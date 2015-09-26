@@ -1,1 +1,4 @@
 .gradle/
+.idea/
+bouncy-castle-examples.iml
+build/

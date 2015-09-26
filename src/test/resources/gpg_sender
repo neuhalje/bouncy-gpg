@@ -1,0 +1,2 @@
+gpg --no-default-keyring --homedir ./sender.gpg.d $*
+
