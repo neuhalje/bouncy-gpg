@@ -6,9 +6,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.E
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 
 public class Main {
 
@@ -27,11 +25,25 @@ public class Main {
             final File destFile = new File(args[6]);
             try {
 
-                EncryptionConfig encryptionConfig = EncryptionConfig.withKeyRingsFromFiles(pubKeyRing, secKeyRing, sender, secKeyRingPassword, recipient, HashAlgorithm.sha1,
+                EncryptionConfig encryptionConfig = EncryptionConfig.withKeyRingsFromFiles(pubKeyRing,
+                        secKeyRing,
+                        sender,
+                        secKeyRingPassword,
+                        recipient,
+                        HashAlgorithm.sha1,
                         SymmetricKeyAlgorithmTags.AES_128);
+
                 EncryptWithOpenPGP pgp = new EncryptWithOpenPGP(encryptionConfig);
 
-                pgp.encryptAndSign(new FileInputStream(sourceFile), new FileOutputStream(destFile));
+                long startTime = System.currentTimeMillis();
+
+                final  int BUFFSIZE = 8*1024;
+                OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(destFile),BUFFSIZE);
+
+                pgp.encryptAndSign(new FileInputStream(sourceFile), outputStream);
+                long endTime = System.currentTimeMillis();
+
+                System.out.format("Encryption took %f.2 s", ((double)endTime-startTime)/1000);
             } catch (Exception e) {
                 System.err.format("ERROR: %s", e.getMessage());
                 e.printStackTrace();
