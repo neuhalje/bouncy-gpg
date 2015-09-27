@@ -92,7 +92,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
 
 
             this.encryptionPublicKeyRing =
-                    this.extractPublicKey(config.getEncryptionPublicKeyId(), publicKeyRings);
+                    Helpers.extractPublicKey(config.getEncryptionPublicKeyId(), publicKeyRings);
 
             this.hashAlgorithmCode = config.getPgpHashAlgorithmCode();
             this.symmetricEncryptionAlgorithmCode = config.getPgpSymmetricEncryptionAlgorithmCode();
@@ -101,44 +101,12 @@ public class EncryptWithOpenPGP implements StreamEncryption {
         }
     }
 
-    /**
-     * Extracts the public key with UID {@code publicKeyUid} from key ring collection {@code publicKeyRings}.
-     *
-     * @param publicKeyUid   the public key uid
-     * @param publicKeyRings the public key rings
-     * @return the pGP public key ring
-     * @throws PGPException the pGP exception
-     */
-    private PGPPublicKeyRing extractPublicKey(final String publicKeyUid,
-                                              final PGPPublicKeyRingCollection publicKeyRings)
-            throws PGPException {
-        // the true parameter indicates, that partial matching of the publicKeyUid is enough.
-        final Iterator<?> keyRings = publicKeyRings.getKeyRings(publicKeyUid, true);
-        PGPPublicKeyRing returnKeyRing = null;
-        while (keyRings.hasNext()) {
-            final Object currentKeyRing = keyRings.next();
-            if (currentKeyRing instanceof PGPPublicKeyRing) {
-                if (returnKeyRing == null) {
-                    returnKeyRing = (PGPPublicKeyRing) currentKeyRing;
-                } else {
-                    throw new PGPException("Multiple public key rings found for UID '" + publicKeyUid + "'!");
-                }
-            }
-        }
-        if (returnKeyRing == null) {
-            throw new PGPException("No public key ring found for UID '" + publicKeyUid + "'!");
-        }
-        LOGGER.debug("Extracted public key ring for UID '{}' with first key strength {}.", publicKeyUid, returnKeyRing
-                .getPublicKey().getBitStrength());
-        return returnKeyRing;
-    }
-
     @Override
     public void encryptAndSign(final InputStream is, final OutputStream os) throws IOException, RuntimeException,
             NoSuchAlgorithmException, SignatureException {
         final long starttime = System.currentTimeMillis();
         try {
-            this.signThenEncrypt(is, os, this.getEncryptionKey(this.encryptionPublicKeyRing), true, true,
+            this.signThenEncrypt(is, os, Helpers.getEncryptionKey(this.encryptionPublicKeyRing), true, true,
                     this.signatureSecretKeyPassphrase, this.hashAlgorithmCode, this.symmetricEncryptionAlgorithmCode);
         } catch (NoSuchProviderException anEx) {
             // This can't happen because we made sure of it in the static part at the top
@@ -150,24 +118,6 @@ public class EncryptWithOpenPGP implements StreamEncryption {
             os.close();
         }
         LOGGER.debug("Encrypt and sign duration {}s", (System.currentTimeMillis() - starttime) / MLLIES_PER_SEC);
-    }
-
-    /**
-     * Returns the first encryption key encountered in {@code publicKeyRing}.
-     *
-     * @param publicKeyRing the public key ring
-     * @return the encryption key
-     */
-    private PGPPublicKey getEncryptionKey(final PGPPublicKeyRing publicKeyRing) {
-        PGPPublicKey returnKey = null;
-        final Iterator<?> kIt = publicKeyRing.getPublicKeys();
-        while (returnKey == null && kIt.hasNext()) {
-            final PGPPublicKey k = (PGPPublicKey) kIt.next();
-            if (k.isEncryptionKey()) {
-                returnKey = k;
-            }
-        }
-        return returnKey;
     }
 
 
@@ -210,7 +160,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
         // this wraps the output stream in an encrypting output stream
         final OutputStream cOut = cPk.open(out, new byte[1 << 16]);
 
-        final PGPSecretKey pgpSec = PGPUtilities.extractSecretSigningKeyFromKeyrings(this.secretKeyRings, this.signatureUid);
+        final PGPSecretKey pgpSec = Helpers.extractSecretSigningKeyFromKeyrings(this.secretKeyRings, this.signatureUid);
 
 
         final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec, signingKeyPassphrase);

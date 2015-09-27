@@ -6,6 +6,8 @@ build
 Performance Results
 ===================
 
+Buffering via `BufferedOutputStream` makes a huge performance impact because it cuts down syscall count approx. by the cache size.
+
 See [Main.java](./src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/Main.java):
 
 | Buffering              | source file size   | duration | throughput |

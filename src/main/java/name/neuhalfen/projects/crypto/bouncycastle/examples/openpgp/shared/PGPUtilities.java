@@ -38,42 +38,6 @@ public class PGPUtilities {
     }
 
     /**
-     * Extracts the first secret signing key for UID {@code signatureUid} suitable for signature generation from a key
-     * ring collection {@code secretKeyRings}.
-     *
-     * @param pgpSec        a Collection of secret key rings
-     * @param signingKeyUid signature Key uid to search for
-     * @return the first secret key for signatureUid suitable for signatures
-     * @throws PGPException if no key ring or key with that Uid is found
-     */
-    public static PGPSecretKey extractSecretSigningKeyFromKeyrings(final PGPSecretKeyRingCollection pgpSec, final String signingKeyUid)
-            throws PGPException {
-
-        PGPSecretKey key = null;
-
-        final Iterator<PGPSecretKeyRing> rIt = pgpSec.getKeyRings(signingKeyUid, true);
-        while (key == null && rIt.hasNext()) {
-            final PGPSecretKeyRing kRing =  rIt.next();
-            final Iterator<PGPSecretKey> kIt = kRing.getSecretKeys();
-
-            while (key == null && kIt.hasNext()) {
-                final PGPSecretKey k =  kIt.next();
-
-                if (k.isSigningKey()) {
-                    key = k;
-                }
-            }
-        }
-
-        if (key == null) {
-            throw new PGPException("Can't find signing key in key ring.");
-        }
-        LOGGER.debug("Extracted secret signing key for UID '{}'.", signingKeyUid);
-
-        return key;
-    }
-
-    /**
      * Extracts the public key with UID {@code publicKeyUid} from key ring collection {@code publicKeyRings}.
      *
      * @param publicKeyUid   the public key uid
