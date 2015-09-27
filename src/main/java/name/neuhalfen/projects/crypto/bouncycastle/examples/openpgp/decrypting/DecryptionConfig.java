@@ -63,6 +63,14 @@ public abstract class DecryptionConfig {
         return decryptionSecretKeyPassphrase;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("DecryptionConfig{");
+        sb.append("signatureCheckRequired=").append(signatureCheckRequired);
+        sb.append(", decryptionSecretKeyPassphrase='").append(decryptionSecretKeyPassphrase).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 
     public abstract InputStream getSecretKeyRing() throws FileNotFoundException;
 
