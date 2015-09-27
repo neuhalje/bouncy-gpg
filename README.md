@@ -3,6 +3,12 @@ build
 
 `./gradlew  shadowJar`
 
+
+Tools
+=========
+
+`encrypt.sh SOURCEFILE DESTFILE` -- uses the testing keys to encrypt a file. Usefull for performance measurements.
+
 Performance Results
 ===================
 

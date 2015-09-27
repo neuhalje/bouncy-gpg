@@ -11,6 +11,8 @@ Keyrings
 Generate new keyrings
 ------------------------
 
+* !!WARNING!! Doing so will break all tests !!WARNING!! *
+
 ```
 rm -rf {sender,recipient}.gpg.d
 mkdir  {sender,recipient}.gpg.d
