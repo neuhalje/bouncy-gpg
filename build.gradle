@@ -3,11 +3,13 @@ apply plugin: 'java'
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
-version = '1.0.0'
+version = '1.0.1'
+
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Bouncycastle Quickstart',
-                'Implementation-Version': version
+        attributes 'Implementation-Title': 'Bouncycastle Examples',
+                   'Implementation-Version': version,
+                   'Main-Class': 'name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.Main'
     }
 }
 
