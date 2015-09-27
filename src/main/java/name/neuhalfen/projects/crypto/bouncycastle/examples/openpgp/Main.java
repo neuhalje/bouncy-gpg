@@ -39,6 +39,7 @@ public class Main {
 
                 final  int BUFFSIZE = 8*1024;
                 OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(destFile),BUFFSIZE);
+                //OutputStream outputStream = new FileOutputStream(destFile);
 
                 pgp.encryptAndSign(new FileInputStream(sourceFile), outputStream);
                 long endTime = System.currentTimeMillis();
