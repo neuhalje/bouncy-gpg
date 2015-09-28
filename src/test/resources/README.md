@@ -5,6 +5,7 @@ Keyrings
 * two keyrings: senders_keyring.gpg and recipients_keyring.gpg
 * passwords: "sender" and "recipient"
 * use `gpg_sender`/`gpg_sender` as commands that operate on the correct keyrings
+* *keyrings might change after use* -- it is save to reset them (`git checkout -- ...`) to the commited state.
 
 
 
