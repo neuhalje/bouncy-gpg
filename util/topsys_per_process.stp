@@ -1,0 +1,23 @@
+#! /usr/bin/env stap
+#
+# This script lists the top 20 systemcalls in total
+# start with stap -c command / stap -x pid
+
+global syscalls_count
+
+probe syscall.* {
+  if (target() == pid())  {
+     syscalls_count[name] <<< 1
+  }
+}
+
+function print_systop () {
+  printf ("%25s %10s\n", "SYSCALL", "COUNT")
+  foreach (syscall in syscalls_count- limit 20) {
+    printf("%25s %10d\n", syscall, @count(syscalls_count[syscall]))
+  }
+}
+
+probe end {
+  print_systop ()
+}
