@@ -46,7 +46,7 @@ public class EncryptWithOpenPGPTest {
 
 
     @Test
-    //@Ignore("this test is very slow (~2min)")
+    @Ignore("this test is very slow (~2min)")
     public void encryptionAndSigning_1GB_doesNotCrash() throws IOException, SignatureException, NoSuchAlgorithmException {
         StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources());
 
