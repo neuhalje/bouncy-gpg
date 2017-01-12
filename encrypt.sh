@@ -1,10 +1,23 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+ASSEMBLY=bouncy-castle-examples-1.0.2
+LOCATION=./build
+
+[ -f ./build/libs/${ASSEMBLY}.jar ] ||  ./gradlew installDist
 
 if [ "x$3" == "x" ]
 then
   echo "$0 [buffered|unbuffered] sourceFile destFile"
 else
-java -jar ./build/libs/bouncy-castle-examples-1.0.1-all.jar \
+
+CP=${LOCATION}/libs/${ASSEMBLY}.jar
+for JAR in ${LOCATION}/install/bouncy-castle-examples/lib/*.jar
+do
+   CP=${CP}:${JAR}
+done
+
+java -cp ${CP} \
+   name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.Main \
    "$1" \
    sender@example.com \
    recipient@example.com \

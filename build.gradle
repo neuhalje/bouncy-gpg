@@ -1,12 +1,15 @@
 plugins {
   id 'java'
-  id 'com.github.johnrengelman.shadow' version '1.2.2'
+  id 'application'
 }
+
+mainClassName = "name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.Main"
+
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
-version = '1.0.1'
+version = '1.0.2'
 
 jar {
     manifest {
