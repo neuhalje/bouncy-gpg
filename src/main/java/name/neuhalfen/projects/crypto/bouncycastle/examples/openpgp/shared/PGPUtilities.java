@@ -14,7 +14,6 @@ import java.util.Iterator;
 public class PGPUtilities {
 
 
-
     // Use the EncryptWithOpenPGP logger to maintain log format against original version
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EncryptWithOpenPGP.class);
 
@@ -22,9 +21,9 @@ public class PGPUtilities {
     /**
      * Decrypt an encrypted PGP secret key.
      *
-     * @param encryptedKey  An encrypted key
-     * @param pass  The password for the key
-     * @return  The decrypted key
+     * @param encryptedKey An encrypted key
+     * @param pass         The password for the key
+     * @return The decrypted key
      * @throws PGPException
      */
     public static PGPPrivateKey extractPrivateKey(PGPSecretKey encryptedKey, final char[] pass) throws PGPException {
