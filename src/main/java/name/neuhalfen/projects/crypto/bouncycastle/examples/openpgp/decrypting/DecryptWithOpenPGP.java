@@ -70,6 +70,7 @@ public class DecryptWithOpenPGP implements StreamDecryption {
 
             this.decryptionSignatureCheckRequired = config.isSignatureCheckRequired();
         } catch (PGPException e) {
+            LOGGER.error("Failed to create DecryptWithOpenPGP", e);
             throw new RuntimeException(e);
         }
     }
@@ -89,6 +90,7 @@ public class DecryptWithOpenPGP implements StreamDecryption {
             LOGGER.error("Bouncy Castle not available!?", anEx);
             throw new AssertionError("Bouncy Castle Provider is needed");
         } catch (PGPException e) {
+            LOGGER.debug("Failure decrypting",e);
             throw new RuntimeException(e);
         } finally {
             os.close();
