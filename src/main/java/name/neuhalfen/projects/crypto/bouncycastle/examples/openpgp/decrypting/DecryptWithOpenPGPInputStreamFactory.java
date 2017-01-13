@@ -101,8 +101,6 @@ public class DecryptWithOpenPGPInputStreamFactory {
         public PGPOnePassSignature ops;
         public PGPObjectFactory factory;
     }
-    // TODO: move out of factory
-    // private SignatureValidatingInputStream signatureValidatingInputStream;
 
     /**
      * Handles PGP objects in decryption process by recursively calling itself.
