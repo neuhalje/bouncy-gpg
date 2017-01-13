@@ -12,7 +12,6 @@ import org.bouncycastle.openpgp.operator.bc.BcPublicKeyDataDecryptorFactory;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.SignatureException;
@@ -84,7 +83,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
         try {
             final PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(in), keyFingerPrintCalculator);
 
-            return nextDecryptedStream(factory, null);
+            return nextDecryptedStream(factory, new DecryptionState());
 
         } catch (NoSuchProviderException anEx) {
             // This can't happen because we made sure of it in the static part at the top
@@ -98,17 +97,24 @@ public class DecryptWithOpenPGPInputStreamFactory {
         }
     }
 
+    private final static class DecryptionState {
+        public PGPOnePassSignature ops;
+        public PGPObjectFactory factory;
+    }
+    // TODO: move out of factory
+    // private SignatureValidatingInputStream signatureValidatingInputStream;
+
     /**
      * Handles PGP objects in decryption process by recursively calling itself.
      *
      * @param factory PGPObjectFactory to access the next objects, might be recreated within this method
-     * @param ops     Signature object, may be null
+     * @param state   Decryption state, e.g. used for signature validation
      * @throws PGPException            the pGP exception
      * @throws IOException             Signals that an I/O exception has occurred.
      * @throws NoSuchProviderException should never occur, see static code part
      * @throws SignatureException      the signature exception
      */
-    private InputStream nextDecryptedStream(PGPObjectFactory factory, PGPOnePassSignature ops) throws PGPException, IOException, NoSuchProviderException, SignatureException {
+    private InputStream nextDecryptedStream(PGPObjectFactory factory, DecryptionState state) throws PGPException, IOException, NoSuchProviderException, SignatureException {
 
         Object pgpObj;
 
@@ -140,11 +146,11 @@ public class DecryptWithOpenPGPInputStreamFactory {
 
                 final InputStream plainText = pbe.getDataStream(new BcPublicKeyDataDecryptorFactory(sKey));
                 PGPObjectFactory nextFactory = new PGPObjectFactory(plainText, new BcKeyFingerprintCalculator());
-                return nextDecryptedStream(nextFactory, ops);
+                return nextDecryptedStream(nextFactory, state);
             } else if (pgpObj instanceof PGPCompressedData) {
                 LOGGER.debug("Found instance of PGPCompressedData");
                 PGPObjectFactory nextFactory = new PGPObjectFactory(((PGPCompressedData) pgpObj).getDataStream(), new BcKeyFingerprintCalculator());
-                return nextDecryptedStream(nextFactory, ops);
+                return nextDecryptedStream(nextFactory, state);
             } else if (pgpObj instanceof PGPOnePassSignatureList) {
                 LOGGER.debug("Found instance of PGPOnePassSignatureList");
 
@@ -152,24 +158,29 @@ public class DecryptWithOpenPGPInputStreamFactory {
                     LOGGER.info("Signature check disabled - ignoring contained signature");
                 } else {
                     // verify the signature
-                    ops = ((PGPOnePassSignatureList)pgpObj).get(0);
-                    final PGPPublicKey pubKey = this.publicKeyRings.getPublicKey(ops.getKeyID());
+                    state.ops = ((PGPOnePassSignatureList) pgpObj).get(0);
+                    state.factory = factory;
+                    final PGPPublicKey pubKey = this.publicKeyRings.getPublicKey(state.ops.getKeyID());
 
                     if (pubKey == null) {
-                        throw new PGPException("No public key found for ID '" + ops.getKeyID() + "'!");
+                        throw new PGPException("No public key found for ID '" + state.ops.getKeyID() + "'!");
                     }
+                    state.ops.init(pgpContentVerifierBuilderProvider, pubKey);
                 }
 
             } else if (pgpObj instanceof PGPLiteralData) {
                 LOGGER.debug("Found instance of PGPLiteralData");
-                if (decryptionSignatureCheckRequired && ops == null) {
-                    throw new PGPException("Message was not signed!");
+
+
+                if (decryptionSignatureCheckRequired) {
+                    if (state.ops == null) {
+                        throw new PGPException("Message was not signed!");
+                    } else {
+                        return new SignatureValidatingInputStream(((PGPLiteralData) pgpObj).getInputStream(), state);
+                    }
+                } else {
+                    return ((PGPLiteralData) pgpObj).getInputStream();
                 }
-                // FIXME: validation ; ops.update; ops.verify()
-
-
-                return ((PGPLiteralData) pgpObj).getInputStream();
-
             } else {// keep on searching...
                 LOGGER.debug("Skipping pgp Object of Type {}", pgpObj.getClass().getSimpleName());
             }
@@ -177,5 +188,101 @@ public class DecryptWithOpenPGPInputStreamFactory {
         }
         return null;
 
+    }
+
+    private final static class SignatureValidatingInputStream extends FilterInputStream {
+
+        private final DecryptionState state;
+
+        /**
+         * Creates a <code>SignatureValidatingInputStream</code>
+         * by assigning the  argument <code>in</code>
+         * to the field <code>this.in</code> so as
+         * to remember it for later use.
+         *
+         * @param in the underlying input stream, or <code>null</code> if
+         *           this instance is to be created without an underlying stream.
+         */
+        public SignatureValidatingInputStream(InputStream in, DecryptionState state) {
+            super(in);
+            this.state = state;
+        }
+
+        @Override
+        public int read() throws IOException {
+            final int data = super.read();
+            if (data != -1) {
+                state.ops.update((byte) data);
+            } else {
+                validateSignature();
+            }
+            return data;
+        }
+
+        @Override
+        public int read(byte[] b) throws IOException {
+            int read = super.read(b);
+            if (read != -1) {
+                state.ops.update(b, 0, read);
+            } else {
+                validateSignature();
+            }
+            return read;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            int read = super.read(b, off, len);
+            if (read != -1) {
+                state.ops.update(b, off, read);
+            } else {
+                validateSignature();
+            }
+            return read;
+        }
+
+        private void validateSignature() throws IOException {
+            try {
+                final boolean successfullyVerified = Helpers.verifySignature(state.factory, state.ops);
+                if (successfullyVerified) {
+                    LOGGER.debug(" *** Signature verification success *** ");
+                } else {
+                    throw new SignatureException("Signature verification failed!");
+                }
+            } catch (PGPException | SignatureException e) {
+                throw new IOException(e.getMessage(), e);
+            }
+
+        }
+
+        @Override
+        public long skip(long n) throws IOException {
+            throw new UnsupportedOperationException("Skipping not supported");
+        }
+
+        @Override
+        public int available() throws IOException {
+            return super.available();
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+        }
+
+        @Override
+        public synchronized void mark(int readlimit) {
+            throw new UnsupportedOperationException("mark not supported");
+        }
+
+        @Override
+        public synchronized void reset() throws IOException {
+            throw new UnsupportedOperationException("reset not supported");
+        }
+
+        @Override
+        public boolean markSupported() {
+            return false;
+        }
     }
 }

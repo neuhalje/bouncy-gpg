@@ -1,7 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp;
 
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.HashingOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -90,19 +89,23 @@ public class DecryptWithOpenPGPInputStreamTest {
     }
 
     @Test(expected = SignatureException.class)
-    public void decryptingTamperedCiphertext_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
-        DecryptWithOpenPGPInputStreamFactory sut = new DecryptWithOpenPGPInputStreamFactory(Configs.buildConfigForDecryptionFromResources());
-        HashingOutputStream result = HashingOutputStream.sha256();
+    public void decryptingTamperedCiphertext_fails() throws Throwable {
 
-        byte[] buf = IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("UTF-8");
+        final DecryptWithOpenPGPInputStreamFactory sut = new DecryptWithOpenPGPInputStreamFactory(Configs.buildConfigForDecryptionFromResources());
+
+        final byte[] buf = IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("UTF-8");
 
         // tamper
         buf[666]++;
 
         final InputStream decryptedInputStream = sut.wrapWithDecryptAndVerify(new ByteArrayInputStream(buf));
 
-        while (decryptedInputStream.read() != -1) {
-            // just eat all the bytes
+        try {
+            while (decryptedInputStream.read() != -1) {
+                // just eat all the bytes
+            }
+        } catch (IOException e) {
+            throw e.getCause();
         }
     }
 
