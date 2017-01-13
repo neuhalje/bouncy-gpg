@@ -12,27 +12,25 @@ import java.io.InputStream;
 import static org.junit.Assume.assumeNotNull;
 
 
-public class ExplodeAndReencryptTest {
+public class ReencryptExplodedZipSinglethreadTest {
 
+    protected name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption.ReencryptExplodedZipSinglethread sut() {
+        return new name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption.ReencryptExplodedZipSinglethread();
+    }
 
     @Test
     public void reencrypting_smallZip_doesNotCrash() throws Exception {
+        final InputStream exampleEncryptedZip = getClass().getClassLoader().getResourceAsStream("testdata/zip_encrypted_binary_signed.zip.gpg");
+        assumeNotNull(exampleEncryptedZip);
 
         final EncryptionConfig encryptionConfig = Configs.buildConfigForEncryptionFromResources();
         final DecryptionConfig decryptionConfig = Configs.buildConfigForDecryptionFromResources();
 
-        final InputStream exampleEncryptedZip = getClass().getClassLoader().getResourceAsStream("testdata/zip_encrypted_binary_signed.zip.gpg");
-
-
         assumeNotNull(encryptionConfig);
         assumeNotNull(decryptionConfig);
-        assumeNotNull(exampleEncryptedZip);
 
         EncryptWithOpenPGP encryptWithOpenPGP = new EncryptWithOpenPGP(encryptionConfig);
-        ReencryptExplodedZipSinglethread reencryptExplodedZip = new ReencryptExplodedZipSinglethread();
 
-        reencryptExplodedZip.explodeAndReencrypt(exampleEncryptedZip, decryptionConfig, encryptWithOpenPGP, new File(("/tmp")));
+        sut().explodeAndReencrypt(exampleEncryptedZip, decryptionConfig, encryptWithOpenPGP, new File(("/tmp/xxx")));
     }
-
-
 }

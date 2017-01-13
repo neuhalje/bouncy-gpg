@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -39,14 +40,15 @@ class ExplodeAndReencrypt implements Runnable {
             this.e = e;
             LOGGER.warn("Unziping  stopped with error", e);
         }
-
     }
+
+    private final Pattern ILLEGAL_REGEXP = Pattern.compile("([.]{2,})|[^a-zA-Z0-9_, +-.]", Pattern.COMMENTS);
 
     protected String rewriteName(String nameFromZip) {
-        return nameFromZip.replaceAll("[./\\\\]*", "");
+        return ILLEGAL_REGEXP.matcher(nameFromZip).replaceAll("");
     }
 
-    private void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException {
+    public void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException {
         boolean zipDataFound = false;
 
         ZipInputStream zis = new ZipInputStream(is);

@@ -50,7 +50,7 @@ public class ReencryptExplodedZipSinglethread {
         final InputStream plainTextStream = decription.wrapWithDecryptAndVerify(is);
 
         final ExplodeAndReencrypt explodeAndReencrypt = new ExplodeAndReencrypt(plainTextStream, target, destRootDir);
-        explodeAndReencrypt.run();
+        explodeAndReencrypt.explodeAndReencrypt();
     }
 }
 
