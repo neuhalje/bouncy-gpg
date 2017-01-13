@@ -30,7 +30,7 @@ public class MainExplodedSinglethreaded {
 
                 EncryptionConfig encryptionConfig = EncryptionConfig.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing,
-                        sender,
+                        recipient,
                         secKeyRingPassword,
                         recipient,
                         HashAlgorithm.sha1,
