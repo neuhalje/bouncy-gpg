@@ -42,31 +42,58 @@ class ExplodeAndReencrypt implements Runnable {
 
     }
 
+    protected String rewriteName(String nameFromZip) {
+        return nameFromZip.replaceAll("[./\\\\]*", "");
+    }
+
     private void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException {
+        boolean zipDataFound = false;
+
         ZipInputStream zis = new ZipInputStream(is);
         ZipEntry entry;
-        while ((entry = zis.getNextEntry()) != null) {
 
-            if (entry.isDirectory()) {
-                final String dirName = entry.getName();
-                LOGGER.trace("found directory '{}'", dirName);
-                File destPath = new File(destRootDir, dirName);
-                boolean success = destPath.mkdir();
-                if (!success) throw new IOException("Failed to create '" + destPath + "'");
-            } else {
-                String fileName = entry.getName() + ".gpg";
-                LOGGER.trace("found file '{}'", fileName);
-                File destPath = new File(destRootDir, fileName);
-                FileOutputStream fos = new
-                        FileOutputStream(destPath);
-                target.encryptAndSign(zis, fos);
-                fos.close();
+        int numDirs = 0;
+        int numFiles = 0;
+
+        try {
+            while ((entry = zis.getNextEntry()) != null) {
+
+                final String rewrittenEntryName = rewriteName(entry.getName());
+
+                if (!zipDataFound) {
+                    zipDataFound = true;
+                    LOGGER.debug("Found ZIP Data");
+                }
+
+                if (entry.isDirectory()) {
+                    numDirs++;
+                    LOGGER.trace("found directory '{}'", entry.getName());
+
+                    File destPath = new File(destRootDir, rewrittenEntryName);
+                    boolean success = destPath.mkdir();
+                    if (!success) throw new IOException("Failed to create '" + destPath + "'");
+                } else {
+                    numFiles++;
+
+                    LOGGER.trace("found file '{}'", entry.getName());
+
+                    final String fileName = rewrittenEntryName + ".gpg";
+
+                    File destPath = new File(destRootDir, fileName);
+                    FileOutputStream fos = new
+                            FileOutputStream(destPath);
+                    target.encryptAndSign(zis, fos);
+                    fos.close();
+                }
             }
+        } finally {
+
+            zis.close();
+            is.close();
         }
 
-        zis.close();
-        is.close();
-        LOGGER.debug("ZIP input stream closed");
+
+        LOGGER.debug("ZIP input stream closed. Created {} directories, and {} files.", numDirs, numFiles);
     }
 
 }
