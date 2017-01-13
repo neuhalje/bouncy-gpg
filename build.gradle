@@ -6,8 +6,8 @@ plugins {
 mainClassName = "name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.Main"
 
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 version = '1.0.2'
 
