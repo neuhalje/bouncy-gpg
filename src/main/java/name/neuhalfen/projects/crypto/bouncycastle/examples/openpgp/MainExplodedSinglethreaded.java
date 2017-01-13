@@ -1,17 +1,16 @@
 package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp;
 
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptionConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption.ReencryptExplodedZipMultithreaded;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption.ReencryptExplodedZipSinglethread;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
 
-public class MainExploded {
+public class MainExplodedSinglethreaded {
 
 
     public static void main(String[] args) {

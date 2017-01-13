@@ -8,9 +8,10 @@ import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
 
-public class MainExploded {
+public class MainExplodedMultithreaded {
 
 
     public static void main(String[] args) {
