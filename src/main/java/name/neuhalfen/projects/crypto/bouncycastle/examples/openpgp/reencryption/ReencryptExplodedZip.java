@@ -56,9 +56,13 @@ public class ReencryptExplodedZip {
         encryptionThread.start();
 
         source.decryptAndVerify(is, pos);
+        LOGGER.debug("Decryption done");
         pos.flush();
+        LOGGER.debug("Close PipedOutputStream");
+
         pos.close();
         is.close();
+        LOGGER.debug("Waiting for Encryption Thread");
 
         encryptionThread.wait();
 
