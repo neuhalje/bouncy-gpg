@@ -4,7 +4,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.D
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptionConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption.ReencryptExplodedZip;
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption.ReencryptExplodedZipMultithreaded;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 
@@ -42,7 +42,7 @@ public class MainExploded {
 
                 EncryptWithOpenPGP encryptWithOpenPGP = new EncryptWithOpenPGP(encryptionConfig);
                 DecryptWithOpenPGP decryptWithOpenPGP = new DecryptWithOpenPGP(decryptionConfig);
-                ReencryptExplodedZip reencryptExplodedZip = new ReencryptExplodedZip();
+                ReencryptExplodedZipMultithreaded reencryptExplodedZip = new ReencryptExplodedZipMultithreaded();
 
 
                 long startTime = System.currentTimeMillis();
