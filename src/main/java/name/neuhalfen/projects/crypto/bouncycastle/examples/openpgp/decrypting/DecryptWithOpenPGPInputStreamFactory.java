@@ -92,8 +92,6 @@ public class DecryptWithOpenPGPInputStreamFactory {
         } catch (PGPException e) {
             LOGGER.debug("Failure decrypting", e);
             throw new RuntimeException(e);
-        } finally {
-            in.close();
         }
     }
 
