@@ -1,15 +1,9 @@
 package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption;
 
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptionConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.StreamDecryption;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.StreamEncryption;
 
-import java.io.*;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.io.InputStream;
 
 /**
  * Takes a ZIP file, unpacks it in memory (streaming), and writes the files encrypted.
@@ -44,12 +38,10 @@ public class ReencryptExplodedZipSinglethread {
      */
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ReencryptExplodedZipSinglethread.class);
 
-    public void explodeAndReencrypt(InputStream is, DecryptionConfig decryptionConfig, StreamEncryption target, File destRootDir) throws Exception {
 
-        DecryptWithOpenPGPInputStreamFactory decription  = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig);
-        final InputStream plainTextStream = decription.wrapWithDecryptAndVerify(is);
+    public void explodeAndReencrypt(InputStream plainTextStream,ZipEntityStrategy zipEntityStrategy, StreamEncryption streamEncryption) throws Exception {
 
-        final ExplodeAndReencrypt explodeAndReencrypt = new ExplodeAndReencrypt(plainTextStream, target, destRootDir);
+        final ExplodeAndReencrypt explodeAndReencrypt = new ExplodeAndReencrypt(plainTextStream, zipEntityStrategy, streamEncryption);
         explodeAndReencrypt.explodeAndReencrypt();
     }
 }

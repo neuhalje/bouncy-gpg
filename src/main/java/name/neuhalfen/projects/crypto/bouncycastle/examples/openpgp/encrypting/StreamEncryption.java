@@ -9,5 +9,14 @@ import java.security.SignatureException;
 
 public interface StreamEncryption {
 
-    void encryptAndSign(final InputStream is, final OutputStream os) throws IOException, NoSuchAlgorithmException, SignatureException;
+    /**
+     * Encrypts and signs. The implementing class will make sure that the data available in 'is' gets
+     * encrypted and written to 'os'.
+     *
+     * @param is Input -- must be closed by caller!
+     * @param os Output -- must be closed by caller!
+     */
+    void encryptAndSign(final InputStream is, final OutputStream os) throws IOException,
+            NoSuchAlgorithmException,
+            SignatureException;
 }

@@ -106,7 +106,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
             NoSuchAlgorithmException, SignatureException {
         final long starttime = System.currentTimeMillis();
         try {
-            this.signThenEncrypt(is, os, Helpers.getEncryptionKey(this.encryptionPublicKeyRing), true, true,
+            this.encryptAndSign(is, os, Helpers.getEncryptionKey(this.encryptionPublicKeyRing), true, true,
                     this.signatureSecretKeyPassphrase, this.hashAlgorithmCode, this.symmetricEncryptionAlgorithmCode);
         } catch (NoSuchProviderException anEx) {
             // This can't happen because we made sure of it in the static part at the top
@@ -140,9 +140,9 @@ public class EncryptWithOpenPGP implements StreamEncryption {
      *                                  {@link org.bouncycastle.bcpg.HashAlgorithmTags}
      *                                  {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
      */
-    protected void signThenEncrypt(final InputStream in, OutputStream out, final PGPPublicKey pubEncKey,
-                                   final boolean armor, final boolean withIntegrityCheck, final char[] signingKeyPassphrase,
-                                   final int hashAlgorithmCode, final int symmetricEncryptionAlgorithmCode) throws IOException,
+    protected void encryptAndSign(final InputStream in, OutputStream out, final PGPPublicKey pubEncKey,
+                                  final boolean armor, final boolean withIntegrityCheck, final char[] signingKeyPassphrase,
+                                  final int hashAlgorithmCode, final int symmetricEncryptionAlgorithmCode) throws IOException,
             NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
         if (armor) {
             out = new ArmoredOutputStream(out);
@@ -187,7 +187,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
         // use of buffering to speed up write
         final byte[] buffer = new byte[1 << 16];
 
-        int bytesRead = 0;
+        int bytesRead;
         while ((bytesRead = in.read(buffer)) != -1) {
             lOut.write(buffer, 0, bytesRead);
             sGen.update(buffer, 0, bytesRead);
@@ -199,7 +199,6 @@ public class EncryptWithOpenPGP implements StreamEncryption {
         cGen.close();
         // ///end of sign
 
-        // comData.close();
         cOut.close();
         out.close(); // as cOut does not forward close to out
     }

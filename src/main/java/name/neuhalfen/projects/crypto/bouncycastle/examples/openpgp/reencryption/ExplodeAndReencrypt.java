@@ -2,10 +2,9 @@ package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryptio
 
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.StreamEncryption;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.regex.Pattern;
@@ -15,18 +14,19 @@ import java.util.zip.ZipInputStream;
 
 class ExplodeAndReencrypt implements Runnable {
 
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ReencryptExplodedZipMultithreaded.class);
+    private final ZipEntityStrategy entityHandlingStrategy;
+
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExplodeAndReencrypt.class);
 
     private final InputStream is;
-    private final StreamEncryption target;
-    private final File destRootDir;
+    private final StreamEncryption streamEncryption;
 
     public Exception e;
 
-    ExplodeAndReencrypt(InputStream is, StreamEncryption target, File destRootDir) {
+    ExplodeAndReencrypt(InputStream is, ZipEntityStrategy entityHandlingStrategy, StreamEncryption streamEncryption) {
         this.is = is;
-        this.target = target;
-        this.destRootDir = destRootDir;
+        this.entityHandlingStrategy = entityHandlingStrategy;
+        this.streamEncryption = streamEncryption;
     }
 
     @Override
@@ -42,25 +42,31 @@ class ExplodeAndReencrypt implements Runnable {
         }
     }
 
-    private final Pattern ILLEGAL_REGEXP = Pattern.compile("([.]{2,})|[^a-zA-Z0-9_, +-.]", Pattern.COMMENTS);
+    private final Pattern REMOVE_LEADING_RELATIVE_PATH = Pattern.compile("^(([.]{2,})|/|\\\\)*", Pattern.COMMENTS);
 
-    protected String rewriteName(String nameFromZip) {
-        return ILLEGAL_REGEXP.matcher(nameFromZip).replaceAll("");
+    private final Pattern REMOVE_DOT_DOT_REGEXP = Pattern.compile("[.]{2,}", Pattern.COMMENTS);
+    private final Pattern REMOVE_FOLLOWING_REGEXP = Pattern.compile("[^a-zA-Z0-9_, +-./\\\\]", Pattern.COMMENTS);
+
+    String rewriteName(String nameFromZip) {
+        final String withOutLeadingRelativePath = REMOVE_LEADING_RELATIVE_PATH.matcher(nameFromZip).replaceAll("");
+        final String withoutDotDot = REMOVE_DOT_DOT_REGEXP.matcher(withOutLeadingRelativePath).replaceAll("");
+        final String sanitizedMiddlePart = REMOVE_FOLLOWING_REGEXP.matcher(withoutDotDot).replaceAll("");
+        return sanitizedMiddlePart;
     }
 
-    public void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException {
+    void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException {
         boolean zipDataFound = false;
+        final ZipInputStream zis = new ZipInputStream(is);
 
-        ZipInputStream zis = new ZipInputStream(is);
-        ZipEntry entry;
-
-        int numDirs = 0;
-        int numFiles = 0;
 
         try {
+            ZipEntry entry;
+
+            int numDirs = 0;
+            int numFiles = 0;
             while ((entry = zis.getNextEntry()) != null) {
 
-                final String rewrittenEntryName = rewriteName(entry.getName());
+                final String sanitizedFileName = rewriteName(entry.getName());
 
                 if (!zipDataFound) {
                     zipDataFound = true;
@@ -69,33 +75,24 @@ class ExplodeAndReencrypt implements Runnable {
 
                 if (entry.isDirectory()) {
                     numDirs++;
-                    LOGGER.trace("found directory '{}'", entry.getName());
+                    LOGGER.debug("found directory '{}'", entry.getName());
 
-                    File destPath = new File(destRootDir, rewrittenEntryName);
-                    boolean success = destPath.mkdir();
-                    if (!success) throw new IOException("Failed to create '" + destPath + "'");
+                    entityHandlingStrategy.handleDirectory(sanitizedFileName);
                 } else {
                     numFiles++;
 
-                    LOGGER.trace("found file '{}'", entry.getName());
+                    LOGGER.debug("found file '{}'", entry.getName());
 
-                    final String fileName = rewrittenEntryName + ".gpg";
-
-                    File destPath = new File(destRootDir, fileName);
-                    FileOutputStream fos = new
-                            FileOutputStream(destPath);
-                    target.encryptAndSign(zis, fos);
-                    fos.close();
+                    try (
+                            final OutputStream outputStream = entityHandlingStrategy.createOutputStream(sanitizedFileName);
+                    ) {
+                        streamEncryption.encryptAndSign(zis, outputStream);
+                    }
                 }
             }
+            LOGGER.debug("ZIP input stream closed. Created {} directories, and {} files.", numDirs, numFiles);
         } finally {
-
-            zis.close();
-            is.close();
+            // IGNORE
         }
-
-
-        LOGGER.debug("ZIP input stream closed. Created {} directories, and {} files.", numDirs, numFiles);
     }
-
 }

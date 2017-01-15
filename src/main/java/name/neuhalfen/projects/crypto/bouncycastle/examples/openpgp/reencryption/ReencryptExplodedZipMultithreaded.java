@@ -3,7 +3,10 @@ package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryptio
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.StreamDecryption;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.StreamEncryption;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 
 /**
  * Takes a ZIP file, unpacks it in memory (streaming), and writes the files encrypted.
@@ -45,7 +48,8 @@ public class ReencryptExplodedZipMultithreaded {
 
         final PipedInputStream pis = new PipedInputStream(pos);
 
-        final ExplodeAndReencrypt reencrypt = new ExplodeAndReencrypt(pis, target, destRootDir);
+        final ZipEntityStrategy zipEntityStrategy = new FSZipEntityStrategy(destRootDir);
+        final ExplodeAndReencrypt reencrypt = new ExplodeAndReencrypt(pis, zipEntityStrategy, target);
         final Thread encryptionThread = new Thread(reencrypt, "Encryption Thread");
 
         encryptionThread.start();

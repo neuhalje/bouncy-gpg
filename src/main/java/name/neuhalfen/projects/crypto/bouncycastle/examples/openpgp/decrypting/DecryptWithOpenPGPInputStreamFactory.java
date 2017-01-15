@@ -56,8 +56,6 @@ public class DecryptWithOpenPGPInputStreamFactory {
 
     public DecryptWithOpenPGPInputStreamFactory(final DecryptionConfig config) throws IOException {
         try {
-            // FIXME: Move this in some factory code
-
             this.publicKeyRings =
                     new PGPPublicKeyRingCollection(
                             PGPUtil.getDecoderStream(
