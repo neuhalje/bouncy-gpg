@@ -63,7 +63,12 @@ See [Main.java](./src/main/java/name/neuhalfen/projects/crypto/bouncycastle/exam
 | 8 KiB output buffering | 800 MB             |   80s    | 10.0 MB/s |              |                      |
 | 1 MiB output buffering | 800 MB             |   82s    |  9.7 MB/s |              |                      |
 
-   0) All tests executed on a Core i7, 8GB RAM, SSD
-   1) Average write IO/s over time (estimated via iotop)
-   2) Average number of syscalls to `write`
-   3) very slow, probably because the laptop had been used otherwise
+0) All tests executed on a Core i7, 8GB RAM, SSD
+1) Average write IO/s over time (estimated via iotop)
+2) Average number of syscalls to `write`
+3) very slow, probably because the laptop had been used otherwise
+
+
+## LICENSE
+
+This code is placed under the WTFPL. Don't forget to adhere to the BouncyCastle License (http://bouncycastle.org/license.html).
