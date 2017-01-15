@@ -26,7 +26,7 @@ java -cp ${CP} \
    recipient@example.com \
    ./src/test/resources/recipient.gpg.d/pubring.gpg  \
    ./src/test/resources/recipient.gpg.d/secring.gpg recipient \
-   "src/test/resources/testdata//zip_encrypted_armor_signed.zip.gpg" "${DEST}"
+   "src/test/resources/testdata/large_demo__1GB_data.zip.gpg" "${DEST}"
 
 
 echo
