@@ -6,7 +6,7 @@ This repository serves several purposes:
 - Showcase the bouncycastle API for OpenPGP en-/decryption
 - Provide examples to [decrypt an enencrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/MainExplodedSinglethreaded.java)
 - [Transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
-- Demonstrate the impact of buffering on write performance (this was the original intend of this repo. How times change.)
+- Demonstrate the impact of buffering on write performance (this was the original intend of this repo. How times change. See [here](https://github.com/neuhalje/finding_bottlenecks_example) for better sample code).
 
 build
 =======
