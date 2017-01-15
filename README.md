@@ -1,18 +1,28 @@
 About
 ======
 
-This repository serves two purposes:
+This repository serves several purposes:
+
 - Showcase the bouncycastle API for OpenPGP en-/decryption
-- Demonstrate the impact of buffering on write performance
+- Provide examples to [decrypt an enencrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/MainExplodedSinglethreaded.java)
+- [Transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
+- Demonstrate the impact of buffering on write performance (this was the original intend of this repo. How times change.)
 
 build
 =======
 
-`./gradlew  shadowJar`
+The project is a basic gradle build. Alle the scripts use `./gradlew  installDist`
 
 
 Tools
 =========
+
+demo_reencrypt.sh
+-------------------
+
+* `demo_reencrypt.sh target` -- decrypts an encrypted ZIP file containing  three files (total size: 1.2 GB) AND re-encrypts each of the files in the ZIP to the `target` dir.
+
+This sample shows how e.g. batch jobs can work with large files without leaving plaintext on disk (together with [Transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java) ).
 
 encrypt.sh
 -----------
