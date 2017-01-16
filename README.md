@@ -38,15 +38,15 @@ This scheme has some very appealing benefits:
 
 Consider the following batch job:
 
-1) The customer sends a large (several GB) GPG encrypted ZIP archive containing a directory structure with several 
+1. The customer sends a large (several GB) GPG encrypted ZIP archive containing a directory structure with several 
    data files
-2) Your `pre-processing` needs to split up the data for further processing
-3) `pre-processing` stream-processes the GPG/ZIP archive
-    1) The GPG stream is decrypted using the [DecryptWithOpenPGPInputStreamFactory](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
-    2) The ZIP file is processed with [ExplodeAndReencrypt](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/reencryption/ExplodeAndReencrypt.java)
-        1) Each file from the archive is [processed](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/reencryption/ZipEntityStrategy.java)
-        2) And transparently  encrypted with GPG and stored for further processing
-4) The `processing` job  [processes](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java) the files without writing plaintext to the disk.
+2. Your `pre-processing` needs to split up the data for further processing
+3. `pre-processing` stream-processes the GPG/ZIP archive
+    1. The GPG stream is decrypted using the [DecryptWithOpenPGPInputStreamFactory](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
+    2. The ZIP file is processed with [ExplodeAndReencrypt](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/reencryption/ExplodeAndReencrypt.java)
+        1. Each file from the archive is [processed](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/reencryption/ZipEntityStrategy.java)
+        2. And transparently  encrypted with GPG and stored for further processing
+4. The `processing` job  [processes](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java) the files without writing plaintext to the disk.
 
 encrypt.sh
 -----------
@@ -87,10 +87,10 @@ See [Main.java](./src/main/java/name/neuhalfen/projects/crypto/bouncycastle/exam
 | 8 KiB output buffering | 800 MB             |   80s    | 10.0 MB/s |              |                      |
 | 1 MiB output buffering | 800 MB             |   82s    |  9.7 MB/s |              |                      |
 
-0) All tests executed on a Core i7, 8GB RAM, SSD
-1) Average write IO/s over time (estimated via iotop)
-2) Average number of syscalls to `write`
-3) very slow, probably because the laptop had been used otherwise
+0. All tests executed on a Core i7, 8GB RAM, SSD
+1. Average write IO/s over time (estimated via iotop)
+2. Average number of syscalls to `write`
+3. very slow, probably because the laptop had been used otherwise
 
 
 ## LICENSE
