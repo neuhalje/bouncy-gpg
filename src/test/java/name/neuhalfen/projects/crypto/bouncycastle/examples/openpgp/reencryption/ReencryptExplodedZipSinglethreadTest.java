@@ -18,18 +18,7 @@ import static org.mockito.Mockito.mock;
 public class ReencryptExplodedZipSinglethreadTest {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ReencryptExplodedZipSinglethreadTest.class);
 
-    private ZipEntityStrategy dummyStrategy = new ZipEntityStrategy() {
-
-        @Override
-        public void handleDirectory(String sanitizedDirectoryName) throws IOException {
-
-        }
-
-        @Override
-        public OutputStream createOutputStream(String sanitizedFileName) throws IOException {
-            return mock(OutputStream.class);
-        }
-    };
+    private ZipEntityStrategy dummyStrategy = mock(ZipEntityStrategy.class);
 
     private ReencryptExplodedZipSinglethread sut() {
         return new ReencryptExplodedZipSinglethread();
@@ -39,7 +28,7 @@ public class ReencryptExplodedZipSinglethreadTest {
     public void reencrypting_smallZip_doesNotCrash_integrationTest() throws Exception {
 
         try (
-                final InputStream exampleEncryptedZip = CloseStream.wrap("encrypted", getClass().getClassLoader().getResourceAsStream("testdata/zip_encrypted_binary_signed.zip.gpg"));
+                final InputStream exampleEncryptedZip = CloseStream.wrap("encrypted", getClass().getClassLoader().getResourceAsStream("testdata/zip_encrypted_binary_signed.zip.gpg"))
         ) {
             assumeNotNull(exampleEncryptedZip);
 
@@ -54,7 +43,7 @@ public class ReencryptExplodedZipSinglethreadTest {
             DecryptWithOpenPGPInputStreamFactory decription = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig);
 
             try (
-                    final InputStream plainTextStream = CloseStream.wrap("plain", decription.wrapWithDecryptAndVerify(exampleEncryptedZip));
+                    final InputStream plainTextStream = CloseStream.wrap("plain", decription.wrapWithDecryptAndVerify(exampleEncryptedZip))
             ) {
 
                 sut().explodeAndReencrypt(plainTextStream, this.dummyStrategy, encryptWithOpenPGP);
@@ -62,6 +51,9 @@ public class ReencryptExplodedZipSinglethreadTest {
         }
     }
 
+    /*
+     * relict from tracking down "Close" related issues
+     */
     private final static class CloseStream extends FilterInputStream {
         public static InputStream wrap(String name, InputStream is) {
             return new CloseStream(name, is);

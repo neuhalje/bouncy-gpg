@@ -42,17 +42,8 @@ class ExplodeAndReencrypt implements Runnable {
         }
     }
 
-    private final Pattern REMOVE_LEADING_RELATIVE_PATH = Pattern.compile("^(([.]{2,})|/|\\\\)*", Pattern.COMMENTS);
 
-    private final Pattern REMOVE_DOT_DOT_REGEXP = Pattern.compile("[.]{2,}", Pattern.COMMENTS);
-    private final Pattern REMOVE_FOLLOWING_REGEXP = Pattern.compile("[^a-zA-Z0-9_, +-./\\\\]", Pattern.COMMENTS);
 
-    String rewriteName(String nameFromZip) {
-        final String withOutLeadingRelativePath = REMOVE_LEADING_RELATIVE_PATH.matcher(nameFromZip).replaceAll("");
-        final String withoutDotDot = REMOVE_DOT_DOT_REGEXP.matcher(withOutLeadingRelativePath).replaceAll("");
-        final String sanitizedMiddlePart = REMOVE_FOLLOWING_REGEXP.matcher(withoutDotDot).replaceAll("");
-        return sanitizedMiddlePart;
-    }
 
     void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException {
         boolean zipDataFound = false;
@@ -66,7 +57,7 @@ class ExplodeAndReencrypt implements Runnable {
             int numFiles = 0;
             while ((entry = zis.getNextEntry()) != null) {
 
-                final String sanitizedFileName = rewriteName(entry.getName());
+                final String sanitizedFileName = entityHandlingStrategy.rewriteName(entry.getName());
 
                 if (!entry.getName().equals(sanitizedFileName)) {
                     LOGGER.trace("Rewriting '{}' to '{}'", entry.getName(), sanitizedFileName);

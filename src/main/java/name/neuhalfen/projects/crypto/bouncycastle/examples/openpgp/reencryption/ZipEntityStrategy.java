@@ -18,6 +18,13 @@ import java.io.OutputStream;
  * -> writeEncryptedFileContent(output)
  */
 public interface ZipEntityStrategy {
+
+
+    /**
+     * Sanitize the names of entities in ZIP files. These can contain absolute paths, and path traversals.
+     */
+    String rewriteName(String nameFromZip);
+
     /**
      * Handle a directory. The names are guaranteed to have be sanitized by  @see  {@link ExplodeAndReencrypt::rewriteName}
      */
