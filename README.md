@@ -5,24 +5,48 @@ This repository serves several purposes:
 
 - Showcase the bouncycastle API for OpenPGP en-/decryption
 - Provide examples to [decrypt an enencrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/MainExplodedSinglethreaded.java)
-- [Transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
-- Demonstrate the impact of buffering on write performance (this was the original intend of this repo. How times change. See [here](https://github.com/neuhalje/finding_bottlenecks_example) for better sample code).
+- Streams with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
+- Demonstrate the impact of buffering on write performance (this was the original intend of this repo. How times change.
+  See [here](https://github.com/neuhalje/finding_bottlenecks_example) for better sample code).
 
 build
 =======
 
-The project is a basic gradle build. Alle the scripts use `./gradlew  installDist`
+The project is a basic gradle build. All the scripts use `./gradlew  installDist`
 
 
-Tools
+Demos
 =========
 
 demo_reencrypt.sh
 -------------------
+A GPG encrypted ZIP file is decrypted on the fly. The structure of the ZIP is then written to disk. All files are re-encrypted before saving them.
 
-* `demo_reencrypt.sh target` -- decrypts an encrypted ZIP file containing  three files (total size: 1.2 GB) AND re-encrypts each of the files in the ZIP to the `target` dir.
+* `demo_reencrypt.sh TARGET` -- decrypts an encrypted ZIP file containing  three files (total size: 1.2 GB) AND 
+   re-encrypts each of the files in the ZIP to the `TARGET` dir.
 
-This sample shows how e.g. batch jobs can work with large files without leaving plaintext on disk (together with [Transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java) ).
+[The sample](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/MainExplodedSinglethreaded.java)
+shows how e.g. batch jobs can work with large files without leaving plaintext on disk (together with
+[Transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)).
+
+This scheme has some very appealing benefits:
+* Data in transit is _always_ encrypted with public key cryptography. Indispensable when you have to use `ftp`,
+  comforting when you use `https` and the next Heartbleed pops up.
+* Data at rest is _always_ encrypted with public key cryptography. When (not if) you get hacked, this can make all the
+  difference between _"Move along folks, nothing to see here!"_ and _"I lost confidential customer data to the competition"_.
+* You still need to protect the private keys, but this is considerable easier than the alternatives.
+
+Consider the following batch job:
+
+1) The customer sends a large (several GB) GPG encrypted ZIP archive containing a directory structure with several 
+   data files
+2) Your `pre-processing` needs to split up the data for further processing
+3) `pre-processing` stream-processes the GPG/ZIP archive
+    1) The GPG stream is decrypted using the [DecryptWithOpenPGPInputStreamFactory](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
+    2) The ZIP file is processed with [ExplodeAndReencrypt](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/reencryption/ExplodeAndReencrypt.java)
+        1) Each file from the archive is [processed](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/reencryption/ZipEntityStrategy.java)
+        2) And transparently  encrypted with GPG and stored for further processing
+4) The `processing` job  [processes](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java) the files without writing plaintext to the disk.
 
 encrypt.sh
 -----------
