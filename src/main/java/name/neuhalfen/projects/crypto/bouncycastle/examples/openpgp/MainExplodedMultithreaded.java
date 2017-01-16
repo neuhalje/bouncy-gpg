@@ -11,6 +11,9 @@ import org.bouncycastle.crypto.tls.HashAlgorithm;
 import java.io.File;
 import java.io.FileInputStream;
 
+/**
+ * Multithreaded implementation. Not tested that much.
+ */
 public class MainExplodedMultithreaded {
 
 
