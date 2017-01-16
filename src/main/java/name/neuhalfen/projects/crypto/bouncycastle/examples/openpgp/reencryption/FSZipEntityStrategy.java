@@ -1,5 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class FSZipEntityStrategy implements ZipEntityStrategy {
     }
 
     @Override
-    public OutputStream createOutputStream(String sanitizedFileName) throws IOException {
+    public @Nullable OutputStream createOutputStream(String sanitizedFileName) throws IOException {
         final String fileName = sanitizedFileName + ".gpg";
 
         File destPath = new File(destRootDir, fileName);

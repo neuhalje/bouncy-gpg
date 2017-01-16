@@ -1,5 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -26,8 +27,9 @@ public interface ZipEntityStrategy {
      * Create an outputstream that will receive the (re-)encrypted  content of one file in the ZIP
      *
      * @param sanitizedFileName Filename with (relative) path
-     * @return data sink
+     * @return data sink. Null: Ignore the file
      * @throws IOException Well, can happen
      */
+    @Nullable
     OutputStream createOutputStream(String sanitizedFileName) throws IOException;
 }

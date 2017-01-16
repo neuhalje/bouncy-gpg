@@ -68,9 +68,14 @@ class ExplodeAndReencrypt implements Runnable {
 
                 final String sanitizedFileName = rewriteName(entry.getName());
 
+                if (!entry.getName().equals(sanitizedFileName)) {
+                    LOGGER.trace("Rewriting '{}' to '{}'", entry.getName(), sanitizedFileName);
+                }
+
                 if (!zipDataFound) {
+                    // Inform the logger that this is indeed a ZIP file
                     zipDataFound = true;
-                    LOGGER.debug("Found ZIP Data");
+                    LOGGER.trace("Found ZIP Data");
                 }
 
                 if (entry.isDirectory()) {
@@ -84,13 +89,21 @@ class ExplodeAndReencrypt implements Runnable {
                     LOGGER.debug("found file '{}'", entry.getName());
 
                     try (
-                            final OutputStream outputStream = entityHandlingStrategy.createOutputStream(sanitizedFileName);
+                            final OutputStream outputStream = entityHandlingStrategy.createOutputStream(sanitizedFileName)
                     ) {
-                        streamEncryption.encryptAndSign(zis, outputStream);
+                        if (outputStream != null) {
+                            streamEncryption.encryptAndSign(zis, outputStream);
+                        } else {
+                            LOGGER.trace("Ignore {}", entry.getName());
+                        }
                     }
                 }
             }
-            LOGGER.debug("ZIP input stream closed. Created {} directories, and {} files.", numDirs, numFiles);
+            if (zipDataFound) {
+                LOGGER.debug("ZIP input stream closed. Created {} directories, and {} files.", numDirs, numFiles);
+            }else {
+                LOGGER.info("ZIP input stream closed. No ZIP data found.");
+            }
         } finally {
             // IGNORE
         }
