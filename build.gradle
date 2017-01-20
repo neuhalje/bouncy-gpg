@@ -52,6 +52,7 @@ jacocoTestReport {
     reports {
         xml.enabled true
         csv.enabled false
+        html.enabled = true
         html.destination "${buildDir}/jacocoHtml"
     }
 }
@@ -60,3 +61,6 @@ jacocoTestReport {
 task wrapper(type: Wrapper) {
     gradleVersion = '2.7'
 }
+
+check.dependsOn jacocoTestReport
+

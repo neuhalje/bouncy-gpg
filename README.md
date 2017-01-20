@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/neuhalje/bouncy-castle-gpg-examples.svg?branch=master)](https://travis-ci.org/neuhalje/bouncy-castle-gpg-examples)
+[![codecov](https://codecov.io/gh/neuhalje/bouncy-castle-gpg-examples/branch/master/graph/badge.svg)](https://codecov.io/gh/neuhalje/bouncy-castle-gpg-examples)
+
+
 About
 ======
 
