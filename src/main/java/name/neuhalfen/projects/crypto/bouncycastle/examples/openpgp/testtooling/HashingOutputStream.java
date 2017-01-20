@@ -5,7 +5,10 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
+/**
+ * Hash everything written into this stream. Used in tests to verify large
+ * datasets can be decrypted reliably.
+ */
 public class HashingOutputStream extends OutputStream {
     private final MessageDigest digest;
 

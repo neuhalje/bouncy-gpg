@@ -67,6 +67,17 @@ public class DecryptWithOpenPGPTest {
         StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
 
         ByteArrayOutputStream res = new ByteArrayOutputStream();
+        sut.decryptAndVerify(new ByteArrayInputStream(IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("UTF-8")), res);
+
+        String decryptedQuote = res.toString("UTF-8");
+        Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
+        //
+    }
+    @Test
+    public void decryptingAndVerifying_smallAmountsOfData_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
+        StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
+
+        ByteArrayOutputStream res = new ByteArrayOutputStream();
         sut.decryptAndVerify(new ByteArrayInputStream(IMPORTANT_QUOTE_COMPRESSED.getBytes("UTF-8")), res);
 
         String decryptedQuote = res.toString("UTF-8");

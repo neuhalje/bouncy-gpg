@@ -32,6 +32,9 @@ public class EncryptWithOpenPGPTest {
         assertThat("A compression>50% is fishy!", out.getBytesWritten(), greaterThan(sampleSize / 2));
     }
 
+    /**
+     * This is really a "does not crash for moderate amounts of data" test.
+     */
     @Test
     public void encryptionAndSigning_10MB_isFast() throws IOException, SignatureException, NoSuchAlgorithmException {
         StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources());

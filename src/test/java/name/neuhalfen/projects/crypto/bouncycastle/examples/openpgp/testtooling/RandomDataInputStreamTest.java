@@ -14,6 +14,9 @@ public class RandomDataInputStreamTest {
     private final int GB = 1024 * MB;
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(RandomDataInputStreamTest.class);
 
+    /**
+     * This test asserts that the fake data source for tests with large data sets is not the bottleneck.
+     */
     @Test
     public void measureRandomDataInputStreamMaxPerformance() throws IOException {
         final int sampleSizeMB = 100;

@@ -10,6 +10,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 
+/**
+ * HashingOutputStream is a utility class used solely for testing.
+ *
+ * @see HashingOutputStream
+ */
 public class HashingOutputStreamTest {
 
     @Test

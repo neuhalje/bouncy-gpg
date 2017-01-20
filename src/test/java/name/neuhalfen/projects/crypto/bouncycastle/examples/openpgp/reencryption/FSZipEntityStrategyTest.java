@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
 
-public class ExplodeAndReencryptTest {
+public class FSZipEntityStrategyTest {
 
     FSZipEntityStrategy sut() {
         return new FSZipEntityStrategy(mock(File.class));
