@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.shared.PGPUtilities;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.operator.KeyFingerPrintCalculator;
@@ -88,14 +89,14 @@ public class DecryptWithOpenPGPInputStreamFactory {
             LOGGER.error("Bouncy Castle not available!?", anEx);
             throw new AssertionError("Bouncy Castle Provider is needed");
         } catch (PGPException e) {
-            LOGGER.debug("Failure decrypting", e);
+            LOGGER.error("Failure decrypting", e);
             throw new RuntimeException(e);
         }
     }
 
     private final static class DecryptionState {
-        public PGPOnePassSignature ops;
-        public PGPObjectFactory factory;
+        PGPOnePassSignature ops;
+        PGPObjectFactory factory;
     }
 
     /**
@@ -129,7 +130,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
                 PGPPublicKeyEncryptedData pbe = null;
                 while (sKey == null && it.hasNext()) {
                     pbe = (PGPPublicKeyEncryptedData) it.next();
-                    sKey = Helpers.findSecretKey(this.secretKeyRings, pbe.getKeyID(), this.decryptionSecretKeyPassphrase);
+                    sKey = PGPUtilities.findSecretKey(this.secretKeyRings, pbe.getKeyID(), this.decryptionSecretKeyPassphrase);
                 }
                 if (sKey == null) {
                     throw new PGPException(

@@ -92,7 +92,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
 
 
             this.encryptionPublicKeyRing =
-                    Helpers.extractPublicKey(config.getEncryptionPublicKeyId(), publicKeyRings);
+                    PGPUtilities.extractPublicKey(config.getEncryptionPublicKeyId(), publicKeyRings);
 
             this.hashAlgorithmCode = config.getPgpHashAlgorithmCode();
             this.symmetricEncryptionAlgorithmCode = config.getPgpSymmetricEncryptionAlgorithmCode();

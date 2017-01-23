@@ -1,14 +1,12 @@
 package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting;
 
 
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.shared.PGPUtilities;
 import org.bouncycastle.openpgp.*;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 
 class Helpers {
@@ -72,24 +70,5 @@ class Helpers {
         return ops.verify(messageSignature);
     }
 
-    /**
-     * Find secret key.
-     *
-     * @param pgpSec the pgp sec
-     * @param keyID  the key id
-     * @param pass   the pass
-     * @return the pGP private key
-     * @throws PGPException            the pGP exception
-     * @throws NoSuchProviderException the no such provider exception
-     */
-     static PGPPrivateKey findSecretKey(final PGPSecretKeyRingCollection pgpSec, final long keyID, final char[] pass)
-            throws PGPException, NoSuchProviderException {
-        LOGGER.debug("Finding secret key for decryption with key ID '{}'", Long.valueOf(keyID).toString());
-        final PGPSecretKey pgpSecKey = pgpSec.getSecretKey(keyID);
 
-        if (pgpSecKey == null) {
-            return null;
-        }
-        return PGPUtilities.extractPrivateKey(pgpSecKey, pass);
-    }
 }
