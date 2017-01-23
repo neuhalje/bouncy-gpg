@@ -17,7 +17,7 @@ class Helpers {
     /**
      * Copy signed decrypted bytes.
      *
-     * @param out     the out
+     * @param out     the out  -- Data is written here. Stream is not closed afterwards.
      * @param message the message
      * @param ops     the ops
      * @throws IOException        Signals that an I/O exception has occurred.
@@ -40,7 +40,9 @@ class Helpers {
                 ops.update(buffer, 0, bytesRead);
             }
         }
-        bOut.close();
+        // Do NOT close the bOut output stream bc. it would close out
+        // and must not be closed according to the contract.
+        bOut.flush();
     }
 
     /**

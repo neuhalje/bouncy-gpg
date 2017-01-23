@@ -92,9 +92,8 @@ public class DecryptWithOpenPGP implements StreamDecryption {
         } catch (PGPException e) {
             LOGGER.debug("Failure decrypting",e);
             throw new RuntimeException(e);
-        } finally {
-            os.close();
         }
+
         LOGGER.debug("Decrypt and verify duration {}s", (System.currentTimeMillis() - starttime) / MLLIES_PER_SEC);
 
     }
@@ -104,14 +103,14 @@ public class DecryptWithOpenPGP implements StreamDecryption {
      *
      * @param factory             PGPObjectFactory to access the next objects, might be recreated within this method
      * @param ops                 Signature object, may be null
-     * @param out                 the stream to write decrypted data to
+     * @param out                 the stream to write decrypted data to. The stream is not closed.
      * @throws PGPException            the pGP exception
      * @throws IOException             Signals that an I/O exception has occurred.
      * @throws NoSuchProviderException should never occur, see static code part
      * @throws SignatureException      the signature exception
      */
-    protected void handlePgpObject(PGPObjectFactory factory, PGPOnePassSignature ops,
-                                   final OutputStream out) throws PGPException, IOException, NoSuchProviderException, SignatureException {
+    void handlePgpObject(PGPObjectFactory factory, PGPOnePassSignature ops,
+                         final OutputStream out) throws PGPException, IOException, NoSuchProviderException, SignatureException {
 
         final Object pgpObj = factory.nextObject();
         if (pgpObj == null) {

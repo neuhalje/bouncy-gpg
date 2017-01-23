@@ -6,13 +6,12 @@ import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.mockito.Mockito.*;
 
 
 public class DecryptWithOpenPGPTest {
@@ -62,12 +61,42 @@ public class DecryptWithOpenPGPTest {
     private final static String IMPORTANT_QUOTE_SHA256 = "5A341E2D70CB67831E837AC0474E140627913C17113163E47F1207EA5C72F86F";
     private final static String IMPORTANT_QUOTE_TEXT = "I love deadlines. I like the whooshing sound they make as they fly by. Douglas Adams";
 
+
+    @Test
+    public void decryptionAndSigning_anyData_doesNotCloseInputStream() throws IOException, SignatureException, NoSuchAlgorithmException {
+
+        StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
+
+
+        InputStream in = spy(new ByteArrayInputStream(IMPORTANT_QUOTE_COMPRESSED.getBytes("UTF-8")));
+
+        sut.decryptAndVerify(in, mock(OutputStream.class));
+
+        verify(in, never()).close();
+    }
+
+
+    @Test
+    public void decryptionAndSigning_anyData_doesNotCloseOutputStream() throws IOException, SignatureException, NoSuchAlgorithmException {
+
+        StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
+
+        InputStream in = spy(new ByteArrayInputStream(IMPORTANT_QUOTE_COMPRESSED.getBytes("UTF-8")));
+
+        OutputStream os = mock(OutputStream.class);
+
+        sut.decryptAndVerify(in, os);
+
+        verify(os, never()).close();
+    }
     @Test
     public void decryptingAndVerifying_smallAmountsOfData_correctlyDecryptsUncompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
         StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
 
         ByteArrayOutputStream res = new ByteArrayOutputStream();
         sut.decryptAndVerify(new ByteArrayInputStream(IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("UTF-8")), res);
+
+        res.close();
 
         String decryptedQuote = res.toString("UTF-8");
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -80,6 +109,8 @@ public class DecryptWithOpenPGPTest {
         ByteArrayOutputStream res = new ByteArrayOutputStream();
         sut.decryptAndVerify(new ByteArrayInputStream(IMPORTANT_QUOTE_COMPRESSED.getBytes("UTF-8")), res);
 
+        res.close();
+
         String decryptedQuote = res.toString("UTF-8");
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
         //
@@ -91,6 +122,8 @@ public class DecryptWithOpenPGPTest {
         HashingOutputStream result = HashingOutputStream.sha256();
 
         sut.decryptAndVerify(new ByteArrayInputStream(IMPORTANT_QUOTE_COMPRESSED.getBytes("UTF-8")), result);
+
+        result.close();
 
         String decryptedQuoteHash = result.toString();
         Assert.assertThat(decryptedQuoteHash, equalTo(IMPORTANT_QUOTE_SHA256));

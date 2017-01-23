@@ -31,7 +31,7 @@ public class HashingInputStream extends FilterInputStream {
     @Override
     public int read() throws IOException {
         int i = super.read();
-        if (i >= 0) {
+        if (i != -1) {
             digest.update((byte) (i & 0xff));
         }
         return i;
@@ -39,17 +39,15 @@ public class HashingInputStream extends FilterInputStream {
 
     @Override
     public int read(byte[] b) throws IOException {
-        int i = super.read(b);
-        if (i >= 0) {
-            digest.update(b, 0, i);
-        }
-        return i;
+        // FilterInputStream::read(byte[]) calls read(byte[],int,int)
+        // So we do not need to update then hash here
+        return super.read(b);
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int i = super.read(b, off, len);
-        if (i >= 0) {
+        if (i != -1) {
             digest.update(b, off, i);
         }
         return i;

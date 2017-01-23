@@ -114,8 +114,6 @@ public class EncryptWithOpenPGP implements StreamEncryption {
             throw new AssertionError("Bouncy Castle Provider is needed");
         } catch (PGPException e) {
             throw new RuntimeException(e);
-        } finally {
-            os.close();
         }
         LOGGER.debug("Encrypt and sign duration {}s", (System.currentTimeMillis() - starttime) / MLLIES_PER_SEC);
     }
