@@ -5,9 +5,9 @@ LOCATION=./build
 
 [ -f ./build/libs/${ASSEMBLY}.jar ] ||  ./gradlew installDist
 
-if [ "x$3" == "x" ]
+if [ "x$2" == "x" ]
 then
-  echo "$0 [buffered|unbuffered] sourceFile destFile"
+  echo "$0  sourceFile destFile"
 else
 
 CP=${LOCATION}/libs/${ASSEMBLY}.jar
@@ -18,11 +18,10 @@ done
 
 java -cp ${CP} \
    name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.Main \
-   "$1" \
    sender@example.com \
    recipient@example.com \
    ./src/test/resources/sender.gpg.d/pubring.gpg  \
    ./src/test/resources/sender.gpg.d/secring.gpg sender \
-   "$2" "$3"
+   "$1" "$2"
 fi
 
