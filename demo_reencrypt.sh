@@ -22,7 +22,6 @@ done
 
 java -cp ${CP} \
    name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.MainExplodedSinglethreaded \
-   sender@example.com \
    recipient@example.com \
    ./src/test/resources/recipient.gpg.d/pubring.gpg  \
    ./src/test/resources/recipient.gpg.d/secring.gpg recipient \

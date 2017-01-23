@@ -18,11 +18,10 @@ public class MainExplodedSinglethreaded {
 
 
     public static void main(String[] args) {
-        if (args.length != 7) {
-            System.err.format("Usage %s  sender recipient pubKeyRing secKeyRing secKeyRingPassword sourceFile.zip.gpg destPath\n", "java -jar xxx.jar");
+        if (args.length != 6) {
+            System.err.format("Usage %s  recipient pubKeyRing secKeyRing secKeyRingPassword sourceFile.zip.gpg destPath\n", "java -jar xxx.jar");
             System.exit(-1);
         } else {
-            final String sender = args[0];
             final String recipient = args[1];
             final File pubKeyRing = new File(args[2]);
             final File secKeyRing = new File(args[3]);
@@ -55,7 +54,7 @@ public class MainExplodedSinglethreaded {
 
                 try (
                         final InputStream encryptedStream = new FileInputStream(sourceFile);
-                        final InputStream decryptedStream = decryptWithOpenPGPInputStreamFactory.wrapWithDecryptAndVerify(encryptedStream);
+                        final InputStream decryptedStream = decryptWithOpenPGPInputStreamFactory.wrapWithDecryptAndVerify(encryptedStream)
                 ) {
                     reencryptExplodedZip.explodeAndReencrypt(decryptedStream, zipEntityStrategy, encryptWithOpenPGP);
                 }
