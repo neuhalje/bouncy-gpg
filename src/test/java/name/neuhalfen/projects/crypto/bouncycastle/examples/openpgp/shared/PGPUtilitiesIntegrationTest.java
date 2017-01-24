@@ -8,27 +8,37 @@ import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.io.IOException;
 import java.security.Security;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@RunWith(Parameterized.class)
 public class PGPUtilitiesIntegrationTest {
 
+    /*
+     * make sure that the tests work independently of the way the config has been created
+     */
+    @Parameterized.Parameters
+    public static Object[] data() {
+        return new Object[]{Configs.buildConfigForDecryptionFromResources(), Configs.buildConfigForDecryptionFromFiles()};
+    }
 
-    public static final long KEY_ID_WITH_PRIVATE_KEY = 0x3DF16BD7C3F280F3l;
+
+    @Parameterized.Parameter
+    public /* NOT private */ DecryptionConfig decryptionConfig;
+
+
+    private static final long KEY_ID_WITH_PRIVATE_KEY = 0x3DF16BD7C3F280F3l;
 
     @Before
     public void before() {
         if (Security.getProvider("BC") == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
-    }
-
-    @Test
-    public void extractPrivateKey() throws Exception {
-
     }
 
     @Test(expected = PGPException.class)
@@ -51,21 +61,19 @@ public class PGPUtilitiesIntegrationTest {
 
     @Test()
     public void extractingPrivateKey_withGoodPassword_returnsKey() throws Exception {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
         final PGPSecretKeyRingCollection secretKeyRings = new PGPSecretKeyRingCollection(
-                PGPUtil.getDecoderStream(config.getSecretKeyRing()), new BcKeyFingerprintCalculator());
-        final PGPPrivateKey pgpPrivateKey = PGPUtilities.extractPrivateKey(secretKeyRings.getSecretKey(KEY_ID_WITH_PRIVATE_KEY), config.getDecryptionSecretKeyPassphrase().toCharArray());
+                PGPUtil.getDecoderStream(decryptionConfig.getSecretKeyRing()), new BcKeyFingerprintCalculator());
+        final PGPPrivateKey pgpPrivateKey = PGPUtilities.extractPrivateKey(secretKeyRings.getSecretKey(KEY_ID_WITH_PRIVATE_KEY), decryptionConfig.getDecryptionSecretKeyPassphrase().toCharArray());
 
         assertThat(pgpPrivateKey, Matchers.notNullValue());
     }
 
     @Test(expected = PGPException.class)
     public void extractingPrivateKey_withWrongPassword_throws() throws Exception {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
         final PGPSecretKeyRingCollection secretKeyRings = new PGPSecretKeyRingCollection(
-                PGPUtil.getDecoderStream(config.getSecretKeyRing()), new BcKeyFingerprintCalculator());
+                PGPUtil.getDecoderStream(decryptionConfig.getSecretKeyRing()), new BcKeyFingerprintCalculator());
 
         final PGPPrivateKey pgpPrivateKey = PGPUtilities.extractPrivateKey(secretKeyRings.getSecretKey(KEY_ID_WITH_PRIVATE_KEY), "wrong password".toCharArray());
     }
@@ -73,11 +81,9 @@ public class PGPUtilitiesIntegrationTest {
 
     PGPPublicKeyRingCollection exampleCollection() throws IOException, PGPException {
 
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
-
         final PGPPublicKeyRingCollection pgpPublicKeyRings = new PGPPublicKeyRingCollection(
                 PGPUtil.getDecoderStream(
-                        config.getPublicKeyRing()), new BcKeyFingerprintCalculator());
+                        decryptionConfig.getPublicKeyRing()), new BcKeyFingerprintCalculator());
 
         return pgpPublicKeyRings;
     }

@@ -14,13 +14,13 @@ public class Configs {
     final static int MB = 1024 * KB;
     final static int GB = 1024 * MB;
 
-    // Used in *FromFiles --> Usefull for testing in the IDE
-    public static String TEST_RESSOURCE_DIRECTORY = "/home/jens/Documents/projects/bouncy-castle-examples/src/test/resources";
+    // Used in *FromFiles --> Useful for testing in the IDE
+    private static String TEST_RESOURCE_DIRECTORY = "./src/test/resources";
 
     public static EncryptionConfig buildConfigForEncryptionFromFiles() {
         final EncryptionConfig encryptAndSignConfig = EncryptionConfig.withKeyRingsFromFiles(
-                new File(TEST_RESSOURCE_DIRECTORY + "/sender.gpg.d/pubring.gpg"),
-                new File(TEST_RESSOURCE_DIRECTORY + "/sender.gpg.d/secring.gpg"),
+                new File(TEST_RESOURCE_DIRECTORY + "/sender.gpg.d/pubring.gpg"),
+                new File(TEST_RESOURCE_DIRECTORY + "/sender.gpg.d/secring.gpg"),
                 "sender@example.com",
                 "sender",
                 "recipient@example.com",
@@ -49,8 +49,8 @@ public class Configs {
 
     public static DecryptionConfig buildConfigForDecryptionFromFiles() {
         final DecryptionConfig decryptAndVerifyConfig = DecryptionConfig.withKeyRingsFromFiles(
-                new File(TEST_RESSOURCE_DIRECTORY + "/recipient.gpg.d/pubring.gpg"),
-                new File(TEST_RESSOURCE_DIRECTORY + "/recipient.gpg.d/secring.gpg"),
+                new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/pubring.gpg"),
+                new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/secring.gpg"),
                 true, "recipient");
 
         return decryptAndVerifyConfig;
