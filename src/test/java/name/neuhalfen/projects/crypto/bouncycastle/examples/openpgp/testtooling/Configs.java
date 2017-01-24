@@ -1,8 +1,10 @@
-package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp;
+package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptWithOpenPGPTest;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptionConfigTest;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 
@@ -10,9 +12,9 @@ import java.io.File;
 
 public class Configs {
 
-    final static int KB = 1024;
-    final static int MB = 1024 * KB;
-    final static int GB = 1024 * MB;
+    public final static int KB = 1024;
+    public final static int MB = 1024 * KB;
+    public final static int GB = 1024 * MB;
 
     // Used in *FromFiles --> Useful for testing in the IDE
     private static String TEST_RESOURCE_DIRECTORY = "./src/test/resources";
@@ -33,7 +35,7 @@ public class Configs {
     }
 
     public static EncryptionConfig buildConfigForEncryptionFromResources() {
-        final EncryptionConfig encryptAndSignConfig = EncryptionConfig.withKeyRingsFromResources(EncryptWithOpenPGPTest.class.getClassLoader(),
+        final EncryptionConfig encryptAndSignConfig = EncryptionConfig.withKeyRingsFromResources(EncryptionConfigTest.EncryptWithOpenPGPTest.class.getClassLoader(),
                 "sender.gpg.d/pubring.gpg",
                 "sender.gpg.d/secring.gpg",
                 "sender@example.com",

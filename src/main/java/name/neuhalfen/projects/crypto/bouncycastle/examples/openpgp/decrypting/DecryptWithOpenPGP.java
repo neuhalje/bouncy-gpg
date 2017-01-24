@@ -92,7 +92,7 @@ public class DecryptWithOpenPGP implements StreamDecryption {
             throw new AssertionError("Bouncy Castle Provider is needed");
         } catch (PGPException e) {
             LOGGER.debug("Failure decrypting",e);
-            throw new RuntimeException(e);
+            throw new IOException(e);
         }
 
         LOGGER.debug("Decrypt and verify duration {}s", (System.currentTimeMillis() - starttime) / MLLIES_PER_SEC);

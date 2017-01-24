@@ -1,19 +1,19 @@
-package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp;
+package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting;
 
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.Configs;
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.HashingOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.mockito.Mockito.*;
 
 
-public class DecryptWithOpenPGPInputStreamTest {
+public class DecryptWithOpenPGPTest {
 
     private final static String IMPORTANT_QUOTE_NOT_COMPRESSED = "-----BEGIN PGP MESSAGE-----\n" +
             "Version: GnuPG v1\n" +
@@ -60,53 +60,86 @@ public class DecryptWithOpenPGPInputStreamTest {
     private final static String IMPORTANT_QUOTE_SHA256 = "5A341E2D70CB67831E837AC0474E140627913C17113163E47F1207EA5C72F86F";
     private final static String IMPORTANT_QUOTE_TEXT = "I love deadlines. I like the whooshing sound they make as they fly by. Douglas Adams";
 
+
+    @Test
+    public void decrypting_anyData_doesNotCloseInputStream() throws IOException, SignatureException, NoSuchAlgorithmException {
+
+        StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
+
+
+        InputStream in = spy(new ByteArrayInputStream(IMPORTANT_QUOTE_COMPRESSED.getBytes("UTF-8")));
+
+        sut.decryptAndVerify(in, mock(OutputStream.class));
+
+        verify(in, never()).close();
+    }
+
+
+    @Test
+    public void decrypting_anyData_doesNotCloseOutputStream() throws IOException, SignatureException, NoSuchAlgorithmException {
+
+        StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
+
+        InputStream in = spy(new ByteArrayInputStream(IMPORTANT_QUOTE_COMPRESSED.getBytes("UTF-8")));
+
+        OutputStream os = mock(OutputStream.class);
+
+        sut.decryptAndVerify(in, os);
+
+        verify(os, never()).close();
+    }
     @Test
     public void decryptingAndVerifying_smallAmountsOfData_correctlyDecryptsUncompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
-        DecryptWithOpenPGPInputStreamFactory sut = new DecryptWithOpenPGPInputStreamFactory(Configs.buildConfigForDecryptionFromResources());
+        StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
 
-        final InputStream decryptedInputStream = sut.wrapWithDecryptAndVerify(new ByteArrayInputStream(IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("UTF-8")));
+        ByteArrayOutputStream res = new ByteArrayOutputStream();
+        sut.decryptAndVerify(new ByteArrayInputStream(IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("UTF-8")), res);
 
-        byte[] buffer = new byte[100];
-        int bytesDecrypted = decryptedInputStream.read(buffer);
+        res.close();
 
-        String decryptedQuote = new String(buffer, 0, bytesDecrypted, "UTF-8");
+        String decryptedQuote = res.toString("UTF-8");
+        Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
+        //
+    }
+    @Test
+    public void decryptingAndVerifying_smallAmountsOfData_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
+        StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
+
+        ByteArrayOutputStream res = new ByteArrayOutputStream();
+        sut.decryptAndVerify(new ByteArrayInputStream(IMPORTANT_QUOTE_COMPRESSED.getBytes("UTF-8")), res);
+
+        res.close();
+
+        String decryptedQuote = res.toString("UTF-8");
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
         //
     }
 
     @Test
-    public void decryptingAndVerifying_smallAmountsOfData_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
-        DecryptWithOpenPGPInputStreamFactory sut = new DecryptWithOpenPGPInputStreamFactory(Configs.buildConfigForDecryptionFromResources());
+    public void decryptingAndVerifyingViaHashing_smallAmountsOfData_correctlyDecryptsUncompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
+        StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
+        HashingOutputStream result = HashingOutputStream.sha256();
 
-        final InputStream decryptedInputStream = sut.wrapWithDecryptAndVerify(new ByteArrayInputStream(IMPORTANT_QUOTE_COMPRESSED.getBytes("UTF-8")));
+        sut.decryptAndVerify(new ByteArrayInputStream(IMPORTANT_QUOTE_COMPRESSED.getBytes("UTF-8")), result);
 
-        byte[] buffer = new byte[100];
-        int bytesDecrypted = decryptedInputStream.read(buffer);
+        result.close();
 
-        String decryptedQuote = new String(buffer, 0, bytesDecrypted, "UTF-8");
-        Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
+        String decryptedQuoteHash = result.toString();
+        Assert.assertThat(decryptedQuoteHash, equalTo(IMPORTANT_QUOTE_SHA256));
         //
     }
 
     @Test(expected = SignatureException.class)
-    public void decryptingTamperedCiphertext_fails() throws Throwable {
+    public void decryptingTamperedCiphertext_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
+        StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
+        HashingOutputStream result = HashingOutputStream.sha256();
 
-        final DecryptWithOpenPGPInputStreamFactory sut = new DecryptWithOpenPGPInputStreamFactory(Configs.buildConfigForDecryptionFromResources());
-
-        final byte[] buf = IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("UTF-8");
+        byte[] buf = IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("UTF-8");
 
         // tamper
         buf[666]++;
 
-        final InputStream decryptedInputStream = sut.wrapWithDecryptAndVerify(new ByteArrayInputStream(buf));
-
-        try {
-            while (decryptedInputStream.read() != -1) {
-                // just eat all the bytes
-            }
-        } catch (IOException e) {
-            throw e.getCause();
-        }
+        sut.decryptAndVerify(new ByteArrayInputStream(buf), result);
     }
 
 }

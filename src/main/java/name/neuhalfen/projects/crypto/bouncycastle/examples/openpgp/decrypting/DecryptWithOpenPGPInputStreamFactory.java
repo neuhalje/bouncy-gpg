@@ -54,6 +54,9 @@ public class DecryptWithOpenPGPInputStreamFactory {
     private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
     private final PGPContentVerifierBuilderProvider pgpContentVerifierBuilderProvider = new BcPGPContentVerifierBuilderProvider();
 
+    public static DecryptWithOpenPGPInputStreamFactory create(final DecryptionConfig config) throws IOException {
+        return new DecryptWithOpenPGPInputStreamFactory(config);
+    }
 
     public DecryptWithOpenPGPInputStreamFactory(final DecryptionConfig config) throws IOException {
         try {
@@ -72,12 +75,11 @@ public class DecryptWithOpenPGPInputStreamFactory {
         } catch (PGPException e) {
 
             LOGGER.error("Failed to create DecryptWithOpenPGP", e);
-            throw new RuntimeException(e);
+            throw new IOException(e);
         }
     }
 
-    public InputStream wrapWithDecryptAndVerify(InputStream in) throws IOException,
-            SignatureException {
+    public InputStream wrapWithDecryptAndVerify(InputStream in) throws IOException {
         LOGGER.debug("Trying to decrypt and verify PGP Encryption.");
         try {
             final PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(in), keyFingerPrintCalculator);
@@ -90,7 +92,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
             throw new AssertionError("Bouncy Castle Provider is needed");
         } catch (PGPException e) {
             LOGGER.error("Failure decrypting", e);
-            throw new RuntimeException(e);
+            throw new IOException(e);
         }
     }
 
@@ -109,7 +111,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
      * @throws NoSuchProviderException should never occur, see static code part
      * @throws SignatureException      the signature exception
      */
-    private InputStream nextDecryptedStream(PGPObjectFactory factory, DecryptionState state) throws PGPException, IOException, NoSuchProviderException, SignatureException {
+    private InputStream nextDecryptedStream(PGPObjectFactory factory, DecryptionState state) throws PGPException, IOException, NoSuchProviderException {
 
         Object pgpObj;
 

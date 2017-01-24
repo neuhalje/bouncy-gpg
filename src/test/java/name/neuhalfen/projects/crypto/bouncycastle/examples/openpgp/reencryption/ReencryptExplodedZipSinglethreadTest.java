@@ -1,16 +1,15 @@
 package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption;
 
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.Configs;
 import org.junit.Test;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import static org.junit.Assume.assumeNotNull;
 import static org.mockito.Mockito.mock;

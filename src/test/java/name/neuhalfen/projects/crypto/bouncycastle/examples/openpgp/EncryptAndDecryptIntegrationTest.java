@@ -4,6 +4,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.D
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.StreamDecryption;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.StreamEncryption;
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.HashingInputStream;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.HashingOutputStream;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.RandomDataInputStream;
