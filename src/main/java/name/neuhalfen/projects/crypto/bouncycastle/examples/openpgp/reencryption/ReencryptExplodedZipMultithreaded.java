@@ -7,6 +7,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Takes a ZIP file, unpacks it in memory (streaming), and writes the files encrypted.
@@ -36,42 +40,55 @@ import java.io.PipedOutputStream;
  */
 public class ReencryptExplodedZipMultithreaded {
 
-    /**
-     * The Constant LOGGER.
-     */
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ReencryptExplodedZipMultithreaded.class);
 
-    public void explodeAndReencrypt(InputStream is, StreamDecryption source, StreamEncryption target, File destRootDir) throws Exception {
+    public void explodeAndReencrypt(InputStream encryptedLargeZip, StreamDecryption decryptionCommand, final StreamEncryption target, final File destRootDir) throws Exception {
+
+        // decrpytionCommand  decrypts  encryptedLargeZip -> plainTextSink
+        // plainTextSource converts  plainTextSink into an InputStream
+        // reencrypt parses the zip & encrypts  plainTextSource -> target
+
+        final PipedOutputStream plainTextSink = new PipedOutputStream();
+        final PipedInputStream plainTextSource = new PipedInputStream(plainTextSink);
 
 
-        final PipedOutputStream pos = new PipedOutputStream();
+        final Callable<Boolean> encryptionTask = new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
 
-        final PipedInputStream pis = new PipedInputStream(pos);
+                try {
+                    LOGGER.trace("Unziping started");
+                    final ZipEntityStrategy zipEntityStrategy = new FSZipEntityStrategy(destRootDir);
+                    final ExplodeAndReencrypt reencrypt = new ExplodeAndReencrypt(plainTextSource, zipEntityStrategy, target);
 
-        final ZipEntityStrategy zipEntityStrategy = new FSZipEntityStrategy(destRootDir);
-        final ExplodeAndReencrypt reencrypt = new ExplodeAndReencrypt(pis, zipEntityStrategy, target);
-        final Thread encryptionThread = new Thread(reencrypt, "Encryption Thread");
+                    reencrypt.explodeAndReencrypt();
+                    LOGGER.debug("Unziping stopped");
+                } catch (Exception e) {
+                    LOGGER.warn("Unziping stopped with error", e);
+                    throw e;
+                }
+                return true;
+            }
+        };
 
-        encryptionThread.start();
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        source.decryptAndVerify(is, pos);
+        final Future<Boolean> encryptionDoneFuture = executor.submit(encryptionTask);
+        decryptionCommand.decryptAndVerify(encryptedLargeZip, plainTextSink);
+
         LOGGER.debug("Decryption done");
-        pos.flush();
-        LOGGER.debug("Close PipedOutputStream");
+        plainTextSink.flush();
+        plainTextSink.close();
+        plainTextSource.close();
 
-        pos.close();
-        is.close();
         LOGGER.debug("Waiting for Encryption Thread");
 
-        encryptionThread.wait();
-
-        if (reencrypt.e != null) {
-            LOGGER.info("Error in re-encryption", reencrypt.e);
-
-            throw reencrypt.e;
-        }
+        // no real return value. Just make sure we wait for the thread
+        // errors are thrown as exception
+        encryptionDoneFuture.get();
 
         LOGGER.info("Done");
+        executor.shutdown();
     }
 
 

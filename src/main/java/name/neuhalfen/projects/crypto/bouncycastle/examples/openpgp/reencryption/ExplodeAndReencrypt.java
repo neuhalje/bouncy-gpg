@@ -7,12 +7,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 
-class ExplodeAndReencrypt implements Runnable {
+class ExplodeAndReencrypt {
 
     private final ZipEntityStrategy entityHandlingStrategy;
 
@@ -21,31 +20,15 @@ class ExplodeAndReencrypt implements Runnable {
     private final InputStream is;
     private final StreamEncryption streamEncryption;
 
-    public Exception e;
 
-    ExplodeAndReencrypt(InputStream is, ZipEntityStrategy entityHandlingStrategy, StreamEncryption streamEncryption) {
+    public ExplodeAndReencrypt(InputStream is, ZipEntityStrategy entityHandlingStrategy, StreamEncryption streamEncryption) {
         this.is = is;
         this.entityHandlingStrategy = entityHandlingStrategy;
         this.streamEncryption = streamEncryption;
     }
 
-    @Override
-    public void run() {
-        try {
-            LOGGER.trace("Unziping started");
-            explodeAndReencrypt();
-            this.e = null;
-            LOGGER.debug("Unziping  stopped");
-        } catch (Exception e) {
-            this.e = e;
-            LOGGER.warn("Unziping  stopped with error", e);
-        }
-    }
 
-
-
-
-    void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException {
+    public void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException {
         boolean zipDataFound = false;
         final ZipInputStream zis = new ZipInputStream(is);
 
