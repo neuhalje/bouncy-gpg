@@ -18,23 +18,22 @@ public class MainExplodedMultithreaded {
 
 
     public static void main(String[] args) {
-        if (args.length != 7) {
-            System.err.format("Usage %s  sender recipient pubKeyRing secKeyRing secKeyRingPassword sourceFile.zip.gpg destPath\n", "java -jar xxx.jar");
+        if (args.length != 6) {
+            System.err.format("Usage %s  recipient pubKeyRing secKeyRing secKeyRingPassword sourceFile.zip.gpg destPath\n", "java -jar xxx.jar");
             System.exit(-1);
         } else {
-            final String sender = args[0];
-            final String recipient = args[1];
-            final File pubKeyRing = new File(args[2]);
-            final File secKeyRing = new File(args[3]);
-            final String secKeyRingPassword = args[4];
-            final File sourceFile = new File(args[5]);
-            final File destRootDir = new File(args[6]);
+            final String recipient = args[0];
+            final File pubKeyRing = new File(args[1]);
+            final File secKeyRing = new File(args[2]);
+            final String secKeyRingPassword = args[3];
+            final File sourceFile = new File(args[4]);
+            final File destRootDir = new File(args[5]);
 
             try {
 
                 EncryptionConfig encryptionConfig = EncryptionConfig.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing,
-                        sender,
+                        recipient,
                         secKeyRingPassword,
                         recipient,
                         HashAlgorithm.sha1,

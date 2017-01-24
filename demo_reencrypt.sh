@@ -7,10 +7,14 @@
 ASSEMBLY=bouncy-castle-examples-1.0.2
 LOCATION=./build
 
+#DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.MainExplodedSinglethreaded
+DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.MainExplodedMultithreaded
+
 DEST=/tmp/gpg-example-$$
 
 [ -d "${DEST}" ] && rm -rf "${DEST}" 
-mkdir $DEST
+mkdir $DEST || exit 1
+echo Writing results into \"$DEST\"
 
 [ -f ./build/libs/${ASSEMBLY}.jar ] ||  ./gradlew installDist
 
@@ -20,8 +24,8 @@ do
    CP=${CP}:${JAR}
 done
 
-java -cp ${CP} \
-   name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.MainExplodedSinglethreaded \
+time java -cp ${CP} \
+   ${DRIVER_CLASS} \
    recipient@example.com \
    ./src/test/resources/recipient.gpg.d/pubring.gpg  \
    ./src/test/resources/recipient.gpg.d/secring.gpg recipient \
