@@ -71,8 +71,7 @@ public class DecryptWithOpenPGP implements StreamDecryption {
 
             this.decryptionSignatureCheckRequired = config.isSignatureCheckRequired();
         } catch (PGPException e) {
-            LOGGER.error("Failed to create DecryptWithOpenPGP", e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to create DecryptWithOpenPGP", e);
         }
     }
 
@@ -88,23 +87,19 @@ public class DecryptWithOpenPGP implements StreamDecryption {
 
         } catch (NoSuchProviderException anEx) {
             // This can't happen because we made sure of it in the static part at the top
-            LOGGER.error("Bouncy Castle not available!?", anEx);
             throw new AssertionError("Bouncy Castle Provider is needed");
         } catch (PGPException e) {
-            LOGGER.debug("Failure decrypting",e);
-            throw new IOException(e);
+            throw new IOException("Failure decrypting", e);
         }
-
         LOGGER.debug("Decrypt and verify duration {}s", (System.currentTimeMillis() - starttime) / MLLIES_PER_SEC);
-
     }
 
     /**
      * Handles PGP objects in decryption process by recursively calling itself.
      *
-     * @param factory             PGPObjectFactory to access the next objects, might be recreated within this method
-     * @param ops                 Signature object, may be null
-     * @param out                 the stream to write decrypted data to. The stream is not closed.
+     * @param factory PGPObjectFactory to access the next objects, might be recreated within this method
+     * @param ops     Signature object, may be null
+     * @param out     the stream to write decrypted data to. The stream is not closed.
      * @throws PGPException            the pGP exception
      * @throws IOException             Signals that an I/O exception has occurred.
      * @throws NoSuchProviderException should never occur, see static code part
@@ -117,33 +112,33 @@ public class DecryptWithOpenPGP implements StreamDecryption {
         if (pgpObj == null) {
             throw new PGPException("Decryption failed - No encrypted data found!");
         } else if (pgpObj instanceof PGPEncryptedDataList) {
-            LOGGER.debug("Found instance of PGPEncryptedDataList");
-            PGPEncryptedDataList enc = (PGPEncryptedDataList) pgpObj;
+            LOGGER.trace("Found instance of PGPEncryptedDataList");
+            final PGPEncryptedDataList enc = (PGPEncryptedDataList) pgpObj;
             handleEncryptedDataObjects(enc, ops, out);
 
         } else if (pgpObj instanceof PGPCompressedData) {
+            LOGGER.trace("Found instance of PGPCompressedData");
             handleCompressedData((PGPCompressedData) pgpObj, ops, out);
 
         } else if (pgpObj instanceof PGPOnePassSignatureList) {
+            LOGGER.trace("Found instance of PGPOnePassSignatureList");
             handleOnePassSignatureList((PGPOnePassSignatureList) pgpObj, factory, ops, out);
 
         } else if (pgpObj instanceof PGPLiteralData) {
-            LOGGER.debug("Found instance of PGPLiteralData");
+            LOGGER.trace("Found instance of PGPLiteralData");
             if (decryptionSignatureCheckRequired && ops == null) {
                 throw new PGPException("Message was not signed!");
             }
             Helpers.copySignedDecryptedBytes(out, (PGPLiteralData) pgpObj, ops);
 
         } else {// keep on searching...
-            LOGGER.debug("Skipping pgp Object of Type {}", pgpObj.getClass().getSimpleName());
+            LOGGER.info("Skipping unknown pgp Object of Type {}", pgpObj.getClass().getSimpleName());
             handlePgpObject(factory, ops, out);
         }
 
     }
 
-    private void handleOnePassSignatureList(PGPOnePassSignatureList pgpObj, PGPObjectFactory factory,  PGPOnePassSignature ops, OutputStream out) throws PGPException, IOException, NoSuchProviderException, SignatureException {
-        LOGGER.debug("Found instance of PGPOnePassSignatureList");
-
+    private void handleOnePassSignatureList(PGPOnePassSignatureList pgpObj, PGPObjectFactory factory, PGPOnePassSignature ops, OutputStream out) throws PGPException, IOException, NoSuchProviderException, SignatureException {
         if (!decryptionSignatureCheckRequired) {
             LOGGER.info("Signature check disabled - ignoring contained signature");
             handlePgpObject(factory, ops, out);
@@ -162,16 +157,14 @@ public class DecryptWithOpenPGP implements StreamDecryption {
 
         final boolean successfullyVerified = Helpers.verifySignature(factory, newOps);
         if (successfullyVerified) {
-            LOGGER.debug(" *** Signature verification success *** ");
+            LOGGER.trace(" *** Signature verification success *** ");
         } else {
             throw new SignatureException("Signature verification failed!");
         }
     }
 
     private void handleCompressedData(PGPCompressedData pgpObj, PGPOnePassSignature ops, OutputStream out) throws PGPException, IOException, NoSuchProviderException, SignatureException {
-        PGPObjectFactory factory;
-        LOGGER.debug("Found instance of PGPCompressedData");
-        factory = new PGPObjectFactory(pgpObj.getDataStream(), new BcKeyFingerprintCalculator());
+        final PGPObjectFactory factory = new PGPObjectFactory(pgpObj.getDataStream(), new BcKeyFingerprintCalculator());
         handlePgpObject(factory, ops, out);
     }
 
@@ -199,8 +192,8 @@ public class DecryptWithOpenPGP implements StreamDecryption {
 
         final InputStream plainText = pbe.getDataStream(new BcPublicKeyDataDecryptorFactory(sKey));
         final PGPObjectFactory newFactory = new PGPObjectFactory(plainText, new BcKeyFingerprintCalculator());
-        LOGGER.info("File decrypted successfully, now checking Signature");
-        handlePgpObject(newFactory,  ops, out);
+        LOGGER.trace("File decrypted successfully, now checking Signature");
+        handlePgpObject(newFactory, ops, out);
     }
 
 }

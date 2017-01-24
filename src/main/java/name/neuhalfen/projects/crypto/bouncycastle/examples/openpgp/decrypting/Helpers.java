@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.security.SignatureException;
 
 class Helpers {
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DecryptWithOpenPGP.class);
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Helpers.class);
 
     /**
      * Copy signed decrypted bytes.

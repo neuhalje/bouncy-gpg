@@ -97,7 +97,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
             this.hashAlgorithmCode = config.getPgpHashAlgorithmCode();
             this.symmetricEncryptionAlgorithmCode = config.getPgpSymmetricEncryptionAlgorithmCode();
         } catch (PGPException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to construct EncryptWithOpenPGP", e);
         }
     }
 
@@ -110,7 +110,6 @@ public class EncryptWithOpenPGP implements StreamEncryption {
                     this.signatureSecretKeyPassphrase, this.hashAlgorithmCode, this.symmetricEncryptionAlgorithmCode);
         } catch (NoSuchProviderException anEx) {
             // This can't happen because we made sure of it in the static part at the top
-            LOGGER.error("Bouncy Castle not available!?", anEx);
             throw new AssertionError("Bouncy Castle Provider is needed");
         } catch (PGPException e) {
             throw new RuntimeException(e);

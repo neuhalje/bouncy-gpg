@@ -73,14 +73,12 @@ public class DecryptWithOpenPGPInputStreamFactory {
 
             this.decryptionSignatureCheckRequired = config.isSignatureCheckRequired();
         } catch (PGPException e) {
-
-            LOGGER.error("Failed to create DecryptWithOpenPGP", e);
-            throw new IOException(e);
+            throw new IOException("Failed to create DecryptWithOpenPGP", e);
         }
     }
 
     public InputStream wrapWithDecryptAndVerify(InputStream in) throws IOException {
-        LOGGER.debug("Trying to decrypt and verify PGP Encryption.");
+        LOGGER.trace("Trying to decrypt and verify PGP Encryption.");
         try {
             final PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(in), keyFingerPrintCalculator);
 
@@ -88,11 +86,9 @@ public class DecryptWithOpenPGPInputStreamFactory {
 
         } catch (NoSuchProviderException anEx) {
             // This can't happen because we made sure of it in the static part at the top
-            LOGGER.error("Bouncy Castle not available!?", anEx);
             throw new AssertionError("Bouncy Castle Provider is needed");
         } catch (PGPException e) {
-            LOGGER.error("Failure decrypting", e);
-            throw new IOException(e);
+            throw new IOException("Failure decrypting", e);
         }
     }
 
@@ -118,7 +114,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
         while ((pgpObj = factory.nextObject()) != null) {
 
             if (pgpObj instanceof PGPEncryptedDataList) {
-                LOGGER.debug("Found instance of PGPEncryptedDataList");
+                LOGGER.trace("Found instance of PGPEncryptedDataList");
                 PGPEncryptedDataList enc = (PGPEncryptedDataList) pgpObj;
                 final Iterator<?> it = enc.getEncryptedDataObjects();
 
@@ -145,11 +141,11 @@ public class DecryptWithOpenPGPInputStreamFactory {
                 PGPObjectFactory nextFactory = new PGPObjectFactory(plainText, new BcKeyFingerprintCalculator());
                 return nextDecryptedStream(nextFactory, state);
             } else if (pgpObj instanceof PGPCompressedData) {
-                LOGGER.debug("Found instance of PGPCompressedData");
+                LOGGER.trace("Found instance of PGPCompressedData");
                 PGPObjectFactory nextFactory = new PGPObjectFactory(((PGPCompressedData) pgpObj).getDataStream(), new BcKeyFingerprintCalculator());
                 return nextDecryptedStream(nextFactory, state);
             } else if (pgpObj instanceof PGPOnePassSignatureList) {
-                LOGGER.debug("Found instance of PGPOnePassSignatureList");
+                LOGGER.trace("Found instance of PGPOnePassSignatureList");
 
                 if (!decryptionSignatureCheckRequired) {
                     LOGGER.info("Signature check disabled - ignoring contained signature");
@@ -166,8 +162,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
                 }
 
             } else if (pgpObj instanceof PGPLiteralData) {
-                LOGGER.debug("Found instance of PGPLiteralData");
-
+                LOGGER.trace("Found instance of PGPLiteralData");
 
                 if (decryptionSignatureCheckRequired) {
                     if (state.ops == null) {
