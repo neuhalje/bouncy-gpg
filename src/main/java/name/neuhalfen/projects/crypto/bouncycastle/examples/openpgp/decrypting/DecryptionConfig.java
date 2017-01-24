@@ -67,7 +67,7 @@ public abstract class DecryptionConfig {
     public String toString() {
         final StringBuilder sb = new StringBuilder("DecryptionConfig{");
         sb.append("signatureCheckRequired=").append(signatureCheckRequired);
-        sb.append(", decryptionSecretKeyPassphrase='").append(decryptionSecretKeyPassphrase).append('\'');
+        sb.append(", decryptionSecretKeyPassphrase? :").append(decryptionSecretKeyPassphrase != null).append("\"");
         sb.append('}');
         return sb.toString();
     }
