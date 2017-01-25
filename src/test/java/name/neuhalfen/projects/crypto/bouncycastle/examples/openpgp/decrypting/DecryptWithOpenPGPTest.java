@@ -2,7 +2,9 @@ package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting;
 
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.HashingOutputStream;
+import org.bouncycastle.openpgp.PGPException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
@@ -88,6 +90,7 @@ public class DecryptWithOpenPGPTest {
 
         verify(os, never()).close();
     }
+
     @Test
     public void decryptingAndVerifying_smallAmountsOfData_correctlyDecryptsUncompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
         StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
@@ -101,6 +104,7 @@ public class DecryptWithOpenPGPTest {
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
         //
     }
+
     @Test
     public void decryptingAndVerifying_smallAmountsOfData_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
         StreamDecryption sut = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
@@ -142,4 +146,21 @@ public class DecryptWithOpenPGPTest {
         sut.decryptAndVerify(new ByteArrayInputStream(buf), result);
     }
 
+    @Ignore("FIXME: Implement")
+    @Test(expected = PGPException.class)
+    public void decryptingMessage_withoutHAvingSecretKey_fails() {
+        // FIXME
+    }
+
+    @Ignore("FIXME: Implement")
+    @Test(expected = SignatureException.class)
+    public void decryptingUnsignedMessage_butSignatureIsRequired_fails() {
+        // FIXME
+    }
+
+    @Ignore("FIXME: Implement")
+    @Test()
+    public void decryptingSignedMessage_butSignatureIsNotRequired_succeeds() {
+
+    }
 }

@@ -3,6 +3,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.Configs;
 import org.bouncycastle.util.io.Streams;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -13,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 
@@ -122,5 +124,25 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
         final InputStream plainTextInputStream = sut.wrapWithDecryptAndVerify(new ByteArrayInputStream(buf));
 
         Streams.drain(plainTextInputStream);
+    }
+
+    @Ignore("FIXME: Implement")
+    @Test(expected = IOException.class)
+    public void decryptingMessage_withoutHAvingSecretKey_fails() {
+        // FIXME
+    }
+
+    @Ignore("FIXME: Implement")
+    @Test(expected = IOException.class)
+    public void decryptingUnsignedMessage_butSignatureIsRequired_fails() {
+        // FIXME
+    }
+
+
+    @Ignore("FIXME: Implement")
+    @Test
+    public void decryptingSignedMessage_butSignatureIsNotRequired_succeeds() {
+        // FIXME
+        assertTrue(false);
     }
 }
