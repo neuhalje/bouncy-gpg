@@ -4,11 +4,10 @@ import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.D
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.CatchCloseStream;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.Configs;
 import org.junit.Test;
 
-import java.io.FilterInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import static org.junit.Assume.assumeNotNull;
@@ -27,7 +26,7 @@ public class ReencryptExplodedZipSinglethreadTest {
     public void reencrypting_smallZip_doesNotCrash_integrationTest() throws Exception {
 
         try (
-                final InputStream exampleEncryptedZip = CloseStream.wrap("encrypted", getClass().getClassLoader().getResourceAsStream("testdata/zip_encrypted_binary_signed.zip.gpg"))
+                final InputStream exampleEncryptedZip = CatchCloseStream.wrap("encrypted", getClass().getClassLoader().getResourceAsStream("testdata/zip_encrypted_binary_signed.zip.gpg"))
         ) {
             assumeNotNull(exampleEncryptedZip);
 
@@ -42,7 +41,7 @@ public class ReencryptExplodedZipSinglethreadTest {
             DecryptWithOpenPGPInputStreamFactory decription = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig);
 
             try (
-                    final InputStream plainTextStream = CloseStream.wrap("plain", decription.wrapWithDecryptAndVerify(exampleEncryptedZip))
+                    final InputStream plainTextStream = CatchCloseStream.wrap("plain", decription.wrapWithDecryptAndVerify(exampleEncryptedZip))
             ) {
 
                 sut().explodeAndReencrypt(plainTextStream, this.dummyStrategy, encryptWithOpenPGP);
@@ -50,25 +49,4 @@ public class ReencryptExplodedZipSinglethreadTest {
         }
     }
 
-    /*
-     * relict from tracking down "Close" related issues
-     */
-    private final static class CloseStream extends FilterInputStream {
-        public static InputStream wrap(String name, InputStream is) {
-            return new CloseStream(name, is);
-        }
-
-        final String name;
-
-        protected CloseStream(final String name, InputStream in) {
-            super(in);
-            this.name = name;
-        }
-
-        @Override
-        public void close() throws IOException {
-            LOGGER.debug("Closing " + name);
-            super.close();
-        }
-    }
 }
