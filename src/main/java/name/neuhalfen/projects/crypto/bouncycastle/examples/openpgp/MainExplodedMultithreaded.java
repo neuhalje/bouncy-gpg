@@ -1,15 +1,18 @@
 package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp;
 
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptWithOpenPGP;
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption.FSZipEntityStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption.ReencryptExplodedZipMultithreaded;
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption.ZipEntityStrategy;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 /**
  * Multithreaded implementation. Not tested that much.
@@ -31,7 +34,8 @@ public class MainExplodedMultithreaded {
 
             try {
 
-                EncryptionConfig encryptionConfig = EncryptionConfig.withKeyRingsFromFiles(pubKeyRing,
+                // Encrypt to self
+                final EncryptionConfig encryptionConfig = EncryptionConfig.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing,
                         recipient,
                         secKeyRingPassword,
@@ -39,21 +43,25 @@ public class MainExplodedMultithreaded {
                         HashAlgorithm.sha1,
                         SymmetricKeyAlgorithmTags.AES_128);
 
-                DecryptionConfig decryptionConfig = DecryptionConfig.withKeyRingsFromFiles(pubKeyRing,
+                final DecryptionConfig decryptionConfig = DecryptionConfig.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing,
                         false, secKeyRingPassword);
 
-                EncryptWithOpenPGP encryptWithOpenPGP = new EncryptWithOpenPGP(encryptionConfig);
-                DecryptWithOpenPGP decryptWithOpenPGP = new DecryptWithOpenPGP(decryptionConfig);
-                ReencryptExplodedZipMultithreaded reencryptExplodedZip = new ReencryptExplodedZipMultithreaded();
-
+                final DecryptWithOpenPGPInputStreamFactory decryptWithOpenPGPInputStreamFactory = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig);
 
                 long startTime = System.currentTimeMillis();
 
+                final EncryptWithOpenPGP encryptWithOpenPGP = new EncryptWithOpenPGP(encryptionConfig);
+                final ZipEntityStrategy zipEntityStrategy = new FSZipEntityStrategy(destRootDir);
+                final ReencryptExplodedZipMultithreaded reencryptExplodedZip = new ReencryptExplodedZipMultithreaded();
 
-                reencryptExplodedZip.explodeAndReencrypt(new FileInputStream(sourceFile), decryptWithOpenPGP, encryptWithOpenPGP, destRootDir);
 
-
+                try (
+                        final InputStream encryptedStream = new FileInputStream(sourceFile);
+                        final InputStream decryptedStream = decryptWithOpenPGPInputStreamFactory.wrapWithDecryptAndVerify(encryptedStream)
+                ) {
+                    reencryptExplodedZip.explodeAndReencrypt(decryptedStream, zipEntityStrategy, encryptWithOpenPGP);
+                }
                 long endTime = System.currentTimeMillis();
 
                 System.out.format("Re-Encryption took %.2f s\n", ((double) endTime - startTime) / 1000);
