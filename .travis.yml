@@ -9,6 +9,10 @@ cache:
 jdk:
   - oraclejdk8
   - oraclejdk7
+  - openjdk7
+
+script:
+  - ./gradlew --stacktrace check
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 /**
  * All decryption schemes must adhere to the same basic rules regarding crypto.
  */
-abstract class DecryptBaseTest {
+public abstract class DecryptBaseTest {
 
     @Test
     public void decrypting_anyData_doesNotCloseInputStream() throws IOException, SignatureException, NoSuchAlgorithmException {
