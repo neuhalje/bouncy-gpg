@@ -10,6 +10,9 @@ import org.bouncycastle.crypto.tls.HashAlgorithm;
 
 import java.io.File;
 
+/**
+ * Example configurations used in unit/-integration tests.
+ */
 public class Configs {
 
     public final static int KB = 1024;

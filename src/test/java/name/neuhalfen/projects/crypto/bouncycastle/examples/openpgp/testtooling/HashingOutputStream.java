@@ -8,6 +8,8 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Hash everything written into this stream. Used in tests to verify large
  * datasets can be decrypted reliably.
+ *
+ * The hash is made available via toString and calculated on close.
  */
 public class HashingOutputStream extends OutputStream {
     private final MessageDigest digest;

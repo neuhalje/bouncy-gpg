@@ -3,7 +3,9 @@ package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling
 import java.io.IOException;
 import java.io.OutputStream;
 
-
+/**
+ * Eats all data written into it.
+ */
 public class DevNullOutputStream extends OutputStream {
 
     private int bytesWritten =0;

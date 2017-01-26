@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
+/**
+ * Generate a defined amount of random input data.
+ */
 public class RandomDataInputStream extends InputStream {
 
     private final Random data;

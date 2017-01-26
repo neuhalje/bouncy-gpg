@@ -7,8 +7,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Hash everything read  from this stream. Used in tests to verify large
+ * Hash everything read from the wrapped stream. Used in tests to verify large
  * datasets can be decrypted reliably.
+ *
+ * Does not support mark & friends.
  */
 public class HashingInputStream extends FilterInputStream {
     private final MessageDigest digest;
@@ -51,16 +53,6 @@ public class HashingInputStream extends FilterInputStream {
             digest.update(b, off, i);
         }
         return i;
-    }
-
-    @Override
-    public long skip(long n) throws IOException {
-        throw new RuntimeException("skip not supported");
-    }
-
-    @Override
-    public int available() throws IOException {
-        return super.available();
     }
 
     @Override

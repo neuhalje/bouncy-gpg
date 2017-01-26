@@ -8,6 +8,9 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 
+/**
+ * "Meta test".
+ */
 public class RandomDataInputStreamTest {
     private final int KB = 1024;
     private final int MB = 1024 * KB;
