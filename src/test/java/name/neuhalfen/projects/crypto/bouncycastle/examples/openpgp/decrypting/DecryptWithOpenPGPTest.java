@@ -9,7 +9,7 @@ import java.security.SignatureException;
 public class DecryptWithOpenPGPTest extends DecryptBaseTest {
 
     @Override
-    String decrpyt(byte[] encrypted, DecryptionConfig config) throws IOException, SignatureException {
+    String decrypt(byte[] encrypted, DecryptionConfig config) throws IOException, SignatureException {
         DecryptWithOpenPGP sut = new DecryptWithOpenPGP(config);
 
         ByteArrayOutputStream res = new ByteArrayOutputStream();

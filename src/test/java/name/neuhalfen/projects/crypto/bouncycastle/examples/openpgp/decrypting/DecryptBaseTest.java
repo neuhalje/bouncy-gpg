@@ -38,7 +38,7 @@ abstract class DecryptBaseTest {
     public void decryptingAndVerifying_smallAmountsOfData_correctlyDecryptsUncompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        String decryptedQuote = decrpyt(IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("US-ASCII"), config);
+        String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("US-ASCII"), config);
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
 
@@ -47,7 +47,7 @@ abstract class DecryptBaseTest {
 
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        String decryptedQuote = decrpyt(IMPORTANT_QUOTE_COMPRESSED.getBytes("US-ASCII"), config);
+        String decryptedQuote = decrypt(IMPORTANT_QUOTE_COMPRESSED.getBytes("US-ASCII"), config);
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
 
@@ -70,14 +70,14 @@ abstract class DecryptBaseTest {
     public void decryptingMessage_withoutHavingSecretKey_fails() throws IOException, SignatureException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(false);
 
-        decrpyt(IMPORTANT_QUOTE_NOT_ENCRYPTED_TO_ME.getBytes("US-ASCII"), config);
+        decrypt(IMPORTANT_QUOTE_NOT_ENCRYPTED_TO_ME.getBytes("US-ASCII"), config);
     }
 
     @Test(expected = IOException.class)
     public void decryptingUnsignedMessage_butSignatureIsRequired_fails() throws IOException, SignatureException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(true);
 
-        final String decryptedQuote = decrpyt(IMPORTANT_QUOTE_NOT_SIGNED.getBytes("US-ASCII"), config);
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED.getBytes("US-ASCII"), config);
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
@@ -86,7 +86,7 @@ abstract class DecryptBaseTest {
     public void decryptingUnsignedMessage_butSignatureIsNotRequired_succeeds() throws IOException, SignatureException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(false);
 
-        final String decryptedQuote = decrpyt(IMPORTANT_QUOTE_NOT_SIGNED.getBytes("US-ASCII"), config);
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED.getBytes("US-ASCII"), config);
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
@@ -95,10 +95,10 @@ abstract class DecryptBaseTest {
     public void decryptingSignedMessage_butSignatureIsNotRequired_succeeds() throws IOException, SignatureException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(false);
 
-        final String decryptedQuote = decrpyt(IMPORTANT_QUOTE_COMPRESSED.getBytes("US-ASCII"), config);
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_COMPRESSED.getBytes("US-ASCII"), config);
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
 
-    abstract String decrpyt(byte[] encrypted, DecryptionConfig config) throws IOException, SignatureException;
+    abstract String decrypt(byte[] encrypted, DecryptionConfig config) throws IOException, SignatureException;
 }

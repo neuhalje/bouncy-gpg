@@ -11,7 +11,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest extends DecryptBaseTest {
 
 
     @Override
-    String decrpyt(byte[] encrypted, DecryptionConfig config) throws IOException {
+    String decrypt(byte[] encrypted, DecryptionConfig config) throws IOException {
         final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(config);
 
         final InputStream plainTextInputStream = sut.wrapWithDecryptAndVerify(new ByteArrayInputStream(encrypted));
