@@ -102,8 +102,8 @@ public class EncryptWithOpenPGP implements StreamEncryption {
     }
 
     @Override
-    public void encryptAndSign(final InputStream is, final OutputStream os) throws IOException, RuntimeException,
-            NoSuchAlgorithmException, SignatureException {
+    public void encryptAndSign(final InputStream is, final OutputStream os) throws IOException,
+            NoSuchAlgorithmException, SignatureException, PGPException {
         final long starttime = System.currentTimeMillis();
         try {
             this.encryptAndSign(is, os, Helpers.getEncryptionKey(this.encryptionPublicKeyRing), true, true,
@@ -111,8 +111,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
         } catch (NoSuchProviderException anEx) {
             // This can't happen because we made sure of it in the static part at the top
             throw new AssertionError("Bouncy Castle Provider is needed");
-        } catch (PGPException e) {
-            throw new RuntimeException(e);
+
         }
         LOGGER.debug("Encrypt and sign duration {}s", (System.currentTimeMillis() - starttime) / MLLIES_PER_SEC);
     }

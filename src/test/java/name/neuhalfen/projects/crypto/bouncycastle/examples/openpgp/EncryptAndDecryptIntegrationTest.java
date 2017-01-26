@@ -6,7 +6,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.S
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.HashingInputStream;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.HashingOutputStream;
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.RandomDataInputStream;
+import org.bouncycastle.openpgp.PGPException;
 import org.junit.Test;
 
 import java.io.*;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertThat;
 public class EncryptAndDecryptIntegrationTest {
 
     @Test
-    public void encryptRandomData_andThenDecryptIt_gives_correctPlaintext() throws IOException, NoSuchAlgorithmException, SignatureException, ExecutionException, InterruptedException {
+    public void encryptRandomData_andThenDecryptIt_gives_correctPlaintext() throws IOException, NoSuchAlgorithmException, SignatureException, ExecutionException, InterruptedException, PGPException {
         final StreamEncryption sutEnc = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources());
 
         final String decryptedHash;
@@ -69,11 +69,6 @@ public class EncryptAndDecryptIntegrationTest {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("UTF-8 should be supported", e);
         }
-    }
-
-
-    private InputStream someRandomInputData(int len) {
-        return new RandomDataInputStream(len);
     }
 
 

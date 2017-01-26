@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.reencryption;
 
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.StreamEncryption;
+import org.bouncycastle.openpgp.PGPException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +29,7 @@ class ExplodeAndReencrypt {
     }
 
 
-    public void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException {
+    public void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException {
         boolean zipDataFound = false;
         final ZipInputStream zis = new ZipInputStream(is);
 

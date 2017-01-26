@@ -3,8 +3,8 @@ package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling
 
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptWithOpenPGPTest;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptWithOpenPGPTest;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptionConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptionConfigTest;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 
@@ -36,13 +36,16 @@ public class Configs {
 
         return encryptAndSignConfig;
     }
-
     public static EncryptionConfig buildConfigForEncryptionFromResources() {
-        final EncryptionConfig encryptAndSignConfig = EncryptionConfig.withKeyRingsFromResources(EncryptionConfigTest.EncryptWithOpenPGPTest.class.getClassLoader(),
+        return buildConfigForEncryptionFromResources("sender@example.com", "sender");
+    }
+
+    public static EncryptionConfig buildConfigForEncryptionFromResources(String signatureSecretKeyId, String signatureSecretKeyPassword) {
+        final EncryptionConfig encryptAndSignConfig = EncryptionConfig.withKeyRingsFromResources(EncryptWithOpenPGPTest.class.getClassLoader(),
                 "sender.gpg.d/pubring.gpg",
                 "sender.gpg.d/secring.gpg",
-                "sender@example.com",
-                "sender",
+                signatureSecretKeyId,
+                signatureSecretKeyPassword,
                 "recipient@example.com",
                 HashAlgorithm.sha1,
                 SymmetricKeyAlgorithmTags.AES_128
