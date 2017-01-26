@@ -1,7 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp;
 
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptWithOpenPGP;
-import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.StreamDecryption;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.StreamEncryption;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.testtooling.Configs;
@@ -96,7 +95,7 @@ public class EncryptAndDecryptIntegrationTest {
 
         @Override
         public AsyncDecryptionResult call() throws Exception {
-            final StreamDecryption sutDec = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
+            final DecryptWithOpenPGP sutDec = new DecryptWithOpenPGP(Configs.buildConfigForDecryptionFromResources());
             HashingOutputStream outputHash = HashingOutputStream.sha256();
             sutDec.decryptAndVerify(in, outputHash);
             outputHash.close();

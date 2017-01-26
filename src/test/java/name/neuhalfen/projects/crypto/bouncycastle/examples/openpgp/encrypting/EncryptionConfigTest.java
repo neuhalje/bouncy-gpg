@@ -96,6 +96,7 @@ public class EncryptionConfigTest {
          * This is really a "does not crash for moderate amounts of data" test.
          */
         @Test
+        @Ignore("this test is  slow (~2sec)")
         public void encryptionAndSigning_10MB_isFast() throws IOException, SignatureException, NoSuchAlgorithmException {
             StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources());
 

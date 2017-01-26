@@ -18,7 +18,7 @@ import java.security.Security;
 import java.security.SignatureException;
 import java.util.Iterator;
 
-public class DecryptWithOpenPGP implements StreamDecryption {
+public class DecryptWithOpenPGP {
 
 
     // make sure the Bouncy Castle provider is available:
@@ -75,7 +75,6 @@ public class DecryptWithOpenPGP implements StreamDecryption {
         }
     }
 
-    @Override
     public void decryptAndVerify(final InputStream is, final OutputStream os) throws IOException,
             SignatureException {
         final long starttime = System.currentTimeMillis();

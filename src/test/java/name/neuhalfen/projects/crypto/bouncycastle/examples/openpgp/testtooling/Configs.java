@@ -52,21 +52,31 @@ public class Configs {
         return encryptAndSignConfig;
     }
 
+
     public static DecryptionConfig buildConfigForDecryptionFromFiles() {
+
+        return buildConfigForDecryptionFromFiles(true);
+    }
+
+    public static DecryptionConfig buildConfigForDecryptionFromFiles(boolean signatureCheckRequire) {
         final DecryptionConfig decryptAndVerifyConfig = DecryptionConfig.withKeyRingsFromFiles(
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/pubring.gpg"),
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/secring.gpg"),
-                true, "recipient");
+                signatureCheckRequire, "recipient");
 
         return decryptAndVerifyConfig;
     }
 
     public static DecryptionConfig buildConfigForDecryptionFromResources() {
+        return buildConfigForDecryptionFromResources(true);
+    }
+
+    public static DecryptionConfig buildConfigForDecryptionFromResources(boolean signatureCheckRequired) {
         final DecryptionConfig decryptAndVerifyConfig = DecryptionConfig.withKeyRingsFromResources(
                 DecryptWithOpenPGPTest.class.getClassLoader(),
                 "recipient.gpg.d/pubring.gpg",
                 "recipient.gpg.d/secring.gpg",
-                true, "recipient");
+                signatureCheckRequired, "recipient");
 
         return decryptAndVerifyConfig;
     }

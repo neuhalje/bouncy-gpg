@@ -10,7 +10,6 @@ import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.bc.BcPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.bc.BcPublicKeyDataDecryptorFactory;
 
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchProviderException;
@@ -82,7 +81,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
         try {
             final PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(in), keyFingerPrintCalculator);
 
-            return nextDecryptedStream(factory, new DecryptionState());
+            return nextDecryptedStream(factory, new SignatureValidatingInputStream.DecryptionState());
 
         } catch (NoSuchProviderException anEx) {
             // This can't happen because we made sure of it in the static part at the top
@@ -92,10 +91,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
         }
     }
 
-    private final static class DecryptionState {
-        PGPOnePassSignature ops;
-        PGPObjectFactory factory;
-    }
+
 
     /**
      * Handles PGP objects in decryption process by recursively calling itself.
@@ -107,7 +103,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
      * @throws NoSuchProviderException should never occur, see static code part
      * @throws SignatureException      the signature exception
      */
-    private InputStream nextDecryptedStream(PGPObjectFactory factory, DecryptionState state) throws PGPException, IOException, NoSuchProviderException {
+    private InputStream nextDecryptedStream(PGPObjectFactory factory, SignatureValidatingInputStream.DecryptionState state) throws PGPException, IOException, NoSuchProviderException {
 
         Object pgpObj;
 
@@ -182,99 +178,4 @@ public class DecryptWithOpenPGPInputStreamFactory {
 
     }
 
-    private final static class SignatureValidatingInputStream extends FilterInputStream {
-
-        private final DecryptionState state;
-
-        /**
-         * Creates a <code>SignatureValidatingInputStream</code>
-         * by assigning the  argument <code>in</code>
-         * to the field <code>this.in</code> so as
-         * to remember it for later use.
-         *
-         * @param in the underlying input stream, or <code>null</code> if
-         *           this instance is to be created without an underlying stream.
-         */
-        public SignatureValidatingInputStream(InputStream in, DecryptionState state) {
-            super(in);
-            this.state = state;
-        }
-
-        @Override
-        public int read() throws IOException {
-            final int data = super.read();
-            if (data != -1) {
-                state.ops.update((byte) data);
-            } else {
-                validateSignature();
-            }
-            return data;
-        }
-
-        @Override
-        public int read(byte[] b) throws IOException {
-            int read = super.read(b);
-            if (read != -1) {
-                state.ops.update(b, 0, read);
-            } else {
-                validateSignature();
-            }
-            return read;
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            int read = super.read(b, off, len);
-            if (read != -1) {
-                state.ops.update(b, off, read);
-            } else {
-                validateSignature();
-            }
-            return read;
-        }
-
-        private void validateSignature() throws IOException {
-            try {
-                final boolean successfullyVerified = Helpers.verifySignature(state.factory, state.ops);
-                if (successfullyVerified) {
-                    LOGGER.debug(" *** Signature verification success *** ");
-                } else {
-                    throw new SignatureException("Signature verification failed!");
-                }
-            } catch (PGPException | SignatureException e) {
-                throw new IOException(e.getMessage(), e);
-            }
-
-        }
-
-        @Override
-        public long skip(long n) throws IOException {
-            throw new UnsupportedOperationException("Skipping not supported");
-        }
-
-        @Override
-        public int available() throws IOException {
-            return super.available();
-        }
-
-        @Override
-        public void close() throws IOException {
-            super.close();
-        }
-
-        @Override
-        public synchronized void mark(int readlimit) {
-            throw new UnsupportedOperationException("mark not supported");
-        }
-
-        @Override
-        public synchronized void reset() throws IOException {
-            throw new UnsupportedOperationException("reset not supported");
-        }
-
-        @Override
-        public boolean markSupported() {
-            return false;
-        }
-    }
 }
