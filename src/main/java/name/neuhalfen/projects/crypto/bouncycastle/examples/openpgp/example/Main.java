@@ -1,4 +1,4 @@
-package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp;
+package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.example;
 
 
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.encrypting.EncryptWithOpenPGP;
@@ -42,7 +42,7 @@ public class Main {
 
                 try (
                         final OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(destFile), BUFFSIZE);
-                        final FileInputStream is = new FileInputStream(sourceFile);
+                        final FileInputStream is = new FileInputStream(sourceFile)
                 ) {
                     pgp.encryptAndSign(is, outputStream);
                 }

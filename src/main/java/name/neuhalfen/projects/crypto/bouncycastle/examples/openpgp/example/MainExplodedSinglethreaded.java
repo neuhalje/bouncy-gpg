@@ -1,4 +1,4 @@
-package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp;
+package name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.example;
 
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.decrypting.DecryptionConfig;

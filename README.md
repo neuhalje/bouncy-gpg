@@ -8,7 +8,7 @@ About
 This repository serves several facets:
 
 - Showcase the bouncycastle API for OpenPGP en-/decryption
-- Provide examples to [decrypt an enencrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/MainExplodedSinglethreaded.java)
+- Provide examples to [decrypt an enencrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/example/MainExplodedSinglethreaded.java)
 - Streams with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
 - Demonstrate the impact of buffering on write performance (this was the original intend of this repo. How times change.
   See [here](https://github.com/neuhalje/finding_bottlenecks_example) for better sample code).
@@ -41,7 +41,7 @@ A GPG encrypted ZIP file is decrypted on the fly. The structure of the ZIP is th
 * `demo_reencrypt.sh TARGET` -- decrypts an encrypted ZIP file containing  three files (total size: 1.2 GB) AND 
    re-encrypts each of the files in the ZIP to the `TARGET` dir.
 
-[The sample](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/MainExplodedSinglethreaded.java)
+[The sample](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/example/MainExplodedSinglethreaded.java)
 shows how e.g. batch jobs can work with large files without leaving plaintext on disk (together with
 [Transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)).
 
@@ -73,7 +73,7 @@ Performance Results
 ===================
 
 
-See [Main.java](./src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/Main.java):
+See [Main.java](./src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/example/Main.java):
 
 | Buffering              | source file size   | duration | throughput|write IO/s (1)| write syscalls (2) |
 |------------------------|-------------------:|---------:|----------:|-------------:|---------------------:|

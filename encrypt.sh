@@ -17,7 +17,7 @@ do
 done
 
 java -cp ${CP} \
-   name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.Main \
+   name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.example.Main \
    sender@example.com \
    recipient@example.com \
    ./src/test/resources/sender.gpg.d/pubring.gpg  \
