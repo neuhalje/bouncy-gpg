@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
 
 /**
  * HashingOutputStream is a utility class used solely for testing.
- *
+ * <p>
  * This is 'meta test' ...
  *
  * @see HashingOutputStream

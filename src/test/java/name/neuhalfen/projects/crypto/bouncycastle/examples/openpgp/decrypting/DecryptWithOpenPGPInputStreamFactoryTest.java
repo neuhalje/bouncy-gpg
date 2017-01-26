@@ -9,7 +9,6 @@ import java.io.InputStream;
 
 public class DecryptWithOpenPGPInputStreamFactoryTest extends DecryptBaseTest {
 
-
     @Override
     String decrypt(byte[] encrypted, DecryptionConfig config) throws IOException {
         final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(config);

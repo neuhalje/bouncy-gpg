@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Hash everything read from the wrapped stream. Used in tests to verify large
  * datasets can be decrypted reliably.
- *
+ * <p>
  * Does not support mark & friends.
  */
 public class HashingInputStream extends FilterInputStream {

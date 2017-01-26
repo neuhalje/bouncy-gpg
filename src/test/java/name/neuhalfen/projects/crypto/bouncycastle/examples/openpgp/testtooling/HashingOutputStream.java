@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Hash everything written into this stream. Used in tests to verify large
  * datasets can be decrypted reliably.
- *
+ * <p>
  * The hash is made available via toString and calculated on close.
  */
 public class HashingOutputStream extends OutputStream {
@@ -30,7 +30,7 @@ public class HashingOutputStream extends OutputStream {
 
     @Override
     public void write(int i) throws IOException {
-            digest.update((byte) (i & 0xff));
+        digest.update((byte) (i & 0xff));
     }
 
     @Override

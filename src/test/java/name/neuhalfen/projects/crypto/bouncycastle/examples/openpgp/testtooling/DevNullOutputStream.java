@@ -8,7 +8,8 @@ import java.io.OutputStream;
  */
 public class DevNullOutputStream extends OutputStream {
 
-    private int bytesWritten =0;
+    private int bytesWritten = 0;
+
     @Override
     public void write(int i) throws IOException {
         // ignore
