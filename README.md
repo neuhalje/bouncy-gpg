@@ -2,33 +2,16 @@
 [![codecov](https://codecov.io/gh/neuhalje/bouncy-castle-gpg-examples/branch/master/graph/badge.svg)](https://codecov.io/gh/neuhalje/bouncy-castle-gpg-examples)
 
 
-About
-======
+Mission Statement
+=======================
 
-This repository serves several facets:
+  **Make using [Bouncy Castle](http://bouncycastle.org/) with [OpenPGP](https://tools.ietf.org/html/rfc4880) ~~great~~ fun again!**
 
-- Showcase the bouncycastle API for OpenPGP en-/decryption
-- Provide examples to [decrypt an enencrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/example/MainExplodedSinglethreaded.java)
-- Streams with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
-- Demonstrate the impact of buffering on write performance (this was the original intend of this repo. How times change.
-  See [here](https://github.com/neuhalje/finding_bottlenecks_example) for better sample code).
+This project gives you the following super-powers
 
-TODO
------
-PR & comments welcome!
-
-- [ ] Cleanup code: Remove code duplications
-- [ ] Cleanup code: Create a more uniform API
-- [ ] Cleanup code: Better error handling
-- [ ] Document: Better documentation
-- [ ] Tests: Better test coverage esp. for the _unhappy paths_
-
-build
-=======
-
-The project is a basic gradle build. All the scripts use `./gradlew  installDist`
-
-The coverage report (incl. running tests) is generated with `./gradlew check`.
+- you can encrypt, decrypt, sign and verify GPG/PGP files with just a few lines of code
+- you now can protect all the data at rest by reading encrypted files with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
+- you can even [decrypt an enencrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/example/MainExplodedSinglethreaded.java) -- never again let  plaintext hit your server again! 
 
 
 Demos
@@ -69,23 +52,34 @@ encrypt.sh
 
 * `encrypt.sh  SOURCEFILE DESTFILE` -- uses the testing keys to encrypt a file. Useful for performance measurements.
 
-Performance Results
-===================
+
+FAQ
+=====
+
+<dl>
+  <dt>Why should I use this?</dt>
+  <dd>For common use cases this project is easier than vanilla Bouncy Castle. It also has a pretty decent unit test
+  coverage. It is free (speech & beer).</dd>
+
+  <dt>Can I just grab a class or two for my project?</dt>
+  <dd>Sure! Just grab it and hack away! The code is placed under the <a href="LICENSE">WTPL</a>, you can't get much
+   more permissive than this.</dd>
+   
+   <dt>Why is the test coverage so low?</dt>
+   <dd>Test coverage for 'non-example' code is &gt;85%. Most of the not tested cases are either trivial OR lines that 
+   throw exceptions when the input format is broken. </dd>
+   
+   <dt>How can I contribute?</dt>
+   <dd>Pullrequests are welcome!</dd>
+</dl>
 
 
-See [Main.java](./src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/example/Main.java):
+Building
+=======
 
-| Buffering              | source file size   | duration | throughput|write IO/s (1)| write syscalls (2) |
-|------------------------|-------------------:|---------:|----------:|-------------:|---------------------:|
-| 8 KiB output buffering |  50 MB             |    5s    | 10.0 MB/s |              |                      |
-| 8 KiB output buffering | 200 MB             |   21s    |  9.5 MB/s |              |           1,652 /s   |
-| 8 KiB output buffering | 500 MB             |   52s    |  9.8 MB/s |  15          |          ~2,100 /s   |
-| 8 KiB output buffering | 800 MB             |   80s    | 10.0 MB/s |              |                      |
+The project is a basic gradle build. All the scripts use `./gradlew  installDist`
 
-0. All tests executed on a Core i7, 8GB RAM, SSD
-1. Average write IO/s over time (estimated via iotop)
-2. Average number of syscalls to `write`
-3. very slow, probably because the laptop had been used otherwise
+The coverage report (incl. running tests) is generated with `./gradlew check`.
 
 
 ## LICENSE
