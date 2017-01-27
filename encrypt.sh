@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ASSEMBLY=bouncy-castle-examples-1.0.2
+ASSEMBLY=bouncy-castle-examples-1.1.0
 LOCATION=./build
 
 [ -f ./build/libs/${ASSEMBLY}.jar ] ||  ./gradlew installDist

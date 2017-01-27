@@ -10,7 +10,7 @@ mainClassName = "name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.Mai
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-version = '1.0.2'
+version = '1.1.0'
 
 jar {
     manifest {

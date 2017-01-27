@@ -4,7 +4,7 @@
 # decrypts an encrypted ZIP file and reencrypts each file in the zip
 #
 
-ASSEMBLY=bouncy-castle-examples-1.0.2
+ASSEMBLY=bouncy-castle-examples-1.1.0
 LOCATION=./build
 
 #DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.MainExplodedSinglethreaded
