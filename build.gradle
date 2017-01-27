@@ -4,7 +4,7 @@ plugins {
   id 'jacoco'
 }
 
-mainClassName = "name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.example.Main"
+mainClassName = "name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.Main"
 
 
 sourceCompatibility = 1.7
@@ -16,7 +16,7 @@ jar {
     manifest {
         attributes 'Implementation-Title': 'Bouncycastle Examples',
                    'Implementation-Version': version,
-                   'Main-Class': 'name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.example.Main'
+                   'Main-Class': 'name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.Main'
     }
 }
 

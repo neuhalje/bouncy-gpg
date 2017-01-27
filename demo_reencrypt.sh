@@ -7,8 +7,8 @@
 ASSEMBLY=bouncy-castle-examples-1.0.2
 LOCATION=./build
 
-#DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.example.MainExplodedSinglethreaded
-DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.examples.openpgp.example.MainExplodedMultithreaded
+#DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.MainExplodedSinglethreaded
+DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.MainExplodedMultithreaded
 
 DEST=/tmp/gpg-example-$$
 

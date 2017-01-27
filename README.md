@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/neuhalje/bouncy-castle-gpg-examples.svg?branch=master)](https://travis-ci.org/neuhalje/bouncy-castle-gpg-examples)
-[![codecov](https://codecov.io/gh/neuhalje/bouncy-castle-gpg-examples/branch/master/graph/badge.svg)](https://codecov.io/gh/neuhalje/bouncy-castle-gpg-examples)
+[![codecov](https://codecov.io/gh/neuhalje/bouncy-castle-gpg-branch/master/graph/badge.svg)](https://codecov.io/gh/neuhalje/bouncy-castle-gpg-examples)
 
 
 Mission Statement
@@ -10,8 +10,8 @@ Mission Statement
 This project gives you the following super-powers
 
 - you can encrypt, decrypt, sign and verify GPG/PGP files with just a few lines of code
-- you now can protect all the data at rest by reading encrypted files with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
-- you can even [decrypt an enencrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/example/MainExplodedSinglethreaded.java) -- never again let  plaintext hit your server again! 
+- you now can protect all the data at rest by reading encrypted files with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
+- you can even [decrypt a gpg encrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java) -- never again let plaintext hit your server again!
 
 
 Demos
@@ -21,12 +21,12 @@ demo_reencrypt.sh
 -------------------
 A GPG encrypted ZIP file is decrypted on the fly. The structure of the ZIP is then written to disk. All files are re-encrypted before saving them.
 
-* `demo_reencrypt.sh TARGET` -- decrypts an encrypted ZIP file containing  three files (total size: 1.2 GB) AND 
+* `demo_reencrypt.sh TARGET` -- decrypts an encrypted ZIP file containing  three files (total size: 1.2 GB) AND
    re-encrypts each of the files in the ZIP to the `TARGET` dir.
 
-[The sample](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/example/MainExplodedSinglethreaded.java)
+[The sample](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java)
 shows how e.g. batch jobs can work with large files without leaving plaintext on disk (together with
-[Transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)).
+[Transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)).
 
 This scheme has some very appealing benefits:
 * Data in transit is _always_ encrypted with public key cryptography. Indispensable when you have to use `ftp`,
@@ -37,15 +37,15 @@ This scheme has some very appealing benefits:
 
 Consider the following batch job:
 
-1. The customer sends a large (several GB) GPG encrypted ZIP archive containing a directory structure with several 
+1. The customer sends a large (several GB) GPG encrypted ZIP archive containing a directory structure with several
    data files
 2. Your `pre-processing` needs to split up the data for further processing
 3. `pre-processing` stream-processes the GPG/ZIP archive
-    1. The GPG stream is decrypted using the [DecryptWithOpenPGPInputStreamFactory](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
-    2. The ZIP file is processed with [ExplodeAndReencrypt](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/reencryption/ExplodeAndReencrypt.java)
-        1. Each file from the archive is [processed](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/reencryption/ZipEntityStrategy.java)
+    1. The GPG stream is decrypted using the [DecryptWithOpenPGPInputStreamFactory](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
+    2. The ZIP file is processed with [ExplodeAndReencrypt](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/reencryption/ExplodeAndReencrypt.java)
+        1. Each file from the archive is [processed](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/reencryption/ZipEntityStrategy.java)
         2. And transparently  encrypted with GPG and stored for further processing
-4. The `processing` job  [processes](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/examples/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java) the files without writing plaintext to the disk.
+4. The `processing` job  [processes](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java) the files without writing plaintext to the disk.
 
 encrypt.sh
 -----------
@@ -64,11 +64,11 @@ FAQ
   <dt>Can I just grab a class or two for my project?</dt>
   <dd>Sure! Just grab it and hack away! The code is placed under the <a href="LICENSE">WTPL</a>, you can't get much
    more permissive than this.</dd>
-   
+
    <dt>Why is the test coverage so low?</dt>
-   <dd>Test coverage for 'non-example' code is &gt;85%. Most of the not tested cases are either trivial OR lines that 
+   <dd>Test coverage for 'non-example' code is &gt;85%. Most of the not tested cases are either trivial OR lines that
    throw exceptions when the input format is broken. </dd>
-   
+
    <dt>How can I contribute?</dt>
    <dd>Pullrequests are welcome!</dd>
 </dl>
