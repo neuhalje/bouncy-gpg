@@ -1,22 +1,26 @@
 plugins {
-  id 'java'
-  id 'application'
-  id 'jacoco'
-}
+    id 'java'
+    id 'application'
+    id 'jacoco'
 
-mainClassName = "name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.Main"
+    // deploy to maven central
+    id 'maven'
+    id 'signing'
+
+}
 
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
+mainClassName =  'name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.Main'
 
 version = '1.1.0'
 
 jar {
     manifest {
         attributes 'Implementation-Title': 'Bouncycastle Examples',
-                   'Implementation-Version': version,
-                   'Main-Class': 'name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.Main'
+                'Implementation-Version': version,
+                'Main-Class':  mainClassName
     }
 }
 
@@ -48,6 +52,7 @@ test {
         classDumpFile = file("$buildDir/jacoco/classpathdumps")
     }
 }
+
 jacocoTestReport {
     reports {
         xml.enabled true
@@ -57,10 +62,19 @@ jacocoTestReport {
     }
 }
 
+check.dependsOn jacocoTestReport
+
+// JCenter deployment
+// configured in gradle.properties
+
+if ( hasProperty('jcenter_Username')) {
+  apply from: 'jcenter.gradle'
+}
+// Misc
+
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.7'
 }
 
-check.dependsOn jacocoTestReport
 

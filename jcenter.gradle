@@ -1,0 +1,66 @@
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+group = "name.neuhalfen.projects.crypto.bouncycastle.openpgp"
+archivesBaseName = "Bouncy-gpg"
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: jcenter_Username, password: jcenter_Password)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: jcenter_Username, password: jcenter_Password)
+            }
+
+            pom.project {
+                name 'Bouncy-gpg'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'Make using Bouncy Castle with OpenPGP fun again!'
+                url 'https://github.com/neuhalje/bouncy-gpg'
+
+                scm {
+                    connection 'scm:git:https://github.com/neuhalje/bouncy-gpg.git'
+                    developerConnection 'scm:git:https://github.com/neuhalje/bouncy-gpg.git'
+                    url 'https://github.com/neuhalje/bouncy-gpg/'
+                }
+
+                licenses {
+                    license {
+                        name 'WTFPL'
+                        url 'http://www.wtfpl.net/'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'neuhalje'
+                        name 'Jens Neuhalfen'
+                        email 'neuhalje@neuhalfen.name'
+                    }
+                }
+            }
+        }
+    }
+}
