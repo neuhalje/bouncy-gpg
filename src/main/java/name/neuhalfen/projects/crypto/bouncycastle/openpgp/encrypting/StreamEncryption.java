@@ -17,6 +17,11 @@ public interface StreamEncryption {
      *
      * @param is Input -- must be closed by caller!
      * @param os Output -- must be closed by caller!
+     * @throws IOException IO is ugly
+     * @throws NoSuchAlgorithmException Cannot encrypt
+     * @throws SignatureException Cannot sign
+     * @throws PGPException general PGP problem
+     *
      */
     void encryptAndSign(final InputStream is, final OutputStream os) throws IOException,
             NoSuchAlgorithmException,

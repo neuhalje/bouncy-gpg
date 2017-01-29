@@ -3,8 +3,20 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
 import java.io.*;
 
+/**
+ * Bundles everything needed for decryption. Dedicated sub-classes can override.
+ */
 public abstract class DecryptionConfig {
 
+    /**
+     * Create a decryption config by reading keyrings from files.
+     *
+     * @param publicKeyring                 E.g. src/test/resources/sender.gpg.d/pubring.gpg
+     * @param secretKeyring                 E.g. src/test/resources/sender.gpg.d/secring.gpg
+     * @param signatureCheckRequired        true: force the presence of a signature with a key from the pubring
+     * @param decryptionSecretKeyPassphrase key to decrypt the secret key
+     * @return the config
+     */
     public static DecryptionConfig withKeyRingsFromFiles(final File publicKeyring,
                                                          final File secretKeyring,
                                                          boolean signatureCheckRequired, String decryptionSecretKeyPassphrase) {
@@ -26,6 +38,16 @@ public abstract class DecryptionConfig {
         };
     }
 
+    /**
+     * Create a decryption config by reading keyrings from the classpath.
+     *
+     * @param classLoader                   E.g. DecryptWithOpenPGPTest.class.getClassLoader()
+     * @param publicKeyring                 E.g. "recipient.gpg.d/pubring.gpg"
+     * @param secretKeyring                 E.g. "recipient.gpg.d/secring.gpg"
+     * @param signatureCheckRequired        true: force the presence of a signature with a key from the pubring
+     * @param decryptionSecretKeyPassphrase passphrase to decrypt the secret key
+     * @return the config
+     */
     public static DecryptionConfig withKeyRingsFromResources(final ClassLoader classLoader, final String publicKeyring,
                                                              final String secretKeyring,
                                                              boolean signatureCheckRequired, String decryptionSecretKeyPassphrase) {
@@ -55,10 +77,16 @@ public abstract class DecryptionConfig {
     }
 
 
+    /**
+     * @return force the presence of a signature with a key from the pubring
+     */
     public boolean isSignatureCheckRequired() {
         return signatureCheckRequired;
     }
 
+    /**
+     * @return passphrase to decrypt the secret key
+     */
     public String getDecryptionSecretKeyPassphrase() {
         return decryptionSecretKeyPassphrase;
     }
@@ -72,7 +100,15 @@ public abstract class DecryptionConfig {
         return sb.toString();
     }
 
-    public abstract InputStream getSecretKeyRing() throws FileNotFoundException;
+    /**
+     * @return Stream that connects to  secring.gpg
+     * @throws FileNotFoundException File not found
+     */
+    public abstract InputStream getSecretKeyRing() throws IOException;
 
+    /**
+     * @return Stream that connects to  pubring.gpg
+     * @throws FileNotFoundException File not found
+     */
     public abstract InputStream getPublicKeyRing() throws IOException;
 }

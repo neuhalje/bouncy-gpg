@@ -44,7 +44,7 @@ public class PGPUtilities {
      * @param encryptedKey An encrypted key
      * @param pass         The password for the key
      * @return The decrypted key
-     * @throws PGPException
+     * @throws PGPException  E.g. wrong password
      */
     public static PGPPrivateKey extractPrivateKey(PGPSecretKey encryptedKey, final char[] pass) throws PGPException {
         PGPDigestCalculatorProvider calcProvider = new JcaPGPDigestCalculatorProviderBuilder()
@@ -59,10 +59,10 @@ public class PGPUtilities {
     /**
      * Extracts the public key with UID {@code publicKeyUid} from key ring collection {@code publicKeyRings}.
      *
-     * @param publicKeyUid   the public key uid
+     * @param publicKeyUid   the public key uid, e.g. sender@example.com
      * @param publicKeyRings the public key rings
      * @return the pGP public key ring
-     * @throws PGPException the pGP exception
+     * @throws PGPException E.g. multiple keyrings for same uid
      */
     public static PGPPublicKeyRing extractPublicKey(final String publicKeyUid,
                                                     final PGPPublicKeyRingCollection publicKeyRings)

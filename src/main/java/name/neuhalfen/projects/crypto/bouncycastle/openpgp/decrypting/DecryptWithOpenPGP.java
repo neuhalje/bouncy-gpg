@@ -18,6 +18,11 @@ import java.security.Security;
 import java.security.SignatureException;
 import java.util.Iterator;
 
+/**
+ * Service style interface to decrypt an encrypted stream.
+ * <p>
+ * Automatically registers the BouncyCastleProvider
+ */
 public class DecryptWithOpenPGP {
 
 
@@ -55,6 +60,11 @@ public class DecryptWithOpenPGP {
     private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
     private final PGPContentVerifierBuilderProvider pgpContentVerifierBuilderProvider = new BcPGPContentVerifierBuilderProvider();
 
+    /**
+     * @param config Decryption Configuration used in {@link #decryptAndVerify(InputStream, OutputStream)}
+     * @throws IOException IO is always a problem
+     * @see DecryptionConfig
+     */
     public DecryptWithOpenPGP(final DecryptionConfig config) throws IOException {
 
         try {
@@ -75,6 +85,17 @@ public class DecryptWithOpenPGP {
         }
     }
 
+    /**
+     * Decrypt the input-stream into the output stream. Verifies the signature according to {@link DecryptionConfig#isSignatureCheckRequired()}
+     * <p>
+     * IMPORTANT: SignatureExceptions are thrown AFTER decryption. DO NOT process data until decryptAndVerify returns
+     * or face to rollback whatever you did when the signature turns out bad.
+     *
+     * @param is Encrypted data
+     * @param os Plaintext sink
+     * @throws IOException        IO is ugly
+     * @throws SignatureException The signature could not be validated (not found/broken/no key). Is thrown AFTER decryption!
+     */
     public void decryptAndVerify(final InputStream is, final OutputStream os) throws IOException,
             SignatureException {
         final long starttime = System.currentTimeMillis();
