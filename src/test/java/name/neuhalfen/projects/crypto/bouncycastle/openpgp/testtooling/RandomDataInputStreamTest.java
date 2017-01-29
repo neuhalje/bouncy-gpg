@@ -1,5 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class RandomDataInputStreamTest {
      * This test asserts that the fake data source for tests with large data sets is not the bottleneck.
      */
     @Test
+    @Ignore("this test is not a test of functionality")
     public void measureRandomDataInputStreamMaxPerformance() throws IOException {
         final int sampleSizeMB = 100;
         RandomDataInputStream sut = new RandomDataInputStream(sampleSizeMB * MB);
