@@ -1,5 +1,6 @@
-[![Build Status](https://travis-ci.org/neuhalje/bouncy-castle-gpg-examples.svg?branch=master)](https://travis-ci.org/neuhalje/bouncy-castle-gpg-examples)
-[![codecov](https://codecov.io/gh/neuhalje/bouncy-castle-gpg-branch/master/graph/badge.svg)](https://codecov.io/gh/neuhalje/bouncy-castle-gpg-examples)
+[![Build Status](https://travis-ci.org/neuhalje/bouncy-gpg.svg?branch=master)](https://travis-ci.org/neuhalje/bouncy-gpg)
+[![codecov](https://codecov.io/gh/neuhalje/bouncy-gpg/master/graph/badge.svg)](https://codecov.io/gh/neuhalje/bouncy-gpg)
+[![license](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-4.png)](http://www.wtfpl.net/)
 
 
 Mission Statement
@@ -11,7 +12,7 @@ This project gives you the following super-powers
 
 - you can encrypt, decrypt, sign and verify GPG/PGP files with just a few lines of code
 - you now can protect all the data at rest by reading encrypted files with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
-- you can even [decrypt a gpg encrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java) -- never again let plaintext hit your server again!
+- you can even [decrypt a gpg encrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java) -- never again let plaintext hit your servers disk!
 
 
 Demos
