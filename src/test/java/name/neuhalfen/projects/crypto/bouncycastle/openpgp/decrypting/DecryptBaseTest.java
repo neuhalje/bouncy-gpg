@@ -1,8 +1,10 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.SignatureCheckingMode;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import org.bouncycastle.util.io.Streams;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -25,7 +27,7 @@ public abstract class DecryptBaseTest {
 
         final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(Configs.buildConfigForDecryptionFromResources());
 
-        InputStream in = spy(new ByteArrayInputStream(IMPORTANT_QUOTE_COMPRESSED.getBytes("US-ASCII")));
+        InputStream in = spy(new ByteArrayInputStream(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII")));
 
         final InputStream decryptAndVerify = sut.wrapWithDecryptAndVerify(in);
         decryptAndVerify.close();
@@ -38,7 +40,7 @@ public abstract class DecryptBaseTest {
     public void decryptingAndVerifying_smallAmountsOfData_correctlyDecryptsUncompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("US-ASCII"), config);
+        String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config);
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
 
@@ -47,16 +49,16 @@ public abstract class DecryptBaseTest {
 
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        String decryptedQuote = decrypt(IMPORTANT_QUOTE_COMPRESSED.getBytes("US-ASCII"), config);
+        String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config);
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
 
     @Test(expected = IOException.class)
-    public void decryptingTamperedCiphertext_fails() throws IOException, NoSuchAlgorithmException {
+    public void decryptingTamperedSignedCiphertext_fails() throws IOException, NoSuchAlgorithmException {
 
         final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(Configs.buildConfigForDecryptionFromResources());
 
-        byte[] buf = IMPORTANT_QUOTE_NOT_COMPRESSED.getBytes("US-ASCII");
+        byte[] buf = IMPORTANT_QUOTE_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII");
 
         // tamper
         buf[666]++;
@@ -66,36 +68,51 @@ public abstract class DecryptBaseTest {
         Streams.drain(plainTextInputStream);
     }
 
+    @Ignore
+    @Test
+    public void TODO_testForSpecificReciptien() throws IOException, SignatureException, NoSuchAlgorithmException {
+        Assert.assertTrue(false);
+    }
+
     @Test(expected = IOException.class)
     public void decryptingMessage_withoutHavingSecretKey_fails() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(false);
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.IgnoreSignatures);
 
         decrypt(IMPORTANT_QUOTE_NOT_ENCRYPTED_TO_ME.getBytes("US-ASCII"), config);
     }
 
     @Test(expected = IOException.class)
-    public void decryptingUnsignedMessage_butSignatureIsRequired_fails() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(true);
+    public void decryptingUnsignedMessage_butAnySignatureIsRequired_fails() throws IOException, SignatureException {
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.RequireAnySignature);
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED.getBytes("US-ASCII"), config);
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config);
+
+        Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
+    }
+
+    @Test(expected = IOException.class)
+    public void decryptingUnsignedMessage_butSpecificSignatureIsRequired_fails() throws IOException, SignatureException {
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.RequireSpecificSignature);
+
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config);
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
 
     @Test
     public void decryptingUnsignedMessage_butSignatureIsNotRequired_succeeds() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(false);
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.IgnoreSignatures);
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED.getBytes("US-ASCII"), config);
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config);
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
 
     @Test
     public void decryptingSignedMessage_butSignatureIsNotRequired_succeeds() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(false);
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.IgnoreSignatures);
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_COMPRESSED.getBytes("US-ASCII"), config);
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config);
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }

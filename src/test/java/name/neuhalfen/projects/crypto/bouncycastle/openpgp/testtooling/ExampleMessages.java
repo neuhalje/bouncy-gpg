@@ -8,7 +8,7 @@ public class ExampleMessages {
      * Signed-By:       sender@example.com
      * Compressed:      false
      */
-    public final static String IMPORTANT_QUOTE_NOT_COMPRESSED = "-----BEGIN PGP MESSAGE-----\n" +
+    public final static String IMPORTANT_QUOTE_SIGNED_NOT_COMPRESSED = "-----BEGIN PGP MESSAGE-----\n" +
             "Version: GnuPG v1\n" +
             "\n" +
             "hQEMA1Sj2zdPeHq3AQgAoY5qm/9RNyWpvqR+fOn/VsJSXDzaqeYgR34xAdu1Yvqq\n" +
@@ -34,7 +34,7 @@ public class ExampleMessages {
      * Signed-By:       sender@example.com
      * Compressed:      true
      */
-    public final static String IMPORTANT_QUOTE_COMPRESSED = "-----BEGIN PGP MESSAGE-----\n" +
+    public final static String IMPORTANT_QUOTE_SIGNED_COMPRESSED = "-----BEGIN PGP MESSAGE-----\n" +
             "Version: GnuPG v1\n" +
             "\n" +
             "hQEMA1Sj2zdPeHq3AQf8CPN1Fbg0HXQHSFzONYZyxkabSAMgIzXf/VOp+FWER0A1\n" +
@@ -60,7 +60,7 @@ public class ExampleMessages {
      * Signed-By:       not signed
      * Compressed:      no
      */
-    public final static String IMPORTANT_QUOTE_NOT_SIGNED =
+    public final static String IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED =
             "-----BEGIN PGP MESSAGE-----\n" +
                     "Version: GnuPG v2\n" +
                     "\n" +
@@ -96,6 +96,10 @@ public class ExampleMessages {
                     "Mp1o2aStMLdDWHCgJK1Sc2MSvX6Eyw==\n" +
                     "=GQV9\n" +
                     "-----END PGP MESSAGE-----";
+
+    /*
+     * Create cipher text by 'echo -n ${IMPORTANT_QUOTE_TEXT} | gpg -e -a -s -r recipient@example.com'
+     */
     public final static String IMPORTANT_QUOTE_TEXT = "I love deadlines. I like the whooshing sound they make as they fly by. Douglas Adams";
     public final static String IMPORTANT_QUOTE_SHA256 = "5A341E2D70CB67831E837AC0474E140627913C17113163E47F1207EA5C72F86F";
 

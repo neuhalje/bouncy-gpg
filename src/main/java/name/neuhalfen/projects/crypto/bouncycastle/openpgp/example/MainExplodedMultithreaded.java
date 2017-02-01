@@ -1,5 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.example;
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.SignatureCheckingMode;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
@@ -45,7 +46,7 @@ public class MainExplodedMultithreaded {
 
                 final DecryptionConfig decryptionConfig = DecryptionConfig.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing,
-                        false, secKeyRingPassword);
+                        SignatureCheckingMode.RequireAnySignature, secKeyRingPassword);
 
                 final DecryptWithOpenPGPInputStreamFactory decryptWithOpenPGPInputStreamFactory = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig);
 

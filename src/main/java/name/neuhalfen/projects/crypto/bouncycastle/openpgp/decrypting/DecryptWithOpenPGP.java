@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.SignatureCheckingMode;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.*;
@@ -54,7 +55,7 @@ public class DecryptWithOpenPGP {
     /**
      * Enforce signature - fail when no valid signature is found.
      */
-    private final boolean decryptionSignatureCheckRequired;
+    private final SignatureCheckingMode decryptionSignatureCheckRequired;
 
 
     private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
@@ -79,14 +80,14 @@ public class DecryptWithOpenPGP {
 
             this.decryptionSecretKeyPassphrase = config.getDecryptionSecretKeyPassphrase().toCharArray();
 
-            this.decryptionSignatureCheckRequired = config.isSignatureCheckRequired();
+            this.decryptionSignatureCheckRequired = config.getSignatureCheckMode();
         } catch (PGPException e) {
             throw new RuntimeException("Failed to create DecryptWithOpenPGP", e);
         }
     }
 
     /**
-     * Decrypt the input-stream into the output stream. Verifies the signature according to {@link DecryptionConfig#isSignatureCheckRequired()}
+     * Decrypt the input-stream into the output stream. Verifies the signature according to {@link DecryptionConfig#getSignatureCheckMode()}
      * <p>
      * IMPORTANT: SignatureExceptions are thrown AFTER decryption. DO NOT process data until decryptAndVerify returns
      * or face to rollback whatever you did when the signature turns out bad.
@@ -146,7 +147,7 @@ public class DecryptWithOpenPGP {
 
         } else if (pgpObj instanceof PGPLiteralData) {
             LOGGER.trace("Found instance of PGPLiteralData");
-            if (decryptionSignatureCheckRequired && ops == null) {
+            if (decryptionSignatureCheckRequired.isRequireSignatureCheck() && ops == null) {
                 throw new PGPException("Message was not signed!");
             }
             Helpers.copySignedDecryptedBytes(out, (PGPLiteralData) pgpObj, ops);
@@ -159,7 +160,7 @@ public class DecryptWithOpenPGP {
     }
 
     private void handleOnePassSignatureList(PGPOnePassSignatureList pgpObj, PGPObjectFactory factory, PGPOnePassSignature ops, OutputStream out) throws PGPException, IOException, NoSuchProviderException, SignatureException {
-        if (!decryptionSignatureCheckRequired) {
+        if (!decryptionSignatureCheckRequired.isRequireSignatureCheck()) {
             LOGGER.info("Signature check disabled - ignoring contained signature");
             handlePgpObject(factory, ops, out);
             return;

@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.SignatureCheckingMode;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWithOpenPGPTest;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGPTest;
@@ -58,28 +59,28 @@ public class Configs {
 
     public static DecryptionConfig buildConfigForDecryptionFromFiles() {
 
-        return buildConfigForDecryptionFromFiles(true);
+        return buildConfigForDecryptionFromFiles(SignatureCheckingMode.RequireAnySignature);
     }
 
-    public static DecryptionConfig buildConfigForDecryptionFromFiles(boolean signatureCheckRequire) {
+    public static DecryptionConfig buildConfigForDecryptionFromFiles(SignatureCheckingMode signatureCheckMode) {
         final DecryptionConfig decryptAndVerifyConfig = DecryptionConfig.withKeyRingsFromFiles(
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/pubring.gpg"),
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/secring.gpg"),
-                signatureCheckRequire, "recipient");
+                signatureCheckMode, "recipient");
 
         return decryptAndVerifyConfig;
     }
 
     public static DecryptionConfig buildConfigForDecryptionFromResources() {
-        return buildConfigForDecryptionFromResources(true);
+        return buildConfigForDecryptionFromResources(SignatureCheckingMode.RequireAnySignature);
     }
 
-    public static DecryptionConfig buildConfigForDecryptionFromResources(boolean signatureCheckRequired) {
+    public static DecryptionConfig buildConfigForDecryptionFromResources(SignatureCheckingMode signatureCheckMode) {
         final DecryptionConfig decryptAndVerifyConfig = DecryptionConfig.withKeyRingsFromResources(
                 DecryptWithOpenPGPTest.class.getClassLoader(),
                 "recipient.gpg.d/pubring.gpg",
                 "recipient.gpg.d/secring.gpg",
-                signatureCheckRequired, "recipient");
+                signatureCheckMode, "recipient");
 
         return decryptAndVerifyConfig;
     }

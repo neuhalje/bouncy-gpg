@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.SignatureCheckingMode;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.*;
@@ -47,7 +48,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
     /**
      * Enforce signature - fail when no valid signature is found.
      */
-    private final boolean decryptionSignatureCheckRequired;
+    private final SignatureCheckingMode decryptionSignatureCheckRequired;
 
 
     private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
@@ -70,7 +71,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
 
             this.decryptionSecretKeyPassphrase = config.getDecryptionSecretKeyPassphrase().toCharArray();
 
-            this.decryptionSignatureCheckRequired = config.isSignatureCheckRequired();
+            this.decryptionSignatureCheckRequired = config.getSignatureCheckMode();
         } catch (PGPException e) {
             throw new IOException("Failed to create DecryptWithOpenPGP", e);
         }
@@ -90,7 +91,6 @@ public class DecryptWithOpenPGPInputStreamFactory {
             throw new IOException("Failure decrypting", e);
         }
     }
-
 
 
     /**
@@ -143,7 +143,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
             } else if (pgpObj instanceof PGPOnePassSignatureList) {
                 LOGGER.trace("Found instance of PGPOnePassSignatureList");
 
-                if (!decryptionSignatureCheckRequired) {
+                if (!decryptionSignatureCheckRequired.isRequireSignatureCheck()) {
                     LOGGER.info("Signature check disabled - ignoring contained signature");
                 } else {
                     // verify the signature
@@ -160,7 +160,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
             } else if (pgpObj instanceof PGPLiteralData) {
                 LOGGER.trace("Found instance of PGPLiteralData");
 
-                if (decryptionSignatureCheckRequired) {
+                if (decryptionSignatureCheckRequired.isRequireSignatureCheck()) {
                     if (state.ops == null) {
                         throw new PGPException("Message was not signed!");
                     } else {
