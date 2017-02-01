@@ -1,6 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategies;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategy;
 
 import java.io.InputStream;
 
@@ -11,7 +13,7 @@ public class BuildVerificationInputStreamAPI {
 
     // Signature
 
-    private SignatureCheckingMode signatureCheckingMode;
+    private SignatureValidationStrategy signatureCheckingMode;
 
     private String expectSignatureFrom;
 
@@ -26,18 +28,18 @@ public class BuildVerificationInputStreamAPI {
 
     public class Validation {
         public Validate andValidateSignatureFrom(String userId) {
-            BuildVerificationInputStreamAPI.this.signatureCheckingMode = SignatureCheckingMode.RequireSpecificSignature;
+            BuildVerificationInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireSpecificSignature();
             BuildVerificationInputStreamAPI.this.expectSignatureFrom = userId;
             return new Validate();
         }
 
         public Validate andValidateSomeoneSigned() {
-            BuildVerificationInputStreamAPI.this.signatureCheckingMode = SignatureCheckingMode.RequireAnySignature;
+            BuildVerificationInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireAnySignature();
             return new Validate();
         }
 
         public Validate andIgnoreSignatures() {
-            BuildVerificationInputStreamAPI.this.signatureCheckingMode = SignatureCheckingMode.IgnoreSignatures;
+            BuildVerificationInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.ignoreSignatures();
             return new Validate();
         }
     }

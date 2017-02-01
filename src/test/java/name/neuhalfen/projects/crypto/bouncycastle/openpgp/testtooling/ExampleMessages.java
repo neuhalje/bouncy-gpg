@@ -88,6 +88,40 @@ public class ExampleMessages {
             "=OxhG\n" +
             "-----END PGP MESSAGE-----";
 
+    /**
+     * Like #IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED but the order of
+     * signatures is reversed.
+     * <p>
+     * Encrypted-To:    recipient@example.com
+     * Signed-By:       another_sender@example.com AND  sender@example.com
+     * Compressed:      true
+     */
+    public final static String IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED = "-----BEGIN PGP MESSAGE-----\n" +
+            "Version: GnuPG v2\n" +
+            "\n" +
+            "hQEMA1Sj2zdPeHq3AQgAwGqEeSJpTfWku/djqSOGxmMFk40LTvWBOb8e+T4U+cig\n" +
+            "LMMa4iECySrjQAeJdHfL+29uoA98svlizzOUC1SOoUHKvbjnYT8CxH47rMmD1ZrE\n" +
+            "qD8678HlRKYQToWTWiDoz85L443BuZedlCe8Vj60pMY5x+i8rElrZTLtAkeGey/3\n" +
+            "QjgVJUoW4vgOkFUj8xe/d1/dJzGDG2C+aAZYhQ7IvQghCD8fKSwaJGFrusoEeGff\n" +
+            "uWP5xotgxN2rx2L5NycT7QRlyL1OK6jP3RH2dskMB41wsX5rbPFGrBaOpOYR7cdp\n" +
+            "Msl1aCCU74DXXUQ0756wyRVS75jUGRTZodNcmvTXR9LpAVxLabsoViv49J2J4brX\n" +
+            "XEtc+DMK11CgDGTpbPmSyGj/WUIh0pw7XkVbN4bjvM6ooMV9ZfKv1tGkqrGrT2Bd\n" +
+            "bgtyQZLnf7DqK+IJzB/LHyUm/yt1gF9BEgXqiH7AALWkSfN1X6nRGfhIBmS4S9DC\n" +
+            "DNU957hZ6fUQY/fWIVWkhoXu7urCtpNbjfRE3a8flSIhT01f5ZER8B4t43oIyXKZ\n" +
+            "0yT61pVVLANBVnj01FySPiG0uvNugVyhqxw9uYZwK93X2ri5HC79jibt7vZ8e2X5\n" +
+            "7NPovb+BhtUA4PdHr0Ou6A8gyQ/QiHBT78od1R80r0TABcshYRMZGglw5dMX65oK\n" +
+            "uQcOdvY1FRaczw/1hmlIVmJxUjTZalk/kH/BzIGLSwiE/Q7MV+myZChzfda0dAtK\n" +
+            "rsdaXDHJQp+RJkJ3Unuc3XcyMLfXI/CX7zJgiT2pJ4mvHn9Zh24MZ289CdgUE4NT\n" +
+            "t/PM3n0lFVt6tylCi4KI9p36QBzNbhfAyOjaYGBQhRkhPA2ETYyneeoUXQc9LCHu\n" +
+            "SG6FxeVSTCVDqA42UC1nrhmVYdF9R8+C9ts7FjUGkdRwi48PmMIBO8TGu+HAoB+o\n" +
+            "/fkKq4w5vYMPfpgBDthtR9rO2hMAsqW9XGfaje+QvE5QPmLXLU8ow7MrAI52Wi3r\n" +
+            "Tl9vDbZ+aDvCc2f4752p9trAGzKzCRxGxyBxVbNMIqH4TZdhGF44ZEhzujlpZO1a\n" +
+            "ysbaExBOk1gtssuQ3pjvXjRI2CDY0DIBCD7NQLp3EdLIGn/Dfqg9VUhOUgLKsA3V\n" +
+            "rHtc3R8WcjxmPQWhR/YIsqORKFBBT/8i9gsJIE4L4sC21tFHlByr4CgYZDRfbTcH\n" +
+            "okCfv9bES0dqmcvH6ou+SG/2amSdHWOu/rnulAh5Vs5r3xcB+CkNZy3S7jFfCoAh\n" +
+            "KXFleR9runn1K4a2Ut17/dSKcVT7qQWSD2pEsx+0vYVPiKWfe0Nn9TETRrdZyA==\n" +
+            "=SCj5\n" +
+            "-----END PGP MESSAGE-----";
 
     /**
      * Encrypted-To:    recipient@example.com

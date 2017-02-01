@@ -1,8 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.example;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.SignatureCheckingMode;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.FSZipEntityStrategy;
@@ -42,10 +42,9 @@ public class MainExplodedSinglethreaded {
                         SymmetricKeyAlgorithmTags.AES_128);
 
                 final DecryptionConfig decryptionConfig = DecryptionConfig.withKeyRingsFromFiles(pubKeyRing,
-                        secKeyRing,
-                        SignatureCheckingMode.RequireAnySignature, secKeyRingPassword);
+                        secKeyRing, secKeyRingPassword);
 
-                final DecryptWithOpenPGPInputStreamFactory decryptWithOpenPGPInputStreamFactory = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig);
+                final DecryptWithOpenPGPInputStreamFactory decryptWithOpenPGPInputStreamFactory = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig, SignatureValidationStrategies.requireAnySignature());
 
                 long startTime = System.currentTimeMillis();
 

@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.CatchCloseStream;
@@ -38,7 +39,7 @@ public class ReencryptExplodedZipMultithreadedTest {
 
             EncryptWithOpenPGP encryptWithOpenPGP = new EncryptWithOpenPGP(encryptionConfig);
 
-            DecryptWithOpenPGPInputStreamFactory decription = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig);
+            DecryptWithOpenPGPInputStreamFactory decription = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig, SignatureValidationStrategies.requireAnySignature());
 
             try (
                     final InputStream plainTextStream = CatchCloseStream.wrap("plain", decription.wrapWithDecryptAndVerify(exampleEncryptedZip))

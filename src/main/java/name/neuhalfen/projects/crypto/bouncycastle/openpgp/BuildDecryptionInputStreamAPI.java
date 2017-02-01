@@ -2,6 +2,8 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategies;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategy;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +19,7 @@ public class BuildDecryptionInputStreamAPI {
 
     // Signature
 
-    private SignatureCheckingMode signatureCheckingMode;
+    private SignatureValidationStrategy signatureCheckingMode;
 
     private String expectSignatureFrom;
 
@@ -39,18 +41,18 @@ public class BuildDecryptionInputStreamAPI {
 
     public class Validation {
         public Build andValidateSignatureFrom(String userId) {
-            BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureCheckingMode.RequireSpecificSignature;
+            BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireSpecificSignature();
             BuildDecryptionInputStreamAPI.this.expectSignatureFrom = userId;
             return new Build();
         }
 
         public Build andValidateSomeoneSigned() {
-            BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureCheckingMode.RequireAnySignature;
+            BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireAnySignature();
             return new Build();
         }
 
         public Build andIgnoreSignatures() {
-            BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureCheckingMode.IgnoreSignatures;
+            BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.ignoreSignatures();
             return new Build();
         }
     }
@@ -60,7 +62,7 @@ public class BuildDecryptionInputStreamAPI {
             BuildDecryptionInputStreamAPI.this.encryptedData = encryptedData;
 
             // FIXME: honor signatureCheckingMode
-            final DecryptWithOpenPGPInputStreamFactory pgpInputStreamFactory = DecryptWithOpenPGPInputStreamFactory.create(BuildDecryptionInputStreamAPI.this.decryptionConfig);
+            final DecryptWithOpenPGPInputStreamFactory pgpInputStreamFactory = DecryptWithOpenPGPInputStreamFactory.create(BuildDecryptionInputStreamAPI.this.decryptionConfig, SignatureValidationStrategies.requireAnySignature());
             return pgpInputStreamFactory.wrapWithDecryptAndVerify(encryptedData);
         }
     }

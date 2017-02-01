@@ -1,7 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.SignatureCheckingMode;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGPTest;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
@@ -36,6 +35,7 @@ public class Configs {
 
         return encryptAndSignConfig;
     }
+
     public static EncryptionConfig buildConfigForEncryptionFromResources() {
         return buildConfigForEncryptionFromResources("sender@example.com", "sender");
     }
@@ -57,29 +57,21 @@ public class Configs {
 
 
     public static DecryptionConfig buildConfigForDecryptionFromFiles() {
-
-        return buildConfigForDecryptionFromFiles(SignatureCheckingMode.RequireAnySignature);
-    }
-
-    public static DecryptionConfig buildConfigForDecryptionFromFiles(SignatureCheckingMode signatureCheckMode) {
         final DecryptionConfig decryptAndVerifyConfig = DecryptionConfig.withKeyRingsFromFiles(
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/pubring.gpg"),
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/secring.gpg"),
-                signatureCheckMode, "recipient");
+                "recipient");
 
         return decryptAndVerifyConfig;
     }
 
     public static DecryptionConfig buildConfigForDecryptionFromResources() {
-        return buildConfigForDecryptionFromResources(SignatureCheckingMode.RequireAnySignature);
-    }
 
-    public static DecryptionConfig buildConfigForDecryptionFromResources(SignatureCheckingMode signatureCheckMode) {
         final DecryptionConfig decryptAndVerifyConfig = DecryptionConfig.withKeyRingsFromResources(
                 DecryptionConfig.class.getClassLoader(),
                 "recipient.gpg.d/pubring.gpg",
                 "recipient.gpg.d/secring.gpg",
-                signatureCheckMode, "recipient");
+                "recipient");
 
         return decryptAndVerifyConfig;
     }

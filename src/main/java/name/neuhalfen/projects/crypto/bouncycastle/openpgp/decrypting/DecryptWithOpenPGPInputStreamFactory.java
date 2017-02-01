@@ -1,7 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.SignatureCheckingMode;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.*;
@@ -45,20 +44,17 @@ public class DecryptWithOpenPGPInputStreamFactory {
      */
     private final char[] decryptionSecretKeyPassphrase;
 
-    /**
-     * Enforce signature - fail when no valid signature is found.
-     */
-    private final SignatureCheckingMode decryptionSignatureCheckRequired;
-
-
     private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
     private final PGPContentVerifierBuilderProvider pgpContentVerifierBuilderProvider = new BcPGPContentVerifierBuilderProvider();
 
-    public static DecryptWithOpenPGPInputStreamFactory create(final DecryptionConfig config) throws IOException {
-        return new DecryptWithOpenPGPInputStreamFactory(config);
+    public static DecryptWithOpenPGPInputStreamFactory create(final DecryptionConfig config, SignatureValidationStrategy signatureValidationStrategy) throws IOException {
+        return new DecryptWithOpenPGPInputStreamFactory(config, signatureValidationStrategy);
     }
 
-    public DecryptWithOpenPGPInputStreamFactory(final DecryptionConfig config) throws IOException {
+    private final SignatureValidationStrategy signatureValidationStrategy;
+
+    public DecryptWithOpenPGPInputStreamFactory(final DecryptionConfig config, SignatureValidationStrategy signatureValidationStrategy) throws IOException {
+        this.signatureValidationStrategy = signatureValidationStrategy;
         try {
             this.publicKeyRings =
                     new PGPPublicKeyRingCollection(
@@ -70,8 +66,6 @@ public class DecryptWithOpenPGPInputStreamFactory {
                             PGPUtil.getDecoderStream(config.getSecretKeyRing()), keyFingerPrintCalculator);
 
             this.decryptionSecretKeyPassphrase = config.getDecryptionSecretKeyPassphrase().toCharArray();
-
-            this.decryptionSignatureCheckRequired = config.getSignatureCheckMode();
         } catch (PGPException e) {
             throw new IOException("Failed to create DecryptWithOpenPGP", e);
         }
@@ -143,7 +137,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
             } else if (pgpObj instanceof PGPOnePassSignatureList) {
                 LOGGER.trace("Found instance of PGPOnePassSignatureList");
 
-                if (!decryptionSignatureCheckRequired.isRequireSignatureCheck()) {
+                if (!signatureValidationStrategy.isRequireSignatureCheck()) {
                     LOGGER.info("Signature check disabled - ignoring contained signature");
                 } else {
                     state.factory = factory;
@@ -169,11 +163,11 @@ public class DecryptWithOpenPGPInputStreamFactory {
             } else if (pgpObj instanceof PGPLiteralData) {
                 LOGGER.trace("Found instance of PGPLiteralData");
 
-                if (decryptionSignatureCheckRequired.isRequireSignatureCheck()) {
+                if (signatureValidationStrategy.isRequireSignatureCheck()) {
                     if (state.numSignatures() == 0) {
                         throw new PGPException("Message was not signed!");
                     } else {
-                        return new SignatureValidatingInputStream(((PGPLiteralData) pgpObj).getInputStream(), state);
+                        return new SignatureValidatingInputStream(((PGPLiteralData) pgpObj).getInputStream(), state, signatureValidationStrategy);
                     }
                 } else {
                     return ((PGPLiteralData) pgpObj).getInputStream();

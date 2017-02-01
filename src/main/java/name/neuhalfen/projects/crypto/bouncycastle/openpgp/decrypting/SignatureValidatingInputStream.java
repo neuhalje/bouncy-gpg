@@ -8,8 +8,8 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.SignatureException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 
 final class SignatureValidatingInputStream extends FilterInputStream {
@@ -18,26 +18,26 @@ final class SignatureValidatingInputStream extends FilterInputStream {
 
     final static class DecryptionState {
         PGPObjectFactory factory;
-        private Set<PGPOnePassSignature> onePassSignatures = new HashSet<>();
+        private Map<Long, PGPOnePassSignature> onePassSignatures = new HashMap<>();
 
         public void updateOnePassSignatures(byte data) {
-            for (PGPOnePassSignature sig : onePassSignatures) {
+            for (PGPOnePassSignature sig : onePassSignatures.values()) {
                 sig.update(data);
             }
         }
 
         public void updateOnePassSignatures(byte[] b, int off, int len) {
-            for (PGPOnePassSignature sig : onePassSignatures) {
+            for (PGPOnePassSignature sig : onePassSignatures.values()) {
                 sig.update(b, off, len);
             }
         }
 
-        public Iterable<PGPOnePassSignature> getOnePassSignatures() {
+        public Map<Long, PGPOnePassSignature> getOnePassSignatures() {
             return onePassSignatures;
         }
 
         public void addSignature(PGPOnePassSignature signature) {
-            onePassSignatures.add(signature);
+            onePassSignatures.put(signature.getKeyID(), signature);
         }
 
         public int numSignatures() {
@@ -46,6 +46,7 @@ final class SignatureValidatingInputStream extends FilterInputStream {
     }
 
     private final DecryptionState state;
+    private final SignatureValidationStrategy signatureValidationStrategy;
 
     /**
      * Creates a <code>SignatureValidatingInputStream</code>
@@ -56,9 +57,10 @@ final class SignatureValidatingInputStream extends FilterInputStream {
      * @param in the underlying input stream, or <code>null</code> if
      *           this instance is to be created without an underlying stream.
      */
-    SignatureValidatingInputStream(InputStream in, DecryptionState state) {
+    SignatureValidatingInputStream(InputStream in, DecryptionState state, SignatureValidationStrategy signatureValidationStrategy) {
         super(in);
         this.state = state;
+        this.signatureValidationStrategy = signatureValidationStrategy;
     }
 
     @Override
@@ -101,20 +103,7 @@ final class SignatureValidatingInputStream extends FilterInputStream {
      */
     private void validateSignature() throws IOException {
         try {
-            boolean successfullyVerified = false;
-
-            for (PGPOnePassSignature signature : state.getOnePassSignatures()) {
-                final boolean isThisSignatureGood = Helpers.verifySignature(state.factory, signature);
-                successfullyVerified |= isThisSignatureGood;
-
-                LOGGER.debug("{} validated signature with key {}", isThisSignatureGood ? "Successfully" : "Failed to", signature.getKeyID());
-            }
-
-            if (successfullyVerified) {
-                LOGGER.debug(" *** Signature verification success *** ");
-            } else {
-                throw new SignatureException("Signature verification failed!");
-            }
+            signatureValidationStrategy.validateSignatures(state.factory, state.getOnePassSignatures());
         } catch (PGPException | SignatureException e) {
             throw new IOException(e.getMessage(), e);
         }
