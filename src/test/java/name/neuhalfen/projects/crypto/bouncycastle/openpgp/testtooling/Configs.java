@@ -2,7 +2,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.SignatureCheckingMode;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWithOpenPGPTest;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGPTest;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
@@ -77,7 +76,7 @@ public class Configs {
 
     public static DecryptionConfig buildConfigForDecryptionFromResources(SignatureCheckingMode signatureCheckMode) {
         final DecryptionConfig decryptAndVerifyConfig = DecryptionConfig.withKeyRingsFromResources(
-                DecryptWithOpenPGPTest.class.getClassLoader(),
+                DecryptionConfig.class.getClassLoader(),
                 "recipient.gpg.d/pubring.gpg",
                 "recipient.gpg.d/secring.gpg",
                 signatureCheckMode, "recipient");
