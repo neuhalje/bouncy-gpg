@@ -57,6 +57,67 @@ public class ExampleMessages {
 
     /**
      * Encrypted-To:    recipient@example.com
+     * Signed-By:       sender@example.com AND another_sender@example.com
+     * Compressed:      true
+     */
+    public final static String IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED = "-----BEGIN PGP MESSAGE-----\n" +
+            "Version: GnuPG v2\n" +
+            "\n" +
+            "hQEMA1Sj2zdPeHq3AQgApWQVGzjMlmIRHNLXh/jtPzwRAredDH/XUQt20zU94pg1\n" +
+            "jIE+fYnG8sV37BdzIK7VQW7juOK356Wwq4+f4RSziYiYGJLCKDoQqJSklWYR1e1h\n" +
+            "TUlUuZPttv80AXujCvhyWykRAs5GTQRFxQmBAAhwzJAsKDPpVQQ5QAO223+WNi5p\n" +
+            "E2JIjEpOVMAMBGPt7nZEPuyHcXNZQPhA4WFFHKZwNGOh6Do64pjNYoCDbzkrCQxa\n" +
+            "dvLwuEEEVSoyPbmkWS5/P/QXVgXzR1/+H3gxg/wDp9xSz29hIOZbFLvfZ21PRCnx\n" +
+            "xBD0xpmNEGZxRoaf49NWGWlVwEJSK/877ILPvvnmo9LpAbExHiktgLOEuGLQJk2W\n" +
+            "bIZft2c8fzOhyHv4vEE6AOupLBNjYbhEXutPPYErxdnNaJ1katUvIHb+VgvxiqLl\n" +
+            "2oJL6ZP0/UWj46v7Wl30Pm3EQXFLqaYYIxzuznlRzRx1+LrwjTTKh69uV9ZA+Ook\n" +
+            "qMPRbZ5LyXi9h7sk4Vi7rHQ0xJ8sGsa65a0TjojLlnUvz9XN5yceWm0fivsrXETZ\n" +
+            "Q86X6DFcBJupjfY3BzLujYGaZVL6a/y3pH+rj+U4Vj4N9EzaYIEGY7Olq5NerTNk\n" +
+            "UmqTruJGeU695YKvky+LtHxKdxFQaaCYTgLZyQdLlZ4ElcCPsDpR2zuv4nlrR6aS\n" +
+            "dQVDXeyKGplD1keItJ03n9rosn3/mifjJvofsdArtQDytN3QL+lXJsV/VUbjCUeN\n" +
+            "RJuM7kspVCA1/iHQIS0qtpygk3QyowZvOGefkmJwA6Y27fWG8/gI6Q8uKuwZ1Ey8\n" +
+            "J8KOCnKhaAyFS3TSBRYeIm93tLcam6qiLNbluRBPFPvPpjlr9zqGIoMkEqWOlO9a\n" +
+            "tJve376X6t1i8119mDxyv6PdR3WpASy1defkOzS0II6G07ETkrjnhiYPfllQQDOw\n" +
+            "uCUg2zb+yFQBr50f6Tkmq5uMCyDd4P1VnEt5GaSSyVl2iwQZLdTC/NtBLu+63iDY\n" +
+            "43prtr9ENZogKsnEOy846aPAHo6NAG+1v2IN2BlhoHyLGah8EIbL2CJ9ZHrcxHI8\n" +
+            "VKLkA3yMb6z2Fn8I3I4ytDxFfuqd1edrluNH9CfKlTNCtmaOz4sbI8v1NFW5uqvz\n" +
+            "FjTH8ZpZ0f8QqOm4bqR0teOg5eLX64w2tO6O79FJPoBnxSq5Gw7lrImrtvQUmygk\n" +
+            "2rP9E3RFGJR2z9J/r+aAEqYn9/AICXFfm9/jswxmkBlEXP9kAStgssX82aPTdHLc\n" +
+            "xsp6H8mB42WG2QxH59b6oqfkVgaHCt81z7LC/9QBSY1CR0SsHawUL47KRsSw7m7W\n" +
+            "Yw==\n" +
+            "=OxhG\n" +
+            "-----END PGP MESSAGE-----";
+
+
+    /**
+     * Encrypted-To:    recipient@example.com
+     * Signed-By:       another_sender@example.com
+     * Compressed:      true
+     */
+    public final static String IMPORTANT_QUOTE_SIGNED_UNKNOWN_KEY_COMPRESSED = "-----BEGIN PGP MESSAGE-----\n" +
+            "Version: GnuPG v2\n" +
+            "\n" +
+            "hQEMA1Sj2zdPeHq3AQgAxIKzL2Q4146ej+4R5xEkYsvzTRbn/itHyDL8BAxkuTXP\n" +
+            "bku1p7y87HmgkJmthq1jLq04uGDKvOSo/VAy31KqyDBlnyGXJWIeNvIFAODxb+3K\n" +
+            "2eDda+7Ijv/RWagdB20Bn7Duyw+iUlzyiZDoMS9u4/OuN1NbYrgb2wAydmAaBWkl\n" +
+            "kK5V2wH7u7lThXAAYc9kaNIbjd9qZlCblNmUW7mKbt0ZnyuHDeTt52Nlgr6WpMMT\n" +
+            "SEcODnkpzszRhu9sjuYefALhSxqrU0b1muh1XbGBExa2eSaaA8JOdOFKNYF1Aql9\n" +
+            "STETTJKiQNpnruNzb4yJ9Yh7bdS8E3z8n59ATACLwNLA+QGr3E/l0ecbd2eB+Vwe\n" +
+            "DwQB6NHhc4xrNyytSlEKBqMo7dpjMEGYwGuSyuTYSlBbq6Bxly3uJhzeR41mrcZt\n" +
+            "5Rz9z4qfEh227d/MaQ4SiAmYK0GowXv6zbaTZHzAHPqaLB0V9fHjyOOUWtybCwup\n" +
+            "8/O4ZI0FgwTnJ9KBQxq997Q7pz3l2UwFrglOFoYafKqSHFcTMgwajRFDb/3gFWtj\n" +
+            "q6Gsylb9ipB9wj3HzyL0w1s58HQ92IhrcXTRLIA4GibbopIBRl1g1FoqVozbPVJp\n" +
+            "cva/t4iUxiP0Bh1SHvD4yxR8x7FFkQ94RKBYmmMvtY6sa8p6VsHGYfWpCJqpU7YP\n" +
+            "SwkSWGDuehZKfFJ8mP//SUknKV4gWYe2Sh4qvisKlzXt/Is+AMB3mT0hYqZnsj9u\n" +
+            "PdXy0lOgmycHZJlaHzbQ+mdHAePRgkfe8WNz3s220L7LYi3DlolBsgYYKZf6FW1A\n" +
+            "x60aZxZ2o2p5lnQloEM4a15mx/bsa9tL4b3Hlv0At1m8MwVrLHVv1/tjagOdH0Y7\n" +
+            "WVr8a1FkXuriJtcDEUJcyl/cPDvtx3ootxskKZgpAqrJ4dF9woRp+GhaOA==\n" +
+            "=UKuw\n" +
+            "-----END PGP MESSAGE-----";
+
+
+    /**
+     * Encrypted-To:    recipient@example.com
      * Signed-By:       not signed
      * Compressed:      no
      */

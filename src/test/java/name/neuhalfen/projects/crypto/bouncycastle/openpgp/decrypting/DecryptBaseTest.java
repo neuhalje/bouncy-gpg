@@ -45,11 +45,37 @@ public abstract class DecryptBaseTest {
     }
 
     @Test
-    public void decryptingAndVerifying_smallAmountsOfData_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
+    public void decryptingAndVerifyingMessageWith_Single_Signature_requiringAnySignature_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
 
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.RequireAnySignature);
 
         String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config);
+        Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
+    }
+
+    @Test
+    public void decryptingAndVerifyingMessageWith_SingleUnknown_Signature_requiringNoSignature_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
+
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.IgnoreSignatures);
+
+        String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_UNKNOWN_KEY_COMPRESSED.getBytes("US-ASCII"), config);
+        Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
+    }
+
+    @Test(expected = IOException.class)
+    public void decryptingAndVerifyingMessageWith_SingleUnknown_Signature_requiringAnySignature_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
+
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.RequireAnySignature);
+
+        decrypt(IMPORTANT_QUOTE_SIGNED_UNKNOWN_KEY_COMPRESSED.getBytes("US-ASCII"), config);
+    }
+
+    @Test
+    public void decryptingAndVerifyingMessageWith_Multiple_Signatures_requiringNoSignature_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.IgnoreSignatures);
+
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config);
+
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
 
@@ -70,7 +96,21 @@ public abstract class DecryptBaseTest {
 
     @Ignore
     @Test
-    public void TODO_testForSpecificReciptien() throws IOException, SignatureException, NoSuchAlgorithmException {
+    public void decryptingSignedMessageAndRequiringSpecificSigner_notSignedByTheCorrectKey_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
+        Assert.assertTrue(false);
+    }
+
+
+    @Ignore
+    @Test
+    public void decryptingSignedMessageAndRequiringSpecificSigner_signedByTheCorrectKey_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {
+        Assert.assertTrue(false);
+    }
+
+
+    @Ignore("Functionallity not implemented yet")
+    @Test
+    public void decryptingSignedMessageAndRequiringSpecificSigner_signedByTheCorrectKeyAndOthers_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {
         Assert.assertTrue(false);
     }
 
@@ -100,7 +140,7 @@ public abstract class DecryptBaseTest {
     }
 
     @Test
-    public void decryptingUnsignedMessage_butSignatureIsNotRequired_succeeds() throws IOException, SignatureException {
+    public void decryptingUnsignedMessage_andSignatureIsNotRequired_succeeds() throws IOException, SignatureException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.IgnoreSignatures);
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config);
@@ -109,10 +149,28 @@ public abstract class DecryptBaseTest {
     }
 
     @Test
-    public void decryptingSignedMessage_butSignatureIsNotRequired_succeeds() throws IOException, SignatureException {
+    public void decryptingSignedMessage_andSignatureIsNotRequired_succeeds() throws IOException, SignatureException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.IgnoreSignatures);
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config);
+
+        Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
+    }
+
+    @Test
+    public void decryptingSignedMessageWithSingleeSignatures_andAnySignatureIsRequired_succeeds() throws IOException, SignatureException {
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.RequireAnySignature);
+
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config);
+
+        Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
+    }
+
+    @Test
+    public void decryptingSignedMessageWithMultipleSignatures_andAnySignatureIsRequired_succeeds() throws IOException, SignatureException {
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources(SignatureCheckingMode.RequireAnySignature);
+
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config);
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }

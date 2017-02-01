@@ -146,22 +146,31 @@ public class DecryptWithOpenPGPInputStreamFactory {
                 if (!decryptionSignatureCheckRequired.isRequireSignatureCheck()) {
                     LOGGER.info("Signature check disabled - ignoring contained signature");
                 } else {
-                    // verify the signature
-                    state.ops = ((PGPOnePassSignatureList) pgpObj).get(0);
                     state.factory = factory;
-                    final PGPPublicKey pubKey = this.publicKeyRings.getPublicKey(state.ops.getKeyID());
 
-                    if (pubKey == null) {
-                        throw new PGPException("No public key found for ID '" + state.ops.getKeyID() + "'!");
+                    // verify the signature
+                    final PGPOnePassSignatureList onePassSignatures = (PGPOnePassSignatureList) pgpObj;
+                    for (PGPOnePassSignature signature : onePassSignatures) {
+                        final PGPPublicKey pubKey = this.publicKeyRings.getPublicKey(signature.getKeyID());
+                        if (pubKey != null) {
+                            LOGGER.trace("public key found for ID '{}'", signature.getKeyID());
+                            signature.init(pgpContentVerifierBuilderProvider, pubKey);
+                            state.addSignature(signature);
+                        } else {
+                            LOGGER.trace("No public key found for ID '{}'", signature.getKeyID());
+                        }
                     }
-                    state.ops.init(pgpContentVerifierBuilderProvider, pubKey);
+
+                    if (state.numSignatures() == 0) {
+                        throw new PGPException("None of the public keys used in signatures found for signature checking'!");
+                    }
                 }
 
             } else if (pgpObj instanceof PGPLiteralData) {
                 LOGGER.trace("Found instance of PGPLiteralData");
 
                 if (decryptionSignatureCheckRequired.isRequireSignatureCheck()) {
-                    if (state.ops == null) {
+                    if (state.numSignatures() == 0) {
                         throw new PGPException("Message was not signed!");
                     } else {
                         return new SignatureValidatingInputStream(((PGPLiteralData) pgpObj).getInputStream(), state);
