@@ -1,12 +1,30 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
 
+import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
+import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
+import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.operator.KeyFingerPrintCalculator;
+import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
+
 import java.io.*;
 
 /**
  * Bundles everything needed for decryption. Dedicated sub-classes can override.
  */
 public abstract class DecryptionConfig {
+    private final String decryptionSecretKeyPassphrase;
+
+    private PGPPublicKeyRingCollection publicKeyRings;
+    private PGPSecretKeyRingCollection secretKeyRings;
+    private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
+
+    public KeyFingerPrintCalculator getKeyFingerPrintCalculator() {
+        return keyFingerPrintCalculator;
+    }
+
+
 
     /**
      * Create a decryption config by reading keyrings from files.
@@ -26,12 +44,12 @@ public abstract class DecryptionConfig {
             final File secretKeyringFile = secretKeyring;
 
             @Override
-            public InputStream getPublicKeyRing() throws IOException {
+            protected InputStream getPublicKeyRingStream() throws IOException {
                 return new FileInputStream(publicKeyringFile);
             }
 
             @Override
-            public InputStream getSecretKeyRing() throws FileNotFoundException {
+            protected InputStream getSecretKeyRingStream() throws FileNotFoundException {
                 return new FileInputStream(secretKeyringFile);
             }
         };
@@ -54,19 +72,17 @@ public abstract class DecryptionConfig {
 
 
             @Override
-            public InputStream getPublicKeyRing() throws IOException {
+            protected InputStream getPublicKeyRingStream() throws IOException {
                 return classLoader.getResourceAsStream(publicKeyring);
             }
 
             @Override
-            public InputStream getSecretKeyRing() throws FileNotFoundException {
+            protected InputStream getSecretKeyRingStream() throws FileNotFoundException {
                 return classLoader.getResourceAsStream(secretKeyring);
             }
         };
     }
 
-
-    private final String decryptionSecretKeyPassphrase;
 
     protected DecryptionConfig(String decryptionSecretKeyPassphrase) {
         this.decryptionSecretKeyPassphrase = decryptionSecretKeyPassphrase;
@@ -92,11 +108,31 @@ public abstract class DecryptionConfig {
      * @return Stream that connects to  secring.gpg
      * @throws FileNotFoundException File not found
      */
-    public abstract InputStream getSecretKeyRing() throws IOException;
+    protected abstract InputStream getSecretKeyRingStream() throws IOException;
 
     /**
      * @return Stream that connects to  pubring.gpg
      * @throws FileNotFoundException File not found
      */
-    public abstract InputStream getPublicKeyRing() throws IOException;
+    protected abstract InputStream getPublicKeyRingStream() throws IOException;
+
+
+    public PGPPublicKeyRingCollection getPublicKeyRings() throws IOException, PGPException {
+
+        if (publicKeyRings == null) {
+            publicKeyRings = new
+
+                    PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(getPublicKeyRingStream()), keyFingerPrintCalculator);
+
+        }
+        return publicKeyRings;
+    }
+
+    public PGPSecretKeyRingCollection getSecretKeyRings() throws IOException, PGPException {
+        if (secretKeyRings == null) {
+            secretKeyRings = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(getSecretKeyRingStream()), keyFingerPrintCalculator);
+        }
+        return secretKeyRings;
+    }
+
 }

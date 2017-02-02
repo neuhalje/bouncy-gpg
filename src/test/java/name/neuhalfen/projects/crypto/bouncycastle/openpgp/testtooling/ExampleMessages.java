@@ -4,6 +4,35 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 public class ExampleMessages {
 
     /**
+     * 2048 bit RSA key 'recipient@example.com'
+     * - Trusted by recipient.
+     * - Private key held by recipient.
+     */
+    public final static long PUBKEY_RECIPIENT = 0x54A3DB374F787AB7L;
+
+    /**
+     * 2048 bit RSA key 'sender@example.com'
+     * - Trusted by recipient.
+     * - Private key held by sender.
+     */
+    public final static long PUBKEY_SENDER = 0x86DAC13816FE6FE2L;
+
+    /**
+     * 4096 bit RSA key 'sender2@example.com'
+     * - Trusted by recipient.
+     * - Private key held by sender.
+     */
+    public final static long PUBKEY_SENDER_2 = 0xF873744002F1D7C3L;
+
+    /**
+     * 2048 bit RSA key 'another_sender@example.com'
+     * - Unknown to recipient.
+     * - Private key held by sender.
+     */
+    public final static long PUBKEY_ANOTHER_SENDER = 0x7B7DA94F0876E36EL;
+
+
+    /**
      * Encrypted-To:    recipient@example.com
      * Signed-By:       sender@example.com
      * Compressed:      false
@@ -147,6 +176,51 @@ public class ExampleMessages {
             "x60aZxZ2o2p5lnQloEM4a15mx/bsa9tL4b3Hlv0At1m8MwVrLHVv1/tjagOdH0Y7\n" +
             "WVr8a1FkXuriJtcDEUJcyl/cPDvtx3ootxskKZgpAqrJ4dF9woRp+GhaOA==\n" +
             "=UKuw\n" +
+            "-----END PGP MESSAGE-----";
+
+
+    /**
+     * Encrypted-To:    recipient@example.com
+     * Signed-By:       another_sender@example.com, sender@example.com AND sender2@example.com
+     * Compressed:      false
+     */
+    public final static String IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY = "-----BEGIN PGP MESSAGE-----\n" +
+            "Version: GnuPG v2\n" +
+            "\n" +
+            "hQEMA1Sj2zdPeHq3AQf/TEsFPsGmKA3ajZJqd/hUWTJOjBU57aFOap/MCsNdCGfi\n" +
+            "SZzjFcUBRXTqwTrnWvGbjFUkWrzB1cI3oqLlWbK2/dJkJjJ9wFa6fm3CnUfjVh5J\n" +
+            "vVUVdzLiGsjr7zz66EGLT7bJcGOfP4c6cvIeb9sghZdxjZi/MMklWaj4dszyb0fH\n" +
+            "MheRS2vimxprhvE/3KX+UtaXDG7uM9F/2zT6L37A2ubfxQ51q4YZ4XZZ2iAq0IRG\n" +
+            "Q1vYCuJgh03QRY5/Z1L7k/IPlWyqLfXcnNDErZqzUCMievQrixvllLdwgFUYmBck\n" +
+            "53GHcBcjPk2KICKR81GhTKHjlONYJGZ3PDY/m8L+qNLqAWeXxxlTrAPuK6s5TZGB\n" +
+            "v56WzmyMXVlFo4lUtBPEJHOVdEM68i6XDK1+6Q7wMgXq+VyhXtSRlYGZJE/oEVAm\n" +
+            "qgeaWsShdCVYRj/TMRg4UH+V3HDEF/u9IGpGCoX1sWNNkvWss8mskh2LYLWdvojS\n" +
+            "QyvB3h4a5aFODJkYTpFYhXgkyFGtzvGxYfClUuTofhlTwNCJzxXfblEBir8CXRqr\n" +
+            "uyzT8NYZvbjQYyarhO/CKNr99bb95LYST6mbE++EFAaT7WtONU6HKrY79UMcCRe/\n" +
+            "xBkK6xrwvfGsMQ/FLr5QFHeG0kP2+6Va05tvKpvXeizxlX+qIhUuaASZXMNkBy9u\n" +
+            "m/ztmbDQwoftxlH5ZvGHTuZSejJNFQGCtHu7CX/voX8vqN4Wb9x+tIKFaLlG7krL\n" +
+            "M2ScgnRRNdpdMMXnalP/sjAwxw5H7+BeRH3v/YY5OimbvLqG/MIMtzUvp4OP0z6m\n" +
+            "wIC2I+VjDHn1unDMnLEG9elGp+ieJ3GQN7k1mKbXXB2/bH4CViKVg4gorUGXVrGL\n" +
+            "qc6p61GZOqB2xkuwNrWgvExVgYQDq1vIbUtlfIKblhwymPMu9Qvrl6SLzmOCG2Am\n" +
+            "Du2YpTY92RXD1om9oj9ltrOLqRmj7t5kbt+Z3Xszb3jPHEvQACcNqaETJ4bkuIeh\n" +
+            "44bANu0W4erYn5PqA/vTPOrfIwkSQtqaZqivHG3gSZclvMq8ASlPwbIcUlB2duSI\n" +
+            "k74nYB5DF2tag6rU4a3gGEE4/+/lDicAnGMO/Ht6YoiKBadfqabflyCAStRFXkz0\n" +
+            "Th1jeH72s1QX6DYGypXtzLiyfp0liCIlKGGYX4OhooC3cjU4JdvNeZz/RXSi2UKD\n" +
+            "zRDaMvPVOelRgxJB0YA01LZO35j1Tb9ukExBXgRRVOPp2VCU5fh9VlqUC7ocX5mb\n" +
+            "/hxhqR4aumGWkoh86nXojSCmTY0SEePZOlRkvFt/8Eyh+Ac1IgxJmXoL9JwcTtDS\n" +
+            "L/MX9VUQvAd0BOk+gaabaGKUglqLErXAsBRPxfCswipfjVyZjchbGZ9rXlpjUz7B\n" +
+            "4dMxnXtyadbKbCcmzUZ7IFIx0HQCu31FDbzUsxJAbPfpDV9AwbbpgllbFLVuQz8n\n" +
+            "kpW4nHsSvwcKKF304PtpJxXbgsUc36nYAB6MgDimiAG4UkCAUFCPi6rVb+ufwFjl\n" +
+            "AjYbxxJvBEkoc3nVj+JsJPTfMQycYinuCqiU4v3rH7CFxiP8BoOEtn0am9tjbpFx\n" +
+            "wx7K2/4ymM/YR/YsKEGB5J3/t66Ql7G0sw+7xxkySNv0TH5i2PmTJBJk17/bXVB1\n" +
+            "oDA9i9YjFVrOmIvxhzEqQ+5rNNV0g9SNrVMnwI7Jjcuh6x8DCU/EYxcNArz63yKz\n" +
+            "kMBPoFrbLa0RJYL5FsyLzeoY7Wsy1+TVperBXUAX+/lYfci2Fexgy7wh+mmSrUE7\n" +
+            "Ip+6vGrdBzyV09BlCJ3Cu1cA/XT8MkMVZSUvXqCpwQs738amqrhhvMVVpM+L1T3I\n" +
+            "ZdNr6uTGuptssLycI9kLpc1ssFleKW3Zw4tJ9cTkHEruKm83o1+us0J3qefMdW0p\n" +
+            "2Hbbc79X4kALGkulDCEey3Ykix+KYyCwB7JUhTdPW7OeECUZe+mi7Mg3vwEcbEIC\n" +
+            "3pAyJirJYx8LCXFehrWbIkjXR41Y93T0Oj6H28SOVjGLz8Ab6qhJoRFSpNMCShg7\n" +
+            "kQcAYvGRCMo1bBdw15LOOdAMEyoNAzMZA9f/rfCmD9nMQQ==\n" +
+            "=o6bw\n" +
             "-----END PGP MESSAGE-----";
 
 

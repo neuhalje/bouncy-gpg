@@ -20,8 +20,8 @@ public class DecryptionConfigTest {
     @Test
     public void loadFromFiles_works() throws IOException {
         final DecryptionConfig decryptionConfig = Configs.buildConfigForDecryptionFromFiles();
-        assertThat(decryptionConfig.getPublicKeyRing(), is(notNullValue()));
-        assertThat(decryptionConfig.getSecretKeyRing(), is(notNullValue()));
+        assertThat(decryptionConfig.getPublicKeyRingStream(), is(notNullValue()));
+        assertThat(decryptionConfig.getSecretKeyRingStream(), is(notNullValue()));
     }
 
 }

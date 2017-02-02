@@ -28,10 +28,10 @@ class RequireAnySignatureValidationStrategy implements SignatureValidationStrate
             if (ops != null) {
                 final boolean isThisSignatureGood = ops.verify(messageSignature);
 
-                LOGGER.debug("{} validated signature with key {}", isThisSignatureGood ? "Successfully" : "Failed to", messageSignature.getKeyID());
+                LOGGER.debug("{} validated signature with key 0x{}", isThisSignatureGood ? "Successfully" : "Failed to", Long.toHexString(messageSignature.getKeyID()));
                 successfullyVerified |= isThisSignatureGood;
             } else {
-                LOGGER.debug("Could not validated signature with key {} because we have no matching public key", messageSignature.getKeyID());
+                LOGGER.debug("Could not validated signature with key 0x{} because we have no matching public key", Long.toHexString(messageSignature.getKeyID()));
             }
         }
 

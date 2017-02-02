@@ -4,7 +4,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.*;
-import org.bouncycastle.openpgp.operator.KeyFingerPrintCalculator;
 import org.bouncycastle.openpgp.operator.PGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.bc.BcPGPContentVerifierBuilderProvider;
@@ -30,51 +29,30 @@ public class DecryptWithOpenPGPInputStreamFactory {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DecryptWithOpenPGPInputStreamFactory.class);
 
     /**
-     * List of all public key rings to be used.
-     */
-    private final PGPPublicKeyRingCollection publicKeyRings;
-
-    /**
-     * List of all secret key rings to be used.
-     */
-    private final PGPSecretKeyRingCollection secretKeyRings;
-
-    /**
      * The decryption secret key passphrase.
      */
     private final char[] decryptionSecretKeyPassphrase;
 
-    private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
     private final PGPContentVerifierBuilderProvider pgpContentVerifierBuilderProvider = new BcPGPContentVerifierBuilderProvider();
+    private final DecryptionConfig config;
 
-    public static DecryptWithOpenPGPInputStreamFactory create(final DecryptionConfig config, SignatureValidationStrategy signatureValidationStrategy) throws IOException {
+    public static DecryptWithOpenPGPInputStreamFactory create(final DecryptionConfig config, SignatureValidationStrategy signatureValidationStrategy) {
         return new DecryptWithOpenPGPInputStreamFactory(config, signatureValidationStrategy);
     }
 
     private final SignatureValidationStrategy signatureValidationStrategy;
 
-    public DecryptWithOpenPGPInputStreamFactory(final DecryptionConfig config, SignatureValidationStrategy signatureValidationStrategy) throws IOException {
+    public DecryptWithOpenPGPInputStreamFactory(final DecryptionConfig config, SignatureValidationStrategy signatureValidationStrategy) {
         this.signatureValidationStrategy = signatureValidationStrategy;
-        try {
-            this.publicKeyRings =
-                    new PGPPublicKeyRingCollection(
-                            PGPUtil.getDecoderStream(
-                                    config.getPublicKeyRing()), keyFingerPrintCalculator);
+        this.config = config;
 
-            this.secretKeyRings =
-                    new PGPSecretKeyRingCollection(
-                            PGPUtil.getDecoderStream(config.getSecretKeyRing()), keyFingerPrintCalculator);
-
-            this.decryptionSecretKeyPassphrase = config.getDecryptionSecretKeyPassphrase().toCharArray();
-        } catch (PGPException e) {
-            throw new IOException("Failed to create DecryptWithOpenPGP", e);
-        }
+        this.decryptionSecretKeyPassphrase = config.getDecryptionSecretKeyPassphrase().toCharArray();
     }
 
     public InputStream wrapWithDecryptAndVerify(InputStream in) throws IOException {
         LOGGER.trace("Trying to decrypt and verify PGP Encryption.");
         try {
-            final PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(in), keyFingerPrintCalculator);
+            final PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(in), config.getKeyFingerPrintCalculator());
 
             return nextDecryptedStream(factory, new SignatureValidatingInputStream.DecryptionState());
 
@@ -118,7 +96,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
                 PGPPublicKeyEncryptedData pbe = null;
                 while (sKey == null && it.hasNext()) {
                     pbe = (PGPPublicKeyEncryptedData) it.next();
-                    sKey = PGPUtilities.findSecretKey(this.secretKeyRings, pbe.getKeyID(), this.decryptionSecretKeyPassphrase);
+                    sKey = PGPUtilities.findSecretKey(config.getSecretKeyRings(), pbe.getKeyID(), this.decryptionSecretKeyPassphrase);
                 }
                 if (sKey == null) {
                     throw new PGPException(
@@ -132,7 +110,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
                 return nextDecryptedStream(nextFactory, state);
             } else if (pgpObj instanceof PGPCompressedData) {
                 LOGGER.trace("Found instance of PGPCompressedData");
-                PGPObjectFactory nextFactory = new PGPObjectFactory(((PGPCompressedData) pgpObj).getDataStream(), new BcKeyFingerprintCalculator());
+                PGPObjectFactory nextFactory = new PGPObjectFactory(((PGPCompressedData) pgpObj).getDataStream(), config.getKeyFingerPrintCalculator());
                 return nextDecryptedStream(nextFactory, state);
             } else if (pgpObj instanceof PGPOnePassSignatureList) {
                 LOGGER.trace("Found instance of PGPOnePassSignatureList");
@@ -145,7 +123,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
                     // verify the signature
                     final PGPOnePassSignatureList onePassSignatures = (PGPOnePassSignatureList) pgpObj;
                     for (PGPOnePassSignature signature : onePassSignatures) {
-                        final PGPPublicKey pubKey = this.publicKeyRings.getPublicKey(signature.getKeyID());
+                        final PGPPublicKey pubKey = config.getPublicKeyRings().getPublicKey(signature.getKeyID());
                         if (pubKey != null) {
                             LOGGER.trace("public key found for ID '{}'", signature.getKeyID());
                             signature.init(pgpContentVerifierBuilderProvider, pubKey);

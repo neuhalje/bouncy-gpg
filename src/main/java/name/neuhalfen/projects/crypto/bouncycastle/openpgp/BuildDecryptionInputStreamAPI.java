@@ -8,6 +8,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureV
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 
 
 public class BuildDecryptionInputStreamAPI {
@@ -21,7 +22,6 @@ public class BuildDecryptionInputStreamAPI {
 
     private SignatureValidationStrategy signatureCheckingMode;
 
-    private String expectSignatureFrom;
 
     BuildDecryptionInputStreamAPI() {
 
@@ -40,9 +40,8 @@ public class BuildDecryptionInputStreamAPI {
     }
 
     public class Validation {
-        public Build andValidateSignatureFrom(String userId) {
-            BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireSpecificSignature();
-            BuildDecryptionInputStreamAPI.this.expectSignatureFrom = userId;
+        public Build andValidateSignatureFrom(Collection<Long> publicKeyIds) {
+            BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireSpecificSignature(publicKeyIds);
             return new Build();
         }
 
