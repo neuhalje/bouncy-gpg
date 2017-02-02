@@ -82,6 +82,11 @@ The project is a basic gradle build. All the scripts use `./gradlew  installDist
 
 The coverage report (incl. running tests) is generated with `./gradlew check`.
 
+CAVE
+=====
+
+* Only one keyring per userid ("sender@example.com") supported.
+* Only one signing key per userid supported.
 
 ## LICENSE
 

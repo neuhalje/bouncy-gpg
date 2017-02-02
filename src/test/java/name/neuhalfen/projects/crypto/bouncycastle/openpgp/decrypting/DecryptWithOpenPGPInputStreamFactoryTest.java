@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
+import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
 import org.junit.Assert;
 import org.junit.Test;
@@ -146,6 +147,30 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
 
+    @Test
+    public void usingSingleUserIdToSignatureValidationSelectKeys_isResolvable_verificationSucceeds() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException {
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSpecificSignature(config.getPublicKeyRings(), "sender@example.com"));
+
+        Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
+    }
+
+    @Test
+    public void usingUserIdsToSignatureValidationSelectKeys_allKeysResolvable_verificationSucceeds() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException {
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSpecificSignature(config.getPublicKeyRings(), "sender@example.com", "sender2@example.com"));
+
+        Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
+    }
+
+    @Test(expected = PGPException.class)
+    public void usingUserIdsToSignatureValidationSelectKeys_oneKeyNotResolvable_fails() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException {
+        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+
+        SignatureValidationStrategies.requireSpecificSignature(config.getPublicKeyRings(), "sender@example.com", "unknown@example.com");
+    }
 
     @Test
     public void decryptingSignedMessageAndRequiringSpecificSigner_signedByTheCorrectKeyAndOthers_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {

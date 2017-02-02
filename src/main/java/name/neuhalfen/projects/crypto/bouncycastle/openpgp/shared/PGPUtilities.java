@@ -29,7 +29,7 @@ public class PGPUtilities {
      */
     public static PGPPrivateKey findSecretKey(final PGPSecretKeyRingCollection pgpSec, final long keyID, final char[] pass)
             throws PGPException, NoSuchProviderException {
-        LOGGER.debug("Finding secret key for decryption with key ID '{}'", Long.valueOf(keyID).toString());
+        LOGGER.debug("Finding secret key for decryption with key ID '0x{}'", Long.toHexString(keyID));
         final PGPSecretKey pgpSecKey = pgpSec.getSecretKey(keyID);
 
         if (pgpSecKey == null) {
@@ -44,7 +44,7 @@ public class PGPUtilities {
      * @param encryptedKey An encrypted key
      * @param pass         The password for the key
      * @return The decrypted key
-     * @throws PGPException  E.g. wrong password
+     * @throws PGPException E.g. wrong password
      */
     public static PGPPrivateKey extractPrivateKey(PGPSecretKey encryptedKey, final char[] pass) throws PGPException {
         PGPDigestCalculatorProvider calcProvider = new JcaPGPDigestCalculatorProviderBuilder()
@@ -64,8 +64,8 @@ public class PGPUtilities {
      * @return the pGP public key ring
      * @throws PGPException E.g. multiple keyrings for same uid
      */
-    public static PGPPublicKeyRing extractPublicKey(final String publicKeyUid,
-                                                    final PGPPublicKeyRingCollection publicKeyRings)
+    public static PGPPublicKeyRing extractPublicKeyRingForUserId(final String publicKeyUid,
+                                                                 final PGPPublicKeyRingCollection publicKeyRings)
             throws PGPException {
         // the true parameter indicates, that partial matching of the publicKeyUid is enough.
         final Iterator<?> keyRings = publicKeyRings.getKeyRings(publicKeyUid, true);
@@ -86,5 +86,26 @@ public class PGPUtilities {
         LOGGER.debug("Extracted public key ring for UID '{}' with first key strength {}.", publicKeyUid, returnKeyRing
                 .getPublicKey().getBitStrength());
         return returnKeyRing;
+    }
+
+    /**
+     * Extract a signing key from the keyring. There must be only one signing key.
+     *
+     * @param keyring search here
+     * @return
+     */
+    public static PGPPublicKey extractSigningKey(PGPPublicKeyRing keyring) throws PGPException {
+
+        PGPPublicKey ret = null;
+        for (PGPPublicKey pubKey : keyring) {
+            if (pubKey.isEncryptionKey() && !pubKey.isMasterKey()) {
+                if (ret != null) {
+                    throw new PGPException(String.format("Multiple signing (encryption) keys found in keyring (e.g. 0x%x and 0x%x)", pubKey.getKeyID(), ret.getKeyID()));
+                } else {
+                    ret = pubKey;
+                }
+            }
+        }
+        return ret;
     }
 }

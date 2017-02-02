@@ -2,11 +2,9 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openpgp.PGPException;
-import org.bouncycastle.openpgp.PGPPrivateKey;
-import org.bouncycastle.openpgp.PGPPublicKeyRing;
-import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
+import org.bouncycastle.openpgp.*;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +14,8 @@ import org.junit.runners.Parameterized;
 import java.security.Security;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assume.assumeThat;
 
 @RunWith(Parameterized.class)
 public class PGPUtilitiesIntegrationTest {
@@ -47,19 +47,39 @@ public class PGPUtilitiesIntegrationTest {
 
     @Test(expected = PGPException.class)
     public void extracting_nonExitingPubKey_throws() throws Exception {
-        PGPUtilities.extractPublicKey("unknown@example.com", decryptionConfig.getPublicKeyRings());
+        PGPUtilities.extractPublicKeyRingForUserId("unknown@example.com", decryptionConfig.getPublicKeyRings());
     }
 
     @Test()
     public void extracting_ownPubKey_returnsKeys() throws Exception {
-        final PGPPublicKeyRing publicKeys = PGPUtilities.extractPublicKey("recipient@example.com", decryptionConfig.getPublicKeyRings());
+        final PGPPublicKeyRing publicKeys = PGPUtilities.extractPublicKeyRingForUserId("recipient@example.com", decryptionConfig.getPublicKeyRings());
         assertThat(publicKeys, Matchers.notNullValue());
     }
 
     @Test()
     public void extracting_exitingPubKey_returnsKeys() throws Exception {
-        final PGPPublicKeyRing publicKeys = PGPUtilities.extractPublicKey("sender@example.com", decryptionConfig.getPublicKeyRings());
+        final PGPPublicKeyRing publicKeys = PGPUtilities.extractPublicKeyRingForUserId("sender@example.com", decryptionConfig.getPublicKeyRings());
         assertThat(publicKeys, Matchers.notNullValue());
+    }
+
+    @Test()
+    public void extracting_exitingSigningPubKeyByName_returnsKey() throws Exception {
+        final PGPPublicKeyRing publicKeys = PGPUtilities.extractPublicKeyRingForUserId("sender@example.com", decryptionConfig.getPublicKeyRings());
+        assumeThat(publicKeys, Matchers.notNullValue());
+
+        final PGPPublicKey pgpPublicKey = PGPUtilities.extractSigningKey(publicKeys);
+        assertThat(pgpPublicKey, Matchers.notNullValue());
+        assertThat(pgpPublicKey.getKeyID(), equalTo(ExampleMessages.PUBKEY_SENDER));
+    }
+
+    @Test()
+    public void extracting_anothereExitingSigningPubKeyByName_returnsKey() throws Exception {
+        final PGPPublicKeyRing publicKeys = PGPUtilities.extractPublicKeyRingForUserId("sender2@example.com", decryptionConfig.getPublicKeyRings());
+        assumeThat(publicKeys, Matchers.notNullValue());
+
+        final PGPPublicKey pgpPublicKey = PGPUtilities.extractSigningKey(publicKeys);
+        assertThat(pgpPublicKey, Matchers.notNullValue());
+        assertThat(pgpPublicKey.getKeyID(), equalTo(ExampleMessages.PUBKEY_SENDER_2));
     }
 
 

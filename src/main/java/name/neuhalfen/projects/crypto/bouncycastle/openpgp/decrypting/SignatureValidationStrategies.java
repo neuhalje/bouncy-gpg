@@ -1,7 +1,15 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
+import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPPublicKey;
+import org.bouncycastle.openpgp.PGPPublicKeyRing;
+import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Defines strategies for signature checking.
@@ -32,6 +40,24 @@ public class SignatureValidationStrategies {
      **/
     public static SignatureValidationStrategy requireSpecificSignature(Collection<Long> signaturesRequiredForTheseKeys) {
         return new RequireSpecificSignatureValidationStrategy(signaturesRequiredForTheseKeys);
+    }
+
+    /**
+     * Require signature from all of the passed keys.
+     *
+     * @param userIds A list of user IDs (e.g. 'sender@example.com')
+     * @throws PGPException No or more than one public key found for a user id
+     **/
+    public static SignatureValidationStrategy requireSpecificSignature(PGPPublicKeyRingCollection publicKeyRings, String... userIds) throws PGPException {
+        final List<Long> keyIds = new ArrayList<>(userIds.length);
+
+        for (String userId : userIds) {
+            final PGPPublicKeyRing pgpPublicKeys = PGPUtilities.extractPublicKeyRingForUserId(userId, publicKeyRings);
+            final PGPPublicKey signingKey = PGPUtilities.extractSigningKey(pgpPublicKeys);
+            keyIds.add(signingKey.getKeyID());
+
+        }
+        return new RequireSpecificSignatureValidationStrategy(keyIds);
     }
 
     /**
