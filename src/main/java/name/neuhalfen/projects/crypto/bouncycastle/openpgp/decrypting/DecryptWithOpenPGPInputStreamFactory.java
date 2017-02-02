@@ -155,7 +155,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
             }
 
         }
-        return null;
+        throw new PGPException("No data found");
 
     }
 

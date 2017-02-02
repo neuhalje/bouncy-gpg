@@ -38,7 +38,7 @@ public class SignatureValidationStrategies {
     /**
      * Require signature from all of the passed keys.
      **/
-    public static SignatureValidationStrategy requireSpecificSignature(Collection<Long> signaturesRequiredForTheseKeys) {
+    public static SignatureValidationStrategy requireSignatureFromAllKeys(Collection<Long> signaturesRequiredForTheseKeys) {
         return new RequireSpecificSignatureValidationStrategy(signaturesRequiredForTheseKeys);
     }
 
@@ -48,7 +48,7 @@ public class SignatureValidationStrategies {
      * @param userIds A list of user IDs (e.g. 'sender@example.com')
      * @throws PGPException No or more than one public key found for a user id
      **/
-    public static SignatureValidationStrategy requireSpecificSignature(PGPPublicKeyRingCollection publicKeyRings, String... userIds) throws PGPException {
+    public static SignatureValidationStrategy requireSignatureFromAllKeys(PGPPublicKeyRingCollection publicKeyRings, String... userIds) throws PGPException {
         final List<Long> keyIds = new ArrayList<>(userIds.length);
 
         for (String userId : userIds) {
@@ -63,14 +63,14 @@ public class SignatureValidationStrategies {
     /**
      * Require signature from all of the passed keys.
      **/
-    public static SignatureValidationStrategy requireSpecificSignature(Long... keyIds) {
+    public static SignatureValidationStrategy requireSignatureFromAllKeys(Long... keyIds) {
         return new RequireSpecificSignatureValidationStrategy(Arrays.asList(keyIds));
     }
 
     /**
      * Require signature from a specific key.
      **/
-    public static SignatureValidationStrategy requireSpecificSignature(long signaturesRequiredForThisKey) {
+    public static SignatureValidationStrategy requireSignatureFromAllKeys(long signaturesRequiredForThisKey) {
         return new RequireSpecificSignatureValidationStrategy(Arrays.asList(signaturesRequiredForThisKey));
     }
 }

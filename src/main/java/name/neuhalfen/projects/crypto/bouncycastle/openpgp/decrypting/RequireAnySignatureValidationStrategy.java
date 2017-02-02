@@ -17,6 +17,9 @@ class RequireAnySignatureValidationStrategy implements SignatureValidationStrate
         final PGPSignatureList signatureList = (PGPSignatureList) factory.nextObject();
 
         if (signatureList == null || signatureList.isEmpty()) {
+            // This statement is not reached in normal flow
+            // because decryption errs first when it does not find
+            // the one pass signature before the data object.
             throw new PGPException("No signatures found!");
         }
 

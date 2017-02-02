@@ -20,27 +20,27 @@ final class SignatureValidatingInputStream extends FilterInputStream {
         PGPObjectFactory factory;
         private Map<Long, PGPOnePassSignature> onePassSignatures = new HashMap<>();
 
-        public void updateOnePassSignatures(byte data) {
+        void updateOnePassSignatures(byte data) {
             for (PGPOnePassSignature sig : onePassSignatures.values()) {
                 sig.update(data);
             }
         }
 
-        public void updateOnePassSignatures(byte[] b, int off, int len) {
+        void updateOnePassSignatures(byte[] b, int off, int len) {
             for (PGPOnePassSignature sig : onePassSignatures.values()) {
                 sig.update(b, off, len);
             }
         }
 
-        public Map<Long, PGPOnePassSignature> getOnePassSignatures() {
+        Map<Long, PGPOnePassSignature> getOnePassSignatures() {
             return onePassSignatures;
         }
 
-        public void addSignature(PGPOnePassSignature signature) {
+        void addSignature(PGPOnePassSignature signature) {
             onePassSignatures.put(signature.getKeyID(), signature);
         }
 
-        public int numSignatures() {
+        int numSignatures() {
             return onePassSignatures.size();
         }
     }

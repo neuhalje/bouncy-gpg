@@ -27,7 +27,7 @@ public class BuildVerificationInputStreamAPI {
 
     public class Validation {
         public Validate andValidateSignatureFrom(Collection<Long> publicKeyIds) {
-            BuildVerificationInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireSpecificSignature(publicKeyIds);
+            BuildVerificationInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireSignatureFromAllKeys(publicKeyIds);
             return new Validate();
         }
 

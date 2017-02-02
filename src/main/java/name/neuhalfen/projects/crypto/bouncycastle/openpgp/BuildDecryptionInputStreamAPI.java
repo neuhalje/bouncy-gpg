@@ -4,11 +4,12 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWit
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategy;
+import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collection;
 
 
 public class BuildDecryptionInputStreamAPI {
@@ -40,8 +41,13 @@ public class BuildDecryptionInputStreamAPI {
     }
 
     public class Validation {
-        public Build andValidateSignatureFrom(Collection<Long> publicKeyIds) {
-            BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireSpecificSignature(publicKeyIds);
+        public Build requireSignatureFromAllKeys(Long... publicKeyIds) {
+            BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireSignatureFromAllKeys(publicKeyIds);
+            return new Build();
+        }
+
+        public Build requireSignatureFromAllKeys(PGPPublicKeyRingCollection publicKeyRings, String... userIds) throws PGPException {
+            BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireSignatureFromAllKeys(publicKeyRings, userIds);
             return new Build();
         }
 

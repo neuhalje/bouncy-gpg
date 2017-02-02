@@ -112,21 +112,21 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     public void decryptingSignedMessageAndRequiringSpecificSigner_notSignedByTheCorrectKey_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSpecificSignature(ExampleMessages.PUBKEY_RECIPIENT));
+        decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_RECIPIENT));
     }
 
     @Test(expected = IOException.class)
     public void decryptingMultiSignedMessageAndRequiringSpecificSigner_notSignedByTheCorrectKey_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSpecificSignature(ExampleMessages.PUBKEY_RECIPIENT));
+        decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_RECIPIENT));
     }
 
     @Test
     public void decryptingSignedMessageAndRequiringSpecificSigner_signedByTheCorrectKey_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSpecificSignature(ExampleMessages.PUBKEY_SENDER));
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER));
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
@@ -135,14 +135,14 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     public void decryptingSignedMessageAndRequiringMultipleSpecificSigner_signedBySubsetOfTheCorrectKeys_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSpecificSignature(ExampleMessages.PUBKEY_SENDER, ExampleMessages.PUBKEY_ANOTHER_SENDER));
+        decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER, ExampleMessages.PUBKEY_ANOTHER_SENDER));
     }
 
     @Test
     public void decryptingSignedMessageAndRequiringMultipleSpecificSigner_signedByTheCorrectKeys_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSpecificSignature(ExampleMessages.PUBKEY_SENDER, ExampleMessages.PUBKEY_SENDER_2));
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER, ExampleMessages.PUBKEY_SENDER_2));
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
@@ -151,7 +151,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     public void usingSingleUserIdToSignatureValidationSelectKeys_isResolvable_verificationSucceeds() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSpecificSignature(config.getPublicKeyRings(), "sender@example.com"));
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(config.getPublicKeyRings(), "sender@example.com"));
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
@@ -160,7 +160,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     public void usingUserIdsToSignatureValidationSelectKeys_allKeysResolvable_verificationSucceeds() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSpecificSignature(config.getPublicKeyRings(), "sender@example.com", "sender2@example.com"));
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(config.getPublicKeyRings(), "sender@example.com", "sender2@example.com"));
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
@@ -169,14 +169,14 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     public void usingUserIdsToSignatureValidationSelectKeys_oneKeyNotResolvable_fails() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        SignatureValidationStrategies.requireSpecificSignature(config.getPublicKeyRings(), "sender@example.com", "unknown@example.com");
+        SignatureValidationStrategies.requireSignatureFromAllKeys(config.getPublicKeyRings(), "sender@example.com", "unknown@example.com");
     }
 
     @Test
     public void decryptingSignedMessageAndRequiringSpecificSigner_signedByTheCorrectKeyAndOthers_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSpecificSignature(ExampleMessages.PUBKEY_SENDER));
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER));
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
@@ -201,7 +201,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     public void decryptingUnsignedMessage_butSpecificSignatureIsRequired_fails() throws IOException, SignatureException {
         final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSpecificSignature(ExampleMessages.PUBKEY_SENDER));
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER));
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
