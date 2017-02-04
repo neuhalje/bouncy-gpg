@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.example;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DefaultDecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
@@ -43,7 +44,7 @@ public class MainExplodedSinglethreaded {
                         HashAlgorithm.sha1,
                         SymmetricKeyAlgorithmTags.AES_128, keyringConfig);
 
-                final DecryptionConfig decryptionConfig = new DecryptionConfig(keyringConfig);
+                final DecryptionConfig decryptionConfig = new DefaultDecryptionConfig(keyringConfig);
 
                 final DecryptWithOpenPGPInputStreamFactory decryptWithOpenPGPInputStreamFactory = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig, SignatureValidationStrategies.requireAnySignature());
 

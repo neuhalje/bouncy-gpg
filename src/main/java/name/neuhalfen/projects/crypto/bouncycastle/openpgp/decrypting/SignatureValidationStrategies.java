@@ -29,7 +29,7 @@ public class SignatureValidationStrategies {
     /**
      * Require any signature for a public key in the keyring.
      *
-     * @see DecryptionConfig#getPublicKeyRingStream()
+     * @see DefaultDecryptionConfig#getPublicKeyRingStream()
      **/
     public static SignatureValidationStrategy requireAnySignature() {
         return new RequireAnySignatureValidationStrategy();

@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DefaultDecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGPTest;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
@@ -77,13 +78,13 @@ public class Configs {
 
 
     public static DecryptionConfig buildConfigForDecryptionFromFiles(KeyringConfigCallback callback) {
-        final DecryptionConfig decryptAndVerifyConfig = new DecryptionConfig(keyringConfigFromFiles(callback));
+        final DecryptionConfig decryptAndVerifyConfig = new DefaultDecryptionConfig(keyringConfigFromFiles(callback));
 
         return decryptAndVerifyConfig;
     }
 
     public static DecryptionConfig buildConfigForDecryptionFromResources(KeyringConfigCallback callback) {
-        final DecryptionConfig decryptAndVerifyConfig = new DecryptionConfig(keyringConfigFromResource(callback));
+        final DecryptionConfig decryptAndVerifyConfig = new DefaultDecryptionConfig(keyringConfigFromResource(callback));
 
         return decryptAndVerifyConfig;
 

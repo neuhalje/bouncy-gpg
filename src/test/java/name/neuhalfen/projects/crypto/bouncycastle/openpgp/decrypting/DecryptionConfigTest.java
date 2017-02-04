@@ -36,7 +36,7 @@ public class DecryptionConfigTest {
 
 
     @Parameterized.Parameter
-    public /* NOT private */ DecryptionConfig decryptionConfig;
+    public /* NOT private */ DefaultDecryptionConfig decryptionConfig;
 
     @Test
     public void toString_returns_nonEmptyString() throws Exception {
