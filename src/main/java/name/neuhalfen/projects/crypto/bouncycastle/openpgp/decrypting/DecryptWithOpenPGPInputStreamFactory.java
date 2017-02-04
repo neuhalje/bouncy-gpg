@@ -2,7 +2,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.operator.PGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
@@ -12,20 +11,9 @@ import org.bouncycastle.openpgp.operator.bc.BcPublicKeyDataDecryptorFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchProviderException;
-import java.security.Security;
-import java.security.SignatureException;
 import java.util.Iterator;
 
 public class DecryptWithOpenPGPInputStreamFactory {
-
-
-    // make sure the Bouncy Castle provider is available:
-    // because of this we can avoid declaring throws NoSuchProviderException further down
-    static {
-        Security.addProvider(new BouncyCastleProvider());
-    }
-
-
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DecryptWithOpenPGPInputStreamFactory.class);
 
 
@@ -67,7 +55,6 @@ public class DecryptWithOpenPGPInputStreamFactory {
      * @throws PGPException            the pGP exception
      * @throws IOException             Signals that an I/O exception has occurred.
      * @throws NoSuchProviderException should never occur, see static code part
-     * @throws SignatureException      the signature exception
      */
     private InputStream nextDecryptedStream(PGPObjectFactory factory, SignatureValidatingInputStream.DecryptionState state) throws PGPException, IOException, NoSuchProviderException {
 

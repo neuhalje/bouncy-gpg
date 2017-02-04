@@ -2,7 +2,9 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
 
 
 /**
- * FIXME: document
+ * Factory for convenience implementations of KeyringConfigCallback.
+ *
+ * {@link KeyringConfigCallback}
  */
 public class KeyringConfigCallbacks {
     public static KeyringConfigCallback withPassword(char[] passphrase) {
@@ -10,7 +12,7 @@ public class KeyringConfigCallbacks {
     }
 
     public static KeyringConfigCallback withPassword(String passphrase) {
-        return new StaticPasswordKeyringConfigCallback(passphrase.toCharArray());
+        return withPassword(passphrase.toCharArray());
     }
 
     public static KeyringConfigCallback withUnprotectedKeys() {
