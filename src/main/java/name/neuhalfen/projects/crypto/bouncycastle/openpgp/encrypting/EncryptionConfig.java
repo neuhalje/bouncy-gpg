@@ -1,65 +1,39 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
-import java.io.*;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
+import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
+import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
+
+import java.io.IOException;
 
 
-public abstract class EncryptionConfig {
-    private final String signatureSecretKeyPassphrase;
+public class EncryptionConfig {
     private final String signatureSecretKeyId;
     private final String encryptionPublicKeyId;
     private final int pgpHashAlgorithmCode;
     private final int pgpSymmetricEncryptionAlgorithmCode;
+    private final KeyringConfig keyringConfig;
 
-    public static EncryptionConfig withKeyRingsFromFiles(final File publicKeyring,
-                                                         final File secretKeyring,
-                                                         String signatureSecretKeyId, String signatureSecretKeyPassphrase,
-                                                         String encryptionPublicKeyId,
-                                                         int pgpHashAlgorithmCode, int pgpSymmetricEncryptionAlgorithmCode) {
 
-        return new EncryptionConfig(signatureSecretKeyId, signatureSecretKeyPassphrase, encryptionPublicKeyId, pgpHashAlgorithmCode, pgpSymmetricEncryptionAlgorithmCode) {
+    public PGPPublicKeyRingCollection getPublicKeyRings() throws IOException, PGPException {
 
-            final File publicKeyringFile = publicKeyring;
-            final File secretKeyringFile = secretKeyring;
-
-            @Override
-            public InputStream getPublicKeyRing() throws IOException {
-                return new FileInputStream(publicKeyringFile);
-            }
-
-            @Override
-            public InputStream getSecretKeyRing() throws FileNotFoundException {
-                return new FileInputStream(secretKeyringFile);
-            }
-        };
+        return keyringConfig.getPublicKeyRings();
     }
 
-    public static EncryptionConfig withKeyRingsFromResources(final ClassLoader classLoader, final String publicKeyring,
-                                                             final String secretKeyring,
-                                                             String signatureSecretKeyId, String signatureSecretKeyPassphrase,
-                                                             String encryptionPublicKeyId,
-                                                             int pgpHashAlgorithmCode, int pgpSymmetricEncryptionAlgorithmCode) {
+    public PGPSecretKeyRingCollection getSecretKeyRings() throws IOException, PGPException {
 
-        return new EncryptionConfig(signatureSecretKeyId, signatureSecretKeyPassphrase, encryptionPublicKeyId, pgpHashAlgorithmCode, pgpSymmetricEncryptionAlgorithmCode) {
-
-
-            @Override
-            public InputStream getPublicKeyRing() throws IOException {
-                return classLoader.getResourceAsStream(publicKeyring);
-            }
-
-            @Override
-            public InputStream getSecretKeyRing() throws FileNotFoundException {
-                return classLoader.getResourceAsStream(secretKeyring);
-            }
-        };
+        return keyringConfig.getSecretKeyRings();
     }
 
 
-    protected EncryptionConfig(String signatureSecretKeyId, String signatureSecretKeyPassphrase,
-                               String encryptionPublicKeyId,
-                               int pgpHashAlgorithmCode, int pgpSymmetricEncryptionAlgorithmCode) {
-        this.signatureSecretKeyPassphrase = signatureSecretKeyPassphrase;
+    public EncryptionConfig(String signatureSecretKeyId,
+                            String encryptionPublicKeyId,
+                            int pgpHashAlgorithmCode,
+                            int pgpSymmetricEncryptionAlgorithmCode,
+                            KeyringConfig keyringConfig) {
+        this.keyringConfig = keyringConfig;
         this.signatureSecretKeyId = signatureSecretKeyId;
         this.encryptionPublicKeyId = encryptionPublicKeyId;
         this.pgpHashAlgorithmCode = pgpHashAlgorithmCode;
@@ -73,18 +47,9 @@ public abstract class EncryptionConfig {
         sb.append(", encryptionPublicKeyId='").append(encryptionPublicKeyId).append('\'');
         sb.append(", pgpHashAlgorithmCode=").append(pgpHashAlgorithmCode);
         sb.append(", pgpSymmetricEncryptionAlgorithmCode=").append(pgpSymmetricEncryptionAlgorithmCode);
-        sb.append(", signatureSecretKeyPassphrase='").append("*** secret ***").append('\'');
+        sb.append(", keyringConfig='").append(keyringConfig.toString()).append('\'');
         sb.append('}');
         return sb.toString();
-    }
-
-    public abstract InputStream getPublicKeyRing() throws IOException;
-
-    public abstract InputStream getSecretKeyRing() throws IOException;
-
-
-    public String getSignatureSecretKeyPassphrase() {
-        return signatureSecretKeyPassphrase;
     }
 
     public String getSignatureSecretKeyId() {
@@ -103,4 +68,8 @@ public abstract class EncryptionConfig {
         return pgpSymmetricEncryptionAlgorithmCode;
     }
 
+
+    public char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID) {
+        return keyringConfig.decryptionSecretKeyPassphraseForSecretKeyId(keyID);
+    }
 }

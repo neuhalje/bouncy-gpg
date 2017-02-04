@@ -3,6 +3,8 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.example;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 
@@ -25,13 +27,14 @@ public class Main {
             final File destFile = new File(args[6]);
             try {
 
-                EncryptionConfig encryptionConfig = EncryptionConfig.withKeyRingsFromFiles(pubKeyRing,
-                        secKeyRing,
+                final KeyringConfig keyringConfig = KeyringConfig.withKeyRingsFromFiles(pubKeyRing,
+                        secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
+
+                final EncryptionConfig encryptionConfig = new EncryptionConfig(
                         sender,
-                        secKeyRingPassword,
                         recipient,
                         HashAlgorithm.sha1,
-                        SymmetricKeyAlgorithmTags.AES_128);
+                        SymmetricKeyAlgorithmTags.AES_128, keyringConfig);
 
                 EncryptWithOpenPGP pgp = new EncryptWithOpenPGP(encryptionConfig);
 

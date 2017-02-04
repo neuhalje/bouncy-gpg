@@ -5,6 +5,8 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.Decryption
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.FSZipEntityStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.ReencryptExplodedZipMultithreaded;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.ZipEntityStrategy;
@@ -35,17 +37,17 @@ public class MainExplodedMultithreaded {
 
             try {
 
-                // Encrypt to self
-                final EncryptionConfig encryptionConfig = EncryptionConfig.withKeyRingsFromFiles(pubKeyRing,
-                        secKeyRing,
+
+                final KeyringConfig keyringConfig = KeyringConfig.withKeyRingsFromFiles(pubKeyRing,
+                        secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
+
+                final EncryptionConfig encryptionConfig = new EncryptionConfig(
                         recipient,
-                        secKeyRingPassword,
                         recipient,
                         HashAlgorithm.sha1,
-                        SymmetricKeyAlgorithmTags.AES_128);
+                        SymmetricKeyAlgorithmTags.AES_128, keyringConfig);
 
-                final DecryptionConfig decryptionConfig = DecryptionConfig.withKeyRingsFromFiles(pubKeyRing,
-                        secKeyRing, secKeyRingPassword);
+                final DecryptionConfig decryptionConfig = new DecryptionConfig(keyringConfig);
 
                 final DecryptWithOpenPGPInputStreamFactory decryptWithOpenPGPInputStreamFactory = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig, SignatureValidationStrategies.requireAnySignature());
 

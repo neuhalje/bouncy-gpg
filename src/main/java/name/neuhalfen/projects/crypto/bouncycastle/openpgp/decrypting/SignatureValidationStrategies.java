@@ -53,7 +53,7 @@ public class SignatureValidationStrategies {
 
         for (String userId : userIds) {
             final PGPPublicKeyRing pgpPublicKeys = PGPUtilities.extractPublicKeyRingForUserId(userId, publicKeyRings);
-            final PGPPublicKey signingKey = PGPUtilities.extractSigningKey(pgpPublicKeys);
+            final PGPPublicKey signingKey = PGPUtilities.extractSigningPublicKey(pgpPublicKeys);
             keyIds.add(signingKey.getKeyID());
 
         }

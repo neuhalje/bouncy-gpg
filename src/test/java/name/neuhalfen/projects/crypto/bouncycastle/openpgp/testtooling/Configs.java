@@ -4,6 +4,9 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGPTest;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallback;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 
@@ -19,60 +22,78 @@ public class Configs {
     public final static int GB = 1024 * MB;
 
     // Used in *FromFiles --> Useful for testing in the IDE
-    private static String TEST_RESOURCE_DIRECTORY = "./src/test/resources";
+    private final static String TEST_RESOURCE_DIRECTORY = "./src/test/resources";
 
-    public static EncryptionConfig buildConfigForEncryptionFromFiles() {
-        final EncryptionConfig encryptAndSignConfig = EncryptionConfig.withKeyRingsFromFiles(
-                new File(TEST_RESOURCE_DIRECTORY + "/sender.gpg.d/pubring.gpg"),
-                new File(TEST_RESOURCE_DIRECTORY + "/sender.gpg.d/secring.gpg"),
-                "sender@example.com",
-                "sender",
+    public static EncryptionConfig buildConfigForEncryptionFromFiles(KeyringConfigCallback callback) {
+        final KeyringConfig keyringConfig = keyringConfigFromFiles(callback);
+
+
+        EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
+                "recipient@example.com",
                 "recipient@example.com",
                 HashAlgorithm.sha1,
-                SymmetricKeyAlgorithmTags.AES_128
-        );
-
+                SymmetricKeyAlgorithmTags.AES_128, keyringConfig);
 
         return encryptAndSignConfig;
-    }
-
-    public static EncryptionConfig buildConfigForEncryptionFromResources() {
-        return buildConfigForEncryptionFromResources("sender@example.com", "sender");
     }
 
     public static EncryptionConfig buildConfigForEncryptionFromResources(String signatureSecretKeyId, String signatureSecretKeyPassword) {
-        final EncryptionConfig encryptAndSignConfig = EncryptionConfig.withKeyRingsFromResources(EncryptWithOpenPGPTest.class.getClassLoader(),
-                "sender.gpg.d/pubring.gpg",
-                "sender.gpg.d/secring.gpg",
-                signatureSecretKeyId,
-                signatureSecretKeyPassword,
+
+
+        final KeyringConfig keyringConfig = keyringConfigFromResource(KeyringConfigCallbacks.withPassword(signatureSecretKeyPassword));
+
+
+        EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
+                "recipient@example.com",
                 "recipient@example.com",
                 HashAlgorithm.sha1,
-                SymmetricKeyAlgorithmTags.AES_128
-        );
-
+                SymmetricKeyAlgorithmTags.AES_128,
+                keyringConfig);
 
         return encryptAndSignConfig;
+
+    }
+
+    private static KeyringConfig keyringConfigFromFiles(KeyringConfigCallback callback) {
+        return KeyringConfig.withKeyRingsFromFiles(
+                new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/pubring.gpg"),
+                new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/secring.gpg"),
+                callback);
+    }
+
+    public static EncryptionConfig buildConfigForEncryptionFromResources() {
+        return buildConfigForEncryptionFromResources(
+                "recipient@example.com",
+                "recipient");
     }
 
 
-    public static DecryptionConfig buildConfigForDecryptionFromFiles() {
-        final DecryptionConfig decryptAndVerifyConfig = DecryptionConfig.withKeyRingsFromFiles(
-                new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/pubring.gpg"),
-                new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/secring.gpg"),
-                "recipient");
+    private static KeyringConfig keyringConfigFromResource(KeyringConfigCallback callback) {
+        return KeyringConfig.withKeyRingsFromResources(EncryptWithOpenPGPTest.class.getClassLoader(),
+                "recipient.gpg.d/pubring.gpg",
+                "recipient.gpg.d/secring.gpg",
+                callback);
+    }
+
+
+    public static DecryptionConfig buildConfigForDecryptionFromFiles(KeyringConfigCallback callback) {
+        final DecryptionConfig decryptAndVerifyConfig = new DecryptionConfig(keyringConfigFromFiles(callback));
 
         return decryptAndVerifyConfig;
+    }
+
+    public static DecryptionConfig buildConfigForDecryptionFromResources(KeyringConfigCallback callback) {
+        final DecryptionConfig decryptAndVerifyConfig = new DecryptionConfig(keyringConfigFromResource(callback));
+
+        return decryptAndVerifyConfig;
+
     }
 
     public static DecryptionConfig buildConfigForDecryptionFromResources() {
+        return buildConfigForDecryptionFromResources(KeyringConfigCallbacks.withPassword("recipient"));
+    }
 
-        final DecryptionConfig decryptAndVerifyConfig = DecryptionConfig.withKeyRingsFromResources(
-                DecryptionConfig.class.getClassLoader(),
-                "recipient.gpg.d/pubring.gpg",
-                "recipient.gpg.d/secring.gpg",
-                "recipient");
-
-        return decryptAndVerifyConfig;
+    public static DecryptionConfig buildConfigForDecryptionFromFiles() {
+        return buildConfigForDecryptionFromFiles(KeyringConfigCallbacks.withPassword("recipient"));
     }
 }

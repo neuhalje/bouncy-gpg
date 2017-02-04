@@ -1,7 +1,9 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
+import org.bouncycastle.openpgp.PGPException;
 import org.hamcrest.text.IsEmptyString;
 import org.junit.Test;
 
@@ -19,14 +21,14 @@ public class EncryptionConfigTest {
     }
 
     @Test
-    public void loadFromFiles_works() throws IOException {
-        final EncryptionConfig encryptionConfig = Configs.buildConfigForEncryptionFromFiles();
+    public void loadFromFiles_works() throws IOException, PGPException {
+        final EncryptionConfig encryptionConfig = Configs.buildConfigForEncryptionFromFiles(KeyringConfigCallbacks.withUnprotectedKeys());
 
         assertThat(encryptionConfig.getEncryptionPublicKeyId(), is(not(isEmptyOrNullString())));
         assertThat(encryptionConfig.getPgpHashAlgorithmCode(), is(not(equalTo((int) HashAlgorithm.none))));
 
-        assertThat(encryptionConfig.getPublicKeyRing(), is(notNullValue()));
-        assertThat(encryptionConfig.getSecretKeyRing(), is(notNullValue()));
+        assertThat(encryptionConfig.getPublicKeyRings(), is(notNullValue()));
+        assertThat(encryptionConfig.getSecretKeyRings(), is(notNullValue()));
     }
 
 }

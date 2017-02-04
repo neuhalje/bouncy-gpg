@@ -6,8 +6,6 @@ import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.*;
-import org.bouncycastle.openpgp.operator.KeyFingerPrintCalculator;
-import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.bc.BcPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPDataEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPublicKeyKeyEncryptionMethodGenerator;
@@ -42,16 +40,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
      */
     private static final int MLLIES_PER_SEC = 1000;
 
-    /**
-     * List of all secret key rings to be used.
-     */
-    private final PGPSecretKeyRingCollection secretKeyRings;
-
-
-    /**
-     * The signature secret key passphrase.
-     */
-    private final char[] signatureSecretKeyPassphrase;
+    private final EncryptionConfig config;
 
     /**
      * The signature uid.
@@ -77,28 +66,19 @@ public class EncryptWithOpenPGP implements StreamEncryption {
     public EncryptWithOpenPGP(final EncryptionConfig config) throws IOException {
 
         try {
-            final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
-
-            final PGPPublicKeyRingCollection publicKeyRings =
-                    new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(
-                            config.getPublicKeyRing()), keyFingerPrintCalculator);
-
-            this.secretKeyRings =
-                    new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(
-                            config.getSecretKeyRing()), keyFingerPrintCalculator);
-            this.signatureSecretKeyPassphrase = config.getSignatureSecretKeyPassphrase().toCharArray();
 
             this.signatureUid = config.getSignatureSecretKeyId();
 
 
             this.encryptionPublicKeyRing =
-                    PGPUtilities.extractPublicKeyRingForUserId(config.getEncryptionPublicKeyId(), publicKeyRings);
+                    PGPUtilities.extractPublicKeyRingForUserId(config.getEncryptionPublicKeyId(), config.getPublicKeyRings());
 
             this.hashAlgorithmCode = config.getPgpHashAlgorithmCode();
             this.symmetricEncryptionAlgorithmCode = config.getPgpSymmetricEncryptionAlgorithmCode();
         } catch (PGPException e) {
             throw new RuntimeException("Failed to construct EncryptWithOpenPGP", e);
         }
+        this.config = config;
     }
 
     @Override
@@ -106,8 +86,8 @@ public class EncryptWithOpenPGP implements StreamEncryption {
             NoSuchAlgorithmException, SignatureException, PGPException {
         final long starttime = System.currentTimeMillis();
         try {
-            this.encryptAndSign(is, os, Helpers.getEncryptionKey(this.encryptionPublicKeyRing), true, true,
-                    this.signatureSecretKeyPassphrase, this.hashAlgorithmCode, this.symmetricEncryptionAlgorithmCode);
+            encryptAndSign(is, os, PGPUtilities.getEncryptionKey(this.encryptionPublicKeyRing), true, true,
+                    this.hashAlgorithmCode, this.symmetricEncryptionAlgorithmCode);
         } catch (NoSuchProviderException anEx) {
             // This can't happen because we made sure of it in the static part at the top
             throw new AssertionError("Bouncy Castle Provider is needed");
@@ -125,7 +105,6 @@ public class EncryptWithOpenPGP implements StreamEncryption {
      * @param pubEncKey                        the pub enc key
      * @param armor                            if OutputStream should be "armored", that means base64 encoded
      * @param withIntegrityCheck               the with integrity check
-     * @param signingKeyPassphrase             the signing key passphrase
      * @param hashAlgorithmCode                code for the hash algorithm used for signing according to
      * @param symmetricEncryptionAlgorithmCode code for the algorithm used for symmetric encryption according to
      * @throws IOException              Signals that an I/O exception has occurred.
@@ -137,7 +116,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
      *                                  {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
      */
     protected void encryptAndSign(final InputStream in, OutputStream out, final PGPPublicKey pubEncKey,
-                                  final boolean armor, final boolean withIntegrityCheck, final char[] signingKeyPassphrase,
+                                  final boolean armor, final boolean withIntegrityCheck,
                                   final int hashAlgorithmCode, final int symmetricEncryptionAlgorithmCode) throws IOException,
             NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
         if (armor) {
@@ -156,10 +135,9 @@ public class EncryptWithOpenPGP implements StreamEncryption {
         // this wraps the output stream in an encrypting output stream
         final OutputStream cOut = cPk.open(out, new byte[1 << 16]);
 
-        final PGPSecretKey pgpSec = Helpers.extractSecretSigningKeyFromKeyrings(this.secretKeyRings, this.signatureUid);
+        final PGPSecretKey pgpSec = PGPUtilities.extractSecretSigningKeyFromKeyrings(config.getSecretKeyRings(), signatureUid);
 
-
-        final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec, signingKeyPassphrase);
+        final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec, config.decryptionSecretKeyPassphraseForSecretKeyId(pgpSec.getKeyID()));
         final PGPSignatureGenerator sGen =
                 new PGPSignatureGenerator(new BcPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), hashAlgorithmCode));
 

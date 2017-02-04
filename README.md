@@ -72,6 +72,9 @@ FAQ
 
    <dt>How can I contribute?</dt>
    <dd>Pullrequests are welcome!</dd>
+   
+   <dt>I am getting 'org.bouncycastle.openpgp.PGPException: checksum mismatch ..' exceptions</dt>
+   <dd>The passphrase to your private key is very likely wrong (or you did not pass a passphrase).</dd>
 </dl>
 
 

@@ -11,9 +11,11 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import java.security.NoSuchProviderException;
 import java.util.Iterator;
 
+
+/**
+ * FIXME: Cleanup code, throw out duplicates etc
+ */
 public class PGPUtilities {
-
-
     // Use the EncryptWithOpenPGP logger to maintain log format against original version
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PGPUtilities.class);
 
@@ -29,7 +31,7 @@ public class PGPUtilities {
      */
     public static PGPPrivateKey findSecretKey(final PGPSecretKeyRingCollection pgpSec, final long keyID, final char[] pass)
             throws PGPException, NoSuchProviderException {
-        LOGGER.debug("Finding secret key for decryption with key ID '0x{}'", Long.toHexString(keyID));
+        LOGGER.trace("Finding secret key for decryption with key ID '0x{}'", Long.toHexString(keyID));
         final PGPSecretKey pgpSecKey = pgpSec.getSecretKey(keyID);
 
         if (pgpSecKey == null) {
@@ -42,16 +44,19 @@ public class PGPUtilities {
      * Decrypt an encrypted PGP secret key.
      *
      * @param encryptedKey An encrypted key
-     * @param pass         The password for the key
+     * @param passphrase   The passphrase for the key
      * @return The decrypted key
-     * @throws PGPException E.g. wrong password
+     * @throws PGPException E.g. wrong passphrase
      */
-    public static PGPPrivateKey extractPrivateKey(PGPSecretKey encryptedKey, final char[] pass) throws PGPException {
+    public static PGPPrivateKey extractPrivateKey(PGPSecretKey encryptedKey, final char[] passphrase) throws PGPException {
+        LOGGER.trace("Extracting secret key for decryption with key ID '0x{}'", Long.toHexString(encryptedKey.getKeyID()));
+
         PGPDigestCalculatorProvider calcProvider = new JcaPGPDigestCalculatorProviderBuilder()
                 .setProvider(BouncyCastleProvider.PROVIDER_NAME).build();
+
         PBESecretKeyDecryptor decryptor = new JcePBESecretKeyDecryptorBuilder(
                 calcProvider).setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                .build(pass);
+                .build(passphrase);
 
         return encryptedKey.extractPrivateKey(decryptor);
     }
@@ -90,11 +95,15 @@ public class PGPUtilities {
 
     /**
      * Extract a signing key from the keyring. There must be only one signing key.
+     * <p>
+     * FIXME: refactor this, so that we use all key from the keyring as valid signing keys
+     * <p>
+     * Detection of a good signig
      *
      * @param keyring search here
      * @return
      */
-    public static PGPPublicKey extractSigningKey(PGPPublicKeyRing keyring) throws PGPException {
+    public static PGPPublicKey extractSigningPublicKey(PGPPublicKeyRing keyring) throws PGPException {
 
         PGPPublicKey ret = null;
         for (PGPPublicKey pubKey : keyring) {
@@ -107,5 +116,59 @@ public class PGPUtilities {
             }
         }
         return ret;
+    }
+
+    /**
+     * Extracts the first secret signing key for UID {@code signatureUid} suitable for signature generation from a key
+     * ring collection {@code secretKeyRings}.
+     *
+     * @param pgpSec        a Collection of secret key rings
+     * @param signingKeyUid signature Key uid to search for
+     * @return the first secret key for signatureUid suitable for signatures
+     * @throws PGPException if no key ring or key with that Uid is found
+     */
+    public static PGPSecretKey extractSecretSigningKeyFromKeyrings(final PGPSecretKeyRingCollection pgpSec, final String signingKeyUid)
+            throws PGPException {
+
+        PGPSecretKey key = null;
+
+        final Iterator<PGPSecretKeyRing> rIt = pgpSec.getKeyRings(signingKeyUid, true);
+        while (key == null && rIt.hasNext()) {
+            final PGPSecretKeyRing kRing = rIt.next();
+            final Iterator<PGPSecretKey> kIt = kRing.getSecretKeys();
+
+            while (key == null && kIt.hasNext()) {
+                final PGPSecretKey k = kIt.next();
+
+                if (k.isSigningKey()) {
+                    key = k;
+                }
+            }
+        }
+
+        if (key == null) {
+            throw new PGPException("Can't find signing key in key ring.");
+        }
+        LOGGER.trace("Extracted secret signing key for UID '{}'.", signingKeyUid);
+
+        return key;
+    }
+
+    /**
+     * Returns the first encryption key encountered in {@code publicKeyRing}.
+     *
+     * @param publicKeyRing the public key ring
+     * @return the encryption key
+     */
+    public static PGPPublicKey getEncryptionKey(final PGPPublicKeyRing publicKeyRing) {
+        PGPPublicKey returnKey = null;
+        final Iterator<?> kIt = publicKeyRing.getPublicKeys();
+        while (returnKey == null && kIt.hasNext()) {
+            final PGPPublicKey k = (PGPPublicKey) kIt.next();
+            if (k.isEncryptionKey()) {
+                returnKey = k;
+            }
+        }
+        return returnKey;
     }
 }

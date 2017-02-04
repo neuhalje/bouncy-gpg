@@ -9,6 +9,7 @@ public class ExampleMessages {
      * - Private key held by recipient.
      */
     public final static long PUBKEY_RECIPIENT = 0x54A3DB374F787AB7L;
+    public final static long SECRETKEY_RECIPIENT = 0x3DF16BD7C3F280F3L;
 
     /**
      * 2048 bit RSA key 'sender@example.com'

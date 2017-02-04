@@ -15,6 +15,7 @@ import java.security.Security;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeThat;
 
 @RunWith(Parameterized.class)
@@ -33,14 +34,16 @@ public class PGPUtilitiesIntegrationTest {
     public /* NOT private */ DecryptionConfig decryptionConfig;
 
 
-    private static final long PRIVATE_MASTER_KEY = 0x3DF16BD7C3F280F3l;
-    private static final long PRIVATE_SUB_KEY = 0x54A3DB374F787AB7l;
+    private static final long PRIVATE_MASTER_KEY_RECIPIENT = 0x3DF16BD7C3F280F3L;
+    private static final char[] PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE = "recipient".toCharArray();
 
-    private static final long PRIVATE_KEY_ID__ONLY_HAVE_PUB_KEY = 0xaff0658d23fb56e6l;
+    private static final long PRIVATE_SUB_KEY_RECIPIENT = 0x54A3DB374F787AB7L;
+
+    private static final long PRIVATE_KEY_ID__ONLY_HAVE_PUB_KEY = 0xaff0658d23fb56e6L;
 
     @Before
     public void before() {
-        if (Security.getProvider("BC") == null) {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
     }
@@ -67,7 +70,7 @@ public class PGPUtilitiesIntegrationTest {
         final PGPPublicKeyRing publicKeys = PGPUtilities.extractPublicKeyRingForUserId("sender@example.com", decryptionConfig.getPublicKeyRings());
         assumeThat(publicKeys, Matchers.notNullValue());
 
-        final PGPPublicKey pgpPublicKey = PGPUtilities.extractSigningKey(publicKeys);
+        final PGPPublicKey pgpPublicKey = PGPUtilities.extractSigningPublicKey(publicKeys);
         assertThat(pgpPublicKey, Matchers.notNullValue());
         assertThat(pgpPublicKey.getKeyID(), equalTo(ExampleMessages.PUBKEY_SENDER));
     }
@@ -77,7 +80,7 @@ public class PGPUtilitiesIntegrationTest {
         final PGPPublicKeyRing publicKeys = PGPUtilities.extractPublicKeyRingForUserId("sender2@example.com", decryptionConfig.getPublicKeyRings());
         assumeThat(publicKeys, Matchers.notNullValue());
 
-        final PGPPublicKey pgpPublicKey = PGPUtilities.extractSigningKey(publicKeys);
+        final PGPPublicKey pgpPublicKey = PGPUtilities.extractSigningPublicKey(publicKeys);
         assertThat(pgpPublicKey, Matchers.notNullValue());
         assertThat(pgpPublicKey.getKeyID(), equalTo(ExampleMessages.PUBKEY_SENDER_2));
     }
@@ -88,16 +91,16 @@ public class PGPUtilitiesIntegrationTest {
 
         final PGPSecretKeyRingCollection secretKeyRings = decryptionConfig.getSecretKeyRings();
 
-        final PGPPrivateKey privateKey = PGPUtilities.findSecretKey(secretKeyRings, PRIVATE_KEY_ID__ONLY_HAVE_PUB_KEY, decryptionConfig.getDecryptionSecretKeyPassphrase().toCharArray());
+        final PGPPrivateKey privateKey = PGPUtilities.findSecretKey(secretKeyRings, PRIVATE_KEY_ID__ONLY_HAVE_PUB_KEY, PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE);
         assertThat(privateKey, Matchers.nullValue());
     }
+
 
     @Test()
     public void findingPrivateMasterKey_withGoodPassword_returnsKey() throws Exception {
 
         final PGPSecretKeyRingCollection secretKeyRings = decryptionConfig.getSecretKeyRings();
-
-        final PGPPrivateKey pgpPrivateKey = PGPUtilities.extractPrivateKey(secretKeyRings.getSecretKey(PRIVATE_MASTER_KEY), decryptionConfig.getDecryptionSecretKeyPassphrase().toCharArray());
+        final PGPPrivateKey pgpPrivateKey = PGPUtilities.findSecretKey(secretKeyRings, PRIVATE_MASTER_KEY_RECIPIENT, PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE);
 
         assertThat(pgpPrivateKey, Matchers.notNullValue());
     }
@@ -106,17 +109,20 @@ public class PGPUtilitiesIntegrationTest {
     public void extractingPrivateMasterKey_withGoodPassword_returnsKey() throws Exception {
 
         final PGPSecretKeyRingCollection secretKeyRings = decryptionConfig.getSecretKeyRings();
-        final PGPPrivateKey pgpPrivateKey = PGPUtilities.extractPrivateKey(secretKeyRings.getSecretKey(PRIVATE_MASTER_KEY), decryptionConfig.getDecryptionSecretKeyPassphrase().toCharArray());
+
+        final PGPSecretKey secretKey = secretKeyRings.getSecretKey(PRIVATE_MASTER_KEY_RECIPIENT);
+        assumeNotNull(secretKey);
+
+        final PGPPrivateKey pgpPrivateKey = PGPUtilities.extractPrivateKey(secretKey, PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE);
 
         assertThat(pgpPrivateKey, Matchers.notNullValue());
     }
-
 
     @Test()
     public void extractingPrivateSubKey_withGoodPassword_returnsKey() throws Exception {
 
         final PGPSecretKeyRingCollection secretKeyRings = decryptionConfig.getSecretKeyRings();
-        final PGPPrivateKey pgpPrivateKey = PGPUtilities.extractPrivateKey(secretKeyRings.getSecretKey(PRIVATE_SUB_KEY), decryptionConfig.getDecryptionSecretKeyPassphrase().toCharArray());
+        final PGPPrivateKey pgpPrivateKey = PGPUtilities.extractPrivateKey(secretKeyRings.getSecretKey(PRIVATE_SUB_KEY_RECIPIENT), PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE);
 
         assertThat(pgpPrivateKey, Matchers.notNullValue());
     }
@@ -126,7 +132,7 @@ public class PGPUtilitiesIntegrationTest {
 
         final PGPSecretKeyRingCollection secretKeyRings = decryptionConfig.getSecretKeyRings();
 
-        final PGPPrivateKey pgpPrivateKey = PGPUtilities.extractPrivateKey(secretKeyRings.getSecretKey(PRIVATE_SUB_KEY), "wrong password".toCharArray());
+        PGPUtilities.extractPrivateKey(secretKeyRings.getSecretKey(PRIVATE_SUB_KEY_RECIPIENT), "wrong password".toCharArray());
     }
 
 }

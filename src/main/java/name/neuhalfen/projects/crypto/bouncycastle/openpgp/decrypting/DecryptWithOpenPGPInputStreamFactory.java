@@ -28,10 +28,6 @@ public class DecryptWithOpenPGPInputStreamFactory {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DecryptWithOpenPGPInputStreamFactory.class);
 
-    /**
-     * The decryption secret key passphrase.
-     */
-    private final char[] decryptionSecretKeyPassphrase;
 
     private final PGPContentVerifierBuilderProvider pgpContentVerifierBuilderProvider = new BcPGPContentVerifierBuilderProvider();
     private final DecryptionConfig config;
@@ -45,8 +41,6 @@ public class DecryptWithOpenPGPInputStreamFactory {
     public DecryptWithOpenPGPInputStreamFactory(final DecryptionConfig config, SignatureValidationStrategy signatureValidationStrategy) {
         this.signatureValidationStrategy = signatureValidationStrategy;
         this.config = config;
-
-        this.decryptionSecretKeyPassphrase = config.getDecryptionSecretKeyPassphrase().toCharArray();
     }
 
     public InputStream wrapWithDecryptAndVerify(InputStream in) throws IOException {
@@ -96,9 +90,10 @@ public class DecryptWithOpenPGPInputStreamFactory {
                 PGPPublicKeyEncryptedData pbe = null;
                 while (sKey == null && it.hasNext()) {
                     pbe = (PGPPublicKeyEncryptedData) it.next();
-                    sKey = PGPUtilities.findSecretKey(config.getSecretKeyRings(), pbe.getKeyID(), this.decryptionSecretKeyPassphrase);
+                    sKey = PGPUtilities.findSecretKey(config.getSecretKeyRings(), pbe.getKeyID(), config.decryptionSecretKeyPassphraseForSecretKeyId(pbe.getKeyID()));
                 }
                 if (sKey == null) {
+                    // Wrong passphrases already trigger a throw in PGPUtilities.findSecretKey.
                     throw new PGPException(
                             "Decryption failed - No secret key was found in the key ring matching the public key used "
                                     + "to encrypt the file, aborting");

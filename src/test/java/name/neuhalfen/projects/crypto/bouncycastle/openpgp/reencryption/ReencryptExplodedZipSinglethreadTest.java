@@ -5,6 +5,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.Decryption
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.CatchCloseStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import org.junit.Test;
@@ -31,8 +32,8 @@ public class ReencryptExplodedZipSinglethreadTest {
         ) {
             assumeNotNull(exampleEncryptedZip);
 
-            final EncryptionConfig encryptionConfig = Configs.buildConfigForEncryptionFromResources();
-            final DecryptionConfig decryptionConfig = Configs.buildConfigForDecryptionFromResources();
+            final EncryptionConfig encryptionConfig = Configs.buildConfigForEncryptionFromResources("sender@example.com", "sender");
+            final DecryptionConfig decryptionConfig = Configs.buildConfigForDecryptionFromResources(KeyringConfigCallbacks.withPassword("recipient"));
 
             assumeNotNull(encryptionConfig);
             assumeNotNull(decryptionConfig);
