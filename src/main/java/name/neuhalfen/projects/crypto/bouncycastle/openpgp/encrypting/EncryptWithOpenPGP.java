@@ -137,7 +137,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
 
         final PGPSecretKey pgpSec = PGPUtilities.extractSecretSigningKeyFromKeyrings(config.getSecretKeyRings(), signatureUid);
 
-        final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec, config.decryptionSecretKeyPassphraseForSecretKeyId(pgpSec.getKeyID()));
+        final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec, config.signingKeyPassphrase(pgpSec.getKeyID()));
         final PGPSignatureGenerator sGen =
                 new PGPSignatureGenerator(new BcPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), hashAlgorithmCode));
 

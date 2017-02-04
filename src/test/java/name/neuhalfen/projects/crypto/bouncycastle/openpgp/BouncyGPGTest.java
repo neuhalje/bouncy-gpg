@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNotNull;
 public class BouncyGPGTest {
     @Test
     public void decrypt_notNull() throws Exception {
-        assertNotNull(BouncyGPG.decrypt());
+        assertNotNull(BouncyGPG.decryptAndVerifyStream());
     }
 
     @Test

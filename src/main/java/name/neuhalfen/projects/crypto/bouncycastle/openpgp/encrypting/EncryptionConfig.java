@@ -69,7 +69,7 @@ public class EncryptionConfig {
     }
 
 
-    public char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID) {
+    public char[] signingKeyPassphrase(long keyID) {
         return keyringConfig.decryptionSecretKeyPassphraseForSecretKeyId(keyID);
     }
 }

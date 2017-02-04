@@ -21,17 +21,17 @@ public class BuildDecryptionInputStreamAPITest {
 
     @Test(expected = IllegalArgumentException.class)
     public void decryptConfigure_NoConfigPassed_throws() throws Exception {
-        BouncyGPG.decrypt().withConfig(null);
+        BouncyGPG.decryptAndVerifyStream().withConfig(null);
     }
 
     @Test
     public void decryptConfigure_ConfigPassed_notNull() throws Exception {
-        assertNotNull(BouncyGPG.decrypt().withConfig(mock(DefaultDecryptionConfig.class)));
+        assertNotNull(BouncyGPG.decryptAndVerifyStream().withConfig(mock(DefaultDecryptionConfig.class)));
     }
 
     @Test
     public void decryptConfigureValidate_notNull() throws Exception {
-        final BuildDecryptionInputStreamAPI.Validation withConfig = BouncyGPG.decrypt().withConfig(mock(DefaultDecryptionConfig.class));
+        final BuildDecryptionInputStreamAPI.Validation withConfig = BouncyGPG.decryptAndVerifyStream().withConfig(mock(DefaultDecryptionConfig.class));
         assumeNotNull(withConfig);
 
         assertNotNull(withConfig.andValidateSomeoneSigned());
@@ -41,14 +41,14 @@ public class BuildDecryptionInputStreamAPITest {
 
     @Test(expected = IllegalArgumentException.class)
     public void decryptConfigureValidate_pasNullCiphertext_throws() throws Exception {
-        final BuildDecryptionInputStreamAPI.Build build = BouncyGPG.decrypt().withConfig(mock(DefaultDecryptionConfig.class)).andIgnoreSignatures();
+        final BuildDecryptionInputStreamAPI.Build build = BouncyGPG.decryptAndVerifyStream().withConfig(mock(DefaultDecryptionConfig.class)).andIgnoreSignatures();
         build.fromEncryptedInputStream(null);
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void decryptValidateSpecificKeysLong_passNoKeys_throws() throws Exception {
-        final BuildDecryptionInputStreamAPI.Validation validation = BouncyGPG.decrypt().withConfig(mock(DefaultDecryptionConfig.class));
+        final BuildDecryptionInputStreamAPI.Validation validation = BouncyGPG.decryptAndVerifyStream().withConfig(mock(DefaultDecryptionConfig.class));
         assumeNotNull(validation);
 
         validation.andRequireSignatureFromAllKeys(new Long[]{});
@@ -56,7 +56,7 @@ public class BuildDecryptionInputStreamAPITest {
 
     @Test(expected = IllegalArgumentException.class)
     public void decryptValidateSpecificKeysUserId_passNoKeys2_throws() throws Exception {
-        final BuildDecryptionInputStreamAPI.Validation validation = BouncyGPG.decrypt().withConfig(mock(DefaultDecryptionConfig.class));
+        final BuildDecryptionInputStreamAPI.Validation validation = BouncyGPG.decryptAndVerifyStream().withConfig(mock(DefaultDecryptionConfig.class));
         assumeNotNull(validation);
 
         validation.andRequireSignatureFromAllKeys(new String[]{});
@@ -66,7 +66,7 @@ public class BuildDecryptionInputStreamAPITest {
     public void decryptAndValidateSignature_withGoodSettings_works() throws Exception {
 
         try (InputStream ciphertext = new ByteArrayInputStream(ExampleMessages.IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"))) {
-            final InputStream plaintextStream = BouncyGPG.decrypt()
+            final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
                     .withConfig(Configs.buildConfigForDecryptionFromResources())
                     .andRequireSignatureFromAllKeys("sender@example.com")
                     .fromEncryptedInputStream(ciphertext);
@@ -83,7 +83,7 @@ public class BuildDecryptionInputStreamAPITest {
     public void decryptNoSignatureValidation_withUnsignedData_works() throws Exception {
 
         try (InputStream ciphertext = new ByteArrayInputStream(ExampleMessages.IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"))) {
-            final InputStream plaintextStream = BouncyGPG.decrypt()
+            final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
                     .withConfig(Configs.buildConfigForDecryptionFromResources())
                     .andIgnoreSignatures()
                     .fromEncryptedInputStream(ciphertext);
@@ -99,7 +99,7 @@ public class BuildDecryptionInputStreamAPITest {
     public void decryptAndValidateSignature_withUnsignedData_throws() throws Exception {
 
         try (InputStream ciphertext = new ByteArrayInputStream(ExampleMessages.IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"))) {
-            final InputStream plaintextStream = BouncyGPG.decrypt()
+            final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
                     .withConfig(Configs.buildConfigForDecryptionFromResources())
                     .andRequireSignatureFromAllKeys("sender@example.com")
                     .fromEncryptedInputStream(ciphertext);

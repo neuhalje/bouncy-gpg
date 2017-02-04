@@ -20,14 +20,14 @@ public class BouncyGPG {
      * Usage:
      * <p>
      * <p>
-     * final InputStream plaintextStream = BouncyGPG.decrypt()
+     * final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
      * .withConfig(Configs.buildConfigForDecryptionFromResources())
      * .andRequireSignatureFromAllKeys("sender@example.com")
      * .fromEncryptedInputStream(ciphertextStream);
      *
      * @return The next build step.
      */
-    public static BuildDecryptionInputStreamAPI decrypt() {
+    public static BuildDecryptionInputStreamAPI decryptAndVerifyStream() {
         return new BuildDecryptionInputStreamAPI();
     }
 
