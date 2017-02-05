@@ -123,4 +123,8 @@ public abstract class KeyringConfig {
             return null;
         }
     }
+
+    public KeyFingerPrintCalculator getKeyFingerPrintCalculator() {
+        return keyFingerPrintCalculator;
+    }
 }

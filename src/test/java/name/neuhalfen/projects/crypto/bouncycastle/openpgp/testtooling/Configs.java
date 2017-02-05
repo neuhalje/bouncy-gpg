@@ -1,8 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DefaultDecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGPTest;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
@@ -55,21 +53,25 @@ public class Configs {
 
     }
 
-    private static KeyringConfig keyringConfigFromFiles(KeyringConfigCallback callback) {
+
+    public static KeyringConfig keyringConfigFromFilesForRecipient() {
+        return keyringConfigFromFiles(KeyringConfigCallbacks.withPassword("recipient"));
+    }
+
+    public static KeyringConfig keyringConfigFromFiles(KeyringConfigCallback callback) {
         return KeyringConfig.withKeyRingsFromFiles(
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/pubring.gpg"),
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/secring.gpg"),
                 callback);
     }
 
-    public static EncryptionConfig buildConfigForEncryptionFromResources() {
-        return buildConfigForEncryptionFromResources(
-                "recipient@example.com",
-                "recipient");
+
+    public static KeyringConfig keyringConfigFromResourceForRecipient() {
+        return keyringConfigFromResource(KeyringConfigCallbacks.withPassword("recipient"));
     }
 
 
-    private static KeyringConfig keyringConfigFromResource(KeyringConfigCallback callback) {
+    public static KeyringConfig keyringConfigFromResource(KeyringConfigCallback callback) {
         return KeyringConfig.withKeyRingsFromResources(EncryptWithOpenPGPTest.class.getClassLoader(),
                 "recipient.gpg.d/pubring.gpg",
                 "recipient.gpg.d/secring.gpg",
@@ -77,24 +79,9 @@ public class Configs {
     }
 
 
-    public static DecryptionConfig buildConfigForDecryptionFromFiles(KeyringConfigCallback callback) {
-        final DecryptionConfig decryptAndVerifyConfig = new DefaultDecryptionConfig(keyringConfigFromFiles(callback));
-
-        return decryptAndVerifyConfig;
-    }
-
-    public static DecryptionConfig buildConfigForDecryptionFromResources(KeyringConfigCallback callback) {
-        final DecryptionConfig decryptAndVerifyConfig = new DefaultDecryptionConfig(keyringConfigFromResource(callback));
-
-        return decryptAndVerifyConfig;
-
-    }
-
-    public static DecryptionConfig buildConfigForDecryptionFromResources() {
-        return buildConfigForDecryptionFromResources(KeyringConfigCallbacks.withPassword("recipient"));
-    }
-
-    public static DecryptionConfig buildConfigForDecryptionFromFiles() {
-        return buildConfigForDecryptionFromFiles(KeyringConfigCallbacks.withPassword("recipient"));
+    public static EncryptionConfig buildConfigForEncryptionFromResources() {
+        return buildConfigForEncryptionFromResources(
+                "recipient@example.com",
+                "recipient");
     }
 }

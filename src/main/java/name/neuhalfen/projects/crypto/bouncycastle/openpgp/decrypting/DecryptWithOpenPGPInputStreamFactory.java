@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.operator.PGPContentVerifierBuilderProvider;
@@ -18,15 +19,15 @@ public class DecryptWithOpenPGPInputStreamFactory {
 
 
     private final PGPContentVerifierBuilderProvider pgpContentVerifierBuilderProvider = new BcPGPContentVerifierBuilderProvider();
-    private final DecryptionConfig config;
+    private final KeyringConfig config;
 
-    public static DecryptWithOpenPGPInputStreamFactory create(final DecryptionConfig config, SignatureValidationStrategy signatureValidationStrategy) {
+    public static DecryptWithOpenPGPInputStreamFactory create(final KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) {
         return new DecryptWithOpenPGPInputStreamFactory(config, signatureValidationStrategy);
     }
 
     private final SignatureValidationStrategy signatureValidationStrategy;
 
-    public DecryptWithOpenPGPInputStreamFactory(final DecryptionConfig config, SignatureValidationStrategy signatureValidationStrategy) {
+    public DecryptWithOpenPGPInputStreamFactory(final KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) {
         this.signatureValidationStrategy = signatureValidationStrategy;
         this.config = config;
     }

@@ -1,5 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.openpgp.PGPException;
@@ -20,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 public class DecryptWithOpenPGPInputStreamFactoryTest {
 
-    String decrypt(byte[] encrypted, DecryptionConfig config, SignatureValidationStrategy signatureValidationStrategy) throws IOException {
+    String decrypt(byte[] encrypted, KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) throws IOException {
         final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(config, signatureValidationStrategy);
 
         final InputStream plainTextInputStream = sut.wrapWithDecryptAndVerify(new ByteArrayInputStream(encrypted));
@@ -37,7 +38,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     @Test
     public void decrypting_anyData_doesNotCloseInputStream() throws IOException, SignatureException, NoSuchAlgorithmException {
 
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
         final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(config, SignatureValidationStrategies.ignoreSignatures());
 
         InputStream in = spy(new ByteArrayInputStream(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII")));
@@ -51,7 +52,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test
     public void decryptingAndVerifying_smallAmountsOfData_correctlyDecryptsUncompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.ignoreSignatures());
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -60,7 +61,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     @Test
     public void decryptingAndVerifyingMessageWith_Single_Signature_requiringAnySignature_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
 
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireAnySignature());
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -69,7 +70,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     @Test
     public void decryptingAndVerifyingMessageWith_SingleUnknown_Signature_requiringNoSignature_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
 
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_UNKNOWN_KEY_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.ignoreSignatures());
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -78,14 +79,14 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     @Test(expected = IOException.class)
     public void decryptingAndVerifyingMessageWith_SingleUnknown_Signature_requiringAnySignature_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
 
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         decrypt(IMPORTANT_QUOTE_SIGNED_UNKNOWN_KEY_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireAnySignature());
     }
 
     @Test
     public void decryptingAndVerifyingMessageWith_Multiple_Signatures_requiringNoSignature_correctlyDecryptsCompressedAndArmored() throws IOException, SignatureException, NoSuchAlgorithmException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.ignoreSignatures());
 
@@ -95,7 +96,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     @Test(expected = IOException.class)
     public void decryptingTamperedSignedCiphertext_fails() throws IOException, NoSuchAlgorithmException {
 
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
         final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(config, SignatureValidationStrategies.requireAnySignature());
 
         byte[] buf = IMPORTANT_QUOTE_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII");
@@ -110,21 +111,21 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test(expected = IOException.class)
     public void decryptingSignedMessageAndRequiringSpecificSigner_notSignedByTheCorrectKey_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_RECIPIENT));
     }
 
     @Test(expected = IOException.class)
     public void decryptingMultiSignedMessageAndRequiringSpecificSigner_notSignedByTheCorrectKey_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_RECIPIENT));
     }
 
     @Test
     public void decryptingSignedMessageAndRequiringSpecificSigner_signedByTheCorrectKey_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER));
 
@@ -133,14 +134,14 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test(expected = IOException.class)
     public void decryptingSignedMessageAndRequiringMultipleSpecificSigner_signedBySubsetOfTheCorrectKeys_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER, ExampleMessages.PUBKEY_ANOTHER_SENDER));
     }
 
     @Test
     public void decryptingSignedMessageAndRequiringMultipleSpecificSigner_signedByTheCorrectKeys_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER, ExampleMessages.PUBKEY_SENDER_2));
 
@@ -149,7 +150,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test
     public void usingSingleUserIdToSignatureValidationSelectKeys_isResolvable_verificationSucceeds() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(config.getPublicKeyRings(), "sender@example.com"));
 
@@ -158,7 +159,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test
     public void usingUserIdsToSignatureValidationSelectKeys_allKeysResolvable_verificationSucceeds() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(config.getPublicKeyRings(), "sender@example.com", "sender2@example.com"));
 
@@ -167,14 +168,14 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test(expected = PGPException.class)
     public void usingUserIdsToSignatureValidationSelectKeys_oneKeyNotResolvable_fails() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         SignatureValidationStrategies.requireSignatureFromAllKeys(config.getPublicKeyRings(), "sender@example.com", "unknown@example.com");
     }
 
     @Test
     public void decryptingSignedMessageAndRequiringSpecificSigner_signedByTheCorrectKeyAndOthers_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER));
 
@@ -183,14 +184,14 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test(expected = IOException.class)
     public void decryptingMessage_withoutHavingSecretKey_fails() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         decrypt(IMPORTANT_QUOTE_NOT_ENCRYPTED_TO_ME.getBytes("US-ASCII"), config, SignatureValidationStrategies.ignoreSignatures());
     }
 
     @Test(expected = IOException.class)
     public void decryptingUnsignedMessage_butAnySignatureIsRequired_fails() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireAnySignature());
 
@@ -199,7 +200,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test(expected = IOException.class)
     public void decryptingUnsignedMessage_butSpecificSignatureIsRequired_fails() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER));
 
@@ -208,7 +209,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test
     public void decryptingUnsignedMessage_andSignatureIsNotRequired_succeeds() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.ignoreSignatures());
 
@@ -217,7 +218,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test
     public void decryptingSignedMessage_andSignatureIsNotRequired_succeeds() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.ignoreSignatures());
 
@@ -226,7 +227,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test
     public void decryptingSignedMessageWithSingleeSignatures_andAnySignatureIsRequired_succeeds() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireAnySignature());
 
@@ -235,7 +236,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test
     public void decryptingSignedMessageWithMultipleSignaturesKnownSignatureFirst_andAnySignatureIsRequired_succeeds() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireAnySignature());
 
@@ -244,7 +245,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
 
     @Test
     public void decryptingSignedMessageWithMultipleSignaturesUnknownSignatureFirst_andAnySignatureIsRequired_succeeds() throws IOException, SignatureException {
-        final DecryptionConfig config = Configs.buildConfigForDecryptionFromResources();
+        final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
         final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireAnySignature());
 

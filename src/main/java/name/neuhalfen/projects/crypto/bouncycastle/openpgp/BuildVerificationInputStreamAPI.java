@@ -1,8 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategy;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.Collection;
 public class BuildVerificationInputStreamAPI {
     private InputStream signedData;
 
-    private DecryptionConfig decryptionConfig;
+    private KeyringConfig keyringConfig;
 
     // Signature
 
@@ -19,8 +19,8 @@ public class BuildVerificationInputStreamAPI {
     BuildVerificationInputStreamAPI() {
     }
 
-    public Validation withConfig(DecryptionConfig decryptionConfig) {
-        BuildVerificationInputStreamAPI.this.decryptionConfig = decryptionConfig;
+    public Validation withConfig(KeyringConfig decryptionConfig) {
+        BuildVerificationInputStreamAPI.this.keyringConfig = decryptionConfig;
         return new Validation();
     }
 

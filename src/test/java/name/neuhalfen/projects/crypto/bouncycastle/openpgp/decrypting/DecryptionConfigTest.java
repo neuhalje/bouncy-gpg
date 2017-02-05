@@ -1,5 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -31,46 +32,46 @@ public class DecryptionConfigTest {
      */
     @Parameterized.Parameters
     public static Object[] data() {
-        return new Object[]{Configs.buildConfigForDecryptionFromResources(), Configs.buildConfigForDecryptionFromFiles()};
+        return new Object[]{Configs.keyringConfigFromFilesForRecipient(), Configs.keyringConfigFromResourceForRecipient()};
     }
 
 
     @Parameterized.Parameter
-    public /* NOT private */ DefaultDecryptionConfig decryptionConfig;
+    public /* NOT private */ KeyringConfig keyringConfig;
 
     @Test
     public void toString_returns_nonEmptyString() throws Exception {
-        assertThat(decryptionConfig.toString(), is(not(IsEmptyString.isEmptyString())));
+        assertThat(keyringConfig.toString(), is(not(IsEmptyString.isEmptyString())));
     }
 
     @Test
     public void getKeyFingerPrintCalculator_returnsNonNull() throws IOException, PGPException {
-        assertNotNull(decryptionConfig.getKeyFingerPrintCalculator());
+        assertNotNull(keyringConfig.getKeyFingerPrintCalculator());
     }
 
     @Test
     public void doesNotThrow() throws IOException, PGPException {
-        assertThat(decryptionConfig.getPublicKeyRings(), is(notNullValue()));
-        assertThat(decryptionConfig.getSecretKeyRings(), is(notNullValue()));
+        assertThat(keyringConfig.getPublicKeyRings(), is(notNullValue()));
+        assertThat(keyringConfig.getSecretKeyRings(), is(notNullValue()));
     }
 
     @Test
     public void loading_doesNotThrow() throws IOException, PGPException {
-        assertThat(decryptionConfig.getPublicKeyRings(), is(notNullValue()));
-        assertThat(decryptionConfig.getSecretKeyRings(), is(notNullValue()));
+        assertThat(keyringConfig.getPublicKeyRings(), is(notNullValue()));
+        assertThat(keyringConfig.getSecretKeyRings(), is(notNullValue()));
     }
 
     @Test
     public void findPubKeys_works() throws IOException, PGPException {
-        assertTrue(decryptionConfig.getPublicKeyRings().contains(ExampleMessages.PUBKEY_SENDER));
-        assertTrue(decryptionConfig.getPublicKeyRings().contains(ExampleMessages.PUBKEY_SENDER_2));
-        assertTrue(decryptionConfig.getPublicKeyRings().contains(ExampleMessages.PUBKEY_RECIPIENT));
+        assertTrue(keyringConfig.getPublicKeyRings().contains(ExampleMessages.PUBKEY_SENDER));
+        assertTrue(keyringConfig.getPublicKeyRings().contains(ExampleMessages.PUBKEY_SENDER_2));
+        assertTrue(keyringConfig.getPublicKeyRings().contains(ExampleMessages.PUBKEY_RECIPIENT));
     }
 
 
     @Test
     public void findSecretKey_works() throws IOException, PGPException {
-        assertTrue(decryptionConfig.getSecretKeyRings().contains(ExampleMessages.SECRETKEY_RECIPIENT));
+        assertTrue(keyringConfig.getSecretKeyRings().contains(ExampleMessages.SECRETKEY_RECIPIENT));
     }
 
 }

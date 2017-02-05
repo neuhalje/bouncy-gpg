@@ -1,11 +1,10 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.CatchCloseStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import org.junit.Test;
@@ -33,14 +32,14 @@ public class ReencryptExplodedZipSinglethreadTest {
             assumeNotNull(exampleEncryptedZip);
 
             final EncryptionConfig encryptionConfig = Configs.buildConfigForEncryptionFromResources("sender@example.com", "sender");
-            final DecryptionConfig decryptionConfig = Configs.buildConfigForDecryptionFromResources(KeyringConfigCallbacks.withPassword("recipient"));
+            final KeyringConfig keyringConfig = Configs.keyringConfigFromResourceForRecipient();
 
             assumeNotNull(encryptionConfig);
-            assumeNotNull(decryptionConfig);
+            assumeNotNull(keyringConfig);
 
             EncryptWithOpenPGP encryptWithOpenPGP = new EncryptWithOpenPGP(encryptionConfig);
 
-            DecryptWithOpenPGPInputStreamFactory decription = new DecryptWithOpenPGPInputStreamFactory(decryptionConfig, SignatureValidationStrategies.requireAnySignature());
+            DecryptWithOpenPGPInputStreamFactory decription = new DecryptWithOpenPGPInputStreamFactory(keyringConfig, SignatureValidationStrategies.requireAnySignature());
 
             try (
                     final InputStream plainTextStream = CatchCloseStream.wrap("plain", decription.wrapWithDecryptAndVerify(exampleEncryptedZip))
