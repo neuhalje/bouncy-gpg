@@ -3,6 +3,8 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
 import org.junit.Assert;

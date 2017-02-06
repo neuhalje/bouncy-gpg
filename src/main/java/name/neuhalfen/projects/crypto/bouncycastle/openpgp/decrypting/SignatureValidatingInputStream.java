@@ -1,5 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPOnePassSignature;

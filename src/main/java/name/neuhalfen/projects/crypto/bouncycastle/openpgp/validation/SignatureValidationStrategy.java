@@ -1,4 +1,4 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
+package name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation;
 
 
 import org.bouncycastle.openpgp.PGPException;
@@ -19,7 +19,7 @@ public interface SignatureValidationStrategy {
 
 
     /**
-     * @return Iff a signature is required for a document.
+     * @return Iff a signature is required for a document. false: All, even broken(!) signatures are ignored.
      */
     boolean isRequireSignatureCheck();
 }

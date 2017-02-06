@@ -3,6 +3,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
 import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.operator.PGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;

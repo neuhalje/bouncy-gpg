@@ -1,4 +1,4 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
+package name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation;
 
 
 import org.bouncycastle.openpgp.PGPException;

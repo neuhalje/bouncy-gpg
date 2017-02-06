@@ -53,6 +53,18 @@ encrypt.sh
 
 * `encrypt.sh  SOURCEFILE DESTFILE` -- uses the testing keys to encrypt a file. Useful for performance measurements.
 
+Important Classes
+=====================
+
+
+| Class                         | Use when you want to                                                                |
+|:------------------------------|:------------------------------------------------------------------------------------|
+| [`BouncyGPG`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/BouncyGPG.java) | Starting point for the convenient fluent en- and decryption API. |
+| [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfigs.java) | Create default implementations for GPG keyring access. You can also create your won implementations by implementing  [`KeyringConfig`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfig.java). |
+| [`KeyringConfigCallbacks`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfigCallbacks.java) | Used by  [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfigs.java). Create default implementations to provide secret-key passwords. 
+|
+
+
 
 FAQ
 =====
