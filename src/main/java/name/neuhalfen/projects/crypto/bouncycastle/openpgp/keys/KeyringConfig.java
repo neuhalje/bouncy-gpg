@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Interface that describes keyrings (e.g. pubring.gpg)
+ * Interface that describes keyrings (e.g. pubring.gpg ans secring.gpg)
  *
  * @see KeyringConfigs
  */

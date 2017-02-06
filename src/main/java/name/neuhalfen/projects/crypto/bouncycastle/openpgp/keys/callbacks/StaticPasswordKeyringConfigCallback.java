@@ -1,7 +1,9 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
+package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 
-class StaticPasswordKeyringConfigCallback implements KeyringConfigCallback {
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallback;
+
+public class StaticPasswordKeyringConfigCallback implements KeyringConfigCallback {
 
 
     private final char[] passphrase;

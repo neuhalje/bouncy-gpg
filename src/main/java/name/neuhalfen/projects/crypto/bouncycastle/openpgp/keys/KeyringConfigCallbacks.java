@@ -1,6 +1,9 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.StaticPasswordKeyringConfigCallback;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.UnprotectedKeysKeyringConfigCallback;
+
 /**
  * Factory for convenience implementations of KeyringConfigCallback.
  *

@@ -1,6 +1,8 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
+package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallback;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
