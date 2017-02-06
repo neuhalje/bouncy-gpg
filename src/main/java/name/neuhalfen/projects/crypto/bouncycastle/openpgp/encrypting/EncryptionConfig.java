@@ -1,7 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.DefaultKeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
@@ -14,7 +14,7 @@ public class EncryptionConfig {
     private final String encryptionPublicKeyId;
     private final int pgpHashAlgorithmCode;
     private final int pgpSymmetricEncryptionAlgorithmCode;
-    private final KeyringConfig keyringConfig;
+    private final DefaultKeyringConfig keyringConfig;
 
 
     public PGPPublicKeyRingCollection getPublicKeyRings() throws IOException, PGPException {
@@ -32,7 +32,7 @@ public class EncryptionConfig {
                             String encryptionPublicKeyId,
                             int pgpHashAlgorithmCode,
                             int pgpSymmetricEncryptionAlgorithmCode,
-                            KeyringConfig keyringConfig) {
+                            DefaultKeyringConfig keyringConfig) {
         this.keyringConfig = keyringConfig;
         this.signatureSecretKeyId = signatureSecretKeyId;
         this.encryptionPublicKeyId = encryptionPublicKeyId;

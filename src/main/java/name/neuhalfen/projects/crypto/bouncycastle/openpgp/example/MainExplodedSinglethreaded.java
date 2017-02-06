@@ -4,8 +4,9 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWit
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.DefaultKeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.FSZipEntityStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.ReencryptExplodedZipSinglethread;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.ZipEntityStrategy;
@@ -33,7 +34,7 @@ public class MainExplodedSinglethreaded {
 
             try {
 
-                final KeyringConfig keyringConfig = KeyringConfig.withKeyRingsFromFiles(pubKeyRing,
+                final DefaultKeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
 
                 final EncryptionConfig encryptionConfig = new EncryptionConfig(
