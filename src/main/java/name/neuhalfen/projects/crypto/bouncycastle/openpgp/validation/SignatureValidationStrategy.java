@@ -14,6 +14,8 @@ public interface SignatureValidationStrategy {
      * @param factory           the PGPObjectFactory
      * @param onePassSignatures all signatures for which public keys have been found, indexed by pubKeyId.
      * @throws SignatureException No satisfiable signature has been found (no signature for expected keys / broken signature)
+     * @throws IOException IO is dangerous
+     * @throws PGPException general error processing PGP
      */
     void validateSignatures(PGPObjectFactory factory, Map<Long, PGPOnePassSignature> onePassSignatures) throws SignatureException, PGPException, IOException;
 

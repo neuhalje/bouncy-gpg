@@ -8,10 +8,10 @@ import java.io.InputStream;
 
 /**
  * Implements a keyring based on resources.
- * <p>
+ * .
  * Use-case: Baked in GPG keyring (probably only with public keys)
  * without distributing separate keyring files.
- * <p>
+ * .
  * See the unit tests for an example:
  * (in tests)  name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs
  */

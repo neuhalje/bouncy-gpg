@@ -28,6 +28,7 @@ public class PGPUtilities {
      * @return the pGP private key
      * @throws PGPException            the pGP exception
      * @throws NoSuchProviderException the no such provider exception
+     * @return the decrypted secret key
      */
     public static PGPPrivateKey findSecretKey(final PGPSecretKeyRingCollection pgpSec, final long keyID, final char[] pass)
             throws PGPException, NoSuchProviderException {
@@ -47,6 +48,7 @@ public class PGPUtilities {
      * @param passphrase   The passphrase for the key
      * @return The decrypted key
      * @throws PGPException E.g. wrong passphrase
+     * @return the decrypted secret key
      */
     public static PGPPrivateKey extractPrivateKey(PGPSecretKey encryptedKey, final char[] passphrase) throws PGPException {
         LOGGER.trace("Extracting secret key for decryption with key ID '0x{}'", Long.toHexString(encryptedKey.getKeyID()));
@@ -66,8 +68,8 @@ public class PGPUtilities {
      *
      * @param publicKeyUid   the public key uid, e.g. sender@example.com
      * @param publicKeyRings the public key rings
-     * @return the pGP public key ring
-     * @throws PGPException E.g. multiple keyrings for same uid
+     * @return the PGP public key ring containing the userId
+     * @throws PGPException E.g. multiple keyrings for same uid OR key not found in keyrings
      */
     public static PGPPublicKeyRing extractPublicKeyRingForUserId(final String publicKeyUid,
                                                                  final PGPPublicKeyRingCollection publicKeyRings)
@@ -95,13 +97,14 @@ public class PGPUtilities {
 
     /**
      * Extract a signing key from the keyring. There must be only one signing key.
-     * <p>
+     * .
      * FIXME: refactor this, so that we use all key from the keyring as valid signing keys
-     * <p>
-     * Detection of a good signig
+     * .
+     * Detection of possible signing keys is heuristic at best.
      *
+     * @throws PGPException Multiple signing (encryption) keys found in keyring
      * @param keyring search here
-     * @return
+     * @return a public key that can be used for signing
      */
     public static PGPPublicKey extractSigningPublicKey(PGPPublicKeyRing keyring) throws PGPException {
 
@@ -159,6 +162,7 @@ public class PGPUtilities {
      *
      * @param publicKeyRing the public key ring
      * @return the encryption key
+     * @deprecated Use explicit uid for signing
      */
     public static PGPPublicKey getEncryptionKey(final PGPPublicKeyRing publicKeyRing) {
         PGPPublicKey returnKey = null;

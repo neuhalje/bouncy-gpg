@@ -48,18 +48,18 @@ public class BuildDecryptionInputStreamAPI {
         /**
          * Decryption will enforce that the ciphertext has been signed by ALL of the
          * public key ids passed.
-         * <p>
+         * .
          * Key-ids are long values. For example with the following keyring
-         * <p>
+         * .
          * # gpg -k --keyid-format=0xlong
          * ...
          * pub   2048R/0x3DF16BD7C3F280F3 2015-09-27
-         * uid                 [ultimate] Rezi Recipient (Pasword: recipient) <recipient@example.com>
+         * uid                 [ultimate] Rezi Recipient (Pasword: recipient) &lt;recipient@example.com&gt;
          * sub   2048R/0x54A3DB374F787AB7 2015-09-27
          * ...
-         * <p>
-         * -->
-         * <p>
+         * .
+         * --&gt;
+         * .
          * andRequireSignatureFromAllKeys(0x54A3DB374F787AB7L)
          *
          * @param publicKeyIds a valid signature from all of the passed keys is required. The keys MUST exist in the public keyring.
@@ -79,21 +79,23 @@ public class BuildDecryptionInputStreamAPI {
         /**
          * Decryption will enforce that the ciphertext has been signed by ALL of the
          * public key ids passed.
-         * <p>
+         * .
          * Key-ids are long values. For example with the following keyring
-         * <p>
+         * .
          * # gpg -k --keyid-format=0xlong
-         * <p>
+         * .
          * pub   2048R/0x3DF16BD7C3F280F3 2015-09-27
-         * uid                 [ultimate] Rezi Recipient (Pasword: recipient) <recipient@example.com>
+         * uid                 [ultimate] Rezi Recipient (Pasword: recipient) &lt;recipient@example.com&gt;
          * sub   2048R/0x54A3DB374F787AB7 2015-09-27
-         * <p>
-         * <p>
-         * -->
-         * <p>
+         * .
+         * .
+         * --&gt;
+         * .
          * andRequireSignatureFromAllKeys("recipient@example.com")
          *
          * @param userIds a valid signature from all of the passed keys is required. The keys MUST exist in the public keyring.
+         * @throws PGPException error extracting public keys from keyring
+         * @throws IOException  IO is dangerous
          * @return the next build step
          */
         @Nonnull
@@ -109,7 +111,7 @@ public class BuildDecryptionInputStreamAPI {
 
         /**
          * Enforce a valid signature from *any* public key in the keyring.
-         * <p>
+         * .
          * Signatures of keys NOT present in the keyring are IGNORED (treated as not existing).
          *
          * @return next build step
@@ -136,11 +138,11 @@ public class BuildDecryptionInputStreamAPI {
 
         /**
          * Build the final decrypted input stream.
-         * <p>
+         * .
          * This method will start reading the cipherstream until it finds the encrypted plaintext.
-         * <p>
+         * .
          * If the source data is NOT signed, but a signature is REQUIRED, then this function might even throw.
-         * <p>
+         * .
          * Signatures are verified AFTER decryption (reading the whole(!) plaintext stream).
          *
          * @param encryptedData An encrypted input stream. Will not be closed.

@@ -16,10 +16,10 @@ public class BouncyGPG {
 
     /**
      * Entry point for stream based decryption.
-     * <p>
+     * .
      * Usage:
-     * <p>
-     * <p>
+     * .
+     * .
      * final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
      * .withConfig(Configs.buildConfigForDecryptionFromResources())
      * .andRequireSignatureFromAllKeys("sender@example.com")
