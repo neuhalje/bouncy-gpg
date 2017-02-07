@@ -53,14 +53,46 @@ encrypt.sh
 
 * `encrypt.sh  SOURCEFILE DESTFILE` -- uses the testing keys to encrypt a file. Useful for performance measurements.
 
-Important Classes
-=====================
+HOWTO
+===========
+
+Have a look at the example classes to see how easy it is to use Bouncy Castle PGP.
+
+#1 Register Bouncy Castle Provider
+-------------------------------
+
+Add bouncy castle as a dependency and then install the provider before in your application.
+
+### Add Build Dependency
+
+```groovy
+
+// in build.gradle add a dependency to bouncy castle and bouncy-gpg
+//  ...
+dependencies {
+    compile 'org.bouncycastle:bcprov-jdk15on:1.56'
+    compile 'org.bouncycastle:bcpg-jdk15on:1.56'
+    //  ...
+    compile 'name.neuhalfen.projects.crypto.bouncycastle.openpgp:bouncy-gpg:2.+'
+```
+
+### Install Provider
+
+```java
+    // in one of you classed install the BC provider
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+```
+
+#2 Important Classes
+-------------------
 
 
 | Class                         | Use when you want to                                                                |
 |:------------------------------|:------------------------------------------------------------------------------------|
 | [`BouncyGPG`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/BouncyGPG.java) | Starting point for the convenient fluent en- and decryption API. |
-| [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfigs.java) | Create default implementations for GPG keyring access. You can also create your won implementations by implementing  [`KeyringConfig`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfig.java). |
+| [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfigs.java) | Create default implementations for GPG keyring access. You can also create your own implementations by implementing  [`KeyringConfig`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfig.java). |
 | [`KeyringConfigCallbacks`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfigCallbacks.java) | Used by  [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfigs.java). Create default implementations to provide secret-key passwords. 
 |
 
@@ -75,7 +107,7 @@ FAQ
   coverage. It is free (speech & beer).</dd>
 
   <dt>Can I just grab a class or two for my project?</dt>
-  <dd>Sure! Just grab it and hack away! The code is placed under the <a href="LICENSE">WTPL</a>, you can't get much
+  <dd>Sure! Just grab it and hack away! The code is placed under the <a href="LICENSE">WTFPL</a>, you can't get much
    more permissive than this.</dd>
 
    <dt>Why is the test coverage so low?</dt>
@@ -83,7 +115,7 @@ FAQ
    throw exceptions when the input format is broken. </dd>
 
    <dt>How can I contribute?</dt>
-   <dd>Pullrequests are welcome!</dd>
+   <dd>Pullrequests are welcome! Please state in your PR that you put your code under the LICENSE.</dd>
    
    <dt>I am getting 'org.bouncycastle.openpgp.PGPException: checksum mismatch ..' exceptions</dt>
    <dd>The passphrase to your private key is very likely wrong (or you did not pass a passphrase).</dd>
