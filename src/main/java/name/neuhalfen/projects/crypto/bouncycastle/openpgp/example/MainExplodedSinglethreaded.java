@@ -12,13 +12,20 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.ZipEntit
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.security.Security;
 
 public class MainExplodedSinglethreaded {
 
+    static void installBCProvider() {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
 
     public static void main(String[] args) {
         if (args.length != 6) {
@@ -33,6 +40,7 @@ public class MainExplodedSinglethreaded {
             final File destRootDir = new File(args[5]);
 
             try {
+                installBCProvider();
 
                 final DefaultKeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));

@@ -15,10 +15,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages.*;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class DecryptWithOpenPGPInputStreamFactoryTest {
@@ -26,7 +28,13 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     String decrypt(byte[] encrypted, KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) throws IOException {
         final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(config, signatureValidationStrategy);
 
-        final InputStream plainTextInputStream = sut.wrapWithDecryptAndVerify(new ByteArrayInputStream(encrypted));
+        final InputStream plainTextInputStream;
+        try {
+            plainTextInputStream = sut.wrapWithDecryptAndVerify(new ByteArrayInputStream(encrypted));
+        } catch (NoSuchProviderException e) {
+            assertTrue("BC provider must be registered by test", false);
+            throw new AssertionError(e);
+        }
 
         ByteArrayOutputStream res = new ByteArrayOutputStream();
         Streams.pipeAll(plainTextInputStream, res);
@@ -38,7 +46,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     }
 
     @Test
-    public void decrypting_anyData_doesNotCloseInputStream() throws IOException, SignatureException, NoSuchAlgorithmException {
+    public void decrypting_anyData_doesNotCloseInputStream() throws IOException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException {
 
         final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
         final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(config, SignatureValidationStrategies.ignoreSignatures());
@@ -96,7 +104,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     }
 
     @Test(expected = IOException.class)
-    public void decryptingTamperedSignedCiphertext_fails() throws IOException, NoSuchAlgorithmException {
+    public void decryptingTamperedSignedCiphertext_fails() throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
 
         final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
         final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(config, SignatureValidationStrategies.requireAnySignature());

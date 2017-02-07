@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.NoSuchProviderException;
 
 /**
  * This class implements the builder for decrypting Streams.
@@ -150,7 +151,7 @@ public class BuildDecryptionInputStreamAPI {
          * @throws IOException IO is dangerous. Also wraps several GPG exceptions.
          */
         @Nonnull
-        public InputStream fromEncryptedInputStream(@Nullable InputStream encryptedData) throws IOException {
+        public InputStream fromEncryptedInputStream(@Nullable InputStream encryptedData) throws IOException, NoSuchProviderException {
             if (encryptedData == null) {
                 throw new IllegalArgumentException("encryptedData must not be null");
             }

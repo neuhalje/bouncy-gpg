@@ -1,18 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import java.security.Security;
-
 public class BouncyGPG {
-    // make sure the Bouncy Castle provider is available:
-    // because of this we can avoid declaring throws NoSuchProviderException further down
-    static {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
-    }
 
     /**
      * Entry point for stream based decryption.

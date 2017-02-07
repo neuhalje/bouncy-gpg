@@ -7,14 +7,24 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.CatchCloseStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.security.Security;
 
 import static org.junit.Assume.assumeNotNull;
 import static org.mockito.Mockito.mock;
 
 public class ReencryptExplodedZipMultithreadedTest {
+    @Before
+    public void installBCProvider() {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
+
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ReencryptExplodedZipMultithreadedTest.class);
 
     private ZipEntityStrategy dummyStrategy = mock(ZipEntityStrategy.class);

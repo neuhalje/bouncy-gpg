@@ -4,7 +4,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.operator.bc.BcPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPDataEncryptorBuilder;
@@ -15,20 +14,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.Security;
 import java.security.SignatureException;
 import java.util.Date;
 import java.util.Iterator;
 
 public class EncryptWithOpenPGP implements StreamEncryption {
-
-
-    // make sure the Bouncy Castle provider is available:
-    // because of this we can avoid declaring throws NoSuchProviderException further down
-    static {
-        Security.addProvider(new BouncyCastleProvider());
-    }
-
     /**
      * The Constant LOGGER.
      */
@@ -83,16 +73,11 @@ public class EncryptWithOpenPGP implements StreamEncryption {
 
     @Override
     public void encryptAndSign(final InputStream is, final OutputStream os) throws IOException,
-            NoSuchAlgorithmException, SignatureException, PGPException {
+            NoSuchAlgorithmException, SignatureException, PGPException, NoSuchProviderException {
         final long starttime = System.currentTimeMillis();
-        try {
-            encryptAndSign(is, os, PGPUtilities.getEncryptionKey(this.encryptionPublicKeyRing), true, true,
-                    this.hashAlgorithmCode, this.symmetricEncryptionAlgorithmCode);
-        } catch (NoSuchProviderException anEx) {
-            // This can't happen because we made sure of it in the static part at the top
-            throw new AssertionError("Bouncy Castle Provider is needed");
+        encryptAndSign(is, os, PGPUtilities.getEncryptionKey(this.encryptionPublicKeyRing), true, true,
+                this.hashAlgorithmCode, this.symmetricEncryptionAlgorithmCode);
 
-        }
         LOGGER.debug("Encrypt and sign duration {}s", (System.currentTimeMillis() - starttime) / MLLIES_PER_SEC);
     }
 

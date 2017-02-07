@@ -33,21 +33,17 @@ public class DecryptWithOpenPGPInputStreamFactory {
         this.config = config;
     }
 
-    public InputStream wrapWithDecryptAndVerify(InputStream in) throws IOException {
+    public InputStream wrapWithDecryptAndVerify(InputStream in) throws IOException, NoSuchProviderException {
         LOGGER.trace("Trying to decrypt and verify PGP Encryption.");
         try {
             final PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(in), config.getKeyFingerPrintCalculator());
 
             return nextDecryptedStream(factory, new SignatureValidatingInputStream.DecryptionState());
 
-        } catch (NoSuchProviderException anEx) {
-            // This can't happen because we made sure of it in the static part at the top
-            throw new AssertionError("Bouncy Castle Provider is needed");
         } catch (PGPException e) {
             throw new IOException("Failure decrypting", e);
         }
     }
-
 
     /**
      * Handles PGP objects in decryption process by recursively calling itself.
@@ -56,7 +52,7 @@ public class DecryptWithOpenPGPInputStreamFactory {
      * @param state   Decryption state, e.g. used for signature validation
      * @throws PGPException            the pGP exception
      * @throws IOException             Signals that an I/O exception has occurred.
-     * @throws NoSuchProviderException should never occur, see static code part
+     * @throws NoSuchProviderException BC provider not registered
      */
     private InputStream nextDecryptedStream(PGPObjectFactory factory, SignatureValidatingInputStream.DecryptionState state) throws PGPException, IOException, NoSuchProviderException {
 

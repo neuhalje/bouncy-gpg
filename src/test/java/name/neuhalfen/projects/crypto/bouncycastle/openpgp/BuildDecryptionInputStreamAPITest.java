@@ -3,13 +3,16 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.DefaultKeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.io.Streams;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Security;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -18,6 +21,13 @@ import static org.junit.Assume.assumeNotNull;
 import static org.mockito.Mockito.mock;
 
 public class BuildDecryptionInputStreamAPITest {
+
+    @Before
+    public void installBCProvider() {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void decryptConfigure_NoConfigPassed_throws() throws Exception {

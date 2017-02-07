@@ -8,11 +8,17 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.DefaultKeyringConfig;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.*;
+import java.security.Security;
 
 public class Main {
-
+    static void installBCProvider() {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
 
     public static void main(String[] args) {
         if (args.length != 7) {
@@ -27,6 +33,7 @@ public class Main {
             final File sourceFile = new File(args[5]);
             final File destFile = new File(args[6]);
             try {
+                installBCProvider();
 
                 final DefaultKeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
