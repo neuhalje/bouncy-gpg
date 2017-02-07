@@ -49,7 +49,7 @@ public class ReencryptExplodedZipMultithreadedTest {
 
             EncryptWithOpenPGP encryptWithOpenPGP = new EncryptWithOpenPGP(encryptionConfig);
 
-            DecryptionStreamFactory decription = new DecryptionStreamFactory(decryptionConfig, SignatureValidationStrategies.requireAnySignature());
+            DecryptionStreamFactory decription = DecryptionStreamFactory.create(decryptionConfig, SignatureValidationStrategies.requireAnySignature());
 
             try (
                     final InputStream plainTextStream = CatchCloseStream.wrap("plain", decription.wrapWithDecryptAndVerify(exampleEncryptedZip))

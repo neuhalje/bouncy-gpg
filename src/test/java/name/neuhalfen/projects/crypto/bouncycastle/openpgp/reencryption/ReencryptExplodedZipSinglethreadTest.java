@@ -49,7 +49,7 @@ public class ReencryptExplodedZipSinglethreadTest {
 
             EncryptWithOpenPGP encryptWithOpenPGP = new EncryptWithOpenPGP(encryptionConfig);
 
-            DecryptionStreamFactory decription = new DecryptionStreamFactory(keyringConfig, SignatureValidationStrategies.requireAnySignature());
+            DecryptionStreamFactory decription = DecryptionStreamFactory.create(keyringConfig, SignatureValidationStrategies.requireAnySignature());
 
             try (
                     final InputStream plainTextStream = CatchCloseStream.wrap("plain", decription.wrapWithDecryptAndVerify(exampleEncryptedZip))

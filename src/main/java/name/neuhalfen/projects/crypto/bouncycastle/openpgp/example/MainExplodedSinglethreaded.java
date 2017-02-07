@@ -51,7 +51,7 @@ public class MainExplodedSinglethreaded {
                         HashAlgorithm.sha1,
                         SymmetricKeyAlgorithmTags.AES_128, keyringConfig);
 
-                final DecryptionStreamFactory decryptionStreamFactory = new DecryptionStreamFactory(keyringConfig, SignatureValidationStrategies.requireAnySignature());
+                final DecryptionStreamFactory decryptionStreamFactory = DecryptionStreamFactory.create(keyringConfig, SignatureValidationStrategies.requireAnySignature());
 
                 long startTime = System.currentTimeMillis();
 
