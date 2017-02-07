@@ -1,6 +1,5 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.DefaultKeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.FileBasedKeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.ResourceBasedKeyringConfig;
 
@@ -19,9 +18,9 @@ public class KeyringConfigs {
      * @param callback      see KeyringConfigCallbacks
      * @return the config
      */
-    public static DefaultKeyringConfig withKeyRingsFromFiles(final File publicKeyring,
-                                                             final File secretKeyring,
-                                                             KeyringConfigCallback callback) {
+    public static KeyringConfig withKeyRingsFromFiles(final File publicKeyring,
+                                                      final File secretKeyring,
+                                                      KeyringConfigCallback callback) {
         if (publicKeyring == null) {
             throw new IllegalArgumentException(("keyring must not be null"));
         }
@@ -44,10 +43,10 @@ public class KeyringConfigs {
      * @param callback          see KeyringConfigCallbacks
      * @return the config
      */
-    public static DefaultKeyringConfig withKeyRingsFromResources(final ClassLoader classLoader,
-                                                                 final String publicKeyringPath,
-                                                                 final String secretKeyringPath,
-                                                                 KeyringConfigCallback callback) {
+    public static KeyringConfig withKeyRingsFromResources(final ClassLoader classLoader,
+                                                          final String publicKeyringPath,
+                                                          final String secretKeyringPath,
+                                                          KeyringConfigCallback callback) {
         if (publicKeyringPath == null) {
             throw new IllegalArgumentException(("publicKeyringPath must not be null"));
         }

@@ -7,7 +7,6 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallback;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigs;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.DefaultKeyringConfig;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 
@@ -26,7 +25,7 @@ public class Configs {
     private final static String TEST_RESOURCE_DIRECTORY = "./src/test/resources";
 
     public static EncryptionConfig buildConfigForEncryptionFromFiles(KeyringConfigCallback callback) {
-        final DefaultKeyringConfig keyringConfig = keyringConfigFromFiles(callback);
+        final KeyringConfig keyringConfig = keyringConfigFromFiles(callback);
 
 
         EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
@@ -41,7 +40,7 @@ public class Configs {
     public static EncryptionConfig buildConfigForEncryptionFromResources(String signatureSecretKeyId, String signatureSecretKeyPassword) {
 
 
-        final DefaultKeyringConfig keyringConfig = keyringConfigFromResource(KeyringConfigCallbacks.withPassword(signatureSecretKeyPassword));
+        final KeyringConfig keyringConfig = keyringConfigFromResource(KeyringConfigCallbacks.withPassword(signatureSecretKeyPassword));
 
 
         EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
@@ -60,7 +59,7 @@ public class Configs {
         return keyringConfigFromFiles(KeyringConfigCallbacks.withPassword("recipient"));
     }
 
-    public static DefaultKeyringConfig keyringConfigFromFiles(KeyringConfigCallback callback) {
+    public static KeyringConfig keyringConfigFromFiles(KeyringConfigCallback callback) {
         return KeyringConfigs.withKeyRingsFromFiles(
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/pubring.gpg"),
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/secring.gpg"),
@@ -73,7 +72,7 @@ public class Configs {
     }
 
 
-    public static DefaultKeyringConfig keyringConfigFromResource(KeyringConfigCallback callback) {
+    public static KeyringConfig keyringConfigFromResource(KeyringConfigCallback callback) {
         return KeyringConfigs.withKeyRingsFromResources(EncryptWithOpenPGPTest.class.getClassLoader(),
                 "recipient.gpg.d/pubring.gpg",
                 "recipient.gpg.d/secring.gpg",

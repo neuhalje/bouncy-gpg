@@ -3,9 +3,9 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.example;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigs;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.DefaultKeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.FSZipEntityStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.ReencryptExplodedZipMultithreaded;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.ZipEntityStrategy;
@@ -45,7 +45,7 @@ public class MainExplodedMultithreaded {
             try {
                 installBCProvider();
 
-                final DefaultKeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
+                final KeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
 
                 final EncryptionConfig encryptionConfig = new EncryptionConfig(

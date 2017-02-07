@@ -3,9 +3,9 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.example;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigs;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.DefaultKeyringConfig;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -35,7 +35,7 @@ public class Main {
             try {
                 installBCProvider();
 
-                final DefaultKeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
+                final KeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
 
                 final EncryptionConfig encryptionConfig = new EncryptionConfig(
