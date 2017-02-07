@@ -15,20 +15,20 @@ import java.io.InputStream;
 import java.security.NoSuchProviderException;
 import java.util.Iterator;
 
-public class DecryptWithOpenPGPInputStreamFactory {
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DecryptWithOpenPGPInputStreamFactory.class);
+public class DecryptionStreamFactory {
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DecryptionStreamFactory.class);
 
 
     private final PGPContentVerifierBuilderProvider pgpContentVerifierBuilderProvider = new BcPGPContentVerifierBuilderProvider();
     private final KeyringConfig config;
 
-    public static DecryptWithOpenPGPInputStreamFactory create(final KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) {
-        return new DecryptWithOpenPGPInputStreamFactory(config, signatureValidationStrategy);
+    public static DecryptionStreamFactory create(final KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) {
+        return new DecryptionStreamFactory(config, signatureValidationStrategy);
     }
 
     private final SignatureValidationStrategy signatureValidationStrategy;
 
-    public DecryptWithOpenPGPInputStreamFactory(final KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) {
+    public DecryptionStreamFactory(final KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) {
         this.signatureValidationStrategy = signatureValidationStrategy;
         this.config = config;
     }

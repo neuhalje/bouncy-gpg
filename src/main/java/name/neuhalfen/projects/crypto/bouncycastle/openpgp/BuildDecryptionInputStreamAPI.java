@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
@@ -156,8 +156,8 @@ public class BuildDecryptionInputStreamAPI {
                 throw new IllegalArgumentException("encryptedData must not be null");
             }
 
-            final DecryptWithOpenPGPInputStreamFactory pgpInputStreamFactory =
-                    DecryptWithOpenPGPInputStreamFactory.create(
+            final DecryptionStreamFactory pgpInputStreamFactory =
+                    DecryptionStreamFactory.create(
                             BuildDecryptionInputStreamAPI.this.keyringConfig,
                             BuildDecryptionInputStreamAPI.this.signatureCheckingMode);
 

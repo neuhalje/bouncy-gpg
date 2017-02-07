@@ -23,10 +23,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-public class DecryptWithOpenPGPInputStreamFactoryTest {
+public class DecryptionStreamFactoryTest {
 
     String decrypt(byte[] encrypted, KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) throws IOException {
-        final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(config, signatureValidationStrategy);
+        final DecryptionStreamFactory sut = DecryptionStreamFactory.create(config, signatureValidationStrategy);
 
         final InputStream plainTextInputStream;
         try {
@@ -49,7 +49,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     public void decrypting_anyData_doesNotCloseInputStream() throws IOException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException {
 
         final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
-        final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(config, SignatureValidationStrategies.ignoreSignatures());
+        final DecryptionStreamFactory sut = DecryptionStreamFactory.create(config, SignatureValidationStrategies.ignoreSignatures());
 
         InputStream in = spy(new ByteArrayInputStream(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII")));
 
@@ -107,7 +107,7 @@ public class DecryptWithOpenPGPInputStreamFactoryTest {
     public void decryptingTamperedSignedCiphertext_fails() throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
 
         final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
-        final DecryptWithOpenPGPInputStreamFactory sut = DecryptWithOpenPGPInputStreamFactory.create(config, SignatureValidationStrategies.requireAnySignature());
+        final DecryptionStreamFactory sut = DecryptionStreamFactory.create(config, SignatureValidationStrategies.requireAnySignature());
 
         byte[] buf = IMPORTANT_QUOTE_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII");
 

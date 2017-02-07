@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.example;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptWithOpenPGPInputStreamFactory;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
@@ -51,7 +51,7 @@ public class MainExplodedSinglethreaded {
                         HashAlgorithm.sha1,
                         SymmetricKeyAlgorithmTags.AES_128, keyringConfig);
 
-                final DecryptWithOpenPGPInputStreamFactory decryptWithOpenPGPInputStreamFactory = new DecryptWithOpenPGPInputStreamFactory(keyringConfig, SignatureValidationStrategies.requireAnySignature());
+                final DecryptionStreamFactory decryptionStreamFactory = new DecryptionStreamFactory(keyringConfig, SignatureValidationStrategies.requireAnySignature());
 
                 long startTime = System.currentTimeMillis();
 
@@ -62,7 +62,7 @@ public class MainExplodedSinglethreaded {
 
                 try (
                         final InputStream encryptedStream = new FileInputStream(sourceFile);
-                        final InputStream decryptedStream = decryptWithOpenPGPInputStreamFactory.wrapWithDecryptAndVerify(encryptedStream)
+                        final InputStream decryptedStream = decryptionStreamFactory.wrapWithDecryptAndVerify(encryptedStream)
                 ) {
                     reencryptExplodedZip.explodeAndReencrypt(decryptedStream, zipEntityStrategy, encryptWithOpenPGP);
                 }
