@@ -72,4 +72,8 @@ public class EncryptionConfig {
     public char[] signingKeyPassphrase(long keyID) {
         return keyringConfig.decryptionSecretKeyPassphraseForSecretKeyId(keyID);
     }
+
+    public KeyringConfig getConfig() {
+        return keyringConfig;
+    }
 }

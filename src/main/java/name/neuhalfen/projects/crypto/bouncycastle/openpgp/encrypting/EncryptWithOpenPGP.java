@@ -1,22 +1,20 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallback;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
-import org.bouncycastle.bcpg.ArmoredOutputStream;
-import org.bouncycastle.bcpg.BCPGOutputStream;
-import org.bouncycastle.openpgp.*;
-import org.bouncycastle.openpgp.operator.bc.BcPGPContentSignerBuilder;
-import org.bouncycastle.openpgp.operator.bc.BcPGPDataEncryptorBuilder;
-import org.bouncycastle.openpgp.operator.bc.BcPublicKeyKeyEncryptionMethodGenerator;
+import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPPublicKey;
+import org.bouncycastle.openpgp.PGPPublicKeyRing;
+import org.bouncycastle.util.io.Streams;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
-import java.util.Date;
-import java.util.Iterator;
 
 public class EncryptWithOpenPGP implements StreamEncryption {
     /**
@@ -75,6 +73,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
     public void encryptAndSign(final InputStream is, final OutputStream os) throws IOException,
             NoSuchAlgorithmException, SignatureException, PGPException, NoSuchProviderException {
         final long starttime = System.currentTimeMillis();
+
         encryptAndSign(is, os, PGPUtilities.getEncryptionKey(this.encryptionPublicKeyRing), true, true,
                 this.hashAlgorithmCode, this.symmetricEncryptionAlgorithmCode);
 
@@ -104,62 +103,20 @@ public class EncryptWithOpenPGP implements StreamEncryption {
                                   final boolean armor, final boolean withIntegrityCheck,
                                   final int hashAlgorithmCode, final int symmetricEncryptionAlgorithmCode) throws IOException,
             NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
-        if (armor) {
-            out = new ArmoredOutputStream(out);
+
+        KeyringConfigCallback callback = new KeyringConfigCallback() {
+            @Nullable
+            @Override
+            public char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID) {
+                return config.signingKeyPassphrase(keyID);
+            }
+        };
+
+        try (final OutputStream encryptionStream = PGPEncryptingStream.create(config, out, armor, pubEncKey, withIntegrityCheck, hashAlgorithmCode, symmetricEncryptionAlgorithmCode, callback)) {
+            Streams.pipeAll(in, encryptionStream);
+            encryptionStream.flush();
         }
-
-        final BcPGPDataEncryptorBuilder dataEncryptorBuilder = new BcPGPDataEncryptorBuilder(symmetricEncryptionAlgorithmCode);
-        dataEncryptorBuilder.setWithIntegrityPacket(withIntegrityCheck);
-
-        final PGPEncryptedDataGenerator cPk =
-                new PGPEncryptedDataGenerator(dataEncryptorBuilder);
-
-
-        cPk.addMethod(new BcPublicKeyKeyEncryptionMethodGenerator(pubEncKey));
-
-        // this wraps the output stream in an encrypting output stream
-        final OutputStream cOut = cPk.open(out, new byte[1 << 16]);
-
-        final PGPSecretKey pgpSec = PGPUtilities.extractSecretSigningKeyFromKeyrings(config.getSecretKeyRings(), signatureUid);
-
-        final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec, config.signingKeyPassphrase(pgpSec.getKeyID()));
-        final PGPSignatureGenerator sGen =
-                new PGPSignatureGenerator(new BcPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), hashAlgorithmCode));
-
-
-        sGen.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
-
-        final Iterator<?> it = pgpSec.getPublicKey().getUserIDs();
-        if (it.hasNext()) {
-            final PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
-
-            spGen.setSignerUserID(false, (String) it.next());
-            sGen.setHashedSubpackets(spGen.generate());
-        }
-
-        final PGPCompressedDataGenerator cGen = new PGPCompressedDataGenerator(PGPCompressedData.ZLIB);
-        final BCPGOutputStream bOut = new BCPGOutputStream(cGen.open(cOut));
-        sGen.generateOnePassVersion(false).encode(bOut);
-
-        final PGPLiteralDataGenerator lGen = new PGPLiteralDataGenerator();
-        final OutputStream lOut = lGen.open(bOut, PGPLiteralData.BINARY, "", new Date(), new byte[1 << 16]);
-        // use of buffering to speed up write
-        final byte[] buffer = new byte[1 << 16];
-
-        int bytesRead;
-        while ((bytesRead = in.read(buffer)) != -1) {
-            lOut.write(buffer, 0, bytesRead);
-            sGen.update(buffer, 0, bytesRead);
-            lOut.flush();
-        }
-
-        lGen.close();
-        sGen.generate().encode(bOut);
-        cGen.close();
-        // ///end of sign
-
-        cOut.close();
-        out.close(); // as cOut does not forward close to out
+        //   out.close(); // as cOut does not forward close to out
     }
 
 }
