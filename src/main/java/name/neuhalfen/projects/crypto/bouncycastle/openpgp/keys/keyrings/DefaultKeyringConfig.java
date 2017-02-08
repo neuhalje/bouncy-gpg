@@ -1,8 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallback;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
@@ -16,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public abstract class DefaultKeyringConfig implements KeyringConfig {
+abstract class DefaultKeyringConfig implements KeyringConfig {
 
     private final KeyringConfigCallback callback;
     private PGPPublicKeyRingCollection publicKeyRings;

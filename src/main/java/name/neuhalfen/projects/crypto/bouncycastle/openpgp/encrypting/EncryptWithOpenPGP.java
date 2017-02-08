@@ -1,7 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallback;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -82,7 +82,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
 
 
     /**
-     * Method to sign-THEN-encrypt.
+     * Method to sign-and-encrypt.
      *
      * @param in                               the in
      * @param out                              the out
@@ -116,7 +116,6 @@ public class EncryptWithOpenPGP implements StreamEncryption {
             Streams.pipeAll(in, encryptionStream);
             encryptionStream.flush();
         }
-        //   out.close(); // as cOut does not forward close to out
+        out.flush();
     }
-
 }

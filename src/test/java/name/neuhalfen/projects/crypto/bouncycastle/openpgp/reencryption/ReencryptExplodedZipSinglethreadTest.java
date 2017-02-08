@@ -3,7 +3,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.CatchCloseStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;

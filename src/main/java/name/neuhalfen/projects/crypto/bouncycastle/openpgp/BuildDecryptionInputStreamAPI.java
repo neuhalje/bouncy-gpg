@@ -1,7 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
 import org.bouncycastle.openpgp.PGPException;

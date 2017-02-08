@@ -1,7 +1,6 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
+package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.FileBasedKeyringConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.ResourceBasedKeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 
 import java.io.File;
 

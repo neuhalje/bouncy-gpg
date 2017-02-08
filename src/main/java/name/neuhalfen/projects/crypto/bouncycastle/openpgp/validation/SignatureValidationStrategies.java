@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;

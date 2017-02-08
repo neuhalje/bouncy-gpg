@@ -1,8 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallback;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;

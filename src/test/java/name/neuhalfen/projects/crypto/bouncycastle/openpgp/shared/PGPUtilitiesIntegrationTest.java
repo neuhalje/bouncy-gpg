@@ -1,7 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;

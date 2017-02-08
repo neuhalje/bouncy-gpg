@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallbacks;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.bouncycastle.openpgp.PGPException;

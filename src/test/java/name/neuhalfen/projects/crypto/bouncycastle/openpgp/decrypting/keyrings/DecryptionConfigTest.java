@@ -1,6 +1,6 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
+package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.keyrings;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.DefaultKeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -37,7 +37,7 @@ public class DecryptionConfigTest {
 
 
     @Parameterized.Parameter
-    public /* NOT private */ DefaultKeyringConfig keyringConfig;
+    public /* NOT private */ KeyringConfig keyringConfig;
 
     @Test
     public void toString_returns_nonEmptyString() throws Exception {

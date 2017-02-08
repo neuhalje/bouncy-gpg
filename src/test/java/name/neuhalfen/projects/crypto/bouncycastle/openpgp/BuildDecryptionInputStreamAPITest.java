@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.DefaultKeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -36,12 +36,12 @@ public class BuildDecryptionInputStreamAPITest {
 
     @Test
     public void decryptConfigure_ConfigPassed_notNull() throws Exception {
-        assertNotNull(BouncyGPG.decryptAndVerifyStream().withConfig(mock(DefaultKeyringConfig.class)));
+        assertNotNull(BouncyGPG.decryptAndVerifyStream().withConfig(mock(KeyringConfig.class)));
     }
 
     @Test
     public void decryptConfigureValidate_notNull() throws Exception {
-        final BuildDecryptionInputStreamAPI.Validation withConfig = BouncyGPG.decryptAndVerifyStream().withConfig(mock(DefaultKeyringConfig.class));
+        final BuildDecryptionInputStreamAPI.Validation withConfig = BouncyGPG.decryptAndVerifyStream().withConfig(mock(KeyringConfig.class));
         assumeNotNull(withConfig);
 
         assertNotNull(withConfig.andValidateSomeoneSigned());
@@ -51,14 +51,14 @@ public class BuildDecryptionInputStreamAPITest {
 
     @Test(expected = IllegalArgumentException.class)
     public void decryptConfigureValidate_pasNullCiphertext_throws() throws Exception {
-        final BuildDecryptionInputStreamAPI.Build build = BouncyGPG.decryptAndVerifyStream().withConfig(mock(DefaultKeyringConfig.class)).andIgnoreSignatures();
+        final BuildDecryptionInputStreamAPI.Build build = BouncyGPG.decryptAndVerifyStream().withConfig(mock(KeyringConfig.class)).andIgnoreSignatures();
         build.fromEncryptedInputStream(null);
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void decryptValidateSpecificKeysLong_passNoKeys_throws() throws Exception {
-        final BuildDecryptionInputStreamAPI.Validation validation = BouncyGPG.decryptAndVerifyStream().withConfig(mock(DefaultKeyringConfig.class));
+        final BuildDecryptionInputStreamAPI.Validation validation = BouncyGPG.decryptAndVerifyStream().withConfig(mock(KeyringConfig.class));
         assumeNotNull(validation);
 
         validation.andRequireSignatureFromAllKeys(new Long[]{});
@@ -66,7 +66,7 @@ public class BuildDecryptionInputStreamAPITest {
 
     @Test(expected = IllegalArgumentException.class)
     public void decryptValidateSpecificKeysUserId_passNoKeys2_throws() throws Exception {
-        final BuildDecryptionInputStreamAPI.Validation validation = BouncyGPG.decryptAndVerifyStream().withConfig(mock(DefaultKeyringConfig.class));
+        final BuildDecryptionInputStreamAPI.Validation validation = BouncyGPG.decryptAndVerifyStream().withConfig(mock(KeyringConfig.class));
         assumeNotNull(validation);
 
         validation.andRequireSignatureFromAllKeys(new String[]{});

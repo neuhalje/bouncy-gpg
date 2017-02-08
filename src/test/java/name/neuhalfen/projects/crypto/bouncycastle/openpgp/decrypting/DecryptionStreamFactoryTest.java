@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;

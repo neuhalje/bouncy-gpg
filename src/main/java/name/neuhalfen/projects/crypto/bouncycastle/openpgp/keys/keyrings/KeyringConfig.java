@@ -1,4 +1,4 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
+package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;

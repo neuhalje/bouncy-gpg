@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallback;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.io.InputStream;
  * See the unit tests for an example:
  * (in tests)  name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs
  */
-public class ResourceBasedKeyringConfig extends DefaultKeyringConfig {
+class ResourceBasedKeyringConfig extends DefaultKeyringConfig {
 
 
     private final ClassLoader classLoader;

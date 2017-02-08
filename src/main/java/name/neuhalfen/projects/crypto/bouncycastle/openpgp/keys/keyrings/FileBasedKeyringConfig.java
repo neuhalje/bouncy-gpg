@@ -1,13 +1,13 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeyringConfigCallback;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 
 import java.io.*;
 
 /**
  * Load keyrings from files. These files are created and managed via gpg.
  */
-public class FileBasedKeyringConfig extends DefaultKeyringConfig {
+class FileBasedKeyringConfig extends DefaultKeyringConfig {
     private final File publicKeyring;
     private final File secretKeyring;
 
