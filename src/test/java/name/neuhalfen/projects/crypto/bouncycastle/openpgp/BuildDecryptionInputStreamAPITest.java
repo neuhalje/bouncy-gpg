@@ -88,6 +88,22 @@ public class BuildDecryptionInputStreamAPITest {
         }
     }
 
+    @Test()
+    public void decryptAndValidateSignature_withSignatureWithSignOnlyCapability_works() throws Exception {
+
+        try (InputStream ciphertext = new ByteArrayInputStream(ExampleMessages.IMPORTANT_QUOTE_SIGNED_BY_SIGN_ONLY_DSA_KEY.getBytes("US-ASCII"))) {
+            final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
+                    .withConfig(Configs.keyringConfigFromResourceForRecipient())
+                    .andRequireSignatureFromAllKeys("sender.signonly@example.com")
+                    .fromEncryptedInputStream(ciphertext);
+
+            final String plainText = inputStreamToText(plaintextStream);
+
+            assertThat(plainText, equalTo(ExampleMessages.IMPORTANT_QUOTE_TEXT));
+            plaintextStream.close();
+        }
+    }
+
 
     @Test()
     public void decryptNoSignatureValidation_withUnsignedData_works() throws Exception {

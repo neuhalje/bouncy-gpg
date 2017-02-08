@@ -25,10 +25,9 @@ public class PGPUtilities {
      * @param pgpSec the pgp sec
      * @param keyID  the key id
      * @param pass   the pass
-     * @return the pGP private key
+     * @return the decrypted secret key
      * @throws PGPException            the pGP exception
      * @throws NoSuchProviderException the no such provider exception
-     * @return the decrypted secret key
      */
     public static PGPPrivateKey findSecretKey(final PGPSecretKeyRingCollection pgpSec, final long keyID, final char[] pass)
             throws PGPException, NoSuchProviderException {
@@ -46,9 +45,8 @@ public class PGPUtilities {
      *
      * @param encryptedKey An encrypted key
      * @param passphrase   The passphrase for the key
-     * @return The decrypted key
-     * @throws PGPException E.g. wrong passphrase
      * @return the decrypted secret key
+     * @throws PGPException E.g. wrong passphrase
      */
     public static PGPPrivateKey extractPrivateKey(PGPSecretKey encryptedKey, final char[] passphrase) throws PGPException {
         LOGGER.debug("Extracting secret key with key ID '0x{}'", Long.toHexString(encryptedKey.getKeyID()));
@@ -96,29 +94,47 @@ public class PGPUtilities {
     }
 
     /**
-     * Extract a signing key from the keyring. There must be only one signing key.
+     * Extract a signing key from the keyring. The implementation tries to find the
+     * best matching key.
      * .
      * FIXME: refactor this, so that we use all key from the keyring as valid signing keys
      * .
      * Detection of possible signing keys is heuristic at best.
      *
-     * @throws PGPException Multiple signing (encryption) keys found in keyring
      * @param keyring search here
      * @return a public key that can be used for signing
      */
-    public static PGPPublicKey extractSigningPublicKey(PGPPublicKeyRing keyring) throws PGPException {
+    public static PGPPublicKey extractSigningPublicKey(PGPPublicKeyRing keyring) {
+
+        int score;
+        int highestScore = -1;
 
         PGPPublicKey ret = null;
+
         for (PGPPublicKey pubKey : keyring) {
-            if (pubKey.isEncryptionKey() && !pubKey.isMasterKey()) {
-                if (ret != null) {
-                    throw new PGPException(String.format("Multiple signing (encryption) keys found in keyring (e.g. 0x%x and 0x%x)", pubKey.getKeyID(), ret.getKeyID()));
-                } else {
-                    ret = pubKey;
-                }
+            score = calculateSigningKeyScore(pubKey);
+            if (score > highestScore) {
+                ret = pubKey;
+                highestScore = score;
             }
         }
         return ret;
+    }
+
+    /*
+     * Try to find the best signing key.
+     * - Try not to use master keys (if possible) because signing should be done with subkeys
+     * - Give a bonus to "sign only" keys (or 'AUTH' only keys - these are not detected)
+     */
+    private static int calculateSigningKeyScore(PGPPublicKey pubKey) {
+        int score = 0;
+        if (pubKey.isMasterKey()) {
+            score--;
+        }
+        if (!pubKey.isEncryptionKey()) {
+            score++;
+        }
+        return score;
     }
 
     /**

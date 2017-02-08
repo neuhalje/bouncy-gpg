@@ -32,6 +32,7 @@ public class ExampleMessages {
      */
     public final static long PUBKEY_ANOTHER_SENDER = 0x7B7DA94F0876E36EL;
 
+    public final static long PUBKEY_SENDER_DSA_SIGN_ONLY = 0x064A7E2DD3D079FAL;
 
     /**
      * Encrypted-To:    recipient@example.com
@@ -267,6 +268,28 @@ public class ExampleMessages {
                     "=GQV9\n" +
                     "-----END PGP MESSAGE-----";
 
+    /**
+     * Encrypted-To:    recipient@example.com
+     * Signed-By:       sender.signonly@example.com  (DSA, sign only key)
+     * Compressed:      no
+     */
+    public final static String IMPORTANT_QUOTE_SIGNED_BY_SIGN_ONLY_DSA_KEY =
+            "-----BEGIN PGP MESSAGE-----\n" +
+                    "Version: GnuPG v2\n" +
+                    "\n" +
+                    "hQEMA1Sj2zdPeHq3AQf9HMO/ADCovbhQcNoo34YxsEg/j7DyMAUZqWXloLbBgynR\n" +
+                    "g17oROXUsOFnKWt9k/YHTXZtA5MhAb6xOpui7bC9Ux6gYZ421aloT1gmUjT2vuc/\n" +
+                    "eQ+z/7ZyWsJGBnQ3gBkzre4rvx/wSzhD5aFnDnitCBKeqv5idLCuhrGyAGprxvJL\n" +
+                    "YkzJPi6XDYu68tOxb049FLUxEn09J6X97YC9D96WFtFntVi+U3KiAuoO1CxIT9fD\n" +
+                    "GPJvaViqcesz54UAzsDQvRI9sk9Y3zMZd5yxm5L+YaUwJot4SXT07EEW+9gsJVVZ\n" +
+                    "A9sYQw4PdAmy2xCcp5u2cRMhjjhmS0upCPzQL7qGs9LAMAGexkJhWZo7AWTKbBCT\n" +
+                    "uD3RHxnjSiKDnmvydkVDBPAMTXI6P0lTxtb1yVCyxnBnpkcI0aHJ/lu07TaXdYDk\n" +
+                    "YW8UAYbP1Pip8acVtIp9dV2EsoT8cmDEmuI3jQvjgz89V+wcsDkLH8IjGIzqvgDQ\n" +
+                    "Yevqo5E6QXTMHxFI4y75bmAKy5GMqs7FzdCbwLwBbVYBw6yjlJzXmZc9/Dga+Ou/\n" +
+                    "Abvu/0HC3dCPxxxpT1rnVThX7YMifX4dxUjahms7ze4Sfjat/3fvklN0mIdoQ7vt\n" +
+                    "3t8SrgBTRvT3rET2OyaaLAx8hD3lxo03CQxA0uEkrjidUQ==\n" +
+                    "=qyRp\n" +
+                    "-----END PGP MESSAGE-----";
     /*
      * Create cipher text by 'echo -n ${IMPORTANT_QUOTE_TEXT} | gpg -e -a -s -r recipient@example.com'
      */

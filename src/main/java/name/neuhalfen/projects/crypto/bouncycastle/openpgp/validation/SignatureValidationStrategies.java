@@ -63,8 +63,16 @@ public class SignatureValidationStrategies {
         final List<Long> keyIds = new ArrayList<>(userIds.length);
 
         for (String userId : userIds) {
+
             final PGPPublicKeyRing pgpPublicKeys = PGPUtilities.extractPublicKeyRingForUserId(userId, publicKeyRings);
+            if (pgpPublicKeys == null) {
+                throw new PGPException("Could not find public-key for userid '" + userId + "'");
+            }
+
             final PGPPublicKey signingKey = PGPUtilities.extractSigningPublicKey(pgpPublicKeys);
+            if (signingKey == null) {
+                throw new PGPException("Could not find public-key for userid '" + userId + "'");
+            }
             keyIds.add(signingKey.getKeyID());
 
         }
