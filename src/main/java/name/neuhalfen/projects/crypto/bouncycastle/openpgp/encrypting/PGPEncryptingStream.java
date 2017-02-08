@@ -204,5 +204,10 @@ public class PGPEncryptingStream extends OutputStream {
 
         outerEncryptionStream.flush();
         outerEncryptionStream.close();
+
+        if (armoredOutputStream != null) {
+            armoredOutputStream.flush();
+            armoredOutputStream.close();
+        }
     }
 }
