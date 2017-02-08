@@ -32,7 +32,7 @@ public class PGPUtilities {
      */
     public static PGPPrivateKey findSecretKey(final PGPSecretKeyRingCollection pgpSec, final long keyID, final char[] pass)
             throws PGPException, NoSuchProviderException {
-        LOGGER.trace("Finding secret key for decryption with key ID '0x{}'", Long.toHexString(keyID));
+        LOGGER.debug("Finding secret key with key ID '0x{}'", Long.toHexString(keyID));
         final PGPSecretKey pgpSecKey = pgpSec.getSecretKey(keyID);
 
         if (pgpSecKey == null) {
@@ -51,7 +51,7 @@ public class PGPUtilities {
      * @return the decrypted secret key
      */
     public static PGPPrivateKey extractPrivateKey(PGPSecretKey encryptedKey, final char[] passphrase) throws PGPException {
-        LOGGER.trace("Extracting secret key for decryption with key ID '0x{}'", Long.toHexString(encryptedKey.getKeyID()));
+        LOGGER.debug("Extracting secret key with key ID '0x{}'", Long.toHexString(encryptedKey.getKeyID()));
 
         PGPDigestCalculatorProvider calcProvider = new JcaPGPDigestCalculatorProviderBuilder()
                 .setProvider(BouncyCastleProvider.PROVIDER_NAME).build();
@@ -143,7 +143,7 @@ public class PGPUtilities {
             while (key == null && kIt.hasNext()) {
                 final PGPSecretKey k = kIt.next();
 
-                if (k.isSigningKey()) {
+                if (k.isSigningKey() && !k.isMasterKey()) {
                     key = k;
                 }
             }

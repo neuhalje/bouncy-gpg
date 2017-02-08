@@ -28,8 +28,8 @@ public class PGPUtilitiesIntegrationTest {
     @Parameterized.Parameters
     public static Object[] data() {
         return new Object[]{
-                Configs.keyringConfigFromResource(KeyringConfigCallbacks.withPassword(PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE)),
-                Configs.keyringConfigFromFiles(KeyringConfigCallbacks.withPassword(PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE))};
+                Configs.keyringConfigFromResourceForRecipient(KeyringConfigCallbacks.withPassword(PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE)),
+                Configs.keyringConfigFromFilesForRecipient(KeyringConfigCallbacks.withPassword(PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE))};
     }
 
 

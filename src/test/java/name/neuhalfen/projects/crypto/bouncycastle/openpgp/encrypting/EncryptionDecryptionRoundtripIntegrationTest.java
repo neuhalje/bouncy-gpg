@@ -19,7 +19,7 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.SignatureException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 
 public class EncryptionDecryptionRoundtripIntegrationTest {
 
@@ -31,7 +31,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
     }
 
     @Test
-    public void xxx() throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+    public void encryptAndSign_thenDecryptAndVerify_yieldsOriginalPlaintext() throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
         StreamEncryption encrypt = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources());
 
         final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
@@ -45,9 +45,9 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
         final byte[] byteArray = cipherText.toByteArray();
         ByteArrayInputStream cipherTextAsSource = new ByteArrayInputStream(byteArray);
         // Decrypt
-        final InputStream decryptedPlaintextStream = BouncyGPG.decryptAndVerifyStream().withConfig(Configs.keyringConfigFromResourceForRecipient()).andRequireSignatureFromAllKeys("recipient@example.com").fromEncryptedInputStream(cipherTextAsSource);
+        final InputStream decryptedPlaintextStream = BouncyGPG.decryptAndVerifyStream().withConfig(Configs.keyringConfigFromResourceForRecipient()).andRequireSignatureFromAllKeys("sender@example.com").fromEncryptedInputStream(cipherTextAsSource);
         final byte[] decryptedPlaintext = Streams.readAll(decryptedPlaintextStream);
 
-        assertEquals(expectedPlaintext, decryptedPlaintext);
+        assertArrayEquals(expectedPlaintext, decryptedPlaintext);
     }
 }

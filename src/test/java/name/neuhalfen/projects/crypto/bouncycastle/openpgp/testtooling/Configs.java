@@ -25,7 +25,7 @@ public class Configs {
     private final static String TEST_RESOURCE_DIRECTORY = "./src/test/resources";
 
     public static EncryptionConfig buildConfigForEncryptionFromFiles(KeyringConfigCallback callback) {
-        final KeyringConfig keyringConfig = keyringConfigFromFiles(callback);
+        final KeyringConfig keyringConfig = keyringConfigFromFilesForRecipient(callback);
 
 
         EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
@@ -40,11 +40,11 @@ public class Configs {
     public static EncryptionConfig buildConfigForEncryptionFromResources(String signatureSecretKeyId, String signatureSecretKeyPassword) {
 
 
-        final KeyringConfig keyringConfig = keyringConfigFromResource(KeyringConfigCallbacks.withPassword(signatureSecretKeyPassword));
+        final KeyringConfig keyringConfig = keyringConfigFromResourceForSender(KeyringConfigCallbacks.withPassword(signatureSecretKeyPassword));
 
 
         EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
-                "recipient@example.com",
+                "sender@example.com",
                 "recipient@example.com",
                 HashAlgorithm.sha1,
                 SymmetricKeyAlgorithmTags.AES_128,
@@ -54,12 +54,13 @@ public class Configs {
 
     }
 
+    // ----- RECIPIENT
 
     public static KeyringConfig keyringConfigFromFilesForRecipient() {
-        return keyringConfigFromFiles(KeyringConfigCallbacks.withPassword("recipient"));
+        return keyringConfigFromFilesForRecipient(KeyringConfigCallbacks.withPassword("recipient"));
     }
 
-    public static KeyringConfig keyringConfigFromFiles(KeyringConfigCallback callback) {
+    public static KeyringConfig keyringConfigFromFilesForRecipient(KeyringConfigCallback callback) {
         return KeyringConfigs.withKeyRingsFromFiles(
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/pubring.gpg"),
                 new File(TEST_RESOURCE_DIRECTORY + "/recipient.gpg.d/secring.gpg"),
@@ -67,12 +68,7 @@ public class Configs {
     }
 
 
-    public static KeyringConfig keyringConfigFromResourceForRecipient() {
-        return keyringConfigFromResource(KeyringConfigCallbacks.withPassword("recipient"));
-    }
-
-
-    public static KeyringConfig keyringConfigFromResource(KeyringConfigCallback callback) {
+    public static KeyringConfig keyringConfigFromResourceForRecipient(KeyringConfigCallback callback) {
         return KeyringConfigs.withKeyRingsFromResources(EncryptWithOpenPGPTest.class.getClassLoader(),
                 "recipient.gpg.d/pubring.gpg",
                 "recipient.gpg.d/secring.gpg",
@@ -80,9 +76,41 @@ public class Configs {
     }
 
 
+    public static KeyringConfig keyringConfigFromResourceForRecipient() {
+        return keyringConfigFromResourceForRecipient(KeyringConfigCallbacks.withPassword("recipient"));
+    }
+
+
+    // --------- Sender
+
+
+    public static KeyringConfig keyringConfigFromFilesForSender() {
+        return keyringConfigFromFilesForSender(KeyringConfigCallbacks.withPassword("sender"));
+    }
+
+    public static KeyringConfig keyringConfigFromFilesForSender(KeyringConfigCallback callback) {
+        return KeyringConfigs.withKeyRingsFromFiles(
+                new File(TEST_RESOURCE_DIRECTORY + "/sender.gpg.d/pubring.gpg"),
+                new File(TEST_RESOURCE_DIRECTORY + "/sender.gpg.d/secring.gpg"),
+                callback);
+    }
+
+
+    public static KeyringConfig keyringConfigFromResourceForSender(KeyringConfigCallback callback) {
+        return KeyringConfigs.withKeyRingsFromResources(EncryptWithOpenPGPTest.class.getClassLoader(),
+                "sender.gpg.d/pubring.gpg",
+                "sender.gpg.d/secring.gpg",
+                callback);
+    }
+
+    public static KeyringConfig keyringConfigFromResourceForSender() {
+        return keyringConfigFromResourceForSender(KeyringConfigCallbacks.withPassword("sender"));
+    }
+
+
     public static EncryptionConfig buildConfigForEncryptionFromResources() {
         return buildConfigForEncryptionFromResources(
-                "recipient@example.com",
-                "recipient");
+                "sender@example.com",
+                "sender");
     }
 }
