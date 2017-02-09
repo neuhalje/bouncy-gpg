@@ -8,7 +8,9 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.DevNullOu
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.RandomDataInputStream;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -17,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Security;
 import java.security.SignatureException;
 
 import static org.hamcrest.Matchers.greaterThan;
@@ -25,7 +28,12 @@ import static org.mockito.Mockito.*;
 
 
 public class EncryptWithOpenPGPTest {
-
+    @Before
+    public void installBCProvider() {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
 
     @Test
     public void encryptionAndSigning_anyData_doesNotCloseInputStream() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
@@ -118,6 +126,25 @@ public class EncryptWithOpenPGPTest {
         sut.encryptAndSign(someRandomInputData(sampleSize), out);
 
         assertThat("A compression>50% is fishy!", out.getBytesWritten(), greaterThan(sampleSize / 2));
+    }
+
+
+    @Test
+    public void encryptionRSAAndSigningWithDSA_smallAmountsOfData_doesNotCrash() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
+        final KeyringConfig keyringConfig = Configs.keyringConfigFromResourceForSender(KeyringConfigCallbacks.withPassword("sign"));
+
+        //  sender.signonly@example.com is a "sign only" DSA key.
+        // trying to encrypt to that key should not be possible
+        EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
+                "sender.signonly@example.com",
+                "sender@example.com",
+                HashAlgorithm.sha1,
+                SymmetricKeyAlgorithmTags.AES_128,
+                keyringConfig);
+        StreamEncryption sut = new EncryptWithOpenPGP(encryptAndSignConfig, DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
+
+        final int sampleSize = Configs.KB;
+        sut.encryptAndSign(someRandomInputData(sampleSize), new DevNullOutputStream());
     }
 
     /**

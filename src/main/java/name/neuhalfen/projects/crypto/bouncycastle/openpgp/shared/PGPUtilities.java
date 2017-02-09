@@ -73,7 +73,7 @@ public class PGPUtilities {
                                                                  final PGPPublicKeyRingCollection publicKeyRings)
             throws PGPException {
         // the true parameter indicates, that partial matching of the publicKeyUid is enough.
-        final Iterator<?> keyRings = publicKeyRings.getKeyRings(publicKeyUid, true);
+        final Iterator<?> keyRings = publicKeyRings.getKeyRings("<" + publicKeyUid + ">", true);
         PGPPublicKeyRing returnKeyRing = null;
         while (keyRings.hasNext()) {
             final Object currentKeyRing = keyRings.next();
@@ -88,7 +88,7 @@ public class PGPUtilities {
         if (returnKeyRing == null) {
             throw new PGPException("No public key ring found for UID '" + publicKeyUid + "'!");
         }
-        LOGGER.debug("Extracted public key ring for UID '{}' with first key strength {}.", publicKeyUid, returnKeyRing
+        LOGGER.debug("Extracted public key ring for UID '{}' with key strength {}.", publicKeyUid, returnKeyRing
                 .getPublicKey().getBitStrength());
         return returnKeyRing;
     }
@@ -106,13 +106,12 @@ public class PGPUtilities {
      */
     public static PGPPublicKey extractSigningPublicKey(PGPPublicKeyRing keyring) {
 
-        int score;
         int highestScore = Integer.MIN_VALUE;
 
         PGPPublicKey ret = null;
 
         for (PGPPublicKey pubKey : keyring) {
-            score = calculateSigningKeyScore(pubKey);
+            int score = calculateSigningKeyScore(pubKey);
             if (score > highestScore) {
                 ret = pubKey;
                 highestScore = score;
@@ -129,10 +128,10 @@ public class PGPUtilities {
     private static int calculateSigningKeyScore(PGPPublicKey pubKey) {
         int score = 0;
         if (!pubKey.isMasterKey()) {
-            score++;
+            score += 100;
         }
         if (!pubKey.isEncryptionKey()) {
-            score++;
+            score += 10;
         }
         return score;
     }
@@ -149,25 +148,28 @@ public class PGPUtilities {
      */
     public static PGPSecretKey extractSecretSigningKeyFromKeyrings(final PGPSecretKeyRingCollection pgpSec, final String signingKeyUid)
             throws PGPException {
+        int highestScore = Integer.MIN_VALUE;
 
         PGPSecretKey key = null;
 
-        final Iterator<PGPSecretKeyRing> rIt = pgpSec.getKeyRings(signingKeyUid, true);
+        final Iterator<PGPSecretKeyRing> rIt = pgpSec.getKeyRings("<" + signingKeyUid + ">", true);
         while (key == null && rIt.hasNext()) {
             final PGPSecretKeyRing kRing = rIt.next();
             final Iterator<PGPSecretKey> kIt = kRing.getSecretKeys();
 
             while (key == null && kIt.hasNext()) {
                 final PGPSecretKey k = kIt.next();
+                int score = calculateSigningKeyScore(k.getPublicKey());
 
-                if (k.isSigningKey() && !k.isMasterKey()) {
+                if (k.isSigningKey() && (score > highestScore)) {
                     key = k;
+                    highestScore = score;
                 }
             }
         }
 
         if (key == null) {
-            throw new PGPException("Can't find signing key in key ring.");
+            throw new PGPException(String.format("Can't find signing key for uid '%s' in key ring.", signingKeyUid));
         }
         LOGGER.trace("Extracted secret signing key for UID '{}'.", signingKeyUid);
 
@@ -179,7 +181,6 @@ public class PGPUtilities {
      *
      * @param publicKeyRing the public key ring
      * @return the encryption key
-     * @deprecated Use explicit uid for signing
      */
     public static PGPPublicKey getEncryptionKey(final PGPPublicKeyRing publicKeyRing) {
         int score;

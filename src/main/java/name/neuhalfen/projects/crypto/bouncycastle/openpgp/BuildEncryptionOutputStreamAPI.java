@@ -1,20 +1,31 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.PGPEncryptingStream;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
+import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPPublicKey;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 
 
-/**
- * encrypt().withConfig().to(recipient).andSignWith().asOutputStream()
- */
 public class BuildEncryptionOutputStreamAPI {
     private OutputStream sinkForEncryptedData;
 
 
-    private EncryptionConfig encryptionConfig;
+    private KeyringConfig encryptionConfig;
+    private PGPAlgorithmSuite algorithmSuite;
+    @Nullable
     private String signWith;
-    private static String recipient;
+    private PGPPublicKey recipient;
+    private boolean armorOutput;
 
     // Signature
 
@@ -22,40 +33,83 @@ public class BuildEncryptionOutputStreamAPI {
     BuildEncryptionOutputStreamAPI() {
     }
 
-    ;
 
-    public To withConfig(EncryptionConfig encryptionConfig) {
+    public WithAlgoritmSuite withConfig(KeyringConfig encryptionConfig) {
+        if (encryptionConfig == null) {
+            throw new NullPointerException("encryptionConfig must not be null");
+        }
+
         BuildEncryptionOutputStreamAPI.this.encryptionConfig = encryptionConfig;
-        return new To();
+        return new WithAlgoritmSuite();
     }
 
+    public class WithAlgoritmSuite {
+        public To withDefaultAlgorithms() {
+            BuildEncryptionOutputStreamAPI.this.algorithmSuite = DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG();
+            return new To();
+        }
+
+        public To withAlgorithms(PGPAlgorithmSuite algorithmSuite) {
+            if (algorithmSuite == null) {
+                throw new NullPointerException("algorithmSuite must not be null");
+            }
+            BuildEncryptionOutputStreamAPI.this.algorithmSuite = algorithmSuite;
+            return new To();
+        }
+
+
+    }
 
     public class To {
-        public SignWith toRecipient(String recipient) {
+        public SignWith toRecipient(String recipient) throws IOException, PGPException {
 
-            BuildEncryptionOutputStreamAPI.recipient = recipient;
+            final PGPPublicKey recipientEncryptionKey = PGPUtilities.getEncryptionKey(PGPUtilities.extractPublicKeyRingForUserId(recipient, encryptionConfig.getPublicKeyRings()));
+
+            if (recipientEncryptionKey == null) {
+                throw new PGPException("No (suitable) public key for encryption to " + recipient + " found");
+            }
+            BuildEncryptionOutputStreamAPI.this.recipient = recipientEncryptionKey;
             return new SignWith();
         }
     }
 
     public class SignWith {
-        public Build andSignWith(String userId) {
+        public Armor andSignWith(String userId) {
             BuildEncryptionOutputStreamAPI.this.signWith = userId;
+            return new Armor();
+        }
+
+        public Armor andDoNotSign() {
+            BuildEncryptionOutputStreamAPI.this.signWith = null;
+            return new Armor();
+        }
+    }
+
+    public class Armor {
+        public Build binaryOutput() {
+            BuildEncryptionOutputStreamAPI.this.armorOutput = false;
             return new Build();
         }
 
-        public Build andDoNotSign() {
-            BuildEncryptionOutputStreamAPI.this.signWith = null;
+        public Build armorAsciiOutput() {
+            BuildEncryptionOutputStreamAPI.this.armorOutput = true;
             return new Build();
         }
     }
 
     public class Build {
 
-        public OutputStream asOutputStream(OutputStream sinkForEncryptedData) {
-            // TODO Implement
+        public OutputStream andWriteTo(OutputStream sinkForEncryptedData) throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
             BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData = sinkForEncryptedData;
-            throw new AssertionError();
+            final OutputStream outputStream = PGPEncryptingStream.create(
+                    BuildEncryptionOutputStreamAPI.this.encryptionConfig,
+                    BuildEncryptionOutputStreamAPI.this.algorithmSuite,
+                    BuildEncryptionOutputStreamAPI.this.signWith,
+                    BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData,
+                    BuildEncryptionOutputStreamAPI.this.armorOutput,
+                    BuildEncryptionOutputStreamAPI.this.recipient);
+            return outputStream;
+
         }
     }
 }

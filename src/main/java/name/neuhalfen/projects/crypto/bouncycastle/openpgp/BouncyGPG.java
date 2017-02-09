@@ -8,12 +8,19 @@ public class BouncyGPG {
      * .
      * Usage:
      * .
-     * .
-     * final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
-     * .withConfig(Configs.buildConfigForDecryptionFromResources())
-     * .andRequireSignatureFromAllKeys("sender@example.com")
-     * .fromEncryptedInputStream(ciphertextStream);
+     *         final OutputStream encryptionStream = BouncyGPG
+     *            .encryptToStream()
+     *            .withConfig(Configs.keyringConfigFromFilesForSender())
+     *            .withDefaultAlgorithms()
+     *            .toRecipient("recipient@example.com")
+     *            .andSignWith("sender@example.com")
+     *            .armorAsciiOutput()
+     *            .andWriteTo(cipherText);
      *
+     *           encryptionStream.write(expectedPlaintext);
+     *           encryptionStream.close();
+     *           cipherText.close();
+     * .
      * @return The next build step.
      */
     public static BuildDecryptionInputStreamAPI decryptAndVerifyStream() {
@@ -22,10 +29,6 @@ public class BouncyGPG {
 
     public static BuildEncryptionOutputStreamAPI encryptToStream() {
         return new BuildEncryptionOutputStreamAPI();
-    }
-
-    public static BuildVerificationInputStreamAPI verifySignature() {
-        return new BuildVerificationInputStreamAPI();
     }
 
 }

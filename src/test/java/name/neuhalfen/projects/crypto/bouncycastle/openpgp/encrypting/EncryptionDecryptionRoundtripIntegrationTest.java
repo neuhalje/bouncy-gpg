@@ -2,7 +2,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -11,10 +10,7 @@ import org.bouncycastle.util.io.Streams;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
@@ -32,21 +28,101 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
     }
 
     @Test
-    public void encryptAndSign_thenDecryptAndVerify_yieldsOriginalPlaintext() throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-        StreamEncryption encrypt = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources(), DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
-
+    public void encryptAndSignArmored_thenDecryptAndVerify_yieldsOriginalPlaintext() throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
         final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
-        ByteArrayInputStream plainTextSource = new ByteArrayInputStream(expectedPlaintext);
+
         ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
 
-        encrypt.encryptAndSign(plainTextSource, cipherText);
-        cipherText.flush();
+        final OutputStream encryptionStream = BouncyGPG
+                .encryptToStream()
+                .withConfig(Configs.keyringConfigFromFilesForSender())
+                .withDefaultAlgorithms()
+                .toRecipient("recipient@example.com")
+                .andSignWith("sender@example.com")
+                .armorAsciiOutput()
+                .andWriteTo(cipherText);
+
+        encryptionStream.write(expectedPlaintext);
+        encryptionStream.close();
         cipherText.close();
 
-        final byte[] byteArray = cipherText.toByteArray();
-        ByteArrayInputStream cipherTextAsSource = new ByteArrayInputStream(byteArray);
+        ByteArrayInputStream cipherTextAsSource = new ByteArrayInputStream(cipherText.toByteArray());
+
         // Decrypt
-        final InputStream decryptedPlaintextStream = BouncyGPG.decryptAndVerifyStream().withConfig(Configs.keyringConfigFromResourceForRecipient()).andRequireSignatureFromAllKeys("sender@example.com").fromEncryptedInputStream(cipherTextAsSource);
+        final InputStream decryptedPlaintextStream = BouncyGPG
+                .decryptAndVerifyStream()
+                .withConfig(Configs.keyringConfigFromResourceForRecipient())
+                .andRequireSignatureFromAllKeys("sender@example.com")
+                .fromEncryptedInputStream(cipherTextAsSource);
+
+        final byte[] decryptedPlaintext = Streams.readAll(decryptedPlaintextStream);
+
+        assertArrayEquals(expectedPlaintext, decryptedPlaintext);
+    }
+
+
+    @Test
+    public void encryptAndSignBinary_thenDecryptAndVerify_yieldsOriginalPlaintext() throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+        final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
+
+        ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
+
+        final OutputStream encryptionStream = BouncyGPG
+                .encryptToStream()
+                .withConfig(Configs.keyringConfigFromFilesForSender())
+                .withDefaultAlgorithms()
+                .toRecipient("recipient@example.com")
+                .andSignWith("sender@example.com")
+                .binaryOutput()
+                .andWriteTo(cipherText);
+
+        encryptionStream.write(expectedPlaintext);
+        encryptionStream.close();
+        cipherText.close();
+
+        ByteArrayInputStream cipherTextAsSource = new ByteArrayInputStream(cipherText.toByteArray());
+
+        // Decrypt
+        final InputStream decryptedPlaintextStream = BouncyGPG
+                .decryptAndVerifyStream()
+                .withConfig(Configs.keyringConfigFromResourceForRecipient())
+                .andRequireSignatureFromAllKeys("sender@example.com")
+                .fromEncryptedInputStream(cipherTextAsSource);
+
+        final byte[] decryptedPlaintext = Streams.readAll(decryptedPlaintextStream);
+
+        assertArrayEquals(expectedPlaintext, decryptedPlaintext);
+    }
+
+
+    @Test
+    public void encryptAndSignWithDSA_thenDecryptAndVerify_yieldsOriginalPlaintext() throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+        final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
+
+        ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
+
+        final OutputStream encryptionStream = BouncyGPG
+                .encryptToStream()
+                .withConfig(Configs.keyringConfigFromFilesForSender())
+                .withDefaultAlgorithms()
+                .toRecipient("recipient@example.com")
+                .andSignWith("sender.signonly@example.com")
+                .binaryOutput()
+                .andWriteTo(cipherText);
+
+        encryptionStream.write(expectedPlaintext);
+        encryptionStream.close();
+        cipherText.close();
+
+        ByteArrayInputStream cipherTextAsSource = new ByteArrayInputStream(cipherText.toByteArray());
+
+        // Decrypt
+        final InputStream decryptedPlaintextStream = BouncyGPG
+                .decryptAndVerifyStream()
+                .withConfig(Configs.keyringConfigFromResourceForRecipient())
+                .andRequireSignatureFromAllKeys("sender.signonly@example.com")
+                .fromEncryptedInputStream(cipherTextAsSource);
+
         final byte[] decryptedPlaintext = Streams.readAll(decryptedPlaintextStream);
 
         assertArrayEquals(expectedPlaintext, decryptedPlaintext);

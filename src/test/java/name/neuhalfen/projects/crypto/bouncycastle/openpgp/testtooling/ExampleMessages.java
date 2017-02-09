@@ -1,6 +1,10 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 public class ExampleMessages {
 
     /**
@@ -33,6 +37,21 @@ public class ExampleMessages {
     public final static long PUBKEY_ANOTHER_SENDER = 0x7B7DA94F0876E36EL;
 
     public final static long PUBKEY_SENDER_DSA_SIGN_ONLY = 0x064A7E2DD3D079FAL;
+
+    public final static Map<Long, char[]> ALL_KEYRINGS_PASSWORDS = BUILD_ALL_KEYRINGS_PASSWORDS();
+
+    private static Map<Long, char[]> BUILD_ALL_KEYRINGS_PASSWORDS() {
+        Map<Long, char[]> m = new HashMap<>();
+        m.put(ExampleMessages.PUBKEY_SENDER, "sender".toCharArray());
+        m.put(ExampleMessages.PUBKEY_SENDER_2, "sender2".toCharArray());
+        m.put(ExampleMessages.PUBKEY_SENDER_DSA_SIGN_ONLY, "sign".toCharArray());
+        m.put(ExampleMessages.PUBKEY_ANOTHER_SENDER, "another_sender".toCharArray());
+
+        m.put(ExampleMessages.PUBKEY_RECIPIENT, "recipient".toCharArray());
+
+        return Collections.unmodifiableMap(m);
+    }
+
 
     /**
      * Encrypted-To:    recipient@example.com

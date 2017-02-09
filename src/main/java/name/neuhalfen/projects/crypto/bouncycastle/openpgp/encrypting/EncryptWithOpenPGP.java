@@ -1,7 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
@@ -34,6 +33,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
     private final KeyringConfig config;
 
     private final PGPAlgorithmSuite algorithmSuite;
+
     /**
      * The signature uid.
      */
@@ -104,7 +104,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
             }
         };
 
-        try (final OutputStream encryptionStream = PGPEncryptingStream.create(config, DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG(), signatureUid, out, armor, pubEncKey, callback)) {
+        try (final OutputStream encryptionStream = PGPEncryptingStream.create(config, algorithmSuite, signatureUid, out, armor, pubEncKey)) {
             Streams.pipeAll(in, encryptionStream);
             encryptionStream.flush();
         }

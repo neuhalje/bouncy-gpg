@@ -57,7 +57,7 @@ public class Configs {
     // ----- RECIPIENT
 
     public static KeyringConfig keyringConfigFromFilesForRecipient() {
-        return keyringConfigFromFilesForRecipient(KeyringConfigCallbacks.withPassword("recipient"));
+        return keyringConfigFromFilesForRecipient(KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
     }
 
     public static KeyringConfig keyringConfigFromFilesForRecipient(KeyringConfigCallback callback) {
@@ -77,7 +77,7 @@ public class Configs {
 
 
     public static KeyringConfig keyringConfigFromResourceForRecipient() {
-        return keyringConfigFromResourceForRecipient(KeyringConfigCallbacks.withPassword("recipient"));
+        return keyringConfigFromResourceForRecipient(KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
     }
 
 
@@ -85,7 +85,7 @@ public class Configs {
 
 
     public static KeyringConfig keyringConfigFromFilesForSender() {
-        return keyringConfigFromFilesForSender(KeyringConfigCallbacks.withPassword("sender"));
+        return keyringConfigFromFilesForSender(KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
     }
 
     public static KeyringConfig keyringConfigFromFilesForSender(KeyringConfigCallback callback) {
@@ -104,7 +104,7 @@ public class Configs {
     }
 
     public static KeyringConfig keyringConfigFromResourceForSender() {
-        return keyringConfigFromResourceForSender(KeyringConfigCallbacks.withPassword("sender"));
+        return keyringConfigFromResourceForSender(KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
     }
 
 

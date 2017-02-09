@@ -2,7 +2,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
@@ -55,8 +54,7 @@ public class PGPEncryptingStream extends OutputStream {
                                       final String signingUid,
                                       final OutputStream cipherTextSink,
                                       final boolean armor,
-                                      final PGPPublicKey pubEncKey,
-                                      final KeyringConfigCallback passphraseCallback) throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+                                      final PGPPublicKey pubEncKey) throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
 
         if (config == null) {
             throw new NullPointerException("No config");
@@ -74,12 +72,10 @@ public class PGPEncryptingStream extends OutputStream {
             throw new PGPException(String.format("This public key (0x%x) is not suitable for encryption", pubEncKey.getKeyID()));
         }
 
-        if (passphraseCallback == null) {
-            throw new NullPointerException("No passphraseCallback");
-        }
+
 
         final PGPEncryptingStream encryptingStream = new PGPEncryptingStream(config, algorithmSuite);
-        encryptingStream.setup(cipherTextSink, signingUid, pubEncKey, armor, passphraseCallback);
+        encryptingStream.setup(cipherTextSink, signingUid, pubEncKey, armor);
         return encryptingStream;
     }
 
@@ -99,8 +95,7 @@ public class PGPEncryptingStream extends OutputStream {
     protected void setup(final OutputStream cipherTextSink,
                          final String signingUid,
                          final PGPPublicKey pubEncKey,
-                         final boolean armor,
-                         final KeyringConfigCallback passphraseCallback) throws
+                         final boolean armor) throws
             IOException, NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
 
         final OutputStream sink;
@@ -125,7 +120,7 @@ public class PGPEncryptingStream extends OutputStream {
 
         final PGPSecretKey pgpSec = PGPUtilities.extractSecretSigningKeyFromKeyrings(config.getSecretKeyRings(), signingUid);
 
-        final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec, passphraseCallback.decryptionSecretKeyPassphraseForSecretKeyId(pgpSec.getKeyID()));
+        final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec, config.decryptionSecretKeyPassphraseForSecretKeyId(pgpSec.getKeyID()));
         signatureGenerator = new PGPSignatureGenerator(new BcPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), algorithmSuite.getHashAlgorithmCode().id));
 
 
