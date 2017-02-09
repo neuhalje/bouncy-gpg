@@ -1,18 +1,14 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.example;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BuildDecryptionInputStreamAPI;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BuildEncryptionOutputStreamAPI;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.FSZipEntityStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.ReencryptExplodedZipMultithreaded;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption.ZipEntityStrategy;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
-import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
-import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
@@ -49,27 +45,29 @@ public class MainExplodedMultithreaded {
                 final KeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
 
-                final EncryptionConfig encryptionConfig = new EncryptionConfig(
-                        recipient,
-                        recipient,
-                        HashAlgorithm.sha1,
-                        SymmetricKeyAlgorithmTags.AES_128, keyringConfig);
-
-
-                final DecryptionStreamFactory decryptionStreamFactory = DecryptionStreamFactory.create(keyringConfig, SignatureValidationStrategies.requireAnySignature());
 
                 long startTime = System.currentTimeMillis();
 
-                final EncryptWithOpenPGP encryptWithOpenPGP = new EncryptWithOpenPGP(encryptionConfig, DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
                 final ZipEntityStrategy zipEntityStrategy = new FSZipEntityStrategy(destRootDir);
                 final ReencryptExplodedZipMultithreaded reencryptExplodedZip = new ReencryptExplodedZipMultithreaded();
 
+                final BuildEncryptionOutputStreamAPI.Build encryptionFactory = BouncyGPG
+                        .encryptToStream()
+                        .withConfig(keyringConfig)
+                        .withStrongAlgorithms()
+                        .toRecipient(recipient)
+                        .andDoNotSign()
+                        .binaryOutput();
+
+                final BuildDecryptionInputStreamAPI.Build decryptionFactory = BouncyGPG.decryptAndVerifyStream()
+                        .withConfig(keyringConfig)
+                        .andValidateSomeoneSigned();
 
                 try (
-                        final InputStream encryptedStream = new FileInputStream(sourceFile);
-                        final InputStream decryptedStream = decryptionStreamFactory.wrapWithDecryptAndVerify(encryptedStream)
+                        final InputStream encryptedSourceZIP = new FileInputStream(sourceFile);
+                        final InputStream decryptedSourceZIP = decryptionFactory.fromEncryptedInputStream(encryptedSourceZIP)
                 ) {
-                    reencryptExplodedZip.explodeAndReencrypt(decryptedStream, zipEntityStrategy, encryptWithOpenPGP);
+                    reencryptExplodedZip.explodeAndReencrypt(decryptedSourceZIP, zipEntityStrategy, encryptionFactory);
                 }
                 long endTime = System.currentTimeMillis();
 

@@ -1,13 +1,11 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BuildDecryptionInputStreamAPI;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BuildEncryptionOutputStreamAPI;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.CatchCloseStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,21 +40,28 @@ public class ReencryptExplodedZipSinglethreadTest {
         ) {
             assumeNotNull(exampleEncryptedZip);
 
-            final EncryptionConfig encryptionConfig = Configs.buildConfigForEncryptionFromResources("sender@example.com", "sender");
             final KeyringConfig keyringConfig = Configs.keyringConfigFromResourceForRecipient();
 
-            assumeNotNull(encryptionConfig);
             assumeNotNull(keyringConfig);
 
-            EncryptWithOpenPGP encryptWithOpenPGP = new EncryptWithOpenPGP(encryptionConfig, DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
+            final ReencryptExplodedZipSinglethread reencryptExplodedZip = new ReencryptExplodedZipSinglethread();
 
-            DecryptionStreamFactory decription = DecryptionStreamFactory.create(keyringConfig, SignatureValidationStrategies.requireAnySignature());
+            final BuildEncryptionOutputStreamAPI.Build encryptionFactory = BouncyGPG
+                    .encryptToStream()
+                    .withConfig(keyringConfig)
+                    .withStrongAlgorithms()
+                    .toRecipient("recipient@example.com")
+                    .andDoNotSign()
+                    .binaryOutput();
+
+            final BuildDecryptionInputStreamAPI.Build decryptionFactory = BouncyGPG.decryptAndVerifyStream()
+                    .withConfig(keyringConfig)
+                    .andValidateSomeoneSigned();
 
             try (
-                    final InputStream plainTextStream = CatchCloseStream.wrap("plain", decription.wrapWithDecryptAndVerify(exampleEncryptedZip))
+                    final InputStream decryptedSourceZIP = decryptionFactory.fromEncryptedInputStream(exampleEncryptedZip)
             ) {
-
-                sut().explodeAndReencrypt(plainTextStream, this.dummyStrategy, encryptWithOpenPGP);
+                reencryptExplodedZip.explodeAndReencrypt(decryptedSourceZIP, this.dummyStrategy, encryptionFactory);
             }
         }
     }

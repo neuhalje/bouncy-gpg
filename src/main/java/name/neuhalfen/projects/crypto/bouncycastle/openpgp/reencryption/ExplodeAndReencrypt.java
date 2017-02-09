@@ -1,7 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BuildEncryptionOutputStreamAPI;
 import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.util.io.Streams;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,13 +21,13 @@ class ExplodeAndReencrypt {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExplodeAndReencrypt.class);
 
     private final InputStream is;
-    private final EncryptWithOpenPGP streamEncryption;
+    private final BuildEncryptionOutputStreamAPI.Build encryptionFactory;
 
 
-    public ExplodeAndReencrypt(InputStream is, ZipEntityStrategy entityHandlingStrategy, EncryptWithOpenPGP streamEncryption) {
+    public ExplodeAndReencrypt(InputStream is, ZipEntityStrategy entityHandlingStrategy, BuildEncryptionOutputStreamAPI.Build encryptionFactory) {
         this.is = is;
         this.entityHandlingStrategy = entityHandlingStrategy;
-        this.streamEncryption = streamEncryption;
+        this.encryptionFactory = encryptionFactory;
     }
 
 
@@ -34,54 +35,51 @@ class ExplodeAndReencrypt {
         boolean zipDataFound = false;
         final ZipInputStream zis = new ZipInputStream(is);
 
+        ZipEntry entry;
 
-        try {
-            ZipEntry entry;
+        int numDirs = 0;
+        int numFiles = 0;
+        while ((entry = zis.getNextEntry()) != null) {
 
-            int numDirs = 0;
-            int numFiles = 0;
-            while ((entry = zis.getNextEntry()) != null) {
+            final String sanitizedFileName = entityHandlingStrategy.rewriteName(entry.getName());
 
-                final String sanitizedFileName = entityHandlingStrategy.rewriteName(entry.getName());
+            if (!entry.getName().equals(sanitizedFileName)) {
+                LOGGER.trace("Rewriting '{}' to '{}'", entry.getName(), sanitizedFileName);
+            }
 
-                if (!entry.getName().equals(sanitizedFileName)) {
-                    LOGGER.trace("Rewriting '{}' to '{}'", entry.getName(), sanitizedFileName);
-                }
+            if (!zipDataFound) {
+                // Inform the logger that this is indeed a ZIP file
+                zipDataFound = true;
+                LOGGER.trace("Found ZIP Data");
+            }
 
-                if (!zipDataFound) {
-                    // Inform the logger that this is indeed a ZIP file
-                    zipDataFound = true;
-                    LOGGER.trace("Found ZIP Data");
-                }
+            if (entry.isDirectory()) {
+                numDirs++;
+                LOGGER.debug("found directory '{}'", entry.getName());
 
-                if (entry.isDirectory()) {
-                    numDirs++;
-                    LOGGER.debug("found directory '{}'", entry.getName());
+                entityHandlingStrategy.handleDirectory(sanitizedFileName);
+            } else {
+                numFiles++;
 
-                    entityHandlingStrategy.handleDirectory(sanitizedFileName);
-                } else {
-                    numFiles++;
+                LOGGER.debug("found file '{}'", entry.getName());
 
-                    LOGGER.debug("found file '{}'", entry.getName());
-
-                    try (
-                            final OutputStream outputStream = entityHandlingStrategy.createOutputStream(sanitizedFileName)
-                    ) {
-                        if (outputStream != null) {
-                            streamEncryption.encryptAndSign(zis, outputStream);
-                        } else {
-                            LOGGER.trace("Ignore {}", entry.getName());
-                        }
+                try (
+                        final OutputStream outputStream = entityHandlingStrategy.createOutputStream(sanitizedFileName)
+                ) {
+                    if (outputStream != null) {
+                        final OutputStream encryptedSmallZIP = encryptionFactory.andWriteTo(outputStream);
+                        Streams.pipeAll(zis, encryptedSmallZIP);
+                    } else {
+                        LOGGER.trace("Ignore {}", entry.getName());
                     }
                 }
             }
-            if (zipDataFound) {
-                LOGGER.debug("ZIP input stream closed. Created {} directories, and {} files.", numDirs, numFiles);
-            } else {
-                LOGGER.info("ZIP input stream closed. No ZIP data found.");
-            }
-        } finally {
-            // IGNORE
         }
+        if (zipDataFound) {
+            LOGGER.debug("ZIP input stream closed. Created {} directories, and {} files.", numDirs, numFiles);
+        } else {
+            LOGGER.info("ZIP input stream closed. No ZIP data found.");
+        }
+
     }
 }

@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BuildEncryptionOutputStreamAPI;
 
 import java.io.InputStream;
 import java.util.concurrent.Callable;
@@ -33,7 +33,7 @@ public class ReencryptExplodedZipMultithreaded {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ReencryptExplodedZipMultithreaded.class);
 
-    public void explodeAndReencrypt(final InputStream plainTextStreamOfZip, final ZipEntityStrategy zipEntityStrategy, final EncryptWithOpenPGP streamEncryption) throws Exception {
+    public void explodeAndReencrypt(final InputStream plainTextStreamOfZip, final ZipEntityStrategy zipEntityStrategy, final BuildEncryptionOutputStreamAPI.Build encryptionFactory) throws Exception {
 
         // decrpytionCommand  decrypts  encryptedLargeZip -> plainTextSink
         // plainTextSource converts  plainTextSink into an InputStream
@@ -45,7 +45,7 @@ public class ReencryptExplodedZipMultithreaded {
 
                 try {
                     LOGGER.trace("Unziping started");
-                    final ExplodeAndReencrypt reencrypt = new ExplodeAndReencrypt(plainTextStreamOfZip, zipEntityStrategy, streamEncryption);
+                    final ExplodeAndReencrypt reencrypt = new ExplodeAndReencrypt(plainTextStreamOfZip, zipEntityStrategy, encryptionFactory);
 
                     reencrypt.explodeAndReencrypt();
                     LOGGER.debug("Unziping stopped");
