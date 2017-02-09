@@ -152,13 +152,13 @@ public class PGPUtilities {
 
         PGPSecretKey key = null;
 
-        final Iterator<PGPSecretKeyRing> rIt = pgpSec.getKeyRings("<" + signingKeyUid + ">", true);
-        while (key == null && rIt.hasNext()) {
-            final PGPSecretKeyRing kRing = rIt.next();
-            final Iterator<PGPSecretKey> kIt = kRing.getSecretKeys();
+        final Iterator<PGPSecretKeyRing> ringIterator = pgpSec.getKeyRings("<" + signingKeyUid + ">", true);
+        while (ringIterator.hasNext()) {
+            final PGPSecretKeyRing kRing = ringIterator.next();
+            final Iterator<PGPSecretKey> secretKeyIterator = kRing.getSecretKeys();
 
-            while (key == null && kIt.hasNext()) {
-                final PGPSecretKey k = kIt.next();
+            while (secretKeyIterator.hasNext()) {
+                final PGPSecretKey k = secretKeyIterator.next();
                 int score = calculateSigningKeyScore(k.getPublicKey());
 
                 if (k.isSigningKey() && (score > highestScore)) {
