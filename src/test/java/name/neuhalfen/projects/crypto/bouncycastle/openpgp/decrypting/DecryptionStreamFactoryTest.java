@@ -5,9 +5,11 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Security;
 import java.security.SignatureException;
 
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages.*;
@@ -24,6 +27,14 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class DecryptionStreamFactoryTest {
+
+    @Before
+    public void installBCProvider() {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
+
 
     String decrypt(byte[] encrypted, KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) throws IOException {
         final DecryptionStreamFactory sut = DecryptionStreamFactory.create(config, signatureValidationStrategy);

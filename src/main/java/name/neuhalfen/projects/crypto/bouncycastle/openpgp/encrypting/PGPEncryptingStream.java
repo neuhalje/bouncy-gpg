@@ -20,7 +20,7 @@ import java.security.SignatureException;
 import java.util.Date;
 import java.util.Iterator;
 
-public class PGPEncryptingStream extends OutputStream {
+public final class PGPEncryptingStream extends OutputStream {
     /**
      * The Constant LOGGER.
      */
@@ -29,7 +29,7 @@ public class PGPEncryptingStream extends OutputStream {
 
     private final KeyringConfig config;
     private PGPAlgorithmSuite algorithmSuite;
-
+    boolean isDoSign;
     /**
      * The signature uid.
      */
@@ -73,7 +73,6 @@ public class PGPEncryptingStream extends OutputStream {
         }
 
 
-
         final PGPEncryptingStream encryptingStream = new PGPEncryptingStream(config, algorithmSuite);
         encryptingStream.setup(cipherTextSink, signingUid, pubEncKey, armor);
         return encryptingStream;
@@ -97,6 +96,7 @@ public class PGPEncryptingStream extends OutputStream {
                          final PGPPublicKey pubEncKey,
                          final boolean armor) throws
             IOException, NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
+        isDoSign = (signingUid != null);
 
         final OutputStream sink;
         if (armor) {
@@ -118,28 +118,32 @@ public class PGPEncryptingStream extends OutputStream {
         // this wraps the output stream in an encrypting output stream
         outerEncryptionStream = cPk.open(sink, new byte[1 << 16]);
 
-        final PGPSecretKey pgpSec = PGPUtilities.extractSecretSigningKeyFromKeyrings(config.getSecretKeyRings(), signingUid);
+        if (isDoSign) {
+            final PGPSecretKey pgpSec = PGPUtilities.extractSecretSigningKeyFromKeyrings(config.getSecretKeyRings(), signingUid);
 
-        final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec, config.decryptionSecretKeyPassphraseForSecretKeyId(pgpSec.getKeyID()));
-        signatureGenerator = new PGPSignatureGenerator(new BcPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), algorithmSuite.getHashAlgorithmCode().id));
+            final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec, config.decryptionSecretKeyPassphraseForSecretKeyId(pgpSec.getKeyID()));
+            signatureGenerator = new PGPSignatureGenerator(new BcPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), algorithmSuite.getHashAlgorithmCode().id));
 
 
-        signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
+            signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
 
-        final Iterator<?> it = pgpSec.getPublicKey().getUserIDs();
-        if (it.hasNext())
+            final Iterator<?> it = pgpSec.getPublicKey().getUserIDs();
+            if (it.hasNext())
 
-        {
-            final PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
+            {
+                final PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
 
-            spGen.setSignerUserID(false, (String) it.next());
-            signatureGenerator.setHashedSubpackets(spGen.generate());
+                spGen.setSignerUserID(false, (String) it.next());
+                signatureGenerator.setHashedSubpackets(spGen.generate());
+            }
         }
 
         compressionStreamGenerator = new PGPCompressedDataGenerator(algorithmSuite.getCompressionEncryptionAlgorithmCode().id);
         compressionStream = new BCPGOutputStream(compressionStreamGenerator.open(outerEncryptionStream));
 
-        signatureGenerator.generateOnePassVersion(false).encode(compressionStream);
+        if (isDoSign) {
+            signatureGenerator.generateOnePassVersion(false).encode(compressionStream);
+        }
 
         encryptionDataStreamGenerator = new PGPLiteralDataGenerator();
         encryptionDataStream = encryptionDataStreamGenerator.open(compressionStream, PGPLiteralData.BINARY, "", new Date(), new byte[1 << 16]);
@@ -148,8 +152,11 @@ public class PGPEncryptingStream extends OutputStream {
     @Override
     public void write(int b) throws IOException {
         encryptionDataStream.write(b);
-        final byte asByte = (byte) (b & 0xff);
-        signatureGenerator.update(asByte);
+
+        if (isDoSign) {
+            final byte asByte = (byte) (b & 0xff);
+            signatureGenerator.update(asByte);
+        }
     }
 
 
@@ -162,7 +169,9 @@ public class PGPEncryptingStream extends OutputStream {
     @Override
     public void write(byte[] buffer, int off, int len) throws IOException {
         encryptionDataStream.write(buffer, 0, len);
-        signatureGenerator.update(buffer, 0, len);
+        if (isDoSign) {
+            signatureGenerator.update(buffer, 0, len);
+        }
     }
 
     @Override
@@ -175,10 +184,13 @@ public class PGPEncryptingStream extends OutputStream {
         encryptionDataStream.flush();
         encryptionDataStream.close();
         encryptionDataStreamGenerator.close();
-        try {
-            signatureGenerator.generate().encode(compressionStream);
-        } catch (PGPException e) {
-            throw new IOException(e);
+        if (isDoSign) {
+
+            try {
+                signatureGenerator.generate().encode(compressionStream);
+            } catch (PGPException e) {
+                throw new IOException(e);
+            }
         }
         compressionStreamGenerator.close();
 

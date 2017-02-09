@@ -72,6 +72,13 @@ public class PGPUtilities {
     public static PGPPublicKeyRing extractPublicKeyRingForUserId(final String publicKeyUid,
                                                                  final PGPPublicKeyRingCollection publicKeyRings)
             throws PGPException {
+        if (publicKeyUid == null) {
+            throw new NullPointerException("publicKeyUid must not be null");
+        }
+        if (publicKeyRings == null) {
+            throw new NullPointerException("publicKeyRings must not be null");
+        }
+
         // the true parameter indicates, that partial matching of the publicKeyUid is enough.
         final Iterator<?> keyRings = publicKeyRings.getKeyRings("<" + publicKeyUid + ">", true);
         PGPPublicKeyRing returnKeyRing = null;

@@ -7,6 +7,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.Keyring
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
+import org.bouncycastle.openpgp.PGPPublicKeyRing;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -34,16 +35,24 @@ public class BuildEncryptionOutputStreamAPI {
     }
 
 
-    public WithAlgoritmSuite withConfig(KeyringConfig encryptionConfig) {
+    public WithAlgorithmSuite withConfig(KeyringConfig encryptionConfig) throws IOException, PGPException {
         if (encryptionConfig == null) {
             throw new NullPointerException("encryptionConfig must not be null");
         }
 
+        if (encryptionConfig.getKeyFingerPrintCalculator() == null) {
+            throw new NullPointerException("encryptionConfig.getKeyFingerPrintCalculator() must not be null");
+        }
+
+        if (encryptionConfig.getPublicKeyRings() == null) {
+            throw new NullPointerException("encryptionConfig.getPublicKeyRings() must not be null");
+        }
+
         BuildEncryptionOutputStreamAPI.this.encryptionConfig = encryptionConfig;
-        return new WithAlgoritmSuite();
+        return new WithAlgorithmSuite();
     }
 
-    public class WithAlgoritmSuite {
+    public class WithAlgorithmSuite {
         public To withDefaultAlgorithms() {
             BuildEncryptionOutputStreamAPI.this.algorithmSuite = DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG();
             return new To();
@@ -63,7 +72,12 @@ public class BuildEncryptionOutputStreamAPI {
     public class To {
         public SignWith toRecipient(String recipient) throws IOException, PGPException {
 
-            final PGPPublicKey recipientEncryptionKey = PGPUtilities.getEncryptionKey(PGPUtilities.extractPublicKeyRingForUserId(recipient, encryptionConfig.getPublicKeyRings()));
+            final PGPPublicKeyRing publicKeyRing = PGPUtilities.extractPublicKeyRingForUserId(recipient, encryptionConfig.getPublicKeyRings());
+            if (publicKeyRing == null) {
+                throw new PGPException("No (suitable) public key for encryption to " + recipient + " found");
+            }
+
+            final PGPPublicKey recipientEncryptionKey = PGPUtilities.getEncryptionKey(publicKeyRing);
 
             if (recipientEncryptionKey == null) {
                 throw new PGPException("No (suitable) public key for encryption to " + recipient + " found");
@@ -74,7 +88,11 @@ public class BuildEncryptionOutputStreamAPI {
     }
 
     public class SignWith {
-        public Armor andSignWith(String userId) {
+        public Armor andSignWith(String userId) throws IOException, PGPException {
+
+            if (encryptionConfig.getSecretKeyRings() == null) {
+                throw new NullPointerException("encryptionConfig.getSecretKeyRings() must not be null");
+            }
             BuildEncryptionOutputStreamAPI.this.signWith = userId;
             return new Armor();
         }

@@ -1,25 +1,25 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
-import org.bouncycastle.openpgp.PGPCompressedData;
+import org.bouncycastle.bcpg.CompressionAlgorithmTags;
 
 
 public enum PGPCompressionAlgorithms {
     /**
      * No compression.
      */
-    UNCOMPRESSED(PGPCompressedData.UNCOMPRESSED),
+    UNCOMPRESSED(CompressionAlgorithmTags.UNCOMPRESSED),
     /**
      * ZIP (RFC 1951) compression. Unwrapped DEFLATE.
      */
-    ZIP(PGPCompressedData.ZIP),
+    ZIP(CompressionAlgorithmTags.ZIP),
     /**
      * ZLIB (RFC 1950) compression. DEFLATE with a wrapper for better error detection.
      */
-    ZLIB(PGPCompressedData.ZLIB),
+    ZLIB(CompressionAlgorithmTags.ZLIB),
     /**
      * BZIP2 compression. Better compression than ZIP but much slower to compress and decompress.
      */
-    BZIP2(PGPCompressedData.BZIP2);
+    BZIP2(CompressionAlgorithmTags.BZIP2);
 
 
     public final int id;
