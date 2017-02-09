@@ -2,7 +2,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.openpgp.PGPException;
@@ -10,7 +9,6 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.util.io.Streams;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -95,14 +93,6 @@ public final class EncryptWithOpenPGP {
     protected void encryptAndSign(final InputStream in, OutputStream out, final PGPPublicKey pubEncKey,
                                   final boolean armor) throws IOException,
             NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
-
-        KeyringConfigCallback callback = new KeyringConfigCallback() {
-            @Nullable
-            @Override
-            public char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID) {
-                return config.decryptionSecretKeyPassphraseForSecretKeyId(keyID);
-            }
-        };
 
         try (final OutputStream encryptionStream = PGPEncryptingStream.create(config, algorithmSuite, signatureUid, out, armor, pubEncKey)) {
             Streams.pipeAll(in, encryptionStream);
