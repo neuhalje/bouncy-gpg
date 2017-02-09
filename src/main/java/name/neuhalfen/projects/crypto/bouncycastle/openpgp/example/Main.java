@@ -1,15 +1,12 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.example;
 
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
-import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
-import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.io.Streams;
 
 import java.io.*;
 import java.security.Security;
@@ -39,24 +36,27 @@ public class Main {
                 final KeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
                         secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
 
-                final EncryptionConfig encryptionConfig = new EncryptionConfig(
-                        sender,
-                        recipient,
-                        HashAlgorithm.sha1,
-                        SymmetricKeyAlgorithmTags.AES_128, keyringConfig);
-
-                EncryptWithOpenPGP pgp = new EncryptWithOpenPGP(encryptionConfig, DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
-
                 long startTime = System.currentTimeMillis();
 
                 final int BUFFSIZE = 8 * 1024;
                 System.out.format("-- Using a write buffer of %d bytes\n", BUFFSIZE);
 
                 try (
-                        final OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(destFile), BUFFSIZE);
+                        final FileOutputStream fileOutput = new FileOutputStream(destFile);
+                        final BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOutput, BUFFSIZE);
+
+                        final OutputStream outputStream = BouncyGPG
+                                .encryptToStream()
+                                .withConfig(keyringConfig)
+                                .withStrongAlgorithms()
+                                .toRecipient(recipient)
+                                .andSignWith(sender)
+                                .binaryOutput()
+                                .andWriteTo(bufferedOut);
+
                         final FileInputStream is = new FileInputStream(sourceFile)
                 ) {
-                    pgp.encryptAndSign(is, outputStream);
+                    Streams.pipeAll(is, outputStream);
                 }
                 long endTime = System.currentTimeMillis();
 

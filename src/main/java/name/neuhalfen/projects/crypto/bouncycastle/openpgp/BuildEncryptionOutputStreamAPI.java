@@ -58,6 +58,11 @@ public final class BuildEncryptionOutputStreamAPI {
             return new To();
         }
 
+        public To withStrongAlgorithms() {
+            BuildEncryptionOutputStreamAPI.this.algorithmSuite = DefaultPGPAlgorithmSuites.strongSuite();
+            return new To();
+        }
+
         public To withAlgorithms(PGPAlgorithmSuite algorithmSuite) {
             if (algorithmSuite == null) {
                 throw new NullPointerException("algorithmSuite must not be null");
