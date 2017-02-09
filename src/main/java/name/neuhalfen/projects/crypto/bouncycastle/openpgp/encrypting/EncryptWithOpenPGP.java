@@ -74,7 +74,11 @@ public class EncryptWithOpenPGP implements StreamEncryption {
             NoSuchAlgorithmException, SignatureException, PGPException, NoSuchProviderException {
         final long starttime = System.currentTimeMillis();
 
-        encryptAndSign(is, os, PGPUtilities.getEncryptionKey(this.encryptionPublicKeyRing), true, true,
+        final PGPPublicKey encryptionKey = PGPUtilities.getEncryptionKey(this.encryptionPublicKeyRing);
+        if (encryptionKey == null) {
+            throw new PGPException("Could not find a valid encryption key for uid '" + config.getEncryptionPublicKeyId() + "'");
+        }
+        encryptAndSign(is, os, encryptionKey, true, true,
                 this.hashAlgorithmCode, this.symmetricEncryptionAlgorithmCode);
 
         LOGGER.debug("Encrypt and sign duration {}s", (System.currentTimeMillis() - starttime) / MLLIES_PER_SEC);

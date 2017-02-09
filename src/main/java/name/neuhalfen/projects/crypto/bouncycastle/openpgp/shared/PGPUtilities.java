@@ -107,7 +107,7 @@ public class PGPUtilities {
     public static PGPPublicKey extractSigningPublicKey(PGPPublicKeyRing keyring) {
 
         int score;
-        int highestScore = -1;
+        int highestScore = Integer.MIN_VALUE;
 
         PGPPublicKey ret = null;
 
@@ -128,14 +128,15 @@ public class PGPUtilities {
      */
     private static int calculateSigningKeyScore(PGPPublicKey pubKey) {
         int score = 0;
-        if (pubKey.isMasterKey()) {
-            score--;
+        if (!pubKey.isMasterKey()) {
+            score++;
         }
         if (!pubKey.isEncryptionKey()) {
             score++;
         }
         return score;
     }
+
 
     /**
      * Extracts the first secret signing key for UID {@code signatureUid} suitable for signature generation from a key
@@ -174,21 +175,40 @@ public class PGPUtilities {
     }
 
     /**
-     * Returns the first encryption key encountered in {@code publicKeyRing}.
+     * Returns the 'best' encryption key encountered in {@code publicKeyRing}.
      *
      * @param publicKeyRing the public key ring
      * @return the encryption key
      * @deprecated Use explicit uid for signing
      */
     public static PGPPublicKey getEncryptionKey(final PGPPublicKeyRing publicKeyRing) {
+        int score;
+        int highestScore = Integer.MIN_VALUE;
+
         PGPPublicKey returnKey = null;
-        final Iterator<?> kIt = publicKeyRing.getPublicKeys();
-        while (returnKey == null && kIt.hasNext()) {
-            final PGPPublicKey k = (PGPPublicKey) kIt.next();
-            if (k.isEncryptionKey()) {
-                returnKey = k;
+
+        for (PGPPublicKey pubKey : publicKeyRing) {
+            score = calculateEncryptionKeyScore(pubKey);
+            if (score > highestScore) {
+                returnKey = pubKey;
+                highestScore = score;
             }
         }
         return returnKey;
+    }
+
+    /*
+    * Try to find the best encryption key.
+    * - Try not to use master keys (if possible) because encryption should be done with subkeys
+    */
+    private static int calculateEncryptionKeyScore(PGPPublicKey pubKey) {
+        if (!pubKey.isEncryptionKey()) return Integer.MIN_VALUE;
+
+        int score = 0;
+        if (!pubKey.isMasterKey()) {
+            score++;
+        }
+
+        return score;
     }
 }

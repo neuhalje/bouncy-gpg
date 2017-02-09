@@ -1,8 +1,12 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.DevNullOutputStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.RandomDataInputStream;
+import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
+import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.bouncycastle.openpgp.PGPException;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -80,6 +84,25 @@ public class EncryptWithOpenPGPTest {
 
         final int sampleSize = Configs.KB;
         sut.encryptAndSign(someRandomInputData(sampleSize), out);
+    }
+
+    @Test(expected = PGPException.class)
+    public void encryption_toSignOnlyKey_throws() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
+
+        final KeyringConfig keyringConfig = Configs.keyringConfigFromResourceForSender(KeyringConfigCallbacks.withPassword("sign"));
+
+        //  sender.signonly@example.com is a "sign only" DSA key.
+        // trying to encrypt to that key should not be possible
+        EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
+                "sender@example.com",
+                "sender.signonly@example.com",
+                HashAlgorithm.sha1,
+                SymmetricKeyAlgorithmTags.AES_128,
+                keyringConfig);
+        StreamEncryption sut = new EncryptWithOpenPGP(encryptAndSignConfig);
+
+        final int sampleSize = Configs.KB;
+        sut.encryptAndSign(someRandomInputData(sampleSize), new DevNullOutputStream());
     }
 
 

@@ -88,6 +88,26 @@ public class PGPEncryptingStream extends OutputStream {
                                       final int symmetricEncryptionAlgorithmCode,
                                       final KeyringConfigCallback passphraseCallback) throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
 
+        if (config == null) {
+            throw new NullPointerException("No config");
+        }
+
+        if (cipherTextSink == null) {
+            throw new NullPointerException("no cipherTextSink");
+        }
+
+        if (pubEncKey == null) {
+            throw new NullPointerException("No pubEncKey");
+        }
+
+        if (!pubEncKey.isEncryptionKey()) {
+            throw new PGPException(String.format("This public key (0x%x) is not suitable for encryption", pubEncKey.getKeyID()));
+        }
+
+        if (passphraseCallback == null) {
+            throw new NullPointerException("No passphraseCallback");
+        }
+
         final PGPEncryptingStream encryptingStream = new PGPEncryptingStream(config);
         encryptingStream.setup(cipherTextSink, pubEncKey, armor, withIntegrityCheck, hashAlgorithmCode, symmetricEncryptionAlgorithmCode, passphraseCallback);
         return encryptingStream;
