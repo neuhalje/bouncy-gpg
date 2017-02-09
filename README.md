@@ -10,8 +10,8 @@ Mission Statement
 
 This project gives you the following super-powers
 
-- you can encrypt, decrypt, sign and verify GPG/PGP files with just a few lines of code
-- you now can protect all the data at rest by reading encrypted files with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
+- encrypt, decrypt, sign and verify GPG/PGP files with just a few lines of code
+- protect all the data at rest by reading encrypted files with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
 - you can even [decrypt a gpg encrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java) -- never again let plaintext hit your servers disk!
 
 
@@ -42,11 +42,11 @@ Consider the following batch job:
    data files
 2. Your `pre-processing` needs to split up the data for further processing
 3. `pre-processing` stream-processes the GPG/ZIP archive
-    1. The GPG stream is decrypted using the [DecryptWithOpenPGPInputStreamFactory](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
+    1. The GPG stream is decrypted using the [BouncyGPG.decryptAndVerifyStream()](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/BouncyGPG.java) `InputStream`
     2. The ZIP file is processed with [ExplodeAndReencrypt](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/reencryption/ExplodeAndReencrypt.java)
         1. Each file from the archive is [processed](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/reencryption/ZipEntityStrategy.java)
         2. And transparently  encrypted with GPG and stored for further processing
-4. The `processing` job  [processes](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java) the files without writing plaintext to the disk.
+4. The `processing` job  [transparently reads](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/SignatureValidatingInputStream.java) the files without writing plaintext to the disk.
 
 encrypt.sh
 -----------
@@ -119,6 +119,12 @@ FAQ
    
    <dt>I am getting 'org.bouncycastle.openpgp.PGPException: checksum mismatch ..' exceptions</dt>
    <dd>The passphrase to your private key is very likely wrong (or you did not pass a passphrase).</dd>
+   
+   <dt>I am getting 'java.security.InvalidKeyException: Illegal key size' / 'java.lang.SecurityException: Unsupported keysize or algorithm parameters'</dt>
+   <dd>The unrestricted policy files for the JVM are <a href="http://www.bouncycastle.org/wiki/display/JA1/Frequently+Asked+Questions">probably not installed</a>.</dd>
+
+   <dt>Where is 'secring.pgp'?</dt>
+   <dd>'secring.gpg' has been <a href="https://gnupg.org/faq/whats-new-in-2.1.html#nosecring">removed in gpg 2.1</a>. Use the other methods to read private keys.</dd>
 </dl>
 
 
@@ -134,6 +140,7 @@ CAVE
 
 * Only one keyring per userid ("sender@example.com") supported.
 * Only one signing key per userid supported.
+
 
 ## LICENSE
 
