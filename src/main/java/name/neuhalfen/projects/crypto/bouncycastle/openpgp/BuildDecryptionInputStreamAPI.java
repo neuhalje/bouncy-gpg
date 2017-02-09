@@ -15,7 +15,7 @@ import java.security.NoSuchProviderException;
 /**
  * This class implements the builder for decrypting Streams.
  */
-public class BuildDecryptionInputStreamAPI {
+public final class BuildDecryptionInputStreamAPI {
 
     @Nonnull
     private KeyringConfig keyringConfig;
@@ -95,9 +95,9 @@ public class BuildDecryptionInputStreamAPI {
          * andRequireSignatureFromAllKeys("recipient@example.com")
          *
          * @param userIds a valid signature from all of the passed keys is required. The keys MUST exist in the public keyring.
+         * @return the next build step
          * @throws PGPException error extracting public keys from keyring
          * @throws IOException  IO is dangerous
-         * @return the next build step
          */
         @Nonnull
         public Build andRequireSignatureFromAllKeys(@Nullable String... userIds) throws PGPException, IOException {
@@ -149,6 +149,7 @@ public class BuildDecryptionInputStreamAPI {
          * @param encryptedData An encrypted input stream. Will not be closed.
          * @return Plaintext stream. Signatures are checked the moment EOF is reached.
          * @throws IOException IO is dangerous. Also wraps several GPG exceptions.
+         * @throws NoSuchProviderException BC provider is not registered
          */
         @Nonnull
         public InputStream fromEncryptedInputStream(@Nullable InputStream encryptedData) throws IOException, NoSuchProviderException {

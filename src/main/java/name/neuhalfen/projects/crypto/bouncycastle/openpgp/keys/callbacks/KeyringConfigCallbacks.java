@@ -8,7 +8,7 @@ import java.util.Map;
  * .
  * {@link KeyringConfigCallback}
  */
-public class KeyringConfigCallbacks {
+public final class KeyringConfigCallbacks {
     public static KeyringConfigCallback withPassword(char[] passphrase) {
         return new StaticPasswordKeyringConfigCallback(passphrase);
     }

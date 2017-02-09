@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class RequireSpecificSignatureValidationStrategy implements SignatureValidationStrategy {
+final class RequireSpecificSignatureValidationStrategy implements SignatureValidationStrategy {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(RequireSpecificSignatureValidationStrategy.class);
 
     private final Set<Long> signaturesRequiredForTheseKeys;

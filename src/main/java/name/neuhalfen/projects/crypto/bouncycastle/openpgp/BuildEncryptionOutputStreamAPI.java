@@ -17,7 +17,7 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 
 
-public class BuildEncryptionOutputStreamAPI {
+public final class BuildEncryptionOutputStreamAPI {
     private OutputStream sinkForEncryptedData;
 
 

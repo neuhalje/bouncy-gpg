@@ -18,7 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 
-public class EncryptWithOpenPGP implements StreamEncryption {
+public final class EncryptWithOpenPGP {
     /**
      * The Constant LOGGER.
      */
@@ -62,7 +62,7 @@ public class EncryptWithOpenPGP implements StreamEncryption {
         this.algorithmSuite = algorithmSuite;
     }
 
-    @Override
+
     public void encryptAndSign(final InputStream is, final OutputStream os) throws IOException,
             NoSuchAlgorithmException, SignatureException, PGPException, NoSuchProviderException {
         final long starttime = System.currentTimeMillis();

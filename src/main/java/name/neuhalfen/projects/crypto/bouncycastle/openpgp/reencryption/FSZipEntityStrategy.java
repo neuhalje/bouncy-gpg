@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * A file based ZipEntityStrategy that puts the contents of the exploded ZIP
  * under a given root directory.
- *
+ * .
  * All file names are appended with ".gpg"
  */
 public class FSZipEntityStrategy implements ZipEntityStrategy {
@@ -34,7 +34,9 @@ public class FSZipEntityStrategy implements ZipEntityStrategy {
     }
 
     @Override
-    public @Nullable OutputStream createOutputStream(String sanitizedFileName) throws IOException {
+    public
+    @Nullable
+    OutputStream createOutputStream(String sanitizedFileName) throws IOException {
         final String fileName = sanitizedFileName + ".gpg";
 
         File destPath = new File(destRootDir, fileName);

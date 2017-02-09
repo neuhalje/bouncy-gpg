@@ -81,6 +81,7 @@ public final class PGPEncryptingStream extends OutputStream {
 
     /**
      * @param cipherTextSink Where the ciphertext goes
+     * @param signingUid     Sign with this uid. null: do not sign
      * @param pubEncKey      the pub enc key
      * @param armor          if OutputStream should be "armored", that means base64 encoded
      * @throws IOException              Signals that an I/O exception has occurred.
@@ -92,7 +93,7 @@ public final class PGPEncryptingStream extends OutputStream {
      *                                  {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
      */
     protected void setup(final OutputStream cipherTextSink,
-                         final String signingUid,
+                         @Nullable final String signingUid,
                          final PGPPublicKey pubEncKey,
                          final boolean armor) throws
             IOException, NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {

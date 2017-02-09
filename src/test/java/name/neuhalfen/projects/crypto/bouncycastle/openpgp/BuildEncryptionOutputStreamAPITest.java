@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -44,7 +44,7 @@ public class BuildEncryptionOutputStreamAPITest {
         assumeNotNull(withConfig);
 
         assertNotNull(withConfig.withDefaultAlgorithms());
-        assertNotNull(withConfig.withAlgorithms(mock(PGPAlgorithmSuite.class)));
+        assertNotNull(withConfig.withAlgorithms(DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG()));
     }
 
     @Test(expected = NullPointerException.class)

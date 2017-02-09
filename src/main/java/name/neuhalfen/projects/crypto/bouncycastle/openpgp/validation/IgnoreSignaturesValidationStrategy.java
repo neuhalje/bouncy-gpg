@@ -8,7 +8,7 @@ import org.bouncycastle.openpgp.PGPOnePassSignature;
 import java.security.SignatureException;
 import java.util.Map;
 
-class IgnoreSignaturesValidationStrategy implements SignatureValidationStrategy {
+final class IgnoreSignaturesValidationStrategy implements SignatureValidationStrategy {
 
     @Override
     public void validateSignatures(PGPObjectFactory factory,

@@ -6,9 +6,9 @@ import java.io.OutputStream;
 
 /**
  * Strategy for handling the content of an encrypted ZIP file.
- *
+ * <p>
  * The data flow is:
- *
+ * <p>
  * [encrypted data from e.g test.zip.gpg]
  * * for each file/dir
  * -- [name sanitation]

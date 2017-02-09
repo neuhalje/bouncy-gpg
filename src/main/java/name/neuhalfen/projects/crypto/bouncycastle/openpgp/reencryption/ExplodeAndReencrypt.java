@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption;
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.StreamEncryption;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import org.bouncycastle.openpgp.PGPException;
 
 import java.io.IOException;
@@ -20,10 +20,10 @@ class ExplodeAndReencrypt {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExplodeAndReencrypt.class);
 
     private final InputStream is;
-    private final StreamEncryption streamEncryption;
+    private final EncryptWithOpenPGP streamEncryption;
 
 
-    public ExplodeAndReencrypt(InputStream is, ZipEntityStrategy entityHandlingStrategy, StreamEncryption streamEncryption) {
+    public ExplodeAndReencrypt(InputStream is, ZipEntityStrategy entityHandlingStrategy, EncryptWithOpenPGP streamEncryption) {
         this.is = is;
         this.entityHandlingStrategy = entityHandlingStrategy;
         this.streamEncryption = streamEncryption;
@@ -77,7 +77,7 @@ class ExplodeAndReencrypt {
             }
             if (zipDataFound) {
                 LOGGER.debug("ZIP input stream closed. Created {} directories, and {} files.", numDirs, numFiles);
-            }else {
+            } else {
                 LOGGER.info("ZIP input stream closed. No ZIP data found.");
             }
         } finally {

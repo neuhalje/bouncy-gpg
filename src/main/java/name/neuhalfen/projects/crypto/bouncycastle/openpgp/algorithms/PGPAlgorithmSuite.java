@@ -1,7 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
 
-public class PGPAlgorithmSuite {
+public final class PGPAlgorithmSuite {
 
     private final PGPHashAlgorithms hashAlgorithmCode;
     private final PGPSymmetricEncryptionAlgorithms symmetricEncryptionAlgorithmCode;

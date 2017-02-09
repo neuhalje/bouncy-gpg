@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.security.NoSuchProviderException;
 import java.util.Iterator;
 
-public class DecryptionStreamFactory {
+public final class DecryptionStreamFactory {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DecryptionStreamFactory.class);
 
 
