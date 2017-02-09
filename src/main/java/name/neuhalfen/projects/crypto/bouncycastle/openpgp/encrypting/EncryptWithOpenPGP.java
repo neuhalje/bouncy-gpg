@@ -1,7 +1,10 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -28,8 +31,9 @@ public class EncryptWithOpenPGP implements StreamEncryption {
      */
     private static final int MLLIES_PER_SEC = 1000;
 
-    private final EncryptionConfig config;
+    private final KeyringConfig config;
 
+    private final PGPAlgorithmSuite algorithmSuite;
     /**
      * The signature uid.
      */
@@ -40,18 +44,8 @@ public class EncryptWithOpenPGP implements StreamEncryption {
      */
     private final PGPPublicKeyRing encryptionPublicKeyRing;
 
-    /**
-     * code for the hash algorithm used for signing according to {@link org.bouncycastle.bcpg.HashAlgorithmTags}.
-     */
-    private final int hashAlgorithmCode;
 
-    /**
-     * code for the algorithm used for symmetric encryption according to
-     * {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}.
-     */
-    private final int symmetricEncryptionAlgorithmCode;
-
-    public EncryptWithOpenPGP(final EncryptionConfig config) throws IOException {
+    public EncryptWithOpenPGP(final EncryptionConfig config, final PGPAlgorithmSuite algorithmSuite) throws IOException {
 
         try {
 
@@ -61,12 +55,11 @@ public class EncryptWithOpenPGP implements StreamEncryption {
             this.encryptionPublicKeyRing =
                     PGPUtilities.extractPublicKeyRingForUserId(config.getEncryptionPublicKeyId(), config.getPublicKeyRings());
 
-            this.hashAlgorithmCode = config.getPgpHashAlgorithmCode();
-            this.symmetricEncryptionAlgorithmCode = config.getPgpSymmetricEncryptionAlgorithmCode();
         } catch (PGPException e) {
             throw new RuntimeException("Failed to construct EncryptWithOpenPGP", e);
         }
-        this.config = config;
+        this.config = config.getConfig();
+        this.algorithmSuite = algorithmSuite;
     }
 
     @Override
@@ -76,10 +69,9 @@ public class EncryptWithOpenPGP implements StreamEncryption {
 
         final PGPPublicKey encryptionKey = PGPUtilities.getEncryptionKey(this.encryptionPublicKeyRing);
         if (encryptionKey == null) {
-            throw new PGPException("Could not find a valid encryption key for uid '" + config.getEncryptionPublicKeyId() + "'");
+            throw new PGPException("Could not find a valid encryption key for uid ");
         }
-        encryptAndSign(is, os, encryptionKey, true, true,
-                this.hashAlgorithmCode, this.symmetricEncryptionAlgorithmCode);
+        encryptAndSign(is, os, encryptionKey, true);
 
         LOGGER.debug("Encrypt and sign duration {}s", (System.currentTimeMillis() - starttime) / MLLIES_PER_SEC);
     }
@@ -88,13 +80,10 @@ public class EncryptWithOpenPGP implements StreamEncryption {
     /**
      * Method to sign-and-encrypt.
      *
-     * @param in                               the in
-     * @param out                              the out
-     * @param pubEncKey                        the pub enc key
-     * @param armor                            if OutputStream should be "armored", that means base64 encoded
-     * @param withIntegrityCheck               the with integrity check
-     * @param hashAlgorithmCode                code for the hash algorithm used for signing according to
-     * @param symmetricEncryptionAlgorithmCode code for the algorithm used for symmetric encryption according to
+     * @param in        the in
+     * @param out       the out
+     * @param pubEncKey the pub enc key
+     * @param armor     if OutputStream should be "armored", that means base64 encoded
      * @throws IOException              Signals that an I/O exception has occurred.
      * @throws NoSuchAlgorithmException the no such algorithm exception
      * @throws NoSuchProviderException  the no such provider exception
@@ -104,19 +93,18 @@ public class EncryptWithOpenPGP implements StreamEncryption {
      *                                  {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
      */
     protected void encryptAndSign(final InputStream in, OutputStream out, final PGPPublicKey pubEncKey,
-                                  final boolean armor, final boolean withIntegrityCheck,
-                                  final int hashAlgorithmCode, final int symmetricEncryptionAlgorithmCode) throws IOException,
+                                  final boolean armor) throws IOException,
             NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
 
         KeyringConfigCallback callback = new KeyringConfigCallback() {
             @Nullable
             @Override
             public char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID) {
-                return config.signingKeyPassphrase(keyID);
+                return config.decryptionSecretKeyPassphraseForSecretKeyId(keyID);
             }
         };
 
-        try (final OutputStream encryptionStream = PGPEncryptingStream.create(config, out, armor, pubEncKey, withIntegrityCheck, hashAlgorithmCode, symmetricEncryptionAlgorithmCode, callback)) {
+        try (final OutputStream encryptionStream = PGPEncryptingStream.create(config, DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG(), signatureUid, out, armor, pubEncKey, callback)) {
             Streams.pipeAll(in, encryptionStream);
             encryptionStream.flush();
         }

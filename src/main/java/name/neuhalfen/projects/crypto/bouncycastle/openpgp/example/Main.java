@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.example;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGP;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
@@ -44,7 +45,7 @@ public class Main {
                         HashAlgorithm.sha1,
                         SymmetricKeyAlgorithmTags.AES_128, keyringConfig);
 
-                EncryptWithOpenPGP pgp = new EncryptWithOpenPGP(encryptionConfig);
+                EncryptWithOpenPGP pgp = new EncryptWithOpenPGP(encryptionConfig, DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
                 long startTime = System.currentTimeMillis();
 

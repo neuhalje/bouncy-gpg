@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -32,7 +33,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
 
     @Test
     public void encryptAndSign_thenDecryptAndVerify_yieldsOriginalPlaintext() throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-        StreamEncryption encrypt = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources());
+        StreamEncryption encrypt = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources(), DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
         final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
         ByteArrayInputStream plainTextSource = new ByteArrayInputStream(expectedPlaintext);

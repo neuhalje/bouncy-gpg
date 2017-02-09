@@ -1,5 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
@@ -29,7 +30,7 @@ public class EncryptWithOpenPGPTest {
     @Test
     public void encryptionAndSigning_anyData_doesNotCloseInputStream() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
 
-        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources());
+        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources(), DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
 
         InputStream in = mock(InputStream.class);
@@ -48,7 +49,7 @@ public class EncryptWithOpenPGPTest {
     @Test
     public void encryptionAndSigning_anyData_doesNotCloseOutputStream() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
 
-        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources());
+        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources(), DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
         InputStream in = mock(InputStream.class);
         when(in.read()).thenReturn(-1);
@@ -67,7 +68,7 @@ public class EncryptWithOpenPGPTest {
     @Test(expected = PGPException.class)
     public void encryptionAndSigning_wrongSigningKeyID_throws() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
 
-        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources("unknown", ""));
+        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources("unknown", ""), DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
         DevNullOutputStream out = new DevNullOutputStream();
 
@@ -78,7 +79,7 @@ public class EncryptWithOpenPGPTest {
     @Test(expected = PGPException.class)
     public void encryptionAndSigning_wrongSigningKeyPassword_throws() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
 
-        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources("sender@example.com", "wrong"));
+        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources("sender@example.com", "wrong"), DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
         DevNullOutputStream out = new DevNullOutputStream();
 
@@ -99,7 +100,7 @@ public class EncryptWithOpenPGPTest {
                 HashAlgorithm.sha1,
                 SymmetricKeyAlgorithmTags.AES_128,
                 keyringConfig);
-        StreamEncryption sut = new EncryptWithOpenPGP(encryptAndSignConfig);
+        StreamEncryption sut = new EncryptWithOpenPGP(encryptAndSignConfig, DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
         final int sampleSize = Configs.KB;
         sut.encryptAndSign(someRandomInputData(sampleSize), new DevNullOutputStream());
@@ -109,7 +110,7 @@ public class EncryptWithOpenPGPTest {
     @Test
     public void encryptionAndSigning_smallAmountsOfData_doesNotCrash() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
 
-        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources());
+        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources(), DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
         DevNullOutputStream out = new DevNullOutputStream();
 
@@ -125,7 +126,7 @@ public class EncryptWithOpenPGPTest {
     @Test
     @Ignore("this test is  slow (~2sec)")
     public void encryptionAndSigning_10MB_isFast() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
-        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources());
+        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources(), DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
         DevNullOutputStream out = new DevNullOutputStream();
 
@@ -139,7 +140,7 @@ public class EncryptWithOpenPGPTest {
     @Test
     @Ignore("this test is very slow (~2min)")
     public void encryptionAndSigning_1GB_doesNotCrash() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
-        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources());
+        StreamEncryption sut = new EncryptWithOpenPGP(Configs.buildConfigForEncryptionFromResources(), DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
         DevNullOutputStream out = new DevNullOutputStream();
 

@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
@@ -28,28 +29,11 @@ public class PGPEncryptingStream extends OutputStream {
 
 
     private final KeyringConfig config;
+    private PGPAlgorithmSuite algorithmSuite;
 
     /**
      * The signature uid.
      */
-    private final String signatureUid;
-
-    /**
-     * The encryption public key ring.
-     */
-    private final PGPPublicKeyRing encryptionPublicKeyRing;
-
-    /**
-     * code for the hash algorithm used for signing according to {@link org.bouncycastle.bcpg.HashAlgorithmTags}.
-     */
-    private final int hashAlgorithmCode;
-
-    /**
-     * code for the algorithm used for symmetric encryption according to
-     * {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}.
-     */
-    private final int symmetricEncryptionAlgorithmCode;
-
     private OutputStream encryptionDataStream;
     private PGPSignatureGenerator signatureGenerator;
 
@@ -60,32 +44,18 @@ public class PGPEncryptingStream extends OutputStream {
     private PGPLiteralDataGenerator encryptionDataStreamGenerator;
     private PGPCompressedDataGenerator compressionStreamGenerator;
 
-    PGPEncryptingStream(final EncryptionConfig config) throws IOException {
-
-
-        try {
-
-            this.signatureUid = config.getSignatureSecretKeyId();
-
-            this.encryptionPublicKeyRing =
-                    PGPUtilities.extractPublicKeyRingForUserId(config.getEncryptionPublicKeyId(), config.getPublicKeyRings());
-
-            this.hashAlgorithmCode = config.getPgpHashAlgorithmCode();
-            this.symmetricEncryptionAlgorithmCode = config.getPgpSymmetricEncryptionAlgorithmCode();
-        } catch (PGPException e) {
-            throw new RuntimeException("Failed to construct EncryptWithOpenPGP", e);
-        }
-        this.config = config.getConfig();
+    PGPEncryptingStream(final KeyringConfig config, final PGPAlgorithmSuite algorithmSuite) throws IOException {
+        this.config = config;
+        this.algorithmSuite = algorithmSuite;
     }
 
     //Return a stream that, when written plaintext into, writes the ciphertext into cipherTextSink.
-    public static OutputStream create(final EncryptionConfig config,
+    public static OutputStream create(final KeyringConfig config,
+                                      final PGPAlgorithmSuite algorithmSuite,
+                                      final String signingUid,
                                       final OutputStream cipherTextSink,
                                       final boolean armor,
                                       final PGPPublicKey pubEncKey,
-                                      final boolean withIntegrityCheck,
-                                      final int hashAlgorithmCode,
-                                      final int symmetricEncryptionAlgorithmCode,
                                       final KeyringConfigCallback passphraseCallback) throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
 
         if (config == null) {
@@ -108,19 +78,16 @@ public class PGPEncryptingStream extends OutputStream {
             throw new NullPointerException("No passphraseCallback");
         }
 
-        final PGPEncryptingStream encryptingStream = new PGPEncryptingStream(config);
-        encryptingStream.setup(cipherTextSink, pubEncKey, armor, withIntegrityCheck, hashAlgorithmCode, symmetricEncryptionAlgorithmCode, passphraseCallback);
+        final PGPEncryptingStream encryptingStream = new PGPEncryptingStream(config, algorithmSuite);
+        encryptingStream.setup(cipherTextSink, signingUid, pubEncKey, armor, passphraseCallback);
         return encryptingStream;
     }
 
 
     /**
-     * @param cipherTextSink                   Where the ciphertext goes
-     * @param pubEncKey                        the pub enc key
-     * @param armor                            if OutputStream should be "armored", that means base64 encoded
-     * @param withIntegrityCheck               the with integrity check
-     * @param hashAlgorithmCode                code for the hash algorithm used for signing according to
-     * @param symmetricEncryptionAlgorithmCode code for the algorithm used for symmetric encryption according to
+     * @param cipherTextSink Where the ciphertext goes
+     * @param pubEncKey      the pub enc key
+     * @param armor          if OutputStream should be "armored", that means base64 encoded
      * @throws IOException              Signals that an I/O exception has occurred.
      * @throws NoSuchAlgorithmException the no such algorithm exception
      * @throws NoSuchProviderException  the no such provider exception
@@ -130,11 +97,9 @@ public class PGPEncryptingStream extends OutputStream {
      *                                  {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
      */
     protected void setup(final OutputStream cipherTextSink,
+                         final String signingUid,
                          final PGPPublicKey pubEncKey,
                          final boolean armor,
-                         final boolean withIntegrityCheck,
-                         final int hashAlgorithmCode,
-                         final int symmetricEncryptionAlgorithmCode,
                          final KeyringConfigCallback passphraseCallback) throws
             IOException, NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
 
@@ -146,8 +111,8 @@ public class PGPEncryptingStream extends OutputStream {
             sink = cipherTextSink;
         }
 
-        final BcPGPDataEncryptorBuilder dataEncryptorBuilder = new BcPGPDataEncryptorBuilder(symmetricEncryptionAlgorithmCode);
-        dataEncryptorBuilder.setWithIntegrityPacket(withIntegrityCheck);
+        final BcPGPDataEncryptorBuilder dataEncryptorBuilder = new BcPGPDataEncryptorBuilder(algorithmSuite.getSymmetricEncryptionAlgorithmCode().id);
+        dataEncryptorBuilder.setWithIntegrityPacket(true);
 
         final PGPEncryptedDataGenerator cPk =
                 new PGPEncryptedDataGenerator(dataEncryptorBuilder);
@@ -158,10 +123,10 @@ public class PGPEncryptingStream extends OutputStream {
         // this wraps the output stream in an encrypting output stream
         outerEncryptionStream = cPk.open(sink, new byte[1 << 16]);
 
-        final PGPSecretKey pgpSec = PGPUtilities.extractSecretSigningKeyFromKeyrings(config.getSecretKeyRings(), signatureUid);
+        final PGPSecretKey pgpSec = PGPUtilities.extractSecretSigningKeyFromKeyrings(config.getSecretKeyRings(), signingUid);
 
         final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec, passphraseCallback.decryptionSecretKeyPassphraseForSecretKeyId(pgpSec.getKeyID()));
-        signatureGenerator = new PGPSignatureGenerator(new BcPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), hashAlgorithmCode));
+        signatureGenerator = new PGPSignatureGenerator(new BcPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), algorithmSuite.getHashAlgorithmCode().id));
 
 
         signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
@@ -176,7 +141,7 @@ public class PGPEncryptingStream extends OutputStream {
             signatureGenerator.setHashedSubpackets(spGen.generate());
         }
 
-        compressionStreamGenerator = new PGPCompressedDataGenerator(PGPCompressedData.ZLIB);
+        compressionStreamGenerator = new PGPCompressedDataGenerator(algorithmSuite.getCompressionEncryptionAlgorithmCode().id);
         compressionStream = new BCPGOutputStream(compressionStreamGenerator.open(outerEncryptionStream));
 
         signatureGenerator.generateOnePassVersion(false).encode(compressionStream);
