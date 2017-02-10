@@ -33,8 +33,8 @@ dependencies {
     compile 'org.bouncycastle:bcprov-jdk15on:1.56'
     compile 'org.bouncycastle:bcpg-jdk15on:1.56'
 
-    compile 'org.slf4j:slf4j-api:1.7.12'
-    compile 'ch.qos.logback:logback-classic:1.1.3'
+    compile 'org.slf4j:slf4j-api:1.7.22'
+    compile 'ch.qos.logback:logback-classic:1.2.1'
 
     // @Nullable and friends are not needed at runtime
     compile 'com.google.code.findbugs:jsr305:3.0.1'
