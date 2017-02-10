@@ -67,10 +67,10 @@ class ExplodeAndReencrypt {
                         final OutputStream outputStream = entityHandlingStrategy.createOutputStream(sanitizedFileName)
                 ) {
                     if (outputStream != null) {
-                        final OutputStream encryptedSmallZIP = encryptionFactory.andWriteTo(outputStream);
-                        Streams.pipeAll(zis, encryptedSmallZIP);
-                        encryptedSmallZIP.flush();
-                        encryptedSmallZIP.close();
+                        final OutputStream encryptedSmallFromZIP = encryptionFactory.andWriteTo(outputStream);
+                        Streams.pipeAll(zis, encryptedSmallFromZIP);
+                        encryptedSmallFromZIP.flush();
+                        encryptedSmallFromZIP.close();
                     } else {
                         LOGGER.trace("Ignore {}", entry.getName());
                     }
