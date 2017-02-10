@@ -4,15 +4,13 @@ Open TODOs
 Version 2.0
 -------------
 
-- [ ] Remove all TODOs and FIXMEs
-- [ ] Allow `gpg --export -a` and `gpg --export-secret-key -a`  as source for keyring generation
+- [x] Remove all TODOs and FIXMEs
 - [x] Test sha256,  AES_256
-- [ ] Code quality reports (Sonar e.g.)
-- [ ] Move example in dedicated directory + projects
+- [x] Move example in dedicated directory + projects
 - [x] Document obsolete secring.gpg in GPG 2.1  (https://gnupg.org/faq/whats-new-in-2.1.html#nosecring)
 - [x] Switch over to Java 8
-- [ ] Fix links in README
-- [ ] Add example snippets to README
+- [x] Fix links in README
+- [x] Add example snippets to README
 
 
 Version 2.1
@@ -21,7 +19,8 @@ Version 2.1
 - [ ] Unit tests: Factor all tests in EncryptionConfig and EncryptWithOpenPGPTestDriver to test the new API
 - [ ] Allow to enforce algorithm "minimum level", e.g. for decryption/validation
 - [ ] Unit tests: iterate different DefaultPGPAlgorithmSuites.secureSuiteForGnuPG() (incl. compression & no signature!)
-
+- [ ] Code quality reports (Sonar e.g.)
+- [ ] Allow `gpg --export -a` and `gpg --export-secret-key -a`  as source for keyring generation
 
 
 Version 3.0

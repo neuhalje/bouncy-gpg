@@ -11,8 +11,8 @@ Mission Statement
 This project gives you the following super-powers
 
 - encrypt, decrypt, sign and verify GPG/PGP files with just a few lines of code
-- protect all the data at rest by reading encrypted files with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
-- you can even [decrypt a gpg encrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java) -- never again let plaintext hit your servers disk!
+- protect all the data at rest by reading encrypted files with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptionStreamFactory.java)
+- you can even [decrypt a gpg encrypted ZIP and re-encrypt each file in it again](examples/reencrypt/src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java) -- never again let plaintext hit your servers disk!
 
 Examples
 ==========
@@ -172,9 +172,9 @@ dependencies {
 | Class                         | Use when you want to                                                                |
 |:------------------------------|:------------------------------------------------------------------------------------|
 | [`BouncyGPG`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/BouncyGPG.java) | Starting point for the convenient fluent en- and decryption API. |
-| [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfigs.java) | Create default implementations for GPG keyring access. You can also create your own implementations by implementing  [`KeyringConfig`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfig.java). |
-| [`KeyringConfigCallbacks`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfigCallbacks.java) | Used by  [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/KeyringConfigs.java). Create default implementations to provide secret-key passwords. 
-|
+| [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java) | Create default implementations for GPG keyring access. You can also create your own implementations by implementing  [`KeyringConfig`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfig.java). |
+| [`KeyringConfigCallbacks`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/callbacks/KeyringConfigCallbacks.java) | Used by  [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java). Create default implementations to provide secret-key passwords.  |
+| [`DefaultPGPAlgorithmSuites`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/algorithms/DefaultPGPAlgorithmSuites.java) |  Select from predefined algorithms suites or create your won with `PGPAlgorithmSuite`. |
 
 
 
@@ -220,6 +220,7 @@ CAVE
 
 * Only one keyring per userid ("sender@example.com") supported.
 * Only one signing key per userid supported.
+* [TODOs](TODO.md)
 
 
 ## LICENSE
