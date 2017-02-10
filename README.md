@@ -85,8 +85,21 @@ The following snippet decrypts the file created in the snippet above.
 Demos
 =========
 
-demo_reencrypt.sh
--------------------
+The directory [examples](examples) contains several examples that show how easy some common usecases are implemented.
+
+[demo_dencrypt.sh](examples/decrypt)
+-----------------------------------------
+
+Decrypt a file and verify the signature.
+
+[demo_encrypt.sh](examples/encrypt)
+-----------------------------------------
+
+Encrypt and sign a file.
+
+[demo_reencrypt.sh](examples/reencrypt)
+-----------------------------------------
+
 A GPG encrypted ZIP file is decrypted on the fly. The structure of the ZIP is then written to disk. All files are re-encrypted before saving them.
 
 * `demo_reencrypt.sh TARGET` -- decrypts an encrypted ZIP file containing  three files (total size: 1.2 GB) AND

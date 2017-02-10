@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ASSEMBLY=bouncy-castle-examples-2.0.0
+ASSEMBLY=encrypt-1.0.0
 LOCATION=./build
 
 [ -f ./build/libs/${ASSEMBLY}.jar ] ||  ./gradlew installDist
@@ -11,7 +11,7 @@ then
 else
 
 CP=${LOCATION}/libs/${ASSEMBLY}.jar
-for JAR in ${LOCATION}/install/bouncy-castle-examples/lib/*.jar
+for JAR in ${LOCATION}/install/encrypt/lib/*.jar
 do
    CP=${CP}:${JAR}
 done
@@ -20,8 +20,8 @@ java -cp ${CP} \
    name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.EncryptMain \
    sender@example.com \
    recipient@example.com \
-   ./src/test/resources/sender.gpg.d/pubring.gpg  \
-   ./src/test/resources/sender.gpg.d/secring.gpg sender \
+   ../../src/test/resources/sender.gpg.d/pubring.gpg  \
+   ../../src/test/resources/sender.gpg.d/secring.gpg sender \
    "$1" "$2"
 fi
 
