@@ -14,6 +14,73 @@ This project gives you the following super-powers
 - protect all the data at rest by reading encrypted files with [transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)
 - you can even [decrypt a gpg encrypted ZIP and re-encrypt each file in it again](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java) -- never again let plaintext hit your servers disk!
 
+Examples
+==========
+
+Encrypting a file
+-------------------
+
+The following snippet encrypts `/tmp/plaintext.txt` to `recipient@exmaple.com` and signs with `sender@example.com`.
+The encrypted file is written to `/tmp/encrypted.gpg`.
+
+```java
+                final KeyringConfig keyringConfig = KeyringConfigs
+                   .withKeyRingsFromFiles(
+                         "pubring.gpg",
+                        "secring.gpg", 
+                        KeyringConfigCallbacks.withPassword("s3cr3t"));
+
+
+                try (
+                        final FileOutputStream fileOutput = new FileOutputStream("/tmp/encrypted.gpg");
+                        final BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOutput);
+
+                        final OutputStream outputStream = BouncyGPG
+                                .encryptToStream()
+                                .withConfig(keyringConfig)
+                                .withStrongAlgorithms()
+                                .toRecipient("recipient@example.com")
+                                .andSignWith("sender@example.com")
+                                .binaryOutput()
+                                .andWriteTo(bufferedOut);
+
+                        final FileInputStream is = new FileInputStream("/tmp/plaintext.txt")
+                ) {
+                    Streams.pipeAll(is, outputStream);
+                }
+
+```
+
+Decrypting a file and validating the signature
+-------------------------------------------------
+
+The following snippet decrypts the file created in the snippet above.
+
+
+```java
+               final KeyringConfig keyringConfig = KeyringConfigs
+                   .withKeyRingsFromFiles(
+                         "pubring.gpg",
+                        "secring.gpg", 
+                        KeyringConfigCallbacks.withPassword("s3cr3t"));
+
+                try (
+                        final FileInputStream cipherTextStream = new FileInputStream("/tmp/encrypted.gpg");
+
+                        final FileOutputStream fileOutput = new FileOutputStream(destFile);
+                        final BufferedOutputStream bufferedOut = new BufferedOutputStream("/tmp/plaintext.txt");
+
+                        final InputStream plaintextStream = BouncyGPG
+                               .decryptAndVerifyStream()
+                               .withConfig(keyringConfig)
+                               .andIgnoreSignatures()
+                               .fromEncryptedInputStream(cipherTextStream)
+
+                ) {
+                    Streams.pipeAll(plaintextStream, bufferedOut);
+                }
+
+```
 
 Demos
 =========

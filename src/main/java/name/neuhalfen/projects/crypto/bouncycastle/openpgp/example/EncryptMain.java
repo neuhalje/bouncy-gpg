@@ -11,7 +11,7 @@ import org.bouncycastle.util.io.Streams;
 import java.io.*;
 import java.security.Security;
 
-public class Main {
+public class EncryptMain {
     static void installBCProvider() {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
