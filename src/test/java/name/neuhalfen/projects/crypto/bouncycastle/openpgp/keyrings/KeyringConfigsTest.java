@@ -1,4 +1,4 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.keyrings;
+package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keyrings;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 @RunWith(Parameterized.class)
-public class DecryptionConfigTest {
+public class KeyringConfigsTest {
     @Before
     public void before() {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
@@ -26,13 +26,14 @@ public class DecryptionConfigTest {
         }
     }
 
-
     /*
      * make sure that the tests work independently of the way the config has been created
      */
     @Parameterized.Parameters
-    public static Object[] data() {
-        return new Object[]{Configs.keyringConfigFromFilesForRecipient(), Configs.keyringConfigFromResourceForRecipient()};
+    public static Object[] data() throws IOException, PGPException {
+        return new Object[]{Configs.keyringConfigFromFilesForSender(),
+                Configs.keyringConfigFromResourceForSender(),
+                Configs.keyringConfigInMemoryForSender()};
     }
 
 
@@ -64,15 +65,20 @@ public class DecryptionConfigTest {
 
     @Test
     public void findPubKeys_works() throws IOException, PGPException {
-        assertTrue(keyringConfig.getPublicKeyRings().contains(ExampleMessages.PUBKEY_SENDER));
-        assertTrue(keyringConfig.getPublicKeyRings().contains(ExampleMessages.PUBKEY_SENDER_2));
-        assertTrue(keyringConfig.getPublicKeyRings().contains(ExampleMessages.PUBKEY_RECIPIENT));
+        assertTrue(keyringConfig.getPublicKeyRings().contains(ExampleMessages.KEY_ID_SENDER));
+        assertTrue(keyringConfig.getPublicKeyRings().contains(ExampleMessages.KEY_ID_SENDER_2));
+        assertTrue(keyringConfig.getPublicKeyRings().contains(ExampleMessages.PUBKEY_ID_RECIPIENT));
     }
 
 
     @Test
-    public void findSecretKey_works() throws IOException, PGPException {
-        assertTrue(keyringConfig.getSecretKeyRings().contains(ExampleMessages.SECRETKEY_RECIPIENT));
+    public void findSecretKeyRsa_works() throws IOException, PGPException {
+        assertTrue(keyringConfig.getSecretKeyRings().contains(ExampleMessages.KEY_ID_SENDER));
+    }
+
+    @Test
+    public void findSecretKeyDSA_works() throws IOException, PGPException {
+        assertTrue(keyringConfig.getSecretKeyRings().contains(ExampleMessages.KEY_ID_SENDER_DSA_SIGN_ONLY));
     }
 
 }

@@ -5,11 +5,14 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWit
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
+import org.bouncycastle.openpgp.PGPException;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Example configurations used in unit/-integration tests.
@@ -78,7 +81,33 @@ public class Configs {
         return keyringConfigFromResourceForRecipient(KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
     }
 
+    public static KeyringConfig keyringConfigInMemoryForSender() throws IOException, PGPException {
+        final InMemoryKeyring keyring = KeyringConfigs.forGpgExportedKeys(KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
 
+        keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER.getBytes("US-ASCII"));
+        keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_2.getBytes("US-ASCII"));
+        keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_DSA_SIGN_ONLY.getBytes("US-ASCII"));
+        keyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes("US-ASCII"));
+
+        keyring.addSecretKey(ExampleMessages.SECRET_KEY_SENDER.getBytes("US-ASCII"));
+        keyring.addSecretKey(ExampleMessages.SECRET_KEY_SENDER_DSA_SIGN_ONLY.getBytes("US-ASCII"));
+
+        return keyring;
+    }
+
+
+    public static KeyringConfig keyringConfigInMemoryForRecipient() throws IOException, PGPException {
+        final InMemoryKeyring keyring = KeyringConfigs.forGpgExportedKeys(KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
+
+        keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER.getBytes("US-ASCII"));
+        keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_2.getBytes("US-ASCII"));
+        keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_DSA_SIGN_ONLY.getBytes("US-ASCII"));
+        keyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes("US-ASCII"));
+
+        keyring.addSecretKey(ExampleMessages.SECRET_KEY_RECIPIENT.getBytes("US-ASCII"));
+
+        return keyring;
+    }
     // --------- Sender
 
 

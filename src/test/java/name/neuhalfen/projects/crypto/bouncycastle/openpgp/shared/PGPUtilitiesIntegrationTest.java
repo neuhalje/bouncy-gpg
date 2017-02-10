@@ -76,7 +76,7 @@ public class PGPUtilitiesIntegrationTest {
 
         final PGPPublicKey pgpPublicKey = PGPUtilities.extractSigningPublicKey(publicKeys);
         assertThat(pgpPublicKey, Matchers.notNullValue());
-        assertThat(pgpPublicKey.getKeyID(), equalTo(ExampleMessages.PUBKEY_SENDER));
+        assertThat(pgpPublicKey.getKeyID(), equalTo(ExampleMessages.KEY_ID_SENDER));
     }
 
     @Test()
@@ -86,7 +86,7 @@ public class PGPUtilitiesIntegrationTest {
 
         final PGPPublicKey pgpPublicKey = PGPUtilities.extractSigningPublicKey(publicKeys);
         assertThat(pgpPublicKey, Matchers.notNullValue());
-        assertThat(pgpPublicKey.getKeyID(), equalTo(ExampleMessages.PUBKEY_SENDER_2));
+        assertThat(pgpPublicKey.getKeyID(), equalTo(ExampleMessages.KEY_ID_SENDER_2));
     }
 
 

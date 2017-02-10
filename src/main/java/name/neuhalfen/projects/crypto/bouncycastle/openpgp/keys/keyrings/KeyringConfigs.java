@@ -1,8 +1,10 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
+import org.bouncycastle.openpgp.PGPException;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Factory for keyring configs.
@@ -14,7 +16,7 @@ public final class KeyringConfigs {
     }
 
     /**
-     * Create a decryption config by reading keyrings from files.
+     * Create a config by reading keyrings from files.
      *
      * @param publicKeyring E.g. src/test/resources/sender.gpg.d/pubring.gpg
      * @param secretKeyring E.g. src/test/resources/sender.gpg.d/secring.gpg
@@ -38,7 +40,7 @@ public final class KeyringConfigs {
     }
 
     /**
-     * Create a decryption config by reading keyrings from the classpath.
+     * Create a config by reading keyrings from the classpath.
      *
      * @param classLoader       E.g. DecryptWithOpenPGPTest.class.getClassLoader()
      * @param publicKeyringPath E.g. "recipient.gpg.d/pubring.gpg"
@@ -49,7 +51,7 @@ public final class KeyringConfigs {
     public static KeyringConfig withKeyRingsFromResources(final ClassLoader classLoader,
                                                           final String publicKeyringPath,
                                                           final String secretKeyringPath,
-                                                          KeyringConfigCallback callback) {
+                                                          final KeyringConfigCallback callback) {
         if (publicKeyringPath == null) {
             throw new IllegalArgumentException(("publicKeyringPath must not be null"));
         }
@@ -63,4 +65,17 @@ public final class KeyringConfigs {
         return new ResourceBasedKeyringConfig(callback, classLoader, publicKeyringPath, secretKeyringPath);
     }
 
+    /**
+     * Create a config that can parse keys exported in gpg.
+     *
+     * @param callback see KeyringConfigCallbacks
+     * @return the config
+     */
+    public static InMemoryKeyring forGpgExportedKeys(final KeyringConfigCallback callback)
+            throws IOException, PGPException {
+        if (callback == null) {
+            throw new IllegalArgumentException("callback must not be null");
+        }
+        return new InMemoryKeyring(callback);
+    }
 }

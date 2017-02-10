@@ -18,6 +18,15 @@ Examples
 
 _Bouncy GPG_ comes with several [examples](examples) build in.
 
+Key management
+-----------------
+
+_Bouncy GPG_ supports [reading `gpg` keyrings](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/FileBasedKeyringConfig.java) and [parsing keys exported](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/InMemoryKeyring.java) via `gpg --export` and  `gpg --export-secret-key`.
+
+The unit tests have some [examples creating/reading keyrings](src/test/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/testtooling/Configs.java).
+
+The easiest way to manage keyrings is to use the pre-defined [KeyringConfigs](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java).
+
 Encrypting a file
 -------------------
 
@@ -180,7 +189,7 @@ dependencies {
 | [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java) | Create default implementations for GPG keyring access. You can also create your own implementations by implementing  [`KeyringConfig`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfig.java). |
 | [`KeyringConfigCallbacks`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/callbacks/KeyringConfigCallbacks.java) | Used by  [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java). Create default implementations to provide secret-key passwords.  |
 | [`DefaultPGPAlgorithmSuites`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/algorithms/DefaultPGPAlgorithmSuites.java) |  Select from predefined algorithms suites or create your won with `PGPAlgorithmSuite`. |
-| ['ReencryptExplodedZipSinglethread'](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/reencryption/ReencryptExplodedZipSinglethread.java) | [Work with encrypted ZIPs](examples/reencrypt/src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java) |
+| [`ReencryptExplodedZipSinglethread`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/reencryption/ReencryptExplodedZipSinglethread.java) | [Work with encrypted ZIPs](examples/reencrypt/src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java) |
 
 FAQ
 =====

@@ -134,21 +134,21 @@ public class DecryptionStreamFactoryTest {
     public void decryptingSignedMessageAndRequiringSpecificSigner_notSignedByTheCorrectKey_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
         final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-        decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_RECIPIENT));
+        decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_ID_RECIPIENT));
     }
 
     @Test(expected = IOException.class)
     public void decryptingMultiSignedMessageAndRequiringSpecificSigner_notSignedByTheCorrectKey_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
         final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-        decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_RECIPIENT));
+        decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_ID_RECIPIENT));
     }
 
     @Test
     public void decryptingSignedMessageAndRequiringSpecificSigner_signedByTheCorrectKey_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {
         final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER));
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.KEY_ID_SENDER));
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
@@ -157,14 +157,14 @@ public class DecryptionStreamFactoryTest {
     public void decryptingSignedMessageAndRequiringMultipleSpecificSigner_signedBySubsetOfTheCorrectKeys_fails() throws IOException, SignatureException, NoSuchAlgorithmException {
         final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-        decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER, ExampleMessages.PUBKEY_ANOTHER_SENDER));
+        decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.KEY_ID_SENDER, ExampleMessages.EY_ID_ANOTHER_SENDER));
     }
 
     @Test
     public void decryptingSignedMessageAndRequiringMultipleSpecificSigner_signedByTheCorrectKeys_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {
         final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER, ExampleMessages.PUBKEY_SENDER_2));
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.KEY_ID_SENDER, ExampleMessages.KEY_ID_SENDER_2));
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
@@ -198,7 +198,7 @@ public class DecryptionStreamFactoryTest {
     public void decryptingSignedMessageAndRequiringSpecificSigner_signedByTheCorrectKeyAndOthers_succeeds() throws IOException, SignatureException, NoSuchAlgorithmException {
         final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER));
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.KEY_ID_SENDER));
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
@@ -223,7 +223,7 @@ public class DecryptionStreamFactoryTest {
     public void decryptingUnsignedMessage_butSpecificSignatureIsRequired_fails() throws IOException, SignatureException {
         final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.PUBKEY_SENDER));
+        final String decryptedQuote = decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config, SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.KEY_ID_SENDER));
 
         Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
     }
