@@ -7,7 +7,7 @@ import java.io.InputStream;
 /**
  * @see ReencryptExplodedZipSinglethread
  */
-public class ReencryptExplodedZipSinglethread {
+public final class ReencryptExplodedZipSinglethread {
 
     /**
      * The Constant LOGGER.

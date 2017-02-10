@@ -32,14 +32,14 @@ public class Main {
             final File destFile = new File(args[6]);
             try {
                 installBCProvider();
-
-                final KeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
-                        secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
-
                 long startTime = System.currentTimeMillis();
 
                 final int BUFFSIZE = 8 * 1024;
                 System.out.format("-- Using a write buffer of %d bytes\n", BUFFSIZE);
+
+                final KeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
+                        secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
+
 
                 try (
                         final FileOutputStream fileOutput = new FileOutputStream(destFile);

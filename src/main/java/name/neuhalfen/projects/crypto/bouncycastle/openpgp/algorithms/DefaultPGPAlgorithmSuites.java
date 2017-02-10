@@ -1,7 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
 
-public class DefaultPGPAlgorithmSuites {
+public final class DefaultPGPAlgorithmSuites {
 
     /**
      * GPG default algorithms

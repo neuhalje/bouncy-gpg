@@ -1,7 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
 
-public class BouncyGPG {
+public final class BouncyGPG {
 
     /**
      * Entry point for stream based decryption.

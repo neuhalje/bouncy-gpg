@@ -1,4 +1,4 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared;
+package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
 
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;

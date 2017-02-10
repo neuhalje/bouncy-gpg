@@ -7,7 +7,7 @@ import java.io.File;
 /**
  * Factory for keyring configs.
  */
-public class KeyringConfigs {
+public final class KeyringConfigs {
 
     /**
      * Create a decryption config by reading keyrings from files.

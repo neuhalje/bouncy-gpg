@@ -7,7 +7,7 @@ import java.io.*;
 /**
  * Load keyrings from files. These files are created and managed via gpg.
  */
-class FileBasedKeyringConfig extends DefaultKeyringConfig {
+final class FileBasedKeyringConfig extends DefaultKeyringConfig {
     private final File publicKeyring;
     private final File secretKeyring;
 

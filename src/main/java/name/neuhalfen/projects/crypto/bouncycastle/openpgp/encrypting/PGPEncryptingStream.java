@@ -2,8 +2,8 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
 import org.bouncycastle.openpgp.*;
@@ -21,9 +21,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 public final class PGPEncryptingStream extends OutputStream {
-    /**
-     * The Constant LOGGER.
-     */
+
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PGPEncryptingStream.class);
 
 

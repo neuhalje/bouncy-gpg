@@ -29,7 +29,7 @@ import java.util.concurrent.Future;
  * dir_a/file2.gpg
  * dir_b/dir_b1/file3.gpg
  */
-public class ReencryptExplodedZipMultithreaded {
+public final class ReencryptExplodedZipMultithreaded {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ReencryptExplodedZipMultithreaded.class);
 

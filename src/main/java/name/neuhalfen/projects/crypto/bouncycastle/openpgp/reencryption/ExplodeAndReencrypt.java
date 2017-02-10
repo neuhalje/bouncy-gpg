@@ -14,7 +14,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 
-class ExplodeAndReencrypt {
+final class ExplodeAndReencrypt {
 
     private final ZipEntityStrategy entityHandlingStrategy;
 
@@ -24,14 +24,14 @@ class ExplodeAndReencrypt {
     private final BuildEncryptionOutputStreamAPI.Build encryptionFactory;
 
 
-    public ExplodeAndReencrypt(InputStream is, ZipEntityStrategy entityHandlingStrategy, BuildEncryptionOutputStreamAPI.Build encryptionFactory) {
+    ExplodeAndReencrypt(InputStream is, ZipEntityStrategy entityHandlingStrategy, BuildEncryptionOutputStreamAPI.Build encryptionFactory) {
         this.is = is;
         this.entityHandlingStrategy = entityHandlingStrategy;
         this.encryptionFactory = encryptionFactory;
     }
 
 
-    public void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
+    void explodeAndReencrypt() throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
         boolean zipDataFound = false;
         final ZipInputStream zis = new ZipInputStream(is);
 

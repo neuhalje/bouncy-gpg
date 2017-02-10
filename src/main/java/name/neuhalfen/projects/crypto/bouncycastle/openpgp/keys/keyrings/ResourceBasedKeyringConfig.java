@@ -15,7 +15,7 @@ import java.io.InputStream;
  * See the unit tests for an example:
  * (in tests)  name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs
  */
-class ResourceBasedKeyringConfig extends DefaultKeyringConfig {
+final class ResourceBasedKeyringConfig extends DefaultKeyringConfig {
 
 
     private final ClassLoader classLoader;

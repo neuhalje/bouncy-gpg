@@ -49,7 +49,7 @@ public final class BuildDecryptionInputStreamAPI {
         return new Validation();
     }
 
-    public class Validation {
+    public final class Validation {
 
         /**
          * Decryption will enforce that the ciphertext has been signed by ALL of the
@@ -140,7 +140,7 @@ public final class BuildDecryptionInputStreamAPI {
         }
 
 
-        public class Builder implements Build {
+        public final class Builder implements Build {
 
             /**
              * Build the final decrypted input stream.

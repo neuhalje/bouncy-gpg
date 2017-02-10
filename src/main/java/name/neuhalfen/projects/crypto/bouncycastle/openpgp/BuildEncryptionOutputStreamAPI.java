@@ -3,8 +3,8 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.PGPEncryptingStream;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.shared.PGPUtilities;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
@@ -57,7 +57,7 @@ public final class BuildEncryptionOutputStreamAPI {
         return new WithAlgorithmSuite();
     }
 
-    public class WithAlgorithmSuite {
+    public final class WithAlgorithmSuite {
         public To withDefaultAlgorithms() {
             BuildEncryptionOutputStreamAPI.this.algorithmSuite = DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG();
             return new To();
@@ -77,7 +77,7 @@ public final class BuildEncryptionOutputStreamAPI {
         }
 
 
-        public class To {
+        public final class To {
             public SignWith toRecipient(String recipient) throws IOException, PGPException {
 
                 final PGPPublicKeyRing publicKeyRing = PGPUtilities.extractPublicKeyRingForUserId(recipient, encryptionConfig.getPublicKeyRings());
@@ -95,7 +95,7 @@ public final class BuildEncryptionOutputStreamAPI {
             }
 
 
-            public class SignWith {
+            public final class SignWith {
                 public Armor andSignWith(String userId) throws IOException, PGPException {
 
                     if (encryptionConfig.getSecretKeyRings() == null) {
@@ -111,7 +111,7 @@ public final class BuildEncryptionOutputStreamAPI {
                 }
 
 
-                public class Armor {
+                public final class Armor {
                     public Build binaryOutput() {
                         BuildEncryptionOutputStreamAPI.this.armorOutput = false;
                         return new Builder();
@@ -123,7 +123,7 @@ public final class BuildEncryptionOutputStreamAPI {
                     }
 
 
-                    public class Builder implements Build {
+                    public final class Builder implements Build {
 
                         public OutputStream andWriteTo(OutputStream sinkForEncryptedData) throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
                             BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData = sinkForEncryptedData;

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.security.SignatureException;
 import java.util.Map;
 
-class RequireAnySignatureValidationStrategy implements SignatureValidationStrategy {
+final class RequireAnySignatureValidationStrategy implements SignatureValidationStrategy {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(RequireAnySignatureValidationStrategy.class);
 
     @Override
