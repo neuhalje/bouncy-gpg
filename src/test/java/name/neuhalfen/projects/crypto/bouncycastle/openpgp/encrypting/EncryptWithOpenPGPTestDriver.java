@@ -16,11 +16,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 
-public final class EncryptWithOpenPGP {
+/**
+ * TODO: This class now only acts as a test-driver and should be factored into oblivion
+ */
+final class EncryptWithOpenPGPTestDriver {
     /**
      * The Constant LOGGER.
      */
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EncryptWithOpenPGP.class);
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EncryptWithOpenPGPTestDriver.class);
 
 
     /**
@@ -43,7 +46,7 @@ public final class EncryptWithOpenPGP {
     private final PGPPublicKeyRing encryptionPublicKeyRing;
 
 
-    public EncryptWithOpenPGP(final EncryptionConfig config, final PGPAlgorithmSuite algorithmSuite) throws IOException {
+    public EncryptWithOpenPGPTestDriver(final EncryptionConfig config, final PGPAlgorithmSuite algorithmSuite) throws IOException {
 
         try {
 
@@ -54,7 +57,7 @@ public final class EncryptWithOpenPGP {
                     PGPUtilities.extractPublicKeyRingForUserId(config.getEncryptionPublicKeyId(), config.getPublicKeyRings());
 
         } catch (PGPException e) {
-            throw new RuntimeException("Failed to construct EncryptWithOpenPGP", e);
+            throw new RuntimeException("Failed to construct EncryptWithOpenPGPTestDriver", e);
         }
         this.config = config.getConfig();
         this.algorithmSuite = algorithmSuite;

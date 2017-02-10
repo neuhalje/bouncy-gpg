@@ -16,7 +16,6 @@ import java.util.Iterator;
  * FIXME: Cleanup code, throw out duplicates etc
  */
 public final class PGPUtilities {
-    // Use the EncryptWithOpenPGP logger to maintain log format against original version
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PGPUtilities.class);
 
     /**

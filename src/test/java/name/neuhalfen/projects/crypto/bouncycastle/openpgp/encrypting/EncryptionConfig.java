@@ -9,6 +9,9 @@ import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import java.io.IOException;
 
 
+/**
+ * TODO: This class now only serves as a vehicle to old test drivers and should be factored into oblivion
+ */
 public class EncryptionConfig {
     private final String signatureSecretKeyId;
     private final String encryptionPublicKeyId;

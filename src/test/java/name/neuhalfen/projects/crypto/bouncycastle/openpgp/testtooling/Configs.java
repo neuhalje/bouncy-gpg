@@ -1,7 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
 
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGPTest;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGPTestDriverTest;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
@@ -69,7 +69,7 @@ public class Configs {
 
 
     public static KeyringConfig keyringConfigFromResourceForRecipient(KeyringConfigCallback callback) {
-        return KeyringConfigs.withKeyRingsFromResources(EncryptWithOpenPGPTest.class.getClassLoader(),
+        return KeyringConfigs.withKeyRingsFromResources(EncryptWithOpenPGPTestDriverTest.class.getClassLoader(),
                 "recipient.gpg.d/pubring.gpg",
                 "recipient.gpg.d/secring.gpg",
                 callback);
@@ -97,7 +97,7 @@ public class Configs {
 
 
     public static KeyringConfig keyringConfigFromResourceForSender(KeyringConfigCallback callback) {
-        return KeyringConfigs.withKeyRingsFromResources(EncryptWithOpenPGPTest.class.getClassLoader(),
+        return KeyringConfigs.withKeyRingsFromResources(EncryptWithOpenPGPTestDriverTest.class.getClassLoader(),
                 "sender.gpg.d/pubring.gpg",
                 "sender.gpg.d/secring.gpg",
                 callback);
