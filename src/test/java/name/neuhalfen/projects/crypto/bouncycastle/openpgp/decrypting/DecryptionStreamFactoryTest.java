@@ -36,7 +36,7 @@ public class DecryptionStreamFactoryTest {
     }
 
 
-    String decrypt(byte[] encrypted, KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) throws IOException {
+    private String decrypt(byte[] encrypted, KeyringConfig config, SignatureValidationStrategy signatureValidationStrategy) throws IOException {
         final DecryptionStreamFactory sut = DecryptionStreamFactory.create(config, signatureValidationStrategy);
 
         final InputStream plainTextInputStream;

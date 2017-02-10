@@ -16,7 +16,6 @@ public class EncryptionConfig {
     private final String signatureSecretKeyId;
     private final String encryptionPublicKeyId;
     private final int pgpHashAlgorithmCode;
-    private final int pgpSymmetricEncryptionAlgorithmCode;
     private final KeyringConfig keyringConfig;
 
 
@@ -34,26 +33,13 @@ public class EncryptionConfig {
     public EncryptionConfig(String signatureSecretKeyId,
                             String encryptionPublicKeyId,
                             int pgpHashAlgorithmCode,
-                            int pgpSymmetricEncryptionAlgorithmCode,
                             KeyringConfig keyringConfig) {
         this.keyringConfig = keyringConfig;
         this.signatureSecretKeyId = signatureSecretKeyId;
         this.encryptionPublicKeyId = encryptionPublicKeyId;
         this.pgpHashAlgorithmCode = pgpHashAlgorithmCode;
-        this.pgpSymmetricEncryptionAlgorithmCode = pgpSymmetricEncryptionAlgorithmCode;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("EncryptionConfig{");
-        sb.append("signatureSecretKeyId='").append(signatureSecretKeyId).append('\'');
-        sb.append(", encryptionPublicKeyId='").append(encryptionPublicKeyId).append('\'');
-        sb.append(", pgpHashAlgorithmCode=").append(pgpHashAlgorithmCode);
-        sb.append(", pgpSymmetricEncryptionAlgorithmCode=").append(pgpSymmetricEncryptionAlgorithmCode);
-        sb.append(", keyringConfig='").append(keyringConfig.toString()).append('\'');
-        sb.append('}');
-        return sb.toString();
-    }
 
     public String getSignatureSecretKeyId() {
         return signatureSecretKeyId;
@@ -67,14 +53,7 @@ public class EncryptionConfig {
         return pgpHashAlgorithmCode;
     }
 
-    public int getPgpSymmetricEncryptionAlgorithmCode() {
-        return pgpSymmetricEncryptionAlgorithmCode;
-    }
 
-
-    public char[] signingKeyPassphrase(long keyID) {
-        return keyringConfig.decryptionSecretKeyPassphraseForSecretKeyId(keyID);
-    }
 
     public KeyringConfig getConfig() {
         return keyringConfig;

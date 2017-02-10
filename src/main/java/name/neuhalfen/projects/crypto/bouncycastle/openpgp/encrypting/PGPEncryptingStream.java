@@ -26,8 +26,8 @@ public final class PGPEncryptingStream extends OutputStream {
 
 
     private final KeyringConfig config;
-    private PGPAlgorithmSuite algorithmSuite;
-    boolean isDoSign;
+    private final PGPAlgorithmSuite algorithmSuite;
+    private boolean isDoSign;
     /**
      * The signature uid.
      */
@@ -41,7 +41,7 @@ public final class PGPEncryptingStream extends OutputStream {
     private PGPLiteralDataGenerator encryptionDataStreamGenerator;
     private PGPCompressedDataGenerator compressionStreamGenerator;
 
-    PGPEncryptingStream(final KeyringConfig config, final PGPAlgorithmSuite algorithmSuite) throws IOException {
+    private PGPEncryptingStream(final KeyringConfig config, final PGPAlgorithmSuite algorithmSuite) {
         this.config = config;
         this.algorithmSuite = algorithmSuite;
     }
@@ -90,11 +90,11 @@ public final class PGPEncryptingStream extends OutputStream {
      *                                  {@link org.bouncycastle.bcpg.HashAlgorithmTags}
      *                                  {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
      */
-    protected void setup(final OutputStream cipherTextSink,
-                         @Nullable final String signingUid,
-                         final PGPPublicKey pubEncKey,
-                         final boolean armor) throws
-            IOException, NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
+    private void setup(final OutputStream cipherTextSink,
+                       @Nullable final String signingUid,
+                       final PGPPublicKey pubEncKey,
+                       final boolean armor) throws
+            IOException, PGPException {
         isDoSign = (signingUid != null);
 
         final OutputStream sink;

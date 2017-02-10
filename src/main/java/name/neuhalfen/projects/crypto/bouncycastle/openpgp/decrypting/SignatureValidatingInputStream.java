@@ -5,6 +5,7 @@ import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPOnePassSignature;
 
+import javax.annotation.Nonnull;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,11 +16,9 @@ import java.util.Map;
 
 final class SignatureValidatingInputStream extends FilterInputStream {
 
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SignatureValidatingInputStream.class);
-
     final static class DecryptionState {
         PGPObjectFactory factory;
-        private Map<Long, PGPOnePassSignature> onePassSignatures = new HashMap<>();
+        private final Map<Long, PGPOnePassSignature> onePassSignatures = new HashMap<>();
 
         void updateOnePassSignatures(byte data) {
             for (PGPOnePassSignature sig : onePassSignatures.values()) {
@@ -76,7 +75,7 @@ final class SignatureValidatingInputStream extends FilterInputStream {
     }
 
     @Override
-    public int read(byte[] b) throws IOException {
+    public int read(@Nonnull byte[] b) throws IOException {
         int read = super.read(b);
         if (read != -1) {
             state.updateOnePassSignatures(b, 0, read);
@@ -87,7 +86,7 @@ final class SignatureValidatingInputStream extends FilterInputStream {
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(@Nonnull byte[] b, int off, int len) throws IOException {
         int read = super.read(b, off, len);
         if (read != -1) {
             state.updateOnePassSignatures(b, off, read);

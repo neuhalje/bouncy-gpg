@@ -7,7 +7,6 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Keyrin
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
-import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 
 import java.io.File;
@@ -32,7 +31,7 @@ public class Configs {
                 "recipient@example.com",
                 "recipient@example.com",
                 HashAlgorithm.sha1,
-                SymmetricKeyAlgorithmTags.AES_128, keyringConfig);
+                keyringConfig);
 
         return encryptAndSignConfig;
     }
@@ -47,7 +46,6 @@ public class Configs {
                 "sender@example.com",
                 "recipient@example.com",
                 HashAlgorithm.sha1,
-                SymmetricKeyAlgorithmTags.AES_128,
                 keyringConfig);
 
         return encryptAndSignConfig;
@@ -88,7 +86,7 @@ public class Configs {
         return keyringConfigFromFilesForSender(KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
     }
 
-    public static KeyringConfig keyringConfigFromFilesForSender(KeyringConfigCallback callback) {
+    private static KeyringConfig keyringConfigFromFilesForSender(KeyringConfigCallback callback) {
         return KeyringConfigs.withKeyRingsFromFiles(
                 new File(TEST_RESOURCE_DIRECTORY + "/sender.gpg.d/pubring.gpg"),
                 new File(TEST_RESOURCE_DIRECTORY + "/sender.gpg.d/secring.gpg"),

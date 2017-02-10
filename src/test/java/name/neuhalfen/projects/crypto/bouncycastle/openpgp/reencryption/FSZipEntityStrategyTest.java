@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 
 public class FSZipEntityStrategyTest {
 
-    FSZipEntityStrategy sut() {
+    private FSZipEntityStrategy sut() {
         return new FSZipEntityStrategy(mock(File.class));
     }
 

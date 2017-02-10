@@ -26,7 +26,7 @@ public class ReencryptExplodedZipMultithreadedTest {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ReencryptExplodedZipMultithreadedTest.class);
 
-    private ZipEntityStrategy dummyStrategy = mock(ZipEntityStrategy.class);
+    private final ZipEntityStrategy dummyStrategy = mock(ZipEntityStrategy.class);
 
     private ReencryptExplodedZipMultithreaded sut() {
         return new ReencryptExplodedZipMultithreaded();

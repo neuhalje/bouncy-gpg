@@ -6,7 +6,6 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.Keyring
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.DevNullOutputStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.RandomDataInputStream;
-import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
@@ -106,7 +105,6 @@ public class EncryptWithOpenPGPTestDriverTest {
                 "sender@example.com",
                 "sender.signonly@example.com",
                 HashAlgorithm.sha1,
-                SymmetricKeyAlgorithmTags.AES_128,
                 keyringConfig);
         EncryptWithOpenPGPTestDriver sut = new EncryptWithOpenPGPTestDriver(encryptAndSignConfig, DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
@@ -139,7 +137,6 @@ public class EncryptWithOpenPGPTestDriverTest {
                 "sender.signonly@example.com",
                 "sender@example.com",
                 HashAlgorithm.sha1,
-                SymmetricKeyAlgorithmTags.AES_128,
                 keyringConfig);
         EncryptWithOpenPGPTestDriver sut = new EncryptWithOpenPGPTestDriver(encryptAndSignConfig, DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 

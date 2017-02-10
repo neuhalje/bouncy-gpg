@@ -26,7 +26,7 @@ public class ReencryptExplodedZipSinglethreadTest {
         }
     }
 
-    private ZipEntityStrategy dummyStrategy = mock(ZipEntityStrategy.class);
+    private final ZipEntityStrategy dummyStrategy = mock(ZipEntityStrategy.class);
 
     private ReencryptExplodedZipSinglethread sut() {
         return new ReencryptExplodedZipSinglethread();

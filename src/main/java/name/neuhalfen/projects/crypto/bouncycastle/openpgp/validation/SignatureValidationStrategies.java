@@ -7,10 +7,7 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Defines strategies for signature checking.
@@ -96,6 +93,6 @@ public final class SignatureValidationStrategies {
      * @return an instance of the requested strategy
      **/
     public static SignatureValidationStrategy requireSignatureFromAllKeys(long signaturesRequiredForThisKey) {
-        return new RequireSpecificSignatureValidationStrategy(Arrays.asList(signaturesRequiredForThisKey));
+        return new RequireSpecificSignatureValidationStrategy(Collections.singletonList(signaturesRequiredForThisKey));
     }
 }

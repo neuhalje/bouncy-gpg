@@ -8,7 +8,6 @@ import org.bouncycastle.openpgp.operator.PGPDigestCalculatorProvider;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPDigestCalculatorProviderBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 
-import java.security.NoSuchProviderException;
 import java.util.Iterator;
 
 
@@ -26,10 +25,9 @@ public final class PGPUtilities {
      * @param pass   the pass
      * @return the decrypted secret key
      * @throws PGPException            the pGP exception
-     * @throws NoSuchProviderException the no such provider exception
      */
     public static PGPPrivateKey findSecretKey(final PGPSecretKeyRingCollection pgpSec, final long keyID, final char[] pass)
-            throws PGPException, NoSuchProviderException {
+            throws PGPException {
         LOGGER.debug("Finding secret key with key ID '0x{}'", Long.toHexString(keyID));
         final PGPSecretKey pgpSecKey = pgpSec.getSecretKey(keyID);
 

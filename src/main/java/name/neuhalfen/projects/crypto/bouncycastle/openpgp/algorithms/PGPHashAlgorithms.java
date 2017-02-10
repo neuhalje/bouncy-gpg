@@ -23,6 +23,7 @@ public enum PGPHashAlgorithms {
      * <p>
      * A value of 'false' does not guarantee, that the algorithm is safe!
      */
+    @SuppressWarnings("WeakerAccess")
     public final boolean insecure;
 
     PGPHashAlgorithms(int id) {

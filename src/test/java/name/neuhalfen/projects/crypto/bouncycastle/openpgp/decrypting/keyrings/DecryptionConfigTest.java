@@ -36,6 +36,7 @@ public class DecryptionConfigTest {
     }
 
 
+    @SuppressWarnings("WeakerAccess")
     @Parameterized.Parameter
     public /* NOT private */ KeyringConfig keyringConfig;
 

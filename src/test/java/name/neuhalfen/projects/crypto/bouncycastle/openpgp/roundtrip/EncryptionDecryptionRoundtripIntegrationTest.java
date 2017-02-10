@@ -35,6 +35,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
     }
 
 
+    @SuppressWarnings("WeakerAccess")
     @Parameterized.Parameter
     public /* NOT private */ PGPAlgorithmSuite algorithmSuite;
 

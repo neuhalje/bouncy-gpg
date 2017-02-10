@@ -93,8 +93,8 @@ final class EncryptWithOpenPGPTestDriver {
      *                                  {@link org.bouncycastle.bcpg.HashAlgorithmTags}
      *                                  {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
      */
-    protected void encryptAndSign(final InputStream in, OutputStream out, final PGPPublicKey pubEncKey,
-                                  final boolean armor) throws IOException,
+    private void encryptAndSign(final InputStream in, OutputStream out, final PGPPublicKey pubEncKey,
+                                final boolean armor) throws IOException,
             NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
 
         try (final OutputStream encryptionStream = PGPEncryptingStream.create(config, algorithmSuite, signatureUid, out, armor, pubEncKey)) {
