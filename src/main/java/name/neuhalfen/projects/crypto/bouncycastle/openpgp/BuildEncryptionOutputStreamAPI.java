@@ -18,6 +18,11 @@ import java.security.SignatureException;
 
 
 public final class BuildEncryptionOutputStreamAPI {
+
+    public interface Build {
+        OutputStream andWriteTo(OutputStream sinkForEncryptedData) throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException;
+    }
+
     private OutputStream sinkForEncryptedData;
 
 
@@ -72,67 +77,69 @@ public final class BuildEncryptionOutputStreamAPI {
         }
 
 
-    }
+        public class To {
+            public SignWith toRecipient(String recipient) throws IOException, PGPException {
 
-    public class To {
-        public SignWith toRecipient(String recipient) throws IOException, PGPException {
+                final PGPPublicKeyRing publicKeyRing = PGPUtilities.extractPublicKeyRingForUserId(recipient, encryptionConfig.getPublicKeyRings());
+                if (publicKeyRing == null) {
+                    throw new PGPException("No (suitable) public key for encryption to " + recipient + " found");
+                }
 
-            final PGPPublicKeyRing publicKeyRing = PGPUtilities.extractPublicKeyRingForUserId(recipient, encryptionConfig.getPublicKeyRings());
-            if (publicKeyRing == null) {
-                throw new PGPException("No (suitable) public key for encryption to " + recipient + " found");
+                final PGPPublicKey recipientEncryptionKey = PGPUtilities.getEncryptionKey(publicKeyRing);
+
+                if (recipientEncryptionKey == null) {
+                    throw new PGPException("No (suitable) public key for encryption to " + recipient + " found");
+                }
+                BuildEncryptionOutputStreamAPI.this.recipient = recipientEncryptionKey;
+                return new SignWith();
             }
 
-            final PGPPublicKey recipientEncryptionKey = PGPUtilities.getEncryptionKey(publicKeyRing);
 
-            if (recipientEncryptionKey == null) {
-                throw new PGPException("No (suitable) public key for encryption to " + recipient + " found");
+            public class SignWith {
+                public Armor andSignWith(String userId) throws IOException, PGPException {
+
+                    if (encryptionConfig.getSecretKeyRings() == null) {
+                        throw new NullPointerException("encryptionConfig.getSecretKeyRings() must not be null");
+                    }
+                    BuildEncryptionOutputStreamAPI.this.signWith = userId;
+                    return new Armor();
+                }
+
+                public Armor andDoNotSign() {
+                    BuildEncryptionOutputStreamAPI.this.signWith = null;
+                    return new Armor();
+                }
+
+
+                public class Armor {
+                    public Build binaryOutput() {
+                        BuildEncryptionOutputStreamAPI.this.armorOutput = false;
+                        return new Builder();
+                    }
+
+                    public Build armorAsciiOutput() {
+                        BuildEncryptionOutputStreamAPI.this.armorOutput = true;
+                        return new Builder();
+                    }
+
+
+                    public class Builder implements Build {
+
+                        public OutputStream andWriteTo(OutputStream sinkForEncryptedData) throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
+                            BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData = sinkForEncryptedData;
+                            final OutputStream outputStream = PGPEncryptingStream.create(
+                                    BuildEncryptionOutputStreamAPI.this.encryptionConfig,
+                                    BuildEncryptionOutputStreamAPI.this.algorithmSuite,
+                                    BuildEncryptionOutputStreamAPI.this.signWith,
+                                    BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData,
+                                    BuildEncryptionOutputStreamAPI.this.armorOutput,
+                                    BuildEncryptionOutputStreamAPI.this.recipient);
+                            return outputStream;
+
+                        }
+                    }
+                }
             }
-            BuildEncryptionOutputStreamAPI.this.recipient = recipientEncryptionKey;
-            return new SignWith();
-        }
-    }
-
-    public class SignWith {
-        public Armor andSignWith(String userId) throws IOException, PGPException {
-
-            if (encryptionConfig.getSecretKeyRings() == null) {
-                throw new NullPointerException("encryptionConfig.getSecretKeyRings() must not be null");
-            }
-            BuildEncryptionOutputStreamAPI.this.signWith = userId;
-            return new Armor();
-        }
-
-        public Armor andDoNotSign() {
-            BuildEncryptionOutputStreamAPI.this.signWith = null;
-            return new Armor();
-        }
-    }
-
-    public class Armor {
-        public Build binaryOutput() {
-            BuildEncryptionOutputStreamAPI.this.armorOutput = false;
-            return new Build();
-        }
-
-        public Build armorAsciiOutput() {
-            BuildEncryptionOutputStreamAPI.this.armorOutput = true;
-            return new Build();
-        }
-    }
-
-    public class Build {
-
-        public OutputStream andWriteTo(OutputStream sinkForEncryptedData) throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
-            BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData = sinkForEncryptedData;
-            final OutputStream outputStream = PGPEncryptingStream.create(
-                    BuildEncryptionOutputStreamAPI.this.encryptionConfig,
-                    BuildEncryptionOutputStreamAPI.this.algorithmSuite,
-                    BuildEncryptionOutputStreamAPI.this.signWith,
-                    BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData,
-                    BuildEncryptionOutputStreamAPI.this.armorOutput,
-                    BuildEncryptionOutputStreamAPI.this.recipient);
-            return outputStream;
-
         }
     }
 }

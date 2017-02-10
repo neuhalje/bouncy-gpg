@@ -17,6 +17,11 @@ import java.security.NoSuchProviderException;
  */
 public final class BuildDecryptionInputStreamAPI {
 
+    public interface Build {
+        @Nonnull
+        InputStream fromEncryptedInputStream(@Nullable InputStream encryptedData) throws IOException, NoSuchProviderException;
+    }
+
     @Nonnull
     private KeyringConfig keyringConfig;
 
@@ -73,7 +78,7 @@ public final class BuildDecryptionInputStreamAPI {
             }
 
             BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireSignatureFromAllKeys(publicKeyIds);
-            return new Build();
+            return new Builder();
         }
 
 
@@ -107,7 +112,7 @@ public final class BuildDecryptionInputStreamAPI {
             }
 
             BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireSignatureFromAllKeys(keyringConfig.getPublicKeyRings(), userIds);
-            return new Build();
+            return new Builder();
         }
 
         /**
@@ -120,7 +125,7 @@ public final class BuildDecryptionInputStreamAPI {
         @Nonnull
         public Build andValidateSomeoneSigned() {
             BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.requireAnySignature();
-            return new Build();
+            return new Builder();
         }
 
         /**
@@ -131,38 +136,39 @@ public final class BuildDecryptionInputStreamAPI {
         @Nonnull
         public Build andIgnoreSignatures() {
             BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies.ignoreSignatures();
-            return new Build();
+            return new Builder();
         }
-    }
 
-    public class Build {
 
-        /**
-         * Build the final decrypted input stream.
-         * .
-         * This method will start reading the cipherstream until it finds the encrypted plaintext.
-         * .
-         * If the source data is NOT signed, but a signature is REQUIRED, then this function might even throw.
-         * .
-         * Signatures are verified AFTER decryption (reading the whole(!) plaintext stream).
-         *
-         * @param encryptedData An encrypted input stream. Will not be closed.
-         * @return Plaintext stream. Signatures are checked the moment EOF is reached.
-         * @throws IOException IO is dangerous. Also wraps several GPG exceptions.
-         * @throws NoSuchProviderException BC provider is not registered
-         */
-        @Nonnull
-        public InputStream fromEncryptedInputStream(@Nullable InputStream encryptedData) throws IOException, NoSuchProviderException {
-            if (encryptedData == null) {
-                throw new IllegalArgumentException("encryptedData must not be null");
+        public class Builder implements Build {
+
+            /**
+             * Build the final decrypted input stream.
+             * .
+             * This method will start reading the cipherstream until it finds the encrypted plaintext.
+             * .
+             * If the source data is NOT signed, but a signature is REQUIRED, then this function might even throw.
+             * .
+             * Signatures are verified AFTER decryption (reading the whole(!) plaintext stream).
+             *
+             * @param encryptedData An encrypted input stream. Will not be closed.
+             * @return Plaintext stream. Signatures are checked the moment EOF is reached.
+             * @throws IOException             IO is dangerous. Also wraps several GPG exceptions.
+             * @throws NoSuchProviderException BC provider is not registered
+             */
+            @Nonnull
+            public InputStream fromEncryptedInputStream(@Nullable InputStream encryptedData) throws IOException, NoSuchProviderException {
+                if (encryptedData == null) {
+                    throw new IllegalArgumentException("encryptedData must not be null");
+                }
+
+                final DecryptionStreamFactory pgpInputStreamFactory =
+                        DecryptionStreamFactory.create(
+                                BuildDecryptionInputStreamAPI.this.keyringConfig,
+                                BuildDecryptionInputStreamAPI.this.signatureCheckingMode);
+
+                return pgpInputStreamFactory.wrapWithDecryptAndVerify(encryptedData);
             }
-
-            final DecryptionStreamFactory pgpInputStreamFactory =
-                    DecryptionStreamFactory.create(
-                            BuildDecryptionInputStreamAPI.this.keyringConfig,
-                            BuildDecryptionInputStreamAPI.this.signatureCheckingMode);
-
-            return pgpInputStreamFactory.wrapWithDecryptAndVerify(encryptedData);
         }
     }
 }

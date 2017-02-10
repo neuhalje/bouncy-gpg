@@ -49,7 +49,7 @@ public class BuildEncryptionOutputStreamAPITest {
 
     @Test(expected = NullPointerException.class)
     public void encryptConfigureValidate_passNullRecipient_throws() throws Exception {
-        final BuildEncryptionOutputStreamAPI.To to = BouncyGPG.encryptToStream().withConfig(mockKeyringConfig()).withDefaultAlgorithms();
+        final BuildEncryptionOutputStreamAPI.WithAlgorithmSuite.To to = BouncyGPG.encryptToStream().withConfig(mockKeyringConfig()).withDefaultAlgorithms();
         assumeNotNull(to);
 
         to.toRecipient(null);
@@ -58,7 +58,7 @@ public class BuildEncryptionOutputStreamAPITest {
     @Test(expected = PGPException.class)
     public void encryptConfigureValidate_passNotExistingRecipient_throws() throws Exception {
 
-        final BuildEncryptionOutputStreamAPI.To to = BouncyGPG.encryptToStream().withConfig(Configs.keyringConfigFromFilesForSender()).withDefaultAlgorithms();
+        final BuildEncryptionOutputStreamAPI.WithAlgorithmSuite.To to = BouncyGPG.encryptToStream().withConfig(Configs.keyringConfigFromFilesForSender()).withDefaultAlgorithms();
         assumeNotNull(to);
 
         to.toRecipient("not existing");
