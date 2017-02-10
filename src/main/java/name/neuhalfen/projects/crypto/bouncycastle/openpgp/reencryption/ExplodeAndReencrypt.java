@@ -69,6 +69,8 @@ class ExplodeAndReencrypt {
                     if (outputStream != null) {
                         final OutputStream encryptedSmallZIP = encryptionFactory.andWriteTo(outputStream);
                         Streams.pipeAll(zis, encryptedSmallZIP);
+                        encryptedSmallZIP.flush();
+                        encryptedSmallZIP.close();
                     } else {
                         LOGGER.trace("Ignore {}", entry.getName());
                     }
