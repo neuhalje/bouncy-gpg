@@ -14,6 +14,9 @@ import java.util.*;
  */
 public final class SignatureValidationStrategies {
 
+    // no instances
+    private SignatureValidationStrategies() {
+    }
 
     /**
      * Ignore signatures, EVEN BROKEN signatures!

@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 
+import javax.annotation.Nonnull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +29,10 @@ final class ResourceBasedKeyringConfig extends DefaultKeyringConfig {
      * @param publicKeyringPath path passed to classLoader.getResourceAsStream
      * @param secretKeyringPath path passed to classLoader.getResourceAsStream
      */
-    public ResourceBasedKeyringConfig(KeyringConfigCallback callback, ClassLoader classLoader, String publicKeyringPath, String secretKeyringPath) {
+    public ResourceBasedKeyringConfig(@Nonnull KeyringConfigCallback callback,
+                                      @Nonnull ClassLoader classLoader,
+                                      @Nonnull String publicKeyringPath,
+                                      @Nonnull String secretKeyringPath) {
         super(callback);
         this.classLoader = classLoader;
         this.publicKeyringPath = publicKeyringPath;

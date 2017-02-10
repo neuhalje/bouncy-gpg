@@ -17,6 +17,10 @@ import java.util.Iterator;
 public final class PGPUtilities {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PGPUtilities.class);
 
+    // No instances
+    private PGPUtilities() {
+    }
+
     /**
      * Find secret key.
      *
@@ -24,7 +28,7 @@ public final class PGPUtilities {
      * @param keyID  the key id
      * @param pass   the pass
      * @return the decrypted secret key
-     * @throws PGPException            the pGP exception
+     * @throws PGPException the pGP exception
      */
     public static PGPPrivateKey findSecretKey(final PGPSecretKeyRingCollection pgpSec, final long keyID, final char[] pass)
             throws PGPException {

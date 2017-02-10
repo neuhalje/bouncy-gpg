@@ -220,7 +220,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
      * This setup does not work. Keep the test as an example of how NOT to do it.
      */
     @Test(expected = EOFException.class)
-    public void encryptInTryWithRespources_decryptInTryWithRessources_fails() throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
+    public void encryptInTryWithResxources_decryptInTryWithRessources_fails() throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
 
         try (
@@ -260,7 +260,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
      * This setup DOES work. Keep the test as an example of how to to do it.
      */
     @Test()
-    public void encryptInTryWithRespources_decryptInTryWithRessources_yieldsOriginalPlaintext() throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
+    public void encryptInTryWithResources_decryptInTryWithRessources_yieldsOriginalPlaintext() throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
 
         try (
@@ -268,7 +268,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
                 final OutputStream outputStream = BouncyGPG
                         .encryptToStream()
                         .withConfig(Configs.keyringConfigFromFilesForSender())
-                        .withStrongAlgorithms()
+                        .withAlgorithms(algorithmSuite)
                         .toRecipient("recipient@example.com")
                         .andSignWith("sender@example.com")
                         .binaryOutput()
@@ -332,4 +332,50 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
         assertArrayEquals(ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(), plainBA.toByteArray());
     }
 
+
+    @Test
+    public void encryptByteByByte_decryptByteByByte_yieldsOriginalPlaintext() throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(result, 16384 * 1024);
+
+        final OutputStream outputStream = BouncyGPG
+                .encryptToStream()
+                .withConfig(Configs.keyringConfigFromFilesForSender())
+                .withAlgorithms(algorithmSuite)
+                .toRecipient("recipient@example.com")
+                .andSignWith("sender@example.com")
+                .binaryOutput()
+                .andWriteTo(bufferedOutputStream);
+
+        final InputStream is = new ByteArrayInputStream(ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes());
+
+        int b;
+        // Copy byte-by-byte to test these edge-cases
+        while ((b = is.read()) > 0) {
+            outputStream.write(b);
+        }
+
+        Streams.pipeAll(is, outputStream);
+
+        outputStream.close();
+        bufferedOutputStream.close();
+        is.close();
+
+
+        final byte[] ciphertext = result.toByteArray();
+        final ByteArrayOutputStream plainBA = new ByteArrayOutputStream();
+
+
+        final InputStream plainIS = BouncyGPG.decryptAndVerifyStream()
+                .withConfig(Configs.keyringConfigFromFilesForRecipient())
+                .andRequireSignatureFromAllKeys("sender@example.com")
+                .fromEncryptedInputStream(new ByteArrayInputStream(ciphertext));
+
+        // Copy byte-by-byte to test these edge-cases
+        while ((b = plainIS.read()) > 0) {
+            plainBA.write(b);
+        }
+
+        assertArrayEquals(ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(), plainBA.toByteArray());
+    }
 }

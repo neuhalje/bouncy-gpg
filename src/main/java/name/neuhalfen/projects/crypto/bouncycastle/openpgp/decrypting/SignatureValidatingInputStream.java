@@ -76,13 +76,7 @@ final class SignatureValidatingInputStream extends FilterInputStream {
 
     @Override
     public int read(@Nonnull byte[] b) throws IOException {
-        int read = super.read(b);
-        if (read != -1) {
-            state.updateOnePassSignatures(b, 0, read);
-        } else {
-            validateSignature();
-        }
-        return read;
+        return read(b, 0, b.length);
     }
 
     @Override

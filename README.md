@@ -2,7 +2,6 @@
 [![codecov](https://codecov.io/gh/neuhalje/bouncy-gpg/branch/master/graph/badge.svg)](https://codecov.io/gh/neuhalje/bouncy-gpg)
 [![license](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-4.png)](http://www.wtfpl.net/)
 
-
 Mission Statement
 =======================
 
@@ -17,38 +16,38 @@ This project gives you the following super-powers
 Examples
 ==========
 
+_Bouncy GPG_ comes with several [examples](examples) build in.
+
 Encrypting a file
 -------------------
 
-The following snippet encrypts `/tmp/plaintext.txt` to `recipient@exmaple.com` and signs with `sender@example.com`.
+The following snippet encrypts `/tmp/plaintext.txt` to `recipient@example.com` and signs with `sender@example.com`.
 The encrypted file is written to `/tmp/encrypted.gpg`.
 
 ```java
-                final KeyringConfig keyringConfig = KeyringConfigs
-                   .withKeyRingsFromFiles(
-                         "pubring.gpg",
-                        "secring.gpg", 
-                        KeyringConfigCallbacks.withPassword("s3cr3t"));
+final KeyringConfig keyringConfig = KeyringConfigs
+   .withKeyRingsFromFiles(
+        "pubring.gpg",
+        "secring.gpg", 
+        KeyringConfigCallbacks.withPassword("s3cr3t"));
 
+try (
+        final FileOutputStream fileOutput = new FileOutputStream("/tmp/encrypted.gpg");
+        final BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOutput);
 
-                try (
-                        final FileOutputStream fileOutput = new FileOutputStream("/tmp/encrypted.gpg");
-                        final BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOutput);
+        final OutputStream outputStream = BouncyGPG
+                .encryptToStream()
+                .withConfig(keyringConfig)
+                .withStrongAlgorithms()
+                .toRecipient("recipient@example.com")
+                .andSignWith("sender@example.com")
+                .binaryOutput()
+                .andWriteTo(bufferedOut);
 
-                        final OutputStream outputStream = BouncyGPG
-                                .encryptToStream()
-                                .withConfig(keyringConfig)
-                                .withStrongAlgorithms()
-                                .toRecipient("recipient@example.com")
-                                .andSignWith("sender@example.com")
-                                .binaryOutput()
-                                .andWriteTo(bufferedOut);
-
-                        final FileInputStream is = new FileInputStream("/tmp/plaintext.txt")
-                ) {
-                    Streams.pipeAll(is, outputStream);
-                }
-
+        final FileInputStream is = new FileInputStream("/tmp/plaintext.txt")
+) {
+    Streams.pipeAll(is, outputStream);
+}
 ```
 
 Decrypting a file and validating the signature
@@ -58,44 +57,52 @@ The following snippet decrypts the file created in the snippet above.
 
 
 ```java
-               final KeyringConfig keyringConfig = KeyringConfigs
-                   .withKeyRingsFromFiles(
-                         "pubring.gpg",
-                        "secring.gpg", 
-                        KeyringConfigCallbacks.withPassword("s3cr3t"));
+final KeyringConfig keyringConfig = KeyringConfigs
+   .withKeyRingsFromFiles(
+         "pubring.gpg",
+         "secring.gpg", 
+         KeyringConfigCallbacks.withPassword("s3cr3t"));
 
-                try (
-                        final FileInputStream cipherTextStream = new FileInputStream("/tmp/encrypted.gpg");
+try (
+        final FileInputStream cipherTextStream = new FileInputStream("/tmp/encrypted.gpg");
 
-                        final FileOutputStream fileOutput = new FileOutputStream(destFile);
-                        final BufferedOutputStream bufferedOut = new BufferedOutputStream("/tmp/plaintext.txt");
+        final FileOutputStream fileOutput = new FileOutputStream(destFile);
+        final BufferedOutputStream bufferedOut = new BufferedOutputStream("/tmp/plaintext.txt");
 
-                        final InputStream plaintextStream = BouncyGPG
-                               .decryptAndVerifyStream()
-                               .withConfig(keyringConfig)
-                               .andIgnoreSignatures()
-                               .fromEncryptedInputStream(cipherTextStream)
+        final InputStream plaintextStream = BouncyGPG
+               .decryptAndVerifyStream()
+               .withConfig(keyringConfig)
+               .andIgnoreSignatures()
+               .fromEncryptedInputStream(cipherTextStream)
 
-                ) {
-                    Streams.pipeAll(plaintextStream, bufferedOut);
-                }
-
+) {
+    Streams.pipeAll(plaintextStream, bufferedOut);
+}
 ```
 
 Demos
 =========
 
-The directory [examples](examples) contains several examples that show how easy some common usecases are implemented.
+The directory [examples](examples) contains several examples that show how easy some common use cases are implemented.
 
-[demo_dencrypt.sh](examples/decrypt)
+[demo_decrypt.sh](examples/decrypt)
 -----------------------------------------
 
 Decrypt a file and verify the signature.
+
+* `decrypt.sh  SOURCEFILE DESTFILE`
+
+Uses the testing keys to decrypt a file. Useful for performance measurements and `gpg` interoperability.
 
 [demo_encrypt.sh](examples/encrypt)
 -----------------------------------------
 
 Encrypt and sign a file.
+
+* `encrypt.sh  SOURCEFILE DESTFILE` 
+
+Uses the testing keys to encrypt a file. Useful for performance measurements and `gpg` interoperability.
+
 
 [demo_reencrypt.sh](examples/reencrypt)
 -----------------------------------------
@@ -105,9 +112,9 @@ A GPG encrypted ZIP file is decrypted on the fly. The structure of the ZIP is th
 * `demo_reencrypt.sh TARGET` -- decrypts an encrypted ZIP file containing  three files (total size: 1.2 GB) AND
    re-encrypts each of the files in the ZIP to the `TARGET` dir.
 
-[The sample](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java)
+[The sample](examples/reencrypt/src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java)
 shows how e.g. batch jobs can work with large files without leaving plaintext on disk (together with
-[Transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptWithOpenPGPInputStreamFactory.java)).
+[Transparent GPG decryption](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/SignatureValidatingInputStream.java)).
 
 This scheme has some very appealing benefits:
 * Data in transit is _always_ encrypted with public key cryptography. Indispensable when you have to use `ftp`,
@@ -128,10 +135,6 @@ Consider the following batch job:
         2. And transparently  encrypted with GPG and stored for further processing
 4. The `processing` job  [transparently reads](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/SignatureValidatingInputStream.java) the files without writing plaintext to the disk.
 
-encrypt.sh
------------
-
-* `encrypt.sh  SOURCEFILE DESTFILE` -- uses the testing keys to encrypt a file. Useful for performance measurements.
 
 HOWTO
 ===========
@@ -154,6 +157,8 @@ dependencies {
     compile 'org.bouncycastle:bcpg-jdk15on:1.56'
     //  ...
     compile 'name.neuhalfen.projects.crypto.bouncycastle.openpgp:bouncy-gpg:2.+'
+   // ...
+  }
 ```
 
 ### Install Provider
@@ -175,8 +180,7 @@ dependencies {
 | [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java) | Create default implementations for GPG keyring access. You can also create your own implementations by implementing  [`KeyringConfig`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfig.java). |
 | [`KeyringConfigCallbacks`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/callbacks/KeyringConfigCallbacks.java) | Used by  [`KeyringConfigs`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java). Create default implementations to provide secret-key passwords.  |
 | [`DefaultPGPAlgorithmSuites`](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/algorithms/DefaultPGPAlgorithmSuites.java) |  Select from predefined algorithms suites or create your won with `PGPAlgorithmSuite`. |
-
-
+| ['ReencryptExplodedZipSinglethread'](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/reencryption/ReencryptExplodedZipSinglethread.java) | [Work with encrypted ZIPs](examples/reencrypt/src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java) |
 
 FAQ
 =====
@@ -207,7 +211,6 @@ FAQ
    <dd>'secring.gpg' has been <a href="https://gnupg.org/faq/whats-new-in-2.1.html#nosecring">removed in gpg 2.1</a>. Use the other methods to read private keys.</dd>
 </dl>
 
-
 Building
 =======
 
@@ -221,7 +224,6 @@ CAVE
 * Only one keyring per userid ("sender@example.com") supported.
 * Only one signing key per userid supported.
 * [TODOs](TODO.md)
-
 
 ## LICENSE
 

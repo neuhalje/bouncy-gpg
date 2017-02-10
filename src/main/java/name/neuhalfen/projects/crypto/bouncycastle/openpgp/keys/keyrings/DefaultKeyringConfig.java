@@ -9,6 +9,7 @@ import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.operator.KeyFingerPrintCalculator;
 import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,12 +18,16 @@ import java.io.InputStream;
 
 abstract class DefaultKeyringConfig implements KeyringConfig {
 
+    @Nonnull
     private final KeyringConfigCallback callback;
     private PGPPublicKeyRingCollection publicKeyRings;
     private PGPSecretKeyRingCollection secretKeyRings;
     private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
 
     DefaultKeyringConfig(KeyringConfigCallback callback) {
+        if (callback == null) {
+            throw new NullPointerException("callback mus not be null");
+        }
         this.callback = callback;
     }
 
@@ -38,6 +43,7 @@ abstract class DefaultKeyringConfig implements KeyringConfig {
      * @return Stream that connects to  secring.gpg
      * @throws FileNotFoundException File not found
      */
+
     protected abstract InputStream getSecretKeyRingStream() throws IOException;
 
     /**
@@ -71,11 +77,7 @@ abstract class DefaultKeyringConfig implements KeyringConfig {
     public
     @Nullable
     char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID) {
-        if (callback != null) {
-            return callback.decryptionSecretKeyPassphraseForSecretKeyId(keyID);
-        } else {
-            return null;
-        }
+        return callback.decryptionSecretKeyPassphraseForSecretKeyId(keyID);
     }
 
     @Override

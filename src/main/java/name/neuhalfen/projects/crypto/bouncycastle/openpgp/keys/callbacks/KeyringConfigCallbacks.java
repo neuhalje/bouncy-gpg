@@ -9,6 +9,10 @@ import java.util.Map;
  * {@link KeyringConfigCallback}
  */
 public final class KeyringConfigCallbacks {
+    // no construction
+    private KeyringConfigCallbacks() {
+    }
+
     public static KeyringConfigCallback withPassword(char[] passphrase) {
         return new StaticPasswordKeyringConfigCallback(passphrase);
     }

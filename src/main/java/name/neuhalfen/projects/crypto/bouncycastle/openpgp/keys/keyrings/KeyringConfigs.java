@@ -9,6 +9,10 @@ import java.io.File;
  */
 public final class KeyringConfigs {
 
+    // no instances
+    private KeyringConfigs() {
+    }
+
     /**
      * Create a decryption config by reading keyrings from files.
      *

@@ -3,6 +3,10 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
 public final class DefaultPGPAlgorithmSuites {
 
+    // no construction
+    private DefaultPGPAlgorithmSuites() {
+    }
+
     /**
      * GPG default algorithms
      */
