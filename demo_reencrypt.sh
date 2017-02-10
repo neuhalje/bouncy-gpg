@@ -7,8 +7,8 @@
 ASSEMBLY=bouncy-castle-examples-1.1.0
 LOCATION=./build
 
-#DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.MainExplodedSinglethreaded
-DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.MainExplodedMultithreaded
+DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.MainExplodedSinglethreaded
+#DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.MainExplodedMultithreaded
 
 DEST=/tmp/gpg-example-$$
 
@@ -24,8 +24,11 @@ do
    CP=${CP}:${JAR}
 done
 
+# The example source files are encrypted TO recipient@example.com (that is why the recipients keyring is used)
+# The generated files are also encrypted to recipient (and signed by recipient)
 time java -cp ${CP} \
    ${DRIVER_CLASS} \
+   recipient@example.com \
    recipient@example.com \
    ./src/test/resources/recipient.gpg.d/pubring.gpg  \
    ./src/test/resources/recipient.gpg.d/secring.gpg recipient \

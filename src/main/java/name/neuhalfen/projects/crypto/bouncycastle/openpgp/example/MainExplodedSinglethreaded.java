@@ -25,16 +25,17 @@ public class MainExplodedSinglethreaded {
     }
 
     public static void main(String[] args) {
-        if (args.length != 6) {
-            System.err.format("Usage %s  recipient pubKeyRing secKeyRing secKeyRingPassword sourceFile.zip.gpg destPath\n", "java -jar xxx.jar");
+        if (args.length != 7) {
+            System.err.format("Usage %s  recipient signWith pubKeyRing secKeyRing secKeyRingPassword sourceFile.zip.gpg destPath\n", "java -jar xxx.jar");
             System.exit(-1);
         } else {
             final String recipient = args[0];
-            final File pubKeyRing = new File(args[1]);
-            final File secKeyRing = new File(args[2]);
-            final String secKeyRingPassword = args[3];
-            final File sourceFile = new File(args[4]);
-            final File destRootDir = new File(args[5]);
+            final String signWith = args[1];
+            final File pubKeyRing = new File(args[2]);
+            final File secKeyRing = new File(args[3]);
+            final String secKeyRingPassword = args[4];
+            final File sourceFile = new File(args[5]);
+            final File destRootDir = new File(args[6]);
 
             try {
                 installBCProvider();
@@ -48,17 +49,17 @@ public class MainExplodedSinglethreaded {
                 final ZipEntityStrategy zipEntityStrategy = new FSZipEntityStrategy(destRootDir);
                 final ReencryptExplodedZipSinglethread reencryptExplodedZip = new ReencryptExplodedZipSinglethread();
 
+                final BuildDecryptionInputStreamAPI.Build decryptionFactory = BouncyGPG.decryptAndVerifyStream()
+                        .withConfig(keyringConfig)
+                        .andValidateSomeoneSigned();
+
                 final BuildEncryptionOutputStreamAPI.Build encryptionFactory = BouncyGPG
                         .encryptToStream()
                         .withConfig(keyringConfig)
                         .withStrongAlgorithms()
                         .toRecipient(recipient)
-                        .andDoNotSign()
+                        .andSignWith(signWith)
                         .binaryOutput();
-
-                final BuildDecryptionInputStreamAPI.Build decryptionFactory = BouncyGPG.decryptAndVerifyStream()
-                        .withConfig(keyringConfig)
-                        .andValidateSomeoneSigned();
 
                 try (
                         final InputStream encryptedSourceZIP = new FileInputStream(sourceFile);
