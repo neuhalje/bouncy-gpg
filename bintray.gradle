@@ -1,0 +1,89 @@
+def pomConfig = {
+
+    scm {
+        connection 'scm:git:https://github.com/neuhalje/bouncy-gpg.git'
+        developerConnection 'scm:git:https://github.com/neuhalje/bouncy-gpg.git'
+        url 'https://github.com/neuhalje/bouncy-gpg/'
+    }
+
+    licenses {
+        license {
+            name 'WTFPL'
+            url 'http://www.wtfpl.net/'
+        }
+    }
+
+    developers {
+        developer {
+            id 'neuhalje'
+            name 'Jens Neuhalfen'
+            email 'neuhalje@neuhalfen.name'
+        }
+    }
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId group
+            artifactId 'bouncy-gpg'
+            version  property('version')
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Make using Bouncy Castle with OpenPGP fun again!')
+                root.appendNode('name', 'bouncy-gpg')
+                root.appendNode('url', 'https://github.com/neuhalje/bouncy-gpg')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+bintray {
+    user = property('bintray_Username')
+    key =  property('bintray_Password')
+
+    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+    publish = true //[Default: false] Whether version should be auto published after an upload
+    override = false //[Default: false] Whether to override version artifacts already published
+
+    pkg {
+        repo = 'maven'
+        name = 'bouncy-gpg'
+        licenses = ['WTFPL']
+        vcsUrl = 'https://github.com/neuhalje/bouncy-gpg.git'
+        websiteUrl = 'https://github.com/neuhalje/bouncy-gpg'
+        labels = ['batch-job', 'bouncycastle', 'bouncy-castle', 'gpg', 'gnupg', 'security', 'encryption', 'decryption']
+
+        version {
+            name = property('version')
+            desc = 'Make using Bouncy Castle with OpenPGP fun again!'
+            released = new Date()
+            vcsTag =  property('version')
+        }
+    }
+
+    publications = ['maven']
+}

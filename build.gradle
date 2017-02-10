@@ -1,18 +1,26 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
 plugins {
     id 'java'
     id 'jacoco'
 
     // deploy to maven central
     id 'maven'
+    id 'maven-publish'
     id 'signing'
-
+    id "com.jfrog.bintray" version "1.7"
 }
 
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-version = '2.0.0'
+group=    'name.neuhalfen.projects.crypto.bouncycastle.openpgp'
+version=    '2.0.0'
 
 repositories {
     jcenter()
@@ -54,11 +62,11 @@ jacocoTestReport {
 
 check.dependsOn jacocoTestReport
 
-// JCenter deployment
+// bintray deployment
 // configured in gradle.properties
 
-if ( hasProperty('jcenter_Username')) {
-  apply from: 'jcenter.gradle'
+if (hasProperty('bintray_Username')) {
+    apply from: 'bintray.gradle'
 }
 // Misc
 
