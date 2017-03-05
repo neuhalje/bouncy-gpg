@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/neuhalje/bouncy-gpg.svg?branch=master)](https://travis-ci.org/neuhalje/bouncy-gpg)
 [![codecov](https://codecov.io/gh/neuhalje/bouncy-gpg/branch/master/graph/badge.svg)](https://codecov.io/gh/neuhalje/bouncy-gpg)
 [![license](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-4.png)](http://www.wtfpl.net/)
+[![Download](https://api.bintray.com/packages/neuhalje/maven/bouncy-gpg/images/download.svg)](https://bintray.com/neuhalje/maven/bouncy-gpg/_latestVersion)
 
 Mission Statement
 =======================
