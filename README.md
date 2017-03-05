@@ -237,6 +237,11 @@ The project is a basic gradle build. All the scripts use `./gradlew  installDist
 
 The coverage report (incl. running tests) is generated with `./gradlew check`.
 
+Publish to jcenter
+--------------------
+
+`./gradlew bintrayUpload`
+
 CAVE
 =====
 
@@ -247,3 +252,4 @@ CAVE
 ## LICENSE
 
 This code is placed under the WTFPL. Don't forget to adhere to the BouncyCastle License (http://bouncycastle.org/license.html).
+

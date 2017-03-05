@@ -36,7 +36,12 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+
 signing {
+    required { isReleaseVersion && gradle.taskGraph.hasTask("bintrayUpload") }
+
     sign configurations.archives
 }
 
@@ -65,7 +70,7 @@ bintray {
     user = property('bintray_Username')
     key =  property('bintray_Password')
 
-    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+    dryRun = property('bintray_dryRun')//[Default: false] Whether to run this as dry-run, without deploying
     publish = true //[Default: false] Whether version should be auto published after an upload
     override = false //[Default: false] Whether to override version artifacts already published
 
@@ -77,11 +82,21 @@ bintray {
         websiteUrl = 'https://github.com/neuhalje/bouncy-gpg'
         labels = ['batch-job', 'bouncycastle', 'bouncy-castle', 'gpg', 'gnupg', 'security', 'encryption', 'decryption']
 
+        githubRepo = 'neuhalje/bouncy-gpg'
+        githubReleaseNotesFile = 'README.md'
+
         version {
             name = property('version')
             desc = 'Make using Bouncy Castle with OpenPGP fun again!'
             released = new Date()
             vcsTag =  property('version')
+
+            gpg {
+                sign = true
+            }
+            mavenCentralSync {
+                sync = false 
+            }    
         }
     }
 
