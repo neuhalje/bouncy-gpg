@@ -158,8 +158,18 @@ Add bouncy castle as a dependency and then install the provider before in your a
 ### Add Build Dependency
 
 ```groovy
-
+// build.gradle
 // in build.gradle add a dependency to bouncy castle and bouncy-gpg
+
+//... 
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+//... 
+
 //  ...
 dependencies {
     compile 'org.bouncycastle:bcprov-jdk15on:1.56'
