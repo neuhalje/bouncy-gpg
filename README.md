@@ -158,6 +158,8 @@ Add bouncy castle as a dependency and then install the provider before in your a
 
 ### Add Build Dependency
 
+#### Gradle
+
 ```groovy
 // build.gradle
 // in build.gradle add a dependency to bouncy castle and bouncy-gpg
@@ -180,7 +182,31 @@ dependencies {
    // ...
   }
 ```
+#### Maven
 
+Dropping this in the root level of pom.xml lets you use this lib in a maven project:
+```xml
+<repositories>
+    <repository>
+        <id>bintray</id>
+        <name>bintray</name>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <!-- http://jcenter.bintray.com is the correct one, see issue #3 -->
+        <url>http://dl.bintray.com/neuhalje/maven</url>
+    </repository>
+</repositories>
+```
+and this dependency snippet:
+```xml
+    <dependency>
+        <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
+        <artifactId>bouncy-gpg</artifactId>
+        <version>2.0.1</version>
+    </dependency>
+```
+   
 ### Install Provider
 
 ```java
