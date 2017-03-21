@@ -77,7 +77,7 @@ try (
         final FileInputStream cipherTextStream = new FileInputStream("/tmp/encrypted.gpg");
 
         final FileOutputStream fileOutput = new FileOutputStream(destFile);
-        final BufferedOutputStream bufferedOut = new BufferedOutputStream("/tmp/plaintext.txt");
+        final BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOutput);
 
         final InputStream plaintextStream = BouncyGPG
                .decryptAndVerifyStream()
