@@ -127,6 +127,8 @@ public class ExampleMessages {
      * - Private key held by sender.
      */
     public final static long KEY_ID_SENDER = 0x86DAC13816FE6FE2L;
+    public final static String USER_ID_SENDER = "sender@example.com";
+    public final static String FULL_USER_ID_SENDER = "Sven Sender (Pasword: sender) <sender@example.com>";
     public final static String PUBKEY_SENDER =
             "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" +
                     "Version: GnuPG v2\n" +
