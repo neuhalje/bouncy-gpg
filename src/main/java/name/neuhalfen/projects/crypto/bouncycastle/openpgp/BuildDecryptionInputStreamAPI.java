@@ -18,6 +18,20 @@ import java.security.NoSuchProviderException;
 public final class BuildDecryptionInputStreamAPI {
 
     public interface Build {
+        /**
+         * Build the final decrypted input stream.
+         * .
+         * This method will start reading the cipherstream until it finds the encrypted plaintext.
+         * .
+         * If the source data is NOT signed, but a signature is REQUIRED, then this function might even throw.
+         * .
+         * Signatures are verified AFTER decryption (reading the whole(!) plaintext stream).
+         *
+         * @param encryptedData An encrypted input stream. *Will not be closed.*
+         * @return Plaintext stream. Signatures are checked the moment EOF is reached.
+         * @throws IOException             IO is dangerous. Also wraps several GPG exceptions.
+         * @throws NoSuchProviderException BC provider is not registered
+         */
         @Nonnull
         InputStream fromEncryptedInputStream(@Nullable InputStream encryptedData) throws IOException, NoSuchProviderException;
     }

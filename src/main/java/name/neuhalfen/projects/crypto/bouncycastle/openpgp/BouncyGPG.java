@@ -7,7 +7,11 @@ public final class BouncyGPG {
     }
 
     /**
-     * Entry point for stream based decryption.
+     * Entry point for stream based decryption.  Ultimately an encryption output stream is
+     * placed before a user supplied output stream so that plaintext written to the
+     * encryption stream is encrypted and written to the user supplied output stream.
+     * .
+     * Example: https://github.com/neuhalje/bouncy-gpg/tree/master/examples/decrypt
      * .
      * Usage:
      * .
@@ -25,12 +29,20 @@ public final class BouncyGPG {
      * cipherText.close();
      * .
      *
-     * @return The next build step.
+     * @return The next build step. In the end the encryption stream.
      */
     public static BuildDecryptionInputStreamAPI decryptAndVerifyStream() {
         return new BuildDecryptionInputStreamAPI();
     }
 
+    /**
+     * Entry point for stream based encryption.  Ultimately a decrypting input stream is placed before a
+     * user supplied stream with encrypted data.
+     * .
+     * Example: https://github.com/neuhalje/bouncy-gpg/tree/master/examples/encrypt
+     * .
+     * @return The next build step. In the end the decryption stream.
+     */
     public static BuildEncryptionOutputStreamAPI encryptToStream() {
         return new BuildEncryptionOutputStreamAPI();
     }
