@@ -9,6 +9,10 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.io.Streams;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.spi.FileSystemProvider;
 import java.security.Security;
 
 public class DecryptMain {
@@ -27,8 +31,8 @@ public class DecryptMain {
             final File pubKeyRing = new File(args[0]);
             final File secKeyRing = new File(args[1]);
             final String secKeyRingPassword = args[2];
-            final File sourceFile = new File(args[3]);
-            final File destFile = new File(args[4]);
+            final Path sourceFile = Paths.get(args[3]);
+            final Path destFile = Paths.get(args[4]);
             try {
                 installBCProvider();
                 long startTime = System.currentTimeMillis();
@@ -40,9 +44,9 @@ public class DecryptMain {
                         secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
 
                 try (
-                        final FileInputStream cipherTextStream = new FileInputStream(sourceFile);
+                        final InputStream cipherTextStream = Files.newInputStream(sourceFile);
 
-                        final FileOutputStream fileOutput = new FileOutputStream(destFile);
+                        final OutputStream fileOutput = Files.newOutputStream(destFile);
                         final BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOutput, BUFFSIZE);
 
                         final InputStream plaintextStream = BouncyGPG

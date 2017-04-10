@@ -70,6 +70,8 @@ public final class KeyringConfigs {
      *
      * @param callback see KeyringConfigCallbacks
      * @return the config
+     * @throws IOException  IO is dangerous
+     * @throws PGPException Could not create keyrings
      */
     public static InMemoryKeyring forGpgExportedKeys(final KeyringConfigCallback callback)
             throws IOException, PGPException {

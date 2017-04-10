@@ -3,7 +3,12 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 
 import javax.annotation.Nonnull;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Load keyrings from files. These files are created and managed via gpg.
@@ -24,12 +29,12 @@ final class FileBasedKeyringConfig extends DefaultKeyringConfig {
     @Nonnull
     @Override
     protected InputStream getPublicKeyRingStream() throws IOException {
-        return new FileInputStream(publicKeyring);
+        return Files.newInputStream(publicKeyring.toPath());
     }
 
     @Nonnull
     @Override
-    protected InputStream getSecretKeyRingStream() throws FileNotFoundException {
-        return new FileInputStream(secretKeyring);
+    protected InputStream getSecretKeyRingStream() throws IOException {
+        return Files.newInputStream(secretKeyring.toPath());
     }
 }

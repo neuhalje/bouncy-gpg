@@ -14,6 +14,9 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Security;
 
 public class MainExplodedSinglethreaded {
@@ -34,7 +37,7 @@ public class MainExplodedSinglethreaded {
             final File pubKeyRing = new File(args[2]);
             final File secKeyRing = new File(args[3]);
             final String secKeyRingPassword = args[4];
-            final File sourceFile = new File(args[5]);
+            final Path sourceFile = Paths.get(args[5]);
             final File destRootDir = new File(args[6]);
 
             try {
@@ -62,7 +65,7 @@ public class MainExplodedSinglethreaded {
                         .binaryOutput();
 
                 try (
-                        final InputStream encryptedSourceZIP = new FileInputStream(sourceFile);
+                        final InputStream encryptedSourceZIP = Files.newInputStream(sourceFile);
                         final InputStream decryptedSourceZIP = decryptionFactory.fromEncryptedInputStream(encryptedSourceZIP)
                 ) {
                     reencryptExplodedZip.explodeAndReencrypt(decryptedSourceZIP, zipEntityStrategy, encryptionFactory);
