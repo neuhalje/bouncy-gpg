@@ -34,7 +34,7 @@
         <snapshots>
             <enabled>false</enabled>
         </snapshots>
-        <url>http://dl.bintray.com/neuhalje/maven</url>
+        <url>http://jcenter.bintray.com</url>
     </repository>
    </repositories>
 

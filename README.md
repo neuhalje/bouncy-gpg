@@ -193,8 +193,7 @@ Dropping this in the root level of pom.xml lets you use this lib in a maven proj
         <snapshots>
             <enabled>false</enabled>
         </snapshots>
-        <!-- http://jcenter.bintray.com is the correct one, see issue #3 -->
-        <url>http://dl.bintray.com/neuhalje/maven</url>
+        <url>http://jcenter.bintray.com</url>
     </repository>
 </repositories>
 ```
