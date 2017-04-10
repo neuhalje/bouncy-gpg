@@ -11,8 +11,7 @@ Version 2.0
 - [x] Switch over to Java 8
 - [x] Fix links in README
 - [x] Add example snippets to README
-- [x] Allow `gpg --export -a` and `gpg --export-secret-key -a`  as source for keyring generation
-
+- [x] Allow `gpg --export -a` and `gpg --export-secret-key -a`  as source for keyring generation
 
 Version 2.1
 -------------
@@ -21,7 +20,6 @@ Version 2.1
 - [ ] Allow to enforce algorithm "minimum level", e.g. for decryption/validation
 - [ ] Unit tests: iterate different DefaultPGPAlgorithmSuites.secureSuiteForGnuPG() (incl. compression & no signature!)
 - [ ] Code quality reports (Sonar e.g.)
-
 
 Version 3.0
 --------------
