@@ -90,6 +90,16 @@ try (
 }
 ```
 
+Performance
+--------------
+
+Bouncy castle is often fast enough to _not be the bottleneck_. That said, here are some metrics to give you an indication of the performance:
+
+| Use Case                                        | MBP 2,9 GHz Intel Core i5, Java 1.8.0_111  |  (please add more via PR) |
+|:------------------------------------------------|:-------------------------------------------|:--------------------------|
+| [Encrypt & sign 1GB random](examples/encrypt)   | ~64s (16 MB/s)                             |                           |
+| [Decrypt 1GB random](examples/encrypt)          | ~32s (32 MB/s)                             |                           |
+
 Demos
 =========
 
