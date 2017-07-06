@@ -8,12 +8,19 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.Keyring
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.io.Streams;
 
-import java.io.*;
+import javax.crypto.*;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.spi.FileSystemProvider;
-import java.security.Security;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 
 public class DecryptMain {
     static void installBCProvider() {
@@ -52,7 +59,7 @@ public class DecryptMain {
                         final InputStream plaintextStream = BouncyGPG
                                 .decryptAndVerifyStream()
                                 .withConfig(keyringConfig)
-                                .andIgnoreSignatures()
+                                .andValidateSomeoneSigned()
                                 .fromEncryptedInputStream(cipherTextStream)
 
                 ) {
@@ -67,4 +74,5 @@ public class DecryptMain {
             }
         }
     }
+
 }
