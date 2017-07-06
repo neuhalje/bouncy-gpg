@@ -25,11 +25,13 @@ public final class InMemoryKeyring implements KeyringConfig {
 
     private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
 
+    @SuppressWarnings("unchecked")
     InMemoryKeyring(final KeyringConfigCallback callback) throws IOException, PGPException {
         if (callback == null) {
             throw new NullPointerException("callback must not be null");
         }
         this.callback = callback;
+        //noinspection unchecked
         this.publicKeyRings = new PGPPublicKeyRingCollection(EMPTY_LIST);
         this.secretKeyRings = new PGPSecretKeyRingCollection(EMPTY_LIST);
     }
