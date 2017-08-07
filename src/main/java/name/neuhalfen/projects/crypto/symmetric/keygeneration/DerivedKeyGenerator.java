@@ -1,4 +1,4 @@
-package name.neuhalfen.projects.crypto.symmetric.keygeneration.impl;
+package name.neuhalfen.projects.crypto.symmetric.keygeneration;
 
 
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.KeyDerivationFunction;

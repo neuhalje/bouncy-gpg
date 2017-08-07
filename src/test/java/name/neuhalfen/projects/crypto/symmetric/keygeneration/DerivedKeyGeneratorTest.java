@@ -1,8 +1,8 @@
-package name.neuhalfen.projects.crypto.symmetric.keygeneration.impl;
+package name.neuhalfen.projects.crypto.symmetric.keygeneration;
 
+import name.neuhalfen.projects.crypto.symmetric.keygeneration.DerivedKeyGenerator;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.HKDFSHA256;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.KeyDerivationFunction;
-import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching.SCryptKeyStretching;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
