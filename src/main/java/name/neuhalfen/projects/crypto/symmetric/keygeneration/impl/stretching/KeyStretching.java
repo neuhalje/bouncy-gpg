@@ -22,6 +22,6 @@ import java.security.GeneralSecurityException;
  *  * <a href="https://en.wikipedia.org/wiki/Key_derivation_function">Key derivation function</a>  on Wikipedia.
  */
 public interface KeyStretching {
-    byte[] strengthenKey(byte[] salt, byte[] keyToStrengthen, int desiredKeyLength) throws GeneralSecurityException;
+    byte[] strengthenKey(byte[] salt, byte[] keyToStrengthen, int desiredKeyLengthInBits) throws GeneralSecurityException;
 
 }

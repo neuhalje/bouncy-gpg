@@ -16,7 +16,7 @@ public class SCryptKeyStretchingTest {
 
     @Test
     public void scrypt_isDeterministic_withTwoInstances() {
-        SCryptKeyStretching.SCryptKeyStretchingParameters fastParams = SCryptKeyStretching.SCryptKeyStretchingParameters.forQuickDerivation();
+        SCryptKeyStretching.SCryptKeyStretchingParameters fastParams = SCryptKeyStretching.SCryptKeyStretchingParameters.forModeratelyStongInputKeyMaterial();
 
         final SCryptKeyStretching sut1 = new SCryptKeyStretching(fastParams);
         final SCryptKeyStretching sut2 = new SCryptKeyStretching(fastParams);
@@ -30,7 +30,7 @@ public class SCryptKeyStretchingTest {
 
     @Test
     public void scrypt_isDeterministic_withSameInstance() {
-        SCryptKeyStretching.SCryptKeyStretchingParameters fastParams = SCryptKeyStretching.SCryptKeyStretchingParameters.forQuickDerivation();
+        SCryptKeyStretching.SCryptKeyStretchingParameters fastParams = SCryptKeyStretching.SCryptKeyStretchingParameters.forModeratelyStongInputKeyMaterial();
 
         final SCryptKeyStretching sut = new SCryptKeyStretching(fastParams);
 
@@ -44,7 +44,7 @@ public class SCryptKeyStretchingTest {
     @Test
     @Ignore("Performance test to estimate the 'quick' setup. Expectation: ~7ms per derivation")
     public void performanceTest_quick() {
-        SCryptKeyStretching.SCryptKeyStretchingParameters fastParams = SCryptKeyStretching.SCryptKeyStretchingParameters.forQuickDerivation();
+        SCryptKeyStretching.SCryptKeyStretchingParameters fastParams = SCryptKeyStretching.SCryptKeyStretchingParameters.forModeratelyStongInputKeyMaterial();
 
         final SCryptKeyStretching sut = new SCryptKeyStretching(fastParams);
 
@@ -64,7 +64,7 @@ public class SCryptKeyStretchingTest {
     @Test
     @Ignore("Performance test to estimate the 'sensitive' setup. Expectation: ~10s per derivation")
     public void performanceTest_slow() {
-        SCryptKeyStretching.SCryptKeyStretchingParameters fastParams = SCryptKeyStretching.SCryptKeyStretchingParameters.forSensitiveStorage();
+        SCryptKeyStretching.SCryptKeyStretchingParameters fastParams = SCryptKeyStretching.SCryptKeyStretchingParameters.forWeakInputKeyMaterial();
 
         final SCryptKeyStretching sut = new SCryptKeyStretching(fastParams);
 
@@ -84,7 +84,7 @@ public class SCryptKeyStretchingTest {
     @Test
     @Ignore("Performance test to estimate the 'recklessly quick' setup. Expectation: less than 1ms per derivation")
     public void performanceTest_quickest() {
-        SCryptKeyStretching.SCryptKeyStretchingParameters fastParams = SCryptKeyStretching.SCryptKeyStretchingParameters.forQuickestDerivation();
+        SCryptKeyStretching.SCryptKeyStretchingParameters fastParams = SCryptKeyStretching.SCryptKeyStretchingParameters.forStrongInputKeyMaterial();
 
         final SCryptKeyStretching sut = new SCryptKeyStretching(fastParams);
 

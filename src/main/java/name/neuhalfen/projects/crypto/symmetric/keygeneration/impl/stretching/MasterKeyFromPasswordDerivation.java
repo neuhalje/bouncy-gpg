@@ -17,23 +17,23 @@ public class MasterKeyFromPasswordDerivation {
 
     private final KeyStretching stretching;
 
-    public byte[] deriveKey(final String salt, final String masterPassword, int desiredKeyLengthBytes) throws GeneralSecurityException {
+    public byte[] deriveKey(final String salt, final String masterPassword, int desiredKeyLengthBits) throws GeneralSecurityException {
 
-        final byte[] derivedKey = stretching.strengthenKey(byteRepresentationOf(salt), byteRepresentationOf(masterPassword), desiredKeyLengthBytes);
-
-        return derivedKey;
-    }
-
-    public byte[] deriveKey(byte[] salt, final String masterPassword, int desiredKeyLengthBytes) throws GeneralSecurityException {
-
-        final byte[] derivedKey = stretching.strengthenKey(salt, byteRepresentationOf(masterPassword), desiredKeyLengthBytes);
+        final byte[] derivedKey = stretching.strengthenKey(byteRepresentationOf(salt), byteRepresentationOf(masterPassword), desiredKeyLengthBits);
 
         return derivedKey;
     }
 
-    public byte[] deriveKey(byte[] salt, final byte[] masterPassword, int desiredKeyLengthBytes) throws GeneralSecurityException {
+    public byte[] deriveKey(byte[] salt, final String masterPassword, int desiredKeyLengthBits) throws GeneralSecurityException {
 
-        final byte[] derivedKey = stretching.strengthenKey(salt, masterPassword, desiredKeyLengthBytes);
+        final byte[] derivedKey = stretching.strengthenKey(salt, byteRepresentationOf(masterPassword), desiredKeyLengthBits);
+
+        return derivedKey;
+    }
+
+    public byte[] deriveKey(byte[] salt, final byte[] masterPassword, int desiredKeyLengthBits) throws GeneralSecurityException {
+
+        final byte[] derivedKey = stretching.strengthenKey(salt, masterPassword, desiredKeyLengthBits);
 
         return derivedKey;
     }

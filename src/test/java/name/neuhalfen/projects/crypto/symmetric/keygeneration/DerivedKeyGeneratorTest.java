@@ -1,6 +1,5 @@
 package name.neuhalfen.projects.crypto.symmetric.keygeneration;
 
-import name.neuhalfen.projects.crypto.symmetric.keygeneration.DerivedKeyGenerator;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.HKDFSHA256;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.KeyDerivationFunction;
 import org.junit.Test;
@@ -20,7 +19,7 @@ public class DerivedKeyGeneratorTest {
     private DerivedKeyGenerator sut() {
         final byte[] MASTERKEY_KEY = new byte[]{5, 6, 7};
 
-       final KeyDerivationFunction kdf = new HKDFSHA256(MASTERKEY_KEY);
+        final KeyDerivationFunction kdf = new HKDFSHA256(MASTERKEY_KEY);
 
         return new DerivedKeyGenerator(kdf);
     }
@@ -30,7 +29,8 @@ public class DerivedKeyGeneratorTest {
 
         final KeyDerivationFunction kdf = new HKDFSHA256(MASTERKEY_KEY);
 
-        return new DerivedKeyGenerator(kdf);    }
+        return new DerivedKeyGenerator(kdf);
+    }
 
     @Test
     public void constructDerivedKeyIdentifier_withGivenContext_returnsValidIdentifier() throws Exception {
@@ -54,16 +54,16 @@ public class DerivedKeyGeneratorTest {
 
     @Test
     public void keyDerivation_returnsCorrectKeySize() throws Exception {
-        final byte[] key128 = sut().deriveKey(DERIVED_KEY_SALT, "Context", "id",128);
-        final byte[] key256 = sut().deriveKey(DERIVED_KEY_SALT, "Context", "id",256);
+        final byte[] key128 = sut().deriveKey(DERIVED_KEY_SALT, "Context", "id", 128);
+        final byte[] key256 = sut().deriveKey(DERIVED_KEY_SALT, "Context", "id", 256);
         assertThat(key128.length, equalTo(128 / 8));
         assertThat(key256.length, equalTo(256 / 8));
     }
 
     @Test
     public void keyDerivation_isDeterministic_withTwoInstances() throws Exception {
-        final byte[] key1 = sut().deriveKey(DERIVED_KEY_SALT, "Context", "id",KEY_LEY);
-        final byte[] key2 = sut().deriveKey(DERIVED_KEY_SALT, "Context", "id",KEY_LEY);
+        final byte[] key1 = sut().deriveKey(DERIVED_KEY_SALT, "Context", "id", KEY_LEY);
+        final byte[] key2 = sut().deriveKey(DERIVED_KEY_SALT, "Context", "id", KEY_LEY);
         assertThat(key1, equalTo(key2));
     }
 
@@ -71,8 +71,8 @@ public class DerivedKeyGeneratorTest {
     public void keyDerivation_isDeterministic_withOneInstance() throws Exception {
         final DerivedKeyGenerator sut = sut();
 
-        final byte[] key1 = sut.deriveKey(DERIVED_KEY_SALT, "Context", "id",KEY_LEY);
-        final byte[] key2 = sut.deriveKey(DERIVED_KEY_SALT, "Context", "id",KEY_LEY);
+        final byte[] key1 = sut.deriveKey(DERIVED_KEY_SALT, "Context", "id", KEY_LEY);
+        final byte[] key2 = sut.deriveKey(DERIVED_KEY_SALT, "Context", "id", KEY_LEY);
         assertThat(key1, equalTo(key2));
     }
 
@@ -88,8 +88,8 @@ public class DerivedKeyGeneratorTest {
     public void keyDerivation_differentIDs_giveDifferentDerivedKeys() throws Exception {
         final DerivedKeyGenerator sut = sut();
 
-        final byte[] key1 = sut.deriveKey(DERIVED_KEY_SALT, "Context", "id1",KEY_LEY);
-        final byte[] key2 = sut.deriveKey(DERIVED_KEY_SALT, "Context", "id2",KEY_LEY);
+        final byte[] key1 = sut.deriveKey(DERIVED_KEY_SALT, "Context", "id1", KEY_LEY);
+        final byte[] key2 = sut.deriveKey(DERIVED_KEY_SALT, "Context", "id2", KEY_LEY);
         assertThat(key1, not(equalTo(key2)));
     }
 
@@ -97,8 +97,8 @@ public class DerivedKeyGeneratorTest {
     public void keyDerivation_differentContext_giveDifferentDerivedKeys() throws Exception {
         final DerivedKeyGenerator sut = sut();
 
-        final byte[] key1 = sut.deriveKey(DERIVED_KEY_SALT, "Context1", "id",KEY_LEY);
-        final byte[] key2 = sut.deriveKey(DERIVED_KEY_SALT, "Context2", "id",KEY_LEY);
+        final byte[] key1 = sut.deriveKey(DERIVED_KEY_SALT, "Context1", "id", KEY_LEY);
+        final byte[] key2 = sut.deriveKey(DERIVED_KEY_SALT, "Context2", "id", KEY_LEY);
         assertThat(key1, not(equalTo(key2)));
     }
 }

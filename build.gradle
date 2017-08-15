@@ -41,7 +41,7 @@ dependencies {
     testCompile 'org.mockito:mockito-core:2.+'
 
     testCompile "org.concordion:concordion:2.1.0"
-    testCompile 'name.neuhalfen.concordion.extension:ExecutableSpecExtension:0.0.3'
+    testCompile 'org.concordion:concordion-api-documentation-extension:0.0.4'
 }
 
 

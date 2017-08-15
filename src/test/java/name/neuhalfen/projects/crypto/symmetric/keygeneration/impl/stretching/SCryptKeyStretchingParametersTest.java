@@ -1,6 +1,5 @@
 package name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching;
 
-import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching.SCryptKeyStretching;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -14,8 +13,8 @@ public class SCryptKeyStretchingParametersTest {
 
     @Test
     public void sameInstances_areEqual() {
-        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters1 = SCryptKeyStretching.SCryptKeyStretchingParameters.forQuickDerivation();
-        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters2 = SCryptKeyStretching.SCryptKeyStretchingParameters.forQuickDerivation();
+        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters1 = SCryptKeyStretching.SCryptKeyStretchingParameters.forModeratelyStongInputKeyMaterial();
+        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters2 = SCryptKeyStretching.SCryptKeyStretchingParameters.forModeratelyStongInputKeyMaterial();
 
         assertNotSame(parameters1,parameters2);
 
@@ -25,8 +24,8 @@ public class SCryptKeyStretchingParametersTest {
 
     @Test
     public void differentLoadParameters_areNotEqual() {
-        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters1 = SCryptKeyStretching.SCryptKeyStretchingParameters.forQuickDerivation();
-        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters2 = SCryptKeyStretching.SCryptKeyStretchingParameters.forSensitiveStorage();
+        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters1 = SCryptKeyStretching.SCryptKeyStretchingParameters.forModeratelyStongInputKeyMaterial();
+        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters2 = SCryptKeyStretching.SCryptKeyStretchingParameters.forWeakInputKeyMaterial();
 
         assertNotSame(parameters1,parameters2);
 
@@ -36,8 +35,8 @@ public class SCryptKeyStretchingParametersTest {
 
     @Test
     public void toString_returnsExpectedValue() {
-        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters1 = SCryptKeyStretching.SCryptKeyStretchingParameters.forQuickDerivation();
-        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters2 = SCryptKeyStretching.SCryptKeyStretchingParameters.forSensitiveStorage();
+        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters1 = SCryptKeyStretching.SCryptKeyStretchingParameters.forModeratelyStongInputKeyMaterial();
+        final SCryptKeyStretching.SCryptKeyStretchingParameters parameters2 = SCryptKeyStretching.SCryptKeyStretchingParameters.forWeakInputKeyMaterial();
 
         assertNotSame(parameters1,parameters2);
 

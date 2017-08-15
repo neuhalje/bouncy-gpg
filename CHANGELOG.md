@@ -1,6 +1,7 @@
 ## V 2.0.2 (NEXT)
 * Maven example
 * Improved test coverage
+* Add Concordion spec-test and tutorial
 * Support for key derivation use cases (--> https://github.com/neuhalje/presentation_content-encryption )
 
 ## V 2.0.1
