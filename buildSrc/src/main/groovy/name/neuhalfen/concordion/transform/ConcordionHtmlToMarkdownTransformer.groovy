@@ -19,22 +19,31 @@ class ConcordionHtmlToMarkdownTransformer extends FilterReader {
     }
 
 
-    static def extractHeader(StringWriter writer, def html) {
+    static def extractHeader(StringWriter writer, Node html) {
         def head = html.head.get(0)
         def title = head.title[0]?.text()
-        if (!title){
-             title = html.body.h1[0]?.text()
+
+
+        if (!title) {
+            def h1 = html.body.h1[0]
+            if (h1) {
+                title = h1.text()
+
+                // remove the source of the title bc. the CMS will taker care of providing it
+                h1.parent().remove(h1)
+            }
         }
+
 
         writer.append("""+++
 title = "$title"
-Xdescription = "YYYYY"
+linktitle = "$title"
 tags = [
     "specification",
     "development"
 ]
 categories = [
-    "Development"
+    "API"
 ]
 menu = "Specifications"
 +++
@@ -43,7 +52,7 @@ menu = "Specifications"
     }
 
     static def extractBody(StringWriter writer, def body) {
-        def indentPrinter = new IndentPrinter(writer, "",false,false)
+        def indentPrinter = new IndentPrinter(writer, "", false, false)
         def xmlNodePrinter = new XmlNodePrinter(indentPrinter)
 
         body.children().each {
