@@ -1,4 +1,4 @@
-baseurl = "https://github.com/neuhalje/bouncy-gpg"
+baseurl = "https://neuhalje.github.io/bouncy-gpg/"
 title = "Bouncy GPG"
 author = "Jens Neuhalfen"
 copyright = "Copyright (c) 2017 - , Jens Neuhalfen; all rights reserved."

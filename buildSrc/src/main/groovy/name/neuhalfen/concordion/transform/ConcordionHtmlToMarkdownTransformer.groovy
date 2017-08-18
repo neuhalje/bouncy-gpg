@@ -45,7 +45,6 @@ tags = [
 categories = [
     "API"
 ]
-menu = "Specifications"
 +++
 
 """)
