@@ -10,19 +10,24 @@ class ConcordionHtmlToMarkdownTransformer extends FilterReader {
         def writer = new StringWriter()
 
         def body = document.body.get(0)
-        def head = document.head.get(0)
 
 
-        extractHeader(writer, head)
+        extractHeader(writer, document)
         extractBody(writer, body)
 
         return new StringReader(writer.toString())
     }
 
 
-    static def extractHeader(StringWriter writer, def head) {
+    static def extractHeader(StringWriter writer, def html) {
+        def head = html.head.get(0)
+        def title = head.title[0]?.text()
+        if (!title){
+             title = html.body.h1[0]?.text()
+        }
+
         writer.append("""+++
-Xtitle = "XXXXXX"
+title = "$title"
 Xdescription = "YYYYY"
 tags = [
     "specification",
