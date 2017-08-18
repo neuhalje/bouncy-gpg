@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://github.com/neuhalje/bouncy-gpg/categories/api/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://github.com/neuhalje/bouncy-gpg/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://github.com/neuhalje/bouncy-gpg/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://github.com/neuhalje/bouncy-gpg/key_derivation/convertingpasswordsintocryptographickeys/</loc>
+  </url>
+  
+  <url>
+    <loc>https://github.com/neuhalje/bouncy-gpg/tags/development/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://github.com/neuhalje/bouncy-gpg/key_derivation/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://github.com/neuhalje/bouncy-gpg/tags/specification/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://github.com/neuhalje/bouncy-gpg/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+</urlset>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bouncy GPG</title>
+    <link>https://github.com/neuhalje/bouncy-gpg/</link>
+    <description>Recent content on Bouncy GPG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright (c) 2017 - , Jens Neuhalfen; all rights reserved.</copyright>
+    
+	<atom:link href="https://github.com/neuhalje/bouncy-gpg/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Converting a (master) password into a cryptographic key</title>
+      <link>https://github.com/neuhalje/bouncy-gpg/key_derivation/convertingpasswordsintocryptographickeys/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://github.com/neuhalje/bouncy-gpg/key_derivation/convertingpasswordsintocryptographickeys/</guid>
+      <description>Most systems use passwords to create (derive) cryptographic keys, e.g. the password to decrypt a ZIP file is used to create a cryptographic key.
+The process of creating a cryptographic key from a password is called password based key derivation. Because passwords are often to short/predictable this derivation often also implements some kind of key strengthening or key stretching (see below for more info).
+To properly derive a key from a passwords a few aspects are important to consider.</description>
+    </item>
+    
+  </channel>
+</rss>
