@@ -10,7 +10,7 @@ jdk:
   - oraclejdk8
 
 script:
-  - ./gradlew --stacktrace check
+  - ./gradlew --stacktrace check generateWebsite
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
