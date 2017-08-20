@@ -3,13 +3,13 @@ def pomConfig = {
     scm {
         connection 'scm:git:https://github.com/neuhalje/bouncy-gpg.git'
         developerConnection 'scm:git:https://github.com/neuhalje/bouncy-gpg.git'
-        url 'https://github.com/neuhalje/bouncy-gpg/'
+        url 'https://neuhalje.github.io/bouncy-gpg/'
     }
 
     licenses {
         license {
-            name 'WTFPL'
-            url 'http://www.wtfpl.net/'
+            name 'Apache-2.0'
+            url 'https://www.apache.org/licenses/LICENSE-2.0.html'
         }
     }
 
@@ -77,9 +77,9 @@ bintray {
     pkg {
         repo = 'maven'
         name = 'bouncy-gpg'
-        licenses = ['WTFPL']
+        licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/neuhalje/bouncy-gpg.git'
-        websiteUrl = 'https://github.com/neuhalje/bouncy-gpg'
+        websiteUrl = 'https://neuhalje.github.io/bouncy-gpg/'
         labels = ['batch-job', 'bouncycastle', 'bouncy-castle', 'gpg', 'gnupg', 'security', 'encryption', 'decryption']
 
         githubRepo = 'neuhalje/bouncy-gpg'

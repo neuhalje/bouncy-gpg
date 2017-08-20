@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/neuhalje/bouncy-gpg.svg?branch=master)](https://travis-ci.org/neuhalje/bouncy-gpg)
 [![codecov](https://codecov.io/gh/neuhalje/bouncy-gpg/branch/master/graph/badge.svg)](https://codecov.io/gh/neuhalje/bouncy-gpg)
-[![license](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-4.png)](http://www.wtfpl.net/)
+[![license](https://img.shields.io/badge/license-APACHE%202.0-brightgreen.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![Download](https://api.bintray.com/packages/neuhalje/maven/bouncy-gpg/images/download.svg)](https://bintray.com/neuhalje/maven/bouncy-gpg/_latestVersion)
 
 Mission Statement
@@ -246,7 +246,7 @@ FAQ
   coverage. It is free (speech & beer).</dd>
 
   <dt>Can I just grab a class or two for my project?</dt>
-  <dd>Sure! Just grab it and hack away! The code is placed under the <a href="LICENSE">WTFPL</a>, you can't get much
+  <dd>Sure! Just grab it and hack away! The code is placed under the <a href="LICENSE">Apache License 2.0</a>, you can't get much
    more permissive than this.</dd>
 
    <dt>Why is the test coverage so low?</dt>
@@ -287,5 +287,5 @@ CAVE
 
 ## LICENSE
 
-This code is placed under the WTFPL. Don't forget to adhere to the BouncyCastle License (http://bouncycastle.org/license.html).
+This code is placed under the Apache License 2.0. Don't forget to adhere to the BouncyCastle License (http://bouncycastle.org/license.html).
 

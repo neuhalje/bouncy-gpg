@@ -3,7 +3,7 @@
 <center>
 <a href="https://travis-ci.org/neuhalje/bouncy-gpg"><img src="https://travis-ci.org/neuhalje/bouncy-gpg.svg?branch=master" alt="Build Status" style="width: auto; height: auto; display: inline; margin: 0" /></a>
 <a href="https://codecov.io/gh/neuhalje/bouncy-gpg"><img src="https://codecov.io/gh/neuhalje/bouncy-gpg/branch/master/graph/badge.svg" alt="codecov"  style="width: auto; height: auto; display: inline; margin: 0"/></a>
-<a href="http://www.wtfpl.net/"><img src="http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-4.png" alt="license"  style="width: auto; height: auto; display: inline; margin: 0"/></a>
+<a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/badge/license-APACHE%202.0-brightgreen.svg" alt="license"  style="width: auto; height: auto; display: inline; margin: 0"/></a>
 <a href="https://bintray.com/neuhalje/maven/bouncy-gpg/_latestVersion"><img src="https://api.bintray.com/packages/neuhalje/maven/bouncy-gpg/images/download.svg" alt="Download"  style="width: auto; height: auto; display: inline; margin: 0"/></a>
 </center>
 
@@ -240,7 +240,7 @@ and this dependency snippet:
   coverage. It is free (speech & beer).</dd>
 
   <dt>Can I just grab a class or two for my project?</dt>
-  <dd>Sure! Just grab it and hack away! The code is placed under the <a href="LICENSE">WTFPL</a>, you can't get much
+  <dd>Sure! Just grab it and hack away! The code is placed under the <a href="LICENSE">Apache License 2.0</a>, you can't get much
    more permissive than this.</dd>
 
    <dt>Why is the test coverage so low?</dt>
@@ -286,5 +286,5 @@ All [Concordion](https//concordion.org) [specifications](src/test/resources/spec
 
 ## LICENSE
 
-This code is placed under the WTFPL. Don't forget to adhere to the BouncyCastle License (http://bouncycastle.org/license.html).
+This code is placed under the Apache License 2.0. Don't forget to adhere to the BouncyCastle License (http://bouncycastle.org/license.html).
 

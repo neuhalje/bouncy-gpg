@@ -1,4 +1,5 @@
 ## V 2.0.2 (NEXT)
+* Switch to APACHE2.0 license
 * Maven example
 * Improved test coverage
 * Add Concordion spec-test and tutorial
