@@ -1,17 +1,7 @@
 package name.neuhalfen.projects.crypto.symmetric.keygeneration;
 
-import org.junit.Test;
-
-import java.io.UnsupportedEncodingException;
-import java.util.concurrent.Callable;
-
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
-
 /**
- * Simple tests that mostly mirror the factory code and make sure the contract
- * is held.
+ * Simple tests that mostly mirror the factory code and make sure the contract is held.
  */
 public class SymmetricMasterKeySetupTest {
 
