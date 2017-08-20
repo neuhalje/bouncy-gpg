@@ -30,7 +30,7 @@ public final class InMemoryKeyring implements KeyringConfig {
   @SuppressWarnings("unchecked")
   InMemoryKeyring(final KeyringConfigCallback callback) throws IOException, PGPException {
     if (callback == null) {
-      throw new NullPointerException("callback must not be null");
+      throw new IllegalArgumentException("callback must not be null");
     }
     this.callback = callback;
     //noinspection unchecked
@@ -50,7 +50,7 @@ public final class InMemoryKeyring implements KeyringConfig {
   public void addPublicKey(byte[] encodedPublicKey) throws IOException, PGPException {
 
     if (encodedPublicKey == null) {
-      throw new NullPointerException("encodedPublicKey must not be null");
+      throw new IllegalArgumentException("encodedPublicKey must not be null");
     }
 
     try (
@@ -77,7 +77,7 @@ public final class InMemoryKeyring implements KeyringConfig {
   public void addSecretKey(byte[] encodedPrivateKey) throws IOException, PGPException {
 
     if (encodedPrivateKey == null) {
-      throw new NullPointerException("encodedPrivateKey must not be null");
+      throw new IllegalArgumentException("encodedPrivateKey must not be null");
     }
 
     try (

@@ -27,7 +27,7 @@ public class ConvertingPasswordsIntoCryptographicKeys {
       throws GeneralSecurityException {
 
     if (password == null) {
-      throw new NullPointerException("password not set");
+      throw new IllegalArgumentException("password not set");
     }
     password = password.trim();
 
@@ -46,10 +46,10 @@ public class ConvertingPasswordsIntoCryptographicKeys {
       throws GeneralSecurityException {
 
     if (password == null) {
-      throw new NullPointerException("password not set");
+      throw new IllegalArgumentException("password not set");
     }
     if (saltAsHexString == null) {
-      throw new NullPointerException("salt not set");
+      throw new IllegalArgumentException("salt not set");
     }
     password = password.trim();
     saltAsHexString = saltAsHexString.trim();
@@ -66,7 +66,7 @@ public class ConvertingPasswordsIntoCryptographicKeys {
 
   public boolean isSaltChangesKey(String password) throws GeneralSecurityException {
     if (password == null) {
-      throw new NullPointerException("password not set");
+      throw new IllegalArgumentException("password not set");
     }
 
     final KeyStretching streching = new SCryptKeyStretching(

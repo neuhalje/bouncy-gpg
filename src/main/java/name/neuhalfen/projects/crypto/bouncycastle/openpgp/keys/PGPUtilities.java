@@ -86,10 +86,10 @@ public final class PGPUtilities {
       final PGPPublicKeyRingCollection publicKeyRings)
       throws PGPException {
     if (publicKeyUid == null) {
-      throw new NullPointerException("publicKeyUid must not be null");
+      throw new IllegalArgumentException("publicKeyUid must not be null");
     }
     if (publicKeyRings == null) {
-      throw new NullPointerException("publicKeyRings must not be null");
+      throw new IllegalArgumentException("publicKeyRings must not be null");
     }
 
     // the true parameter indicates, that partial matching of the publicKeyUid is enough.

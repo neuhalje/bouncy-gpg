@@ -33,16 +33,16 @@ public final class BuildEncryptionOutputStreamAPI {
   public WithAlgorithmSuite withConfig(KeyringConfig encryptionConfig)
       throws IOException, PGPException {
     if (encryptionConfig == null) {
-      throw new NullPointerException("encryptionConfig must not be null");
+      throw new IllegalArgumentException("encryptionConfig must not be null");
     }
 
     if (encryptionConfig.getKeyFingerPrintCalculator() == null) {
-      throw new NullPointerException(
+      throw new IllegalArgumentException(
           "encryptionConfig.getKeyFingerPrintCalculator() must not be null");
     }
 
     if (encryptionConfig.getPublicKeyRings() == null) {
-      throw new NullPointerException("encryptionConfig.getPublicKeyRings() must not be null");
+      throw new IllegalArgumentException("encryptionConfig.getPublicKeyRings() must not be null");
     }
 
     BuildEncryptionOutputStreamAPI.this.encryptionConfig = encryptionConfig;
@@ -71,7 +71,7 @@ public final class BuildEncryptionOutputStreamAPI {
 
     public To withAlgorithms(PGPAlgorithmSuite algorithmSuite) {
       if (algorithmSuite == null) {
-        throw new NullPointerException("algorithmSuite must not be null");
+        throw new IllegalArgumentException("algorithmSuite must not be null");
       }
       BuildEncryptionOutputStreamAPI.this.algorithmSuite = algorithmSuite;
       return new To();
@@ -81,6 +81,9 @@ public final class BuildEncryptionOutputStreamAPI {
     public final class To {
 
       public SignWith toRecipient(String recipient) throws IOException, PGPException {
+        if (recipient == null || "".equals(recipient)) {
+          throw new IllegalArgumentException("recipient must be a string");
+        }
 
         final PGPPublicKeyRing publicKeyRing = PGPUtilities
             .extractPublicKeyRingForUserId(recipient, encryptionConfig.getPublicKeyRings());
@@ -105,7 +108,7 @@ public final class BuildEncryptionOutputStreamAPI {
         public Armor andSignWith(String userId) throws IOException, PGPException {
 
           if (encryptionConfig.getSecretKeyRings() == null) {
-            throw new NullPointerException("encryptionConfig.getSecretKeyRings() must not be null");
+            throw new IllegalArgumentException("encryptionConfig.getSecretKeyRings() must not be null");
           }
           BuildEncryptionOutputStreamAPI.this.signWith = userId;
           return new Armor();

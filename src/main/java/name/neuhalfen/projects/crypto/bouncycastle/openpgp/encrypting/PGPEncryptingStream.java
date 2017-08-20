@@ -66,15 +66,15 @@ public final class PGPEncryptingStream extends OutputStream {
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
 
     if (config == null) {
-      throw new NullPointerException("No config");
+      throw new IllegalArgumentException("No config");
     }
 
     if (cipherTextSink == null) {
-      throw new NullPointerException("no cipherTextSink");
+      throw new IllegalArgumentException("no cipherTextSink");
     }
 
     if (pubEncKey == null) {
-      throw new NullPointerException("No pubEncKey");
+      throw new IllegalArgumentException("No pubEncKey");
     }
 
     if (!pubEncKey.isEncryptionKey()) {

@@ -27,7 +27,7 @@ public class BuildEncryptionOutputStreamAPITest {
     }
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void encryptConfigure_NoConfigPassed_throws() throws Exception {
     BouncyGPG.encryptToStream().withConfig(null);
   }
@@ -47,7 +47,7 @@ public class BuildEncryptionOutputStreamAPITest {
     assertNotNull(withConfig.withAlgorithms(DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG()));
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void encryptConfigureValidate_passNullRecipient_throws() throws Exception {
     final BuildEncryptionOutputStreamAPI.WithAlgorithmSuite.To to = BouncyGPG.encryptToStream()
         .withConfig(mockKeyringConfig()).withDefaultAlgorithms();

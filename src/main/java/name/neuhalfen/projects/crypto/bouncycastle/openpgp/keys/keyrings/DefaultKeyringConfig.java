@@ -25,7 +25,7 @@ abstract class DefaultKeyringConfig implements KeyringConfig {
 
   DefaultKeyringConfig(KeyringConfigCallback callback) {
     if (callback == null) {
-      throw new NullPointerException("callback mus not be null");
+      throw new IllegalArgumentException("callback mus not be null");
     }
     this.callback = callback;
   }
