@@ -110,7 +110,10 @@ task wrapper(type: Wrapper) {
 // gradle publishDocs
 
 
-task prepareForCMS(type: Copy, dependsOn: ['test']) {
+task removeOldSpecsFromCMS(type: Delete) { 
+  delete "${specifications_prepareForCms_target}"
+} 
+task prepareSpecsForCMS(type: Copy, dependsOn: ['test', 'removeOldSpecsFromCMS']) {
     description 'Transform the build output of concordion to include it in the CMS'
 
     from(fileTree("${specifications_prepareForCms_source}")) {
@@ -128,7 +131,7 @@ task removeOldWebsite(type: Delete) {
   delete "${specifications_cms_target}"
 } 
 
-task generateWebsite(type: Exec, dependsOn: ['prepareForCMS', 'removeOldWebsite']) {
+task generateWebsite(type: Exec, dependsOn: ['removeOldWebsite', 'prepareSpecsForCMS' ]) {
     commandLine = ['hugo', '--cleanDestinationDir', '--destination', "${specifications_cms_target}", '--enableGitInfo']
     workingDir = file("${specifications_cms_cmsdRoot}")
 }
