@@ -17,7 +17,6 @@ public class RandomDataInputStreamTest {
       .getLogger(RandomDataInputStreamTest.class);
   private final int KB = 1024;
   private final int MB = 1024 * KB;
-  private final int GB = 1024 * MB;
 
   /**
    * This test asserts that the fake data source for tests with large data sets is not the

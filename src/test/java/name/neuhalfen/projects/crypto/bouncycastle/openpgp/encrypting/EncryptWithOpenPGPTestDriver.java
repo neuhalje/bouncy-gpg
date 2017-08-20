@@ -47,6 +47,7 @@ final class EncryptWithOpenPGPTestDriver {
   private final PGPPublicKeyRing encryptionPublicKeyRing;
 
 
+  @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
   public EncryptWithOpenPGPTestDriver(final EncryptionConfig config,
       final PGPAlgorithmSuite algorithmSuite) throws IOException {
 

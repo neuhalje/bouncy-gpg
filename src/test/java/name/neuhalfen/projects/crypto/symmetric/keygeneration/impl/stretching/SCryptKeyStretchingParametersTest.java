@@ -10,9 +10,6 @@ import org.junit.Test;
 
 public class SCryptKeyStretchingParametersTest {
 
-  final static byte[] KEY_8BIT = new byte[]{1};
-  final static byte[] KEY2_8BIT = new byte[]{2};
-
   @Test
   public void sameInstances_areEqual() {
     final SCryptKeyStretching.SCryptKeyStretchingParameters parameters1 = SCryptKeyStretching.SCryptKeyStretchingParameters

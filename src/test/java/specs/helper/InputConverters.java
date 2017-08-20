@@ -7,13 +7,14 @@ public class InputConverters {
   public final static class ByteArray {
 
     public static String toHexString(byte[] bytes) {
-      StringBuilder sb = new StringBuilder("0x");
+      final StringBuilder sb = new StringBuilder("0x");
       for (byte b : bytes) {
         sb.append(String.format("%02x", b));
       }
       return sb.toString();
     }
 
+    @SuppressWarnings("PMD.AvoidReassigningParameters")
     public static byte[] fromHexString(String hexString) {
 
       if (hexString.startsWith("0x")) {

@@ -21,8 +21,6 @@ import org.junit.Test;
 
 public class ReencryptExplodedZipSinglethreadTest {
 
-  private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
-      .getLogger(ReencryptExplodedZipSinglethreadTest.class);
   private final ZipEntityStrategy dummyStrategy = mock(ZipEntityStrategy.class);
 
   @Before
@@ -30,10 +28,6 @@ public class ReencryptExplodedZipSinglethreadTest {
     if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
       Security.addProvider(new BouncyCastleProvider());
     }
-  }
-
-  private ReencryptExplodedZipSinglethread sut() {
-    return new ReencryptExplodedZipSinglethread();
   }
 
   @Test
@@ -114,6 +108,7 @@ public class ReencryptExplodedZipSinglethreadTest {
 
         @Override
         public void handleDirectory(String sanitizedDirectoryName) throws IOException {
+          // ignore - nothing to do
         }
 
         @Nullable

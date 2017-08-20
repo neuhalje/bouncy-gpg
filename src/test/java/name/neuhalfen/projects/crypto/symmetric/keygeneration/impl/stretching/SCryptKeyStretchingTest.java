@@ -10,9 +10,7 @@ import org.junit.Test;
 
 public class SCryptKeyStretchingTest {
 
-  private final static byte[] SALT_24BIT = new byte[]{0x12, 0x34, 0x5};
-  private final static byte[] KEY_256BIT = new byte[256 / 8];
-
+   private final static byte[] SALT_24BIT = new byte[]{0x12, 0x34, 0x5};
 
   @Test
   public void scrypt_isDeterministic_withTwoInstances() {

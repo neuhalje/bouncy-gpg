@@ -54,6 +54,7 @@ public class HashingInputStream extends FilterInputStream {
     return i;
   }
 
+  @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
   @Override
   public synchronized void mark(int readlimit) {
     throw new RuntimeException("reset not supported");

@@ -17,8 +17,6 @@ import org.junit.Test;
 
 public class ReencryptExplodedZipMultithreadedTest {
 
-  private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
-      .getLogger(ReencryptExplodedZipMultithreadedTest.class);
   private final ZipEntityStrategy dummyStrategy = mock(ZipEntityStrategy.class);
 
   @Before
@@ -26,10 +24,6 @@ public class ReencryptExplodedZipMultithreadedTest {
     if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
       Security.addProvider(new BouncyCastleProvider());
     }
-  }
-
-  private ReencryptExplodedZipMultithreaded sut() {
-    return new ReencryptExplodedZipMultithreaded();
   }
 
   @Test

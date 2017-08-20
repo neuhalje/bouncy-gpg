@@ -31,7 +31,7 @@ public class ConvertingPasswordsIntoCryptographicKeys {
     }
     password = password.trim();
 
-    final name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching.KeyStretching streching = new SCryptKeyStretching(
+    final KeyStretching streching = new SCryptKeyStretching(
         SCryptKeyStretching.SCryptKeyStretchingParameters.forModeratelyStongInputKeyMaterial());
 
     final byte[] SALT = fromHexString("0x01");
@@ -42,6 +42,7 @@ public class ConvertingPasswordsIntoCryptographicKeys {
   }
 
 
+  @SuppressWarnings("PMD.AvoidReassigningParameters")
   public KeyAndMetaData stretchWithSalt(String password, String saltAsHexString)
       throws GeneralSecurityException {
 
@@ -84,12 +85,13 @@ public class ConvertingPasswordsIntoCryptographicKeys {
   }
 
   public String toHex(byte[] bytes) {
-    return InputConverters.ByteArray.toHexString(bytes);
+    return toHexString(bytes);
   }
 
   public static class KeyAndMetaData {
 
     public final String derivedKey;
+
     public final int derivedKeyLen;
 
     public KeyAndMetaData(String derivedKey, int derivedKeyLen) {
