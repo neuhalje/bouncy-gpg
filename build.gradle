@@ -133,6 +133,11 @@ task generateWebsite(type: Exec, dependsOn: ['prepareForCMS', 'removeOldWebsite'
     workingDir = file("${specifications_cms_cmsdRoot}")
 }
 
+task previewWebsite(type: Exec, dependsOn: ['generateWebsite']) {
+    commandLine = ['hugo', 'server', '--debug', '--watch', '--enableGitInfo']
+    workingDir = file("${specifications_cms_cmsdRoot}")
+}
+
 gitPublish {
     // where to publish to (repo must exist)
     repoUri = 'git@github.com:neuhalje/bouncy-gpg.git'
