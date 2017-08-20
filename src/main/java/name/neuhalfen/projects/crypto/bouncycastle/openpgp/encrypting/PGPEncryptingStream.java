@@ -31,10 +31,6 @@ import org.bouncycastle.openpgp.operator.bc.BcPublicKeyKeyEncryptionMethodGenera
 
 public final class PGPEncryptingStream extends OutputStream {
 
-  private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
-      .getLogger(PGPEncryptingStream.class);
-
-
   private final KeyringConfig config;
   private final PGPAlgorithmSuite algorithmSuite;
   private boolean isDoSign;
