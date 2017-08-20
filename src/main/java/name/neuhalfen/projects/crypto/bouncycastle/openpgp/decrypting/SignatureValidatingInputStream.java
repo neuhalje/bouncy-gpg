@@ -17,6 +17,7 @@ final class SignatureValidatingInputStream extends FilterInputStream {
 
   private final DecryptionState state;
   private final SignatureValidationStrategy signatureValidationStrategy;
+
   /**
    * Creates a <code>SignatureValidatingInputStream</code> by assigning the  argument
    * <code>in</code> to the field <code>this.in</code> so as to remember it for later use.
@@ -65,7 +66,8 @@ final class SignatureValidatingInputStream extends FilterInputStream {
    */
   private void validateSignature() throws IOException {
     try {
-      signatureValidationStrategy.validateSignatures(state.factory, state.getOnePassSignatures());
+      signatureValidationStrategy
+          .validateSignatures(state.getSignatureFactory(), state.getOnePassSignatures());
     } catch (PGPException | SignatureException e) {
       throw new IOException(e.getMessage(), e);
     }
@@ -95,7 +97,16 @@ final class SignatureValidatingInputStream extends FilterInputStream {
   final static class DecryptionState {
 
     private final Map<Long, PGPOnePassSignature> onePassSignatures = new HashMap<>();
-    PGPObjectFactory factory;
+    private PGPObjectFactory signatureFactory;
+
+    public PGPObjectFactory getSignatureFactory() {
+      return signatureFactory;
+    }
+
+    public void setSignatureFactory(PGPObjectFactory signatureFactory) {
+      this.signatureFactory = signatureFactory;
+    }
+
 
     void updateOnePassSignatures(byte data) {
       for (PGPOnePassSignature sig : onePassSignatures.values()) {

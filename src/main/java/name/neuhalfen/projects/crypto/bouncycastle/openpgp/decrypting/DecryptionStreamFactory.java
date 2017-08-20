@@ -136,7 +136,7 @@ public final class DecryptionStreamFactory {
         if (!signatureValidationStrategy.isRequireSignatureCheck()) {
           LOGGER.info("Signature check disabled - ignoring contained signature");
         } else {
-          state.factory = factory;
+          state.setSignatureFactory(factory);
 
           // verify the signature
           final PGPOnePassSignatureList onePassSignatures = (PGPOnePassSignatureList) pgpObj;
