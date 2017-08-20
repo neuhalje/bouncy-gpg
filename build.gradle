@@ -22,13 +22,15 @@ plugins {
 
 
 
+project.ext.set("specifications_cms_cmsdRoot", "$projectDir/website")
+project.ext.set("specifications_cms_target", "$buildDir/website")
+
 project.ext.set("specifications_concordion_target", "$reporting.baseDir/specs/concordion")
 
 project.ext.set("specifications_prepareForCms_source", "$reporting.baseDir/specs/concordion/specs")
-project.ext.set("specifications_prepareForCms_target", "$projectDir/cms/content/specification")
+project.ext.set("specifications_prepareForCms_target", "$specifications_cms_cmsdRoot/content/specification")
 
-project.ext.set("specifications_cms_cmsdRoot", "$projectDir/cms")
-project.ext.set("specifications_cms_target", "$buildDir/website")
+
 
 
 sourceCompatibility = 1.8
