@@ -19,7 +19,7 @@ script:
   - sudo snap install hugo
   - export PATH
   - /snap/bin/hugo version
-  - ./gradlew -PHUGO_EXEC="/snap/bin/hugo" --stacktrace --debug check generateWebsite
+  - ./gradlew -PHUGO_EXEC="/snap/bin/hugo" --stacktrace --debug check # generateWebsite
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
