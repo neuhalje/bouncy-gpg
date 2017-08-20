@@ -9,6 +9,7 @@ plugins {
     id 'jacoco'
 
     id 'checkstyle'
+    id 'pmd'
 
     // required for: website.gradle
     id 'org.ajoberstar.git-publish' version '0.3.0'
@@ -22,6 +23,10 @@ plugins {
 
 checkstyle {
     toolVersion = "8.1"
+}
+
+pmd {
+    toolVersion = "5.8.1"
 }
 
 // Global configuration
