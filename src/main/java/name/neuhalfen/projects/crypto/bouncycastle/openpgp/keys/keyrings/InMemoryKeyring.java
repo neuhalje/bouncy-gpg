@@ -21,12 +21,11 @@ public final class InMemoryKeyring implements KeyringConfig {
 
   @Nonnull
   private final KeyringConfigCallback callback;
+  private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
   @Nonnull
   private PGPPublicKeyRingCollection publicKeyRings;
   @Nonnull
   private PGPSecretKeyRingCollection secretKeyRings;
-
-  private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
 
   @SuppressWarnings("unchecked")
   InMemoryKeyring(final KeyringConfigCallback callback) throws IOException, PGPException {

@@ -3,10 +3,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
 public final class DefaultPGPAlgorithmSuites {
 
-  // no construction
-  private DefaultPGPAlgorithmSuites() {
-  }
-
   /**
    * GPG default algorithms
    */
@@ -14,7 +10,6 @@ public final class DefaultPGPAlgorithmSuites {
       PGPHashAlgorithms.SHA1,
       PGPSymmetricEncryptionAlgorithms.CAST5,
       PGPCompressionAlgorithms.ZLIB);
-
   /**
    * GPG strong crypto algorithms
    */
@@ -22,6 +17,10 @@ public final class DefaultPGPAlgorithmSuites {
       PGPHashAlgorithms.SHA_256,
       PGPSymmetricEncryptionAlgorithms.AES_128,
       PGPCompressionAlgorithms.ZLIB);
+
+  // no construction
+  private DefaultPGPAlgorithmSuites() {
+  }
 
   public static PGPAlgorithmSuite defaultSuiteForGnuPG() {
     return DEFAULT_GPG;

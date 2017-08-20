@@ -15,11 +15,9 @@ import org.bouncycastle.util.io.Streams;
 
 final class ExplodeAndReencrypt {
 
-  private final ZipEntityStrategy entityHandlingStrategy;
-
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
       .getLogger(ExplodeAndReencrypt.class);
-
+  private final ZipEntityStrategy entityHandlingStrategy;
   private final InputStream is;
   private final BuildEncryptionOutputStreamAPI.Build encryptionFactory;
 

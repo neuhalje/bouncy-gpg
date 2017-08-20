@@ -15,16 +15,16 @@ public class HashingOutputStream extends OutputStream {
 
   private byte[] calculatedDigest = {};
 
+  private HashingOutputStream(MessageDigest digest) {
+    this.digest = digest;
+  }
+
   public static HashingOutputStream sha256() throws NoSuchAlgorithmException {
     return new HashingOutputStream(MessageDigest.getInstance("SHA-256"));
   }
 
   public static HashingOutputStream sha1() throws NoSuchAlgorithmException {
     return new HashingOutputStream(MessageDigest.getInstance("SHA-1"));
-  }
-
-  private HashingOutputStream(MessageDigest digest) {
-    this.digest = digest;
   }
 
   @Override

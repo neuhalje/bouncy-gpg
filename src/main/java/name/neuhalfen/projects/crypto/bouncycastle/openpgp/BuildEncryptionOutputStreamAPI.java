@@ -18,28 +18,17 @@ import org.bouncycastle.openpgp.PGPPublicKeyRing;
 
 public final class BuildEncryptionOutputStreamAPI {
 
-  public interface Build {
-
-    OutputStream andWriteTo(OutputStream sinkForEncryptedData)
-        throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException;
-  }
-
   private OutputStream sinkForEncryptedData;
-
-
   private KeyringConfig encryptionConfig;
   private PGPAlgorithmSuite algorithmSuite;
   @Nullable
   private String signWith;
   private PGPPublicKey recipient;
   private boolean armorOutput;
-
-  // Signature
-
-
   BuildEncryptionOutputStreamAPI() {
   }
 
+  // Signature
 
   public WithAlgorithmSuite withConfig(KeyringConfig encryptionConfig)
       throws IOException, PGPException {
@@ -58,6 +47,13 @@ public final class BuildEncryptionOutputStreamAPI {
 
     BuildEncryptionOutputStreamAPI.this.encryptionConfig = encryptionConfig;
     return new WithAlgorithmSuite();
+  }
+
+
+  public interface Build {
+
+    OutputStream andWriteTo(OutputStream sinkForEncryptedData)
+        throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException;
   }
 
   public final class WithAlgorithmSuite {

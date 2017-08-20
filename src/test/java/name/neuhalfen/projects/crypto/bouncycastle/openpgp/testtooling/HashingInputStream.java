@@ -16,17 +16,17 @@ public class HashingInputStream extends FilterInputStream {
 
   private byte[] calculatedDigest = {};
 
+  private HashingInputStream(MessageDigest digest, InputStream src) {
+    super(src);
+    this.digest = digest;
+  }
+
   public static HashingInputStream sha256(InputStream src) throws NoSuchAlgorithmException {
     return new HashingInputStream(MessageDigest.getInstance("SHA-256"), src);
   }
 
   public static HashingInputStream sha1(InputStream src) throws NoSuchAlgorithmException {
     return new HashingInputStream(MessageDigest.getInstance("SHA-1"), src);
-  }
-
-  private HashingInputStream(MessageDigest digest, InputStream src) {
-    super(src);
-    this.digest = digest;
   }
 
   @Override

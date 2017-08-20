@@ -40,6 +40,12 @@ public final class DecryptionStreamFactory {
   @Nonnull
   private final SignatureValidationStrategy signatureValidationStrategy;
 
+  private DecryptionStreamFactory(final KeyringConfig config,
+      final SignatureValidationStrategy signatureValidationStrategy) {
+    this.signatureValidationStrategy = signatureValidationStrategy;
+    this.config = config;
+  }
+
   public static DecryptionStreamFactory create(final KeyringConfig config,
       final SignatureValidationStrategy signatureValidationStrategy) {
     if (config == null) {
@@ -50,13 +56,6 @@ public final class DecryptionStreamFactory {
 
     }
     return new DecryptionStreamFactory(config, signatureValidationStrategy);
-  }
-
-
-  private DecryptionStreamFactory(final KeyringConfig config,
-      final SignatureValidationStrategy signatureValidationStrategy) {
-    this.signatureValidationStrategy = signatureValidationStrategy;
-    this.config = config;
   }
 
   public InputStream wrapWithDecryptAndVerify(InputStream in)

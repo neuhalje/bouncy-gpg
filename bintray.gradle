@@ -53,7 +53,7 @@ publishing {
             artifact javadocJar
             groupId group
             artifactId 'bouncy-gpg'
-            version  property('version')
+            version property('version')
 
             pom.withXml {
                 def root = asNode()
@@ -68,9 +68,10 @@ publishing {
 
 bintray {
     user = property('bintray_Username')
-    key =  property('bintray_Password')
+    key = property('bintray_Password')
 
-    dryRun = false //property('bintray_dryRun')//[Default: false] Whether to run this as dry-run, without deploying
+    dryRun = false
+    //property('bintray_dryRun')//[Default: false] Whether to run this as dry-run, without deploying
     publish = true //[Default: false] Whether version should be auto published after an upload
     override = false //[Default: false] Whether to override version artifacts already published
 
@@ -89,14 +90,14 @@ bintray {
             name = property('version')
             desc = 'Make using Bouncy Castle with OpenPGP fun again!'
             released = new Date()
-            vcsTag =  property('version')
+            vcsTag = property('version')
 
             gpg {
                 sign = true
             }
             mavenCentralSync {
-                sync = false 
-            }    
+                sync = false
+            }
         }
     }
 

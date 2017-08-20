@@ -20,17 +20,6 @@ public class EncryptionConfig {
   private final KeyringConfig keyringConfig;
 
 
-  public PGPPublicKeyRingCollection getPublicKeyRings() throws IOException, PGPException {
-
-    return keyringConfig.getPublicKeyRings();
-  }
-
-  public PGPSecretKeyRingCollection getSecretKeyRings() throws IOException, PGPException {
-
-    return keyringConfig.getSecretKeyRings();
-  }
-
-
   public EncryptionConfig(String signatureSecretKeyId,
       String encryptionPublicKeyId,
       int pgpHashAlgorithmCode,
@@ -41,6 +30,15 @@ public class EncryptionConfig {
     this.pgpHashAlgorithmCode = pgpHashAlgorithmCode;
   }
 
+  public PGPPublicKeyRingCollection getPublicKeyRings() throws IOException, PGPException {
+
+    return keyringConfig.getPublicKeyRings();
+  }
+
+  public PGPSecretKeyRingCollection getSecretKeyRings() throws IOException, PGPException {
+
+    return keyringConfig.getSecretKeyRings();
+  }
 
   public String getSignatureSecretKeyId() {
     return signatureSecretKeyId;

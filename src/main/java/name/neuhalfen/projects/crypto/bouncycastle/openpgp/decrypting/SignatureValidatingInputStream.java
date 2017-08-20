@@ -15,39 +15,8 @@ import org.bouncycastle.openpgp.PGPOnePassSignature;
 
 final class SignatureValidatingInputStream extends FilterInputStream {
 
-  final static class DecryptionState {
-
-    PGPObjectFactory factory;
-    private final Map<Long, PGPOnePassSignature> onePassSignatures = new HashMap<>();
-
-    void updateOnePassSignatures(byte data) {
-      for (PGPOnePassSignature sig : onePassSignatures.values()) {
-        sig.update(data);
-      }
-    }
-
-    void updateOnePassSignatures(byte[] b, int off, int len) {
-      for (PGPOnePassSignature sig : onePassSignatures.values()) {
-        sig.update(b, off, len);
-      }
-    }
-
-    Map<Long, PGPOnePassSignature> getOnePassSignatures() {
-      return onePassSignatures;
-    }
-
-    void addSignature(PGPOnePassSignature signature) {
-      onePassSignatures.put(signature.getKeyID(), signature);
-    }
-
-    int numSignatures() {
-      return onePassSignatures.size();
-    }
-  }
-
   private final DecryptionState state;
   private final SignatureValidationStrategy signatureValidationStrategy;
-
   /**
    * Creates a <code>SignatureValidatingInputStream</code> by assigning the  argument
    * <code>in</code> to the field <code>this.in</code> so as to remember it for later use.
@@ -121,5 +90,35 @@ final class SignatureValidatingInputStream extends FilterInputStream {
   @Override
   public boolean markSupported() {
     return false;
+  }
+
+  final static class DecryptionState {
+
+    private final Map<Long, PGPOnePassSignature> onePassSignatures = new HashMap<>();
+    PGPObjectFactory factory;
+
+    void updateOnePassSignatures(byte data) {
+      for (PGPOnePassSignature sig : onePassSignatures.values()) {
+        sig.update(data);
+      }
+    }
+
+    void updateOnePassSignatures(byte[] b, int off, int len) {
+      for (PGPOnePassSignature sig : onePassSignatures.values()) {
+        sig.update(b, off, len);
+      }
+    }
+
+    Map<Long, PGPOnePassSignature> getOnePassSignatures() {
+      return onePassSignatures;
+    }
+
+    void addSignature(PGPOnePassSignature signature) {
+      onePassSignatures.put(signature.getKeyID(), signature);
+    }
+
+    int numSignatures() {
+      return onePassSignatures.size();
+    }
   }
 }

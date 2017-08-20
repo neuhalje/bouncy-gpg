@@ -34,6 +34,10 @@ import org.junit.runners.Parameterized;
 public class EncryptionDecryptionRoundtripIntegrationTest {
 
 
+  @SuppressWarnings("WeakerAccess")
+  @Parameterized.Parameter
+  public /* NOT private */ PGPAlgorithmSuite algorithmSuite;
+
   /*
    * make sure that the tests work independently of the way the config has been created
    */
@@ -42,12 +46,6 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
     return new Object[]{DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG(),
         DefaultPGPAlgorithmSuites.strongSuite()};
   }
-
-
-  @SuppressWarnings("WeakerAccess")
-  @Parameterized.Parameter
-  public /* NOT private */ PGPAlgorithmSuite algorithmSuite;
-
 
   @Before
   public void installBCProvider() {

@@ -8,12 +8,12 @@ import java.security.GeneralSecurityException;
 
 public class MasterKeyFromPasswordDerivation {
 
+  private final KeyStretching stretching;
+
+
   public MasterKeyFromPasswordDerivation(KeyStretching stretching) {
     this.stretching = stretching;
   }
-
-
-  private final KeyStretching stretching;
 
   public byte[] deriveKey(final String salt, final String masterPassword, int desiredKeyLengthBits)
       throws GeneralSecurityException {

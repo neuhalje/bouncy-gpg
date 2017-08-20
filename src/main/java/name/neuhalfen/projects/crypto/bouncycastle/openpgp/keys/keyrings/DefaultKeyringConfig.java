@@ -19,9 +19,9 @@ abstract class DefaultKeyringConfig implements KeyringConfig {
 
   @Nonnull
   private final KeyringConfigCallback callback;
+  private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
   private PGPPublicKeyRingCollection publicKeyRings;
   private PGPSecretKeyRingCollection secretKeyRings;
-  private final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
 
   DefaultKeyringConfig(KeyringConfigCallback callback) {
     if (callback == null) {

@@ -419,21 +419,6 @@ public class ExampleMessages {
           "-----END PGP PRIVATE KEY BLOCK-----";
 
   public final static Map<Long, char[]> ALL_KEYRINGS_PASSWORDS = BUILD_ALL_KEYRINGS_PASSWORDS();
-
-  private static Map<Long, char[]> BUILD_ALL_KEYRINGS_PASSWORDS() {
-    Map<Long, char[]> m = new HashMap<>();
-    m.put(ExampleMessages.KEY_ID_SENDER, "sender".toCharArray());
-    m.put(ExampleMessages.KEY_ID_SENDER_2, "sender2".toCharArray());
-    m.put(ExampleMessages.KEY_ID_SENDER_DSA_SIGN_ONLY, "sign".toCharArray());
-    m.put(ExampleMessages.EY_ID_ANOTHER_SENDER, "another_sender".toCharArray());
-
-    m.put(ExampleMessages.PUBKEY_ID_RECIPIENT, "recipient".toCharArray());
-
-    return Collections.unmodifiableMap(m);
-  }
-
-  // public final static String
-
   /**
    * Encrypted-To:    recipient@example.com Signed-By:       sender@example.com Compressed: false
    */
@@ -459,6 +444,7 @@ public class ExampleMessages {
           "=xVAW\n" +
           "-----END PGP MESSAGE-----\n";
 
+  // public final static String
   /**
    * Encrypted-To:    recipient@example.com Signed-By:       sender@example.com Compressed: true
    */
@@ -482,7 +468,6 @@ public class ExampleMessages {
       "kfkE8g9Jm9QfsIaCwfcTqJslO22BSIANmm2Ho8vevPzS0uTxnugoRaA6r0qw\n" +
       "=dQ4L\n" +
       "-----END PGP MESSAGE-----";
-
   /**
    * Encrypted-To:    recipient@example.com Signed-By:       sender@example.com AND
    * another_sender@example.com Compressed:      true
@@ -515,7 +500,6 @@ public class ExampleMessages {
           "Yw==\n" +
           "=OxhG\n" +
           "-----END PGP MESSAGE-----";
-
   /**
    * Like #IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED but the order of signatures is reversed. <p>
    * Encrypted-To:    recipient@example.com Signed-By:       another_sender@example.com AND
@@ -548,7 +532,6 @@ public class ExampleMessages {
           "KXFleR9runn1K4a2Ut17/dSKcVT7qQWSD2pEsx+0vYVPiKWfe0Nn9TETRrdZyA==\n" +
           "=SCj5\n" +
           "-----END PGP MESSAGE-----";
-
   /**
    * Encrypted-To:    recipient@example.com Signed-By:       another_sender@example.com Compressed:
    * true
@@ -574,8 +557,6 @@ public class ExampleMessages {
           "WVr8a1FkXuriJtcDEUJcyl/cPDvtx3ootxskKZgpAqrJ4dF9woRp+GhaOA==\n" +
           "=UKuw\n" +
           "-----END PGP MESSAGE-----";
-
-
   /**
    * Encrypted-To:    recipient@example.com Signed-By:       another_sender@example.com,
    * sender@example.com AND sender2@example.com Compressed:      false
@@ -619,8 +600,6 @@ public class ExampleMessages {
           "kQcAYvGRCMo1bBdw15LOOdAMEyoNAzMZA9f/rfCmD9nMQQ==\n" +
           "=o6bw\n" +
           "-----END PGP MESSAGE-----";
-
-
   /**
    * Encrypted-To:    recipient@example.com Signed-By:       not signed Compressed:      no
    */
@@ -639,7 +618,6 @@ public class ExampleMessages {
           "znd5CR+Jye1UXfLusnylrlfgKZcCRA==\n" +
           "=q3RN\n" +
           "-----END PGP MESSAGE-----";
-
   /**
    * Encrypted-To:    sender@example.com Signed-By:       not signed Compressed:      no
    */
@@ -658,7 +636,6 @@ public class ExampleMessages {
           "Mp1o2aStMLdDWHCgJK1Sc2MSvX6Eyw==\n" +
           "=GQV9\n" +
           "-----END PGP MESSAGE-----";
-
   /**
    * Encrypted-To:    recipient@example.com Signed-By:       sender.signonly@example.com  (DSA, sign
    * only key) Compressed:      no
@@ -685,5 +662,17 @@ public class ExampleMessages {
    */
   public final static String IMPORTANT_QUOTE_TEXT = "I love deadlines. I like the whooshing sound they make as they fly by. Douglas Adams";
   public final static String IMPORTANT_QUOTE_SHA256 = "5A341E2D70CB67831E837AC0474E140627913C17113163E47F1207EA5C72F86F";
+
+  private static Map<Long, char[]> BUILD_ALL_KEYRINGS_PASSWORDS() {
+    Map<Long, char[]> m = new HashMap<>();
+    m.put(ExampleMessages.KEY_ID_SENDER, "sender".toCharArray());
+    m.put(ExampleMessages.KEY_ID_SENDER_2, "sender2".toCharArray());
+    m.put(ExampleMessages.KEY_ID_SENDER_DSA_SIGN_ONLY, "sign".toCharArray());
+    m.put(ExampleMessages.EY_ID_ANOTHER_SENDER, "another_sender".toCharArray());
+
+    m.put(ExampleMessages.PUBKEY_ID_RECIPIENT, "recipient".toCharArray());
+
+    return Collections.unmodifiableMap(m);
+  }
 
 }

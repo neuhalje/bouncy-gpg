@@ -8,7 +8,7 @@ plugins {
     id 'java'
     id 'jacoco'
 
-    id  'checkstyle'
+    id 'checkstyle'
 
     // required for: website.gradle
     id 'org.ajoberstar.git-publish' version '0.3.0'
@@ -34,7 +34,7 @@ project.ext.set("specifications_prepareForCms_source", "$reporting.baseDir/specs
 project.ext.set("specifications_prepareForCms_target", "$specifications_cms_cmsdRoot/content/specification")
 
 // use ./gradlew -PHUGO_EXEC=/path/to/hugo to configure the executable for hugo
-project.ext.set("hugo",  project.hasProperty("HUGO_EXEC") ? HUGO_EXEC : "hugo")
+project.ext.set("hugo", project.hasProperty("HUGO_EXEC") ? HUGO_EXEC : "hugo")
 
 // ----
 

@@ -6,7 +6,7 @@ plugins {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-mainClassName =  'name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.EncryptMain'
+mainClassName = 'name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.EncryptMain'
 
 version = '1.0.0'
 
@@ -14,7 +14,7 @@ jar {
     manifest {
         attributes 'Implementation-Title': 'Bouncycastle Examples: encryption',
                 'Implementation-Version': version,
-                'Main-Class':  mainClassName
+                'Main-Class': mainClassName
     }
 }
 

@@ -7,16 +7,37 @@ import org.bouncycastle.crypto.generators.SCrypt;
 
 public class SCryptKeyStretching implements KeyStretching {
 
-  public static SCryptKeyStretching forConfig(SCryptKeyStretchingParameters cfg) {
-    return new SCryptKeyStretching(cfg);
-  }
+  private final SCryptKeyStretchingParameters cfg;
 
   public SCryptKeyStretching(SCryptKeyStretchingParameters cfg) {
     this.cfg = cfg;
   }
 
+  public static SCryptKeyStretching forConfig(SCryptKeyStretchingParameters cfg) {
+    return new SCryptKeyStretching(cfg);
+  }
+
+  @Override
+  public byte[] strengthenKey(byte[] salt, byte[] keyToStrengthen, int desiredKeyLengthInBit) {
+    if (desiredKeyLengthInBit % 8 != 0) {
+      throw new IllegalArgumentException("desiredKeyLengthInBit must be a multiple of 8");
+    }
+
+    final int desiredKeyLengthInBytes = desiredKeyLengthInBit / 8;
+    final byte[] key = SCrypt.generate(keyToStrengthen, salt, cfg.getN(), cfg.getR(), cfg.getP(),
+        desiredKeyLengthInBytes);
+    return key;
+  }
 
   public final static class SCryptKeyStretchingParameters implements Serializable {
+
+    private final int N, r, p;
+
+    public SCryptKeyStretchingParameters(int N, int r, int p) {
+      this.N = N;
+      this.r = r;
+      this.p = p;
+    }
 
     /**
      * Generate a workload factor for sensitive ( ~5 seconds in 2017) derivation with very weak
@@ -40,7 +61,6 @@ public class SCryptKeyStretching implements KeyStretching {
       return new SCryptKeyStretchingParameters(1 << 12, 4, 1);
     }
 
-
     /**
      * Generate a workload factor for quickest (~1ms in 2017) derivation. <p> **Only use this if
      * your input key material is very good**
@@ -55,8 +75,6 @@ public class SCryptKeyStretching implements KeyStretching {
       return new SCryptKeyStretchingParameters(1 << 8, 4, 1);
     }
 
-    private final int N, r, p;
-
     public int getN() {
       return N;
     }
@@ -67,12 +85,6 @@ public class SCryptKeyStretching implements KeyStretching {
 
     public int getP() {
       return p;
-    }
-
-    public SCryptKeyStretchingParameters(int N, int r, int p) {
-      this.N = N;
-      this.r = r;
-      this.p = p;
     }
 
     @Override
@@ -103,19 +115,5 @@ public class SCryptKeyStretching implements KeyStretching {
       sb.append('}');
       return sb.toString();
     }
-  }
-
-  private final SCryptKeyStretchingParameters cfg;
-
-  @Override
-  public byte[] strengthenKey(byte[] salt, byte[] keyToStrengthen, int desiredKeyLengthInBit) {
-    if (desiredKeyLengthInBit % 8 != 0) {
-      throw new IllegalArgumentException("desiredKeyLengthInBit must be a multiple of 8");
-    }
-
-    final int desiredKeyLengthInBytes = desiredKeyLengthInBit / 8;
-    final byte[] key = SCrypt.generate(keyToStrengthen, salt, cfg.getN(), cfg.getR(), cfg.getP(),
-        desiredKeyLengthInBytes);
-    return key;
   }
 }

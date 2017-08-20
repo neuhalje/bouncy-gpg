@@ -10,13 +10,12 @@ import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.Ke
 public class DerivedKeyGenerator {
 
 
+  private final KeyDerivationFunction kdFwithMasterKeyMixin;
+
+
   public DerivedKeyGenerator(KeyDerivationFunction kdFwithMasterKeyMixin) {
     this.kdFwithMasterKeyMixin = kdFwithMasterKeyMixin;
   }
-
-
-  private final KeyDerivationFunction kdFwithMasterKeyMixin;
-
 
   /**
    * @param salt (from rfc5869): Ideally, the salt value is a random (or pseudorandom) string of the

@@ -1,58 +1,59 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
-    <artifactId>maven-example</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    <packaging>jar</packaging>
+  <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
+  <artifactId>maven-example</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <packaging>jar</packaging>
 
-    <name>maven-example</name>
-    <url>https://github.com/neuhalje/bouncy-gpg/</url>
+  <name>maven-example</name>
+  <url>https://github.com/neuhalje/bouncy-gpg/</url>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-   <!-- OR use the settingx.xml -->
-   <repositories>
+  <!-- OR use the settingx.xml -->
+  <repositories>
     <repository>
-        <id>bintray</id>
-        <name>bintray</name>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-        <url>http://jcenter.bintray.com</url>
+      <id>bintray</id>
+      <name>bintray</name>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <url>http://jcenter.bintray.com</url>
     </repository>
-   </repositories>
+  </repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.57</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpg-jdk15on</artifactId>
-            <version>1.57</version>
-        </dependency>
-        <dependency>
-            <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
-            <artifactId>bouncy-gpg</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <version>1.57</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpg-jdk15on</artifactId>
+      <version>1.57</version>
+    </dependency>
+    <dependency>
+      <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
+      <artifactId>bouncy-gpg</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+  </dependencies>
 </project>

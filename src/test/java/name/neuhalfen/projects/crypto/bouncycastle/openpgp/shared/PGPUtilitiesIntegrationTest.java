@@ -27,6 +27,13 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class PGPUtilitiesIntegrationTest {
 
+  private static final long PRIVATE_MASTER_KEY_RECIPIENT = 0x3DF16BD7C3F280F3L;
+  private static final char[] PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE = "recipient".toCharArray();
+  private static final long PRIVATE_SUB_KEY_RECIPIENT = 0x54A3DB374F787AB7L;
+  private static final long PRIVATE_KEY_ID__ONLY_HAVE_PUB_KEY = 0xaff0658d23fb56e6L;
+  @Parameterized.Parameter
+  public /* NOT private */ KeyringConfig keyringConfig;
+
   /*
    * make sure that the tests work independently of the way the config has been created
    */
@@ -38,18 +45,6 @@ public class PGPUtilitiesIntegrationTest {
         Configs.keyringConfigFromFilesForRecipient(
             KeyringConfigCallbacks.withPassword(PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE))};
   }
-
-
-  @Parameterized.Parameter
-  public /* NOT private */ KeyringConfig keyringConfig;
-
-
-  private static final long PRIVATE_MASTER_KEY_RECIPIENT = 0x3DF16BD7C3F280F3L;
-  private static final char[] PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE = "recipient".toCharArray();
-
-  private static final long PRIVATE_SUB_KEY_RECIPIENT = 0x54A3DB374F787AB7L;
-
-  private static final long PRIVATE_KEY_ID__ONLY_HAVE_PUB_KEY = 0xaff0658d23fb56e6L;
 
   @Before
   public void before() {

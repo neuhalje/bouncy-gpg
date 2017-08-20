@@ -12,9 +12,8 @@ import org.junit.Test;
 
 public class DerivedKeyGeneratorTest {
 
-  final byte[] DERIVED_KEY_SALT = new byte[]{1, 2, 3, 4};
-
   private final static int KEY_LEY = 128;
+  final byte[] DERIVED_KEY_SALT = new byte[]{1, 2, 3, 4};
 
   private DerivedKeyGenerator sut() {
     final byte[] MASTERKEY_KEY = new byte[]{5, 6, 7};

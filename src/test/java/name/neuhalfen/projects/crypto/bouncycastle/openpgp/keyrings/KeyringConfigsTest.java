@@ -23,12 +23,9 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class KeyringConfigsTest {
 
-  @Before
-  public void before() {
-    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-      Security.addProvider(new BouncyCastleProvider());
-    }
-  }
+  @SuppressWarnings("WeakerAccess")
+  @Parameterized.Parameter
+  public /* NOT private */ KeyringConfig keyringConfig;
 
   /*
    * make sure that the tests work independently of the way the config has been created
@@ -40,10 +37,12 @@ public class KeyringConfigsTest {
         Configs.keyringConfigInMemoryForSender()};
   }
 
-
-  @SuppressWarnings("WeakerAccess")
-  @Parameterized.Parameter
-  public /* NOT private */ KeyringConfig keyringConfig;
+  @Before
+  public void before() {
+    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+      Security.addProvider(new BouncyCastleProvider());
+    }
+  }
 
   @Test
   public void toString_returns_nonEmptyString() throws Exception {

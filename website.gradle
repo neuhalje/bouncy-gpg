@@ -4,9 +4,9 @@ import name.neuhalfen.concordion.transform.ConcordionHtmlToMarkdownTransformer
 // https://github.com/ajoberstar/gradle-git-publish
 
 
-task removeOldSpecsFromCMS(type: Delete) { 
-  delete "${specifications_prepareForCms_target}"
-} 
+task removeOldSpecsFromCMS(type: Delete) {
+    delete "${specifications_prepareForCms_target}"
+}
 task prepareSpecsForCMS(type: Copy, dependsOn: ['test', 'removeOldSpecsFromCMS']) {
     description 'Transform the build output of concordion to include it in the CMS'
 
@@ -19,12 +19,12 @@ task prepareSpecsForCMS(type: Copy, dependsOn: ['test', 'removeOldSpecsFromCMS']
     filter(ConcordionHtmlToMarkdownTransformer)
 }
 
-task removeOldWebsite(type: Delete) { 
-  delete "${specifications_cms_target}"
-} 
+task removeOldWebsite(type: Delete) {
+    delete "${specifications_cms_target}"
+}
 
 
-task generateWebsite(type: Exec, dependsOn: ['removeOldWebsite', 'prepareSpecsForCMS' ]) {
+task generateWebsite(type: Exec, dependsOn: ['removeOldWebsite', 'prepareSpecsForCMS']) {
     commandLine = [hugo, '--cleanDestinationDir', '--destination', "${specifications_cms_target}", '--enableGitInfo']
     workingDir = file("${specifications_cms_cmsdRoot}")
 }

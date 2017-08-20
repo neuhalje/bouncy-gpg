@@ -23,6 +23,7 @@ public class ReencryptExplodedZipSinglethreadTest {
 
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
       .getLogger(ReencryptExplodedZipSinglethreadTest.class);
+  private final ZipEntityStrategy dummyStrategy = mock(ZipEntityStrategy.class);
 
   @Before
   public void installBCProvider() {
@@ -30,8 +31,6 @@ public class ReencryptExplodedZipSinglethreadTest {
       Security.addProvider(new BouncyCastleProvider());
     }
   }
-
-  private final ZipEntityStrategy dummyStrategy = mock(ZipEntityStrategy.class);
 
   private ReencryptExplodedZipSinglethread sut() {
     return new ReencryptExplodedZipSinglethread();
