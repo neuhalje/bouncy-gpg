@@ -27,6 +27,7 @@ checkstyle {
 
 pmd {
     toolVersion = "5.8.1"
+    ruleSetFiles = files("config/pmd/ruleset.xml")
 }
 
 // Global configuration
