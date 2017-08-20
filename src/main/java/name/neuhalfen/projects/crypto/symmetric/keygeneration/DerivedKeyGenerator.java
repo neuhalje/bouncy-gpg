@@ -51,7 +51,9 @@ public class DerivedKeyGenerator {
     return derivedKey;
   }
 
-  String constructDerivedKeyIdentifier(String contextName, String idUniqueInContext) {
+
+  @SuppressWarnings({"PMD.AvoidReassigningParameters","PMD.DefaultPackage"})
+  String constructDerivedKeyIdentifier(String contextName, final String idUniqueInContext) {
     if (contextName == null) {
       contextName = "";
     }

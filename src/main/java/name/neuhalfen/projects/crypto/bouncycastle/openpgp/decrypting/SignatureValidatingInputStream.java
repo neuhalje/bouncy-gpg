@@ -94,40 +94,48 @@ final class SignatureValidatingInputStream extends FilterInputStream {
     return false;
   }
 
+  @SuppressWarnings("PMD.DefaultPackage")
   final static class DecryptionState {
 
     private final Map<Long, PGPOnePassSignature> onePassSignatures = new HashMap<>();
     private PGPObjectFactory signatureFactory;
 
-    public PGPObjectFactory getSignatureFactory() {
+    @SuppressWarnings("PMD.DefaultPackage")
+    PGPObjectFactory getSignatureFactory() {
       return signatureFactory;
     }
 
-    public void setSignatureFactory(PGPObjectFactory signatureFactory) {
+    @SuppressWarnings("PMD.DefaultPackage")
+    void setSignatureFactory(PGPObjectFactory signatureFactory) {
       this.signatureFactory = signatureFactory;
     }
 
 
+    @SuppressWarnings("PMD.DefaultPackage")
     void updateOnePassSignatures(byte data) {
       for (PGPOnePassSignature sig : onePassSignatures.values()) {
         sig.update(data);
       }
     }
 
+    @SuppressWarnings("PMD.DefaultPackage")
     void updateOnePassSignatures(byte[] b, int off, int len) {
       for (PGPOnePassSignature sig : onePassSignatures.values()) {
         sig.update(b, off, len);
       }
     }
 
+    @SuppressWarnings("PMD.DefaultPackage")
     Map<Long, PGPOnePassSignature> getOnePassSignatures() {
       return onePassSignatures;
     }
 
+    @SuppressWarnings("PMD.DefaultPackage")
     void addSignature(PGPOnePassSignature signature) {
       onePassSignatures.put(signature.getKeyID(), signature);
     }
 
+    @SuppressWarnings("PMD.DefaultPackage")
     int numSignatures() {
       return onePassSignatures.size();
     }

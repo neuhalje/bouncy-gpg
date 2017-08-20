@@ -22,6 +22,7 @@ final class ExplodeAndReencrypt {
   private final BuildEncryptionOutputStreamAPI.Build encryptionFactory;
 
 
+  @SuppressWarnings("PMD.DefaultPackage")
   ExplodeAndReencrypt(InputStream is, ZipEntityStrategy entityHandlingStrategy,
       BuildEncryptionOutputStreamAPI.Build encryptionFactory) {
     this.is = is;
@@ -30,6 +31,7 @@ final class ExplodeAndReencrypt {
   }
 
 
+  @SuppressWarnings("PMD.DefaultPackage")
   void explodeAndReencrypt()
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
     boolean zipDataFound = false;
