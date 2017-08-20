@@ -16,6 +16,7 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 
 
+@SuppressWarnings({"PMD.AtLeastOneConstructor","PMD.AccessorMethodGeneration"})
 public final class BuildEncryptionOutputStreamAPI {
 
   private OutputStream sinkForEncryptedData;
@@ -25,8 +26,6 @@ public final class BuildEncryptionOutputStreamAPI {
   private String signWith;
   private PGPPublicKey recipient;
   private boolean armorOutput;
-  BuildEncryptionOutputStreamAPI() {
-  }
 
   // Signature
 
@@ -81,7 +80,7 @@ public final class BuildEncryptionOutputStreamAPI {
     public final class To {
 
       public SignWith toRecipient(String recipient) throws IOException, PGPException {
-        if (recipient == null || "".equals(recipient)) {
+        if (recipient == null || recipient.isEmpty()) {
           throw new IllegalArgumentException("recipient must be a string");
         }
 
@@ -114,6 +113,7 @@ public final class BuildEncryptionOutputStreamAPI {
           return new Armor();
         }
 
+        @SuppressWarnings("PMD.NullAssignment")
         public Armor andDoNotSign() {
           BuildEncryptionOutputStreamAPI.this.signWith = null;
           return new Armor();

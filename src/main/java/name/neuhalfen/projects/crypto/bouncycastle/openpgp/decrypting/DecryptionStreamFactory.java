@@ -58,15 +58,15 @@ public final class DecryptionStreamFactory {
     return new DecryptionStreamFactory(config, signatureValidationStrategy);
   }
 
-  public InputStream wrapWithDecryptAndVerify(InputStream in)
+  public InputStream wrapWithDecryptAndVerify(InputStream inputStream)
       throws IOException, NoSuchProviderException {
     LOGGER.trace("Trying to decrypt and verify PGP Encryption.");
-    if (in == null) {
+    if (inputStream == null) {
       throw new IllegalArgumentException("in config must not be null");
     }
 
     try {
-      final PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(in),
+      final PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(inputStream),
           config.getKeyFingerPrintCalculator());
 
       return nextDecryptedStream(factory, new SignatureValidatingInputStream.DecryptionState());
@@ -92,7 +92,8 @@ public final class DecryptionStreamFactory {
 
     Object pgpObj;
 
-    while ((pgpObj = factory.nextObject()) != null) {
+    //
+    while ((pgpObj = factory.nextObject()) != null) { //NOPMD
 
       if (pgpObj instanceof PGPEncryptedDataList) {
         LOGGER.trace("Found instance of PGPEncryptedDataList");
@@ -124,18 +125,17 @@ public final class DecryptionStreamFactory {
         final InputStream plainText = pbe.getDataStream(new BcPublicKeyDataDecryptorFactory(sKey));
         final PGPObjectFactory nextFactory = new PGPObjectFactory(plainText,
             new BcKeyFingerprintCalculator());
-        return nextDecryptedStream(nextFactory, state);
+        return nextDecryptedStream(nextFactory, state); // NOPMD
       } else if (pgpObj instanceof PGPCompressedData) {
         LOGGER.trace("Found instance of PGPCompressedData");
         final PGPObjectFactory nextFactory = new PGPObjectFactory(
             ((PGPCompressedData) pgpObj).getDataStream(), config.getKeyFingerPrintCalculator());
-        return nextDecryptedStream(nextFactory, state);
+        return nextDecryptedStream(nextFactory, state);  // NOPMD
       } else if (pgpObj instanceof PGPOnePassSignatureList) {
         LOGGER.trace("Found instance of PGPOnePassSignatureList");
 
-        if (!signatureValidationStrategy.isRequireSignatureCheck()) {
-          LOGGER.info("Signature check disabled - ignoring contained signature");
-        } else {
+        if (signatureValidationStrategy.isRequireSignatureCheck()) {
+
           state.setSignatureFactory(factory);
 
           // verify the signature
@@ -143,20 +143,24 @@ public final class DecryptionStreamFactory {
           for (PGPOnePassSignature signature : onePassSignatures) {
             final PGPPublicKey pubKey = config.getPublicKeyRings()
                 .getPublicKey(signature.getKeyID());
-            if (pubKey != null) {
+
+            final boolean isHavePublicKeyForSignatureInKeyring = pubKey == null;
+            if (isHavePublicKeyForSignatureInKeyring) {
+              LOGGER.trace("Found signature but public key '{}' was not found in the keyring.",
+                  Long.toHexString(signature.getKeyID()));
+            } else {
               LOGGER.trace("Found signature and the public key '{}' was found in the keyring.",
                   Long.toHexString(signature.getKeyID()));
               signature.init(pgpContentVerifierBuilderProvider, pubKey);
               state.addSignature(signature);
-            } else {
-              LOGGER.trace("Found signature but public key '{}' was not found in the keyring.",
-                  Long.toHexString(signature.getKeyID()));
             }
           }
           if (state.numSignatures() == 0) {
             throw new PGPException(
                 "Signature checking is required but none of the public keys used to sign the data was found in the keyring'!");
           }
+        } else {
+          LOGGER.info("Signature check disabled - ignoring contained signature");
         }
       } else if (pgpObj instanceof PGPLiteralData) {
         LOGGER.trace("Found instance of PGPLiteralData");

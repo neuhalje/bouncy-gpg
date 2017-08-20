@@ -14,16 +14,13 @@ import org.bouncycastle.openpgp.PGPException;
 /**
  * This class implements the builder for decrypting Streams.
  */
+@SuppressWarnings({"PMD.AtLeastOneConstructor","PMD.AccessorMethodGeneration"})
 public final class BuildDecryptionInputStreamAPI {
 
   @Nonnull
   private KeyringConfig keyringConfig;
   @Nonnull
   private SignatureValidationStrategy signatureCheckingMode;
-
-  /* hide */
-  BuildDecryptionInputStreamAPI() {
-  }
 
   /**
    * Start building by passing in the keyring config.
