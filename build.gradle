@@ -8,6 +8,8 @@ plugins {
     id 'java'
     id 'jacoco'
 
+    id  'checkstyle'
+
     // required for: website.gradle
     id 'org.ajoberstar.git-publish' version '0.3.0'
 
@@ -16,6 +18,10 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id "com.jfrog.bintray" version "1.7.3"
+}
+
+checkstyle {
+    toolVersion = "8.1"
 }
 
 // Global configuration
