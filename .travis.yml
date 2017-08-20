@@ -1,4 +1,5 @@
 language: java
+os: linux
 dist: trusty
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -12,8 +13,13 @@ jdk:
 
 script:
   - sudo apt-get update
-  - sudo apt-get install hugo
-  - ./gradlew --stacktrace check generateWebsite
+  - sudo apt-get install git && echo installed git so that hugo can inject commit data into the website
+  - git --version
+  - sudo apt-get install snapd
+  - sudo snap install hugo
+  - export PATH
+  - /snap/bin/hugo version
+  - ./gradlew -PHUGO_EXEC="/snap/bin/hugo" --stacktrace --debug check generateWebsite
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

@@ -30,6 +30,8 @@ project.ext.set("specifications_concordion_target", "$reporting.baseDir/specs/co
 project.ext.set("specifications_prepareForCms_source", "$reporting.baseDir/specs/concordion/specs")
 project.ext.set("specifications_prepareForCms_target", "$specifications_cms_cmsdRoot/content/specification")
 
+// use ./gradlew -PHUGO_EXEC=/path/to/hugo to configure the executable for hugo
+project.ext.set("hugo",  project.hasProperty("HUGO_EXEC") ? HUGO_EXEC : "hugo")
 
 
 
@@ -131,13 +133,14 @@ task removeOldWebsite(type: Delete) {
   delete "${specifications_cms_target}"
 } 
 
+
 task generateWebsite(type: Exec, dependsOn: ['removeOldWebsite', 'prepareSpecsForCMS' ]) {
-    commandLine = ['hugo', '--cleanDestinationDir', '--destination', "${specifications_cms_target}", '--enableGitInfo']
+    commandLine = [hugo, '--cleanDestinationDir', '--destination', "${specifications_cms_target}", '--enableGitInfo']
     workingDir = file("${specifications_cms_cmsdRoot}")
 }
 
 task previewWebsite(type: Exec, dependsOn: ['generateWebsite']) {
-    commandLine = ['hugo', 'server', '--debug', '--watch', '--enableGitInfo']
+    commandLine = [hugo, 'server', '--debug', '--watch', '--enableGitInfo']
     workingDir = file("${specifications_cms_cmsdRoot}")
 }
 
