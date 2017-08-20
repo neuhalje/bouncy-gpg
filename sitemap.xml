@@ -3,12 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://neuhalje.github.io/bouncy-gpg/categories/api/</loc>
-    <priority>0</priority>
+    <loc>https://neuhalje.github.io/bouncy-gpg/about/</loc>
+    <lastmod>2017-08-20T14:14:34+02:00</lastmod>
   </url>
   
   <url>
     <loc>https://neuhalje.github.io/bouncy-gpg/</loc>
+    <lastmod>2017-08-20T14:14:34+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://neuhalje.github.io/bouncy-gpg/categories/api/</loc>
     <priority>0</priority>
   </url>
   
@@ -39,6 +44,10 @@
   <url>
     <loc>https://neuhalje.github.io/bouncy-gpg/tags/</loc>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://neuhalje.github.io/bouncy-gpg/_header/</loc>
   </url>
   
 </urlset>

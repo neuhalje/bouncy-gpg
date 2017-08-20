@@ -7,7 +7,7 @@
     <meta name="description" content="">
 
 
-    <title>Bouncy GPG :: Bouncy GPG</title>
+    <title> :: Bouncy GPG</title>
     <link rel="shortcut icon" href="https://neuhalje.github.io/bouncy-gpg/images/favicon.png" type="image/x-icon" />
     <link href="https://neuhalje.github.io/bouncy-gpg/css/nucleus.css" rel="stylesheet">
     <link href="https://neuhalje.github.io/bouncy-gpg/css/font-awesome.min.css" rel="stylesheet">
@@ -41,13 +41,9 @@
 <div class="highlightable">
   <div id="header-wrapper">
     <div id="header">
-      
-<span style="font-size:smaller">
-	<a id="logo" href="https://neuhalje.github.io/bouncy-gpg/">
-	  <span class="fa fa-gears" style="font-size:large"></span>
-	</a>
-	Create a _header.md to customize this
-</small>
+       
+	<p>Bouncy GPG Documentation</p>
+ 
 
 
     </div>
@@ -85,7 +81,7 @@
     
     <li data-nav-id="/specification/" class="dd-item 
         
-        active
+        
         
         ">
       <a href="https://neuhalje.github.io/bouncy-gpg/specification/">
@@ -141,6 +137,25 @@
         
 
         
+        <section id="shortcuts">
+            
+                <li class="" role="">
+                    <h3>More</h3>
+                    <a href="https://github.com/neuhalje/bouncy-gpg"><i class='fa fa-github'></i> Github repo</a>
+                    
+                </li>
+            
+                <li class="" role="">
+                    
+                    <a href="https://neuhalje.github.io/bouncy-gpg/about"><i class='fa fa-bullhorn'></i> About</a>
+                    
+                </li>
+            
+        </section>    
+        
+        
+
+        
     </ul>
     
      
@@ -167,18 +182,357 @@
 <a href="#" id="sidebar-toggle" data-sidebar-toggle=""><i class="fa fa-bars"></i> navigation</a>
 </span>
 
-           
+ 
+
+
+<h1 id="bouncy-gpg">Bouncy GPG</h1>
+
+<p><center>
+<a href="https://travis-ci.org/neuhalje/bouncy-gpg"><img src="https://travis-ci.org/neuhalje/bouncy-gpg.svg?branch=master" alt="Build Status" style="width: auto; height: auto; display: inline; margin: 0" /></a>
+<a href="https://codecov.io/gh/neuhalje/bouncy-gpg"><img src="https://codecov.io/gh/neuhalje/bouncy-gpg/branch/master/graph/badge.svg" alt="codecov"  style="width: auto; height: auto; display: inline; margin: 0"/></a>
+<a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/badge/license-APACHE%202.0-brightgreen.svg" alt="license"  style="width: auto; height: auto; display: inline; margin: 0"/></a>
+<a href="https://bintray.com/neuhalje/maven/bouncy-gpg/_latestVersion"><img src="https://api.bintray.com/packages/neuhalje/maven/bouncy-gpg/images/download.svg" alt="Download"  style="width: auto; height: auto; display: inline; margin: 0"/></a>
+</center></p>
+
+<h2 id="mission-statement">Mission Statement</h2>
+
+<p><strong>Make using <a href="http://bouncycastle.org/">Bouncy Castle</a> with <a href="https://tools.ietf.org/html/rfc4880">OpenPGP</a> <del>great</del> fun again!</strong></p>
+
+<p>This project gives you the following super-powers</p>
+
+<ul>
+<li>encrypt, decrypt, sign and verify GPG/PGP files with just a few lines of code</li>
+<li>protect all the data at rest by reading encrypted files with <a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/DecryptionStreamFactory.java">transparent GPG decryption</a></li>
+<li>you can even <a href="examples/reencrypt/src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java">decrypt a gpg encrypted ZIP and re-encrypt each file in it again</a> &ndash; never again let plaintext hit your servers disk!</li>
+</ul>
+
+<h2 id="examples">Examples</h2>
+
+<p><em>Bouncy GPG</em> comes with several <a href="examples">examples</a> build in.</p>
+
+<h3 id="key-management">Key management</h3>
+
+<p><em>Bouncy GPG</em> supports <a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/FileBasedKeyringConfig.java">reading <code>gpg</code> keyrings</a> and <a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/InMemoryKeyring.java">parsing keys exported</a> via <code>gpg --export</code> and  <code>gpg --export-secret-key</code>.</p>
+
+<p>The unit tests have some <a href="src/test/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/testtooling/Configs.java">examples creating/reading keyrings</a>.</p>
+
+<p>The easiest way to manage keyrings is to use the pre-defined <a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java">KeyringConfigs</a>.</p>
+
+<h3 id="encrypting-a-file">Encrypting a file</h3>
+
+<p>The following snippet encrypts <code>/tmp/plaintext.txt</code> to <code>recipient@example.com</code> and signs with <code>sender@example.com</code>.
+The encrypted file is written to <code>/tmp/encrypted.gpg</code>.</p>
+
+<pre><code class="language-java">final KeyringConfig keyringConfig = KeyringConfigs
+   .withKeyRingsFromFiles(
+        &quot;pubring.gpg&quot;,
+        &quot;secring.gpg&quot;, 
+        KeyringConfigCallbacks.withPassword(&quot;s3cr3t&quot;));
+
+try (
+        final FileOutputStream fileOutput = new FileOutputStream(&quot;/tmp/encrypted.gpg&quot;);
+        final BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOutput);
+
+        final OutputStream outputStream = BouncyGPG
+                .encryptToStream()
+                .withConfig(keyringConfig)
+                .withStrongAlgorithms()
+                .toRecipient(&quot;recipient@example.com&quot;)
+                .andSignWith(&quot;sender@example.com&quot;)
+                .binaryOutput()
+                .andWriteTo(bufferedOut);
+
+        final FileInputStream is = new FileInputStream(&quot;/tmp/plaintext.txt&quot;)
+) {
+    Streams.pipeAll(is, outputStream);
+}
+</code></pre>
+
+<h3 id="decrypting-a-file-and-validating-the-signature">Decrypting a file and validating the signature</h3>
+
+<p>The following snippet decrypts the file created in the snippet above.</p>
+
+<pre><code class="language-java">final KeyringConfig keyringConfig = KeyringConfigs
+   .withKeyRingsFromFiles(
+         &quot;pubring.gpg&quot;,
+         &quot;secring.gpg&quot;, 
+         KeyringConfigCallbacks.withPassword(&quot;s3cr3t&quot;));
+
+try (
+        final FileInputStream cipherTextStream = new FileInputStream(&quot;/tmp/encrypted.gpg&quot;);
+
+        final FileOutputStream fileOutput = new FileOutputStream(destFile);
+        final BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOutput);
+
+        final InputStream plaintextStream = BouncyGPG
+               .decryptAndVerifyStream()
+               .withConfig(keyringConfig)
+               .andIgnoreSignatures()
+               .fromEncryptedInputStream(cipherTextStream)
+
+) {
+    Streams.pipeAll(plaintextStream, bufferedOut);
+}
+</code></pre>
+
+<h3 id="performance">Performance</h3>
+
+<p>Bouncy castle is often fast enough to <em>not be the bottleneck</em>. That said, here are some metrics to give you an indication of the performance:</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Use Case</th>
+<th align="left">MBP 2,9 GHz Intel Core i5, Java 1.8.0_111</th>
+<th align="left">(please add more via PR)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><a href="examples/encrypt">Encrypt &amp; sign 1GB random</a></td>
+<td align="left">~64s (16 MB/s)</td>
+<td align="left"></td>
+</tr>
+
+<tr>
+<td align="left"><a href="examples/encrypt">Decrypt 1GB random</a></td>
+<td align="left">~32s (32 MB/s)</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="demos">Demos</h2>
+
+<p>The directory <a href="examples">examples</a> contains several examples that show how easy some common use cases are implemented.</p>
+
+<h3 id="demo-decrypt-sh-examples-decrypt"><a href="examples/decrypt">demo_decrypt.sh</a></h3>
+
+<p>Decrypt a file and verify the signature.</p>
+
+<ul>
+<li><code>decrypt.sh  SOURCEFILE DESTFILE</code></li>
+</ul>
+
+<p>Uses the testing keys to decrypt a file. Useful for performance measurements and <code>gpg</code> interoperability.</p>
+
+<h3 id="demo-encrypt-sh-examples-encrypt"><a href="examples/encrypt">demo_encrypt.sh</a></h3>
+
+<p>Encrypt and sign a file.</p>
+
+<ul>
+<li><code>encrypt.sh  SOURCEFILE DESTFILE</code></li>
+</ul>
+
+<p>Uses the testing keys to encrypt a file. Useful for performance measurements and <code>gpg</code> interoperability.</p>
+
+<h3 id="demo-reencrypt-sh-examples-reencrypt"><a href="examples/reencrypt">demo_reencrypt.sh</a></h3>
+
+<p>A GPG encrypted ZIP file is decrypted on the fly. The structure of the ZIP is then written to disk. All files are re-encrypted before saving them.</p>
+
+<ul>
+<li><code>demo_reencrypt.sh TARGET</code> &ndash; decrypts an encrypted ZIP file containing  three files (total size: 1.2 GB) AND
+re-encrypts each of the files in the ZIP to the <code>TARGET</code> dir.</li>
+</ul>
+
+<p><a href="examples/reencrypt/src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java">The sample</a>
+shows how e.g. batch jobs can work with large files without leaving plaintext on disk (together with
+<a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/SignatureValidatingInputStream.java">Transparent GPG decryption</a>).</p>
+
+<p>This scheme has some very appealing benefits:
+* Data in transit is <em>always</em> encrypted with public key cryptography. Indispensable when you have to use <code>ftp</code>,
+  comforting when you use <code>https</code> and the next Heartbleed pops up.
+* Data at rest is <em>always</em> encrypted with public key cryptography. When (not if) you get hacked, this can make all the
+  difference between <em>&ldquo;Move along folks, nothing to see here!&rdquo;</em> and <em>&ldquo;I lost confidential customer data to the competition&rdquo;</em>.
+* You still need to protect the private keys, but this is considerable easier than the alternatives.</p>
+
+<p>Consider the following batch job:</p>
+
+<ol>
+<li>The customer sends a large (several GB) GPG encrypted ZIP archive containing a directory structure with several
+data files</li>
+<li>Your <code>pre-processing</code> needs to split up the data for further processing</li>
+<li><code>pre-processing</code> stream-processes the GPG/ZIP archive
+
+<ol>
+<li>The GPG stream is decrypted using the <a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/BouncyGPG.java">BouncyGPG.decryptAndVerifyStream()</a> <code>InputStream</code></li>
+<li>The ZIP file is processed with <a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/reencryption/ExplodeAndReencrypt.java">ExplodeAndReencrypt</a>
+
+<ol>
+<li>Each file from the archive is <a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/reencryption/ZipEntityStrategy.java">processed</a></li>
+<li>And transparently  encrypted with GPG and stored for further processing</li>
+</ol></li>
+</ol></li>
+<li>The <code>processing</code> job  <a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/decrypting/SignatureValidatingInputStream.java">transparently reads</a> the files without writing plaintext to the disk.</li>
+</ol>
+
+<h2 id="howto">HOWTO</h2>
+
+<p>Have a look at the example classes to see how easy it is to use Bouncy Castle PGP.</p>
+
+<h3 id="1-bouncy-castle-provider-dependency">#1 Bouncy Castle Provider Dependency</h3>
+
+<p>Add bouncy castle as a dependency and then install the provider before in your application.</p>
+
+<h4 id="add-build-dependency">Add Build Dependency</h4>
+
+<h5 id="gradle">Gradle</h5>
+
+<pre><code class="language-groovy">// build.gradle
+// in build.gradle add a dependency to bouncy castle and bouncy-gpg
+
+//... 
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+//... 
+
+//  ...
+dependencies {
+    compile 'org.bouncycastle:bcprov-jdk15on:1.57'
+    compile 'org.bouncycastle:bcpg-jdk15on:1.57'
+    //  ...
+    compile 'name.neuhalfen.projects.crypto.bouncycastle.openpgp:bouncy-gpg:2.+'
+   // ...
+  }
+</code></pre>
+
+<h5 id="maven">Maven</h5>
+
+<p>Dropping this in the root level of pom.xml lets you use this lib in a maven project:</p>
+
+<pre><code class="language-xml">&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;bintray&lt;/id&gt;
+        &lt;name&gt;bintray&lt;/name&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+        &lt;url&gt;http://jcenter.bintray.com&lt;/url&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+</code></pre>
+
+<p>and this dependency snippet:</p>
+
+<pre><code class="language-xml">    &lt;dependency&gt;
+        &lt;groupId&gt;name.neuhalfen.projects.crypto.bouncycastle.openpgp&lt;/groupId&gt;
+        &lt;artifactId&gt;bouncy-gpg&lt;/artifactId&gt;
+        &lt;version&gt;2.0.1&lt;/version&gt;
+    &lt;/dependency&gt;
+</code></pre>
+
+<p> </p>
+
+<h3 id="2-install-provider">#2 Install Provider</h3>
+
+<pre><code class="language-java">    // in one of you classed install the BC provider
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+</code></pre>
+
+<h2 id="important-classes">Important Classes</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left">Class</th>
+<th align="left">Use when you want to</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/BouncyGPG.java"><code>BouncyGPG</code></a></td>
+<td align="left">Starting point for the convenient fluent en- and decryption API.</td>
+</tr>
+
+<tr>
+<td align="left"><a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java"><code>KeyringConfigs</code></a></td>
+<td align="left">Create default implementations for GPG keyring access. You can also create your own implementations by implementing  <a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfig.java"><code>KeyringConfig</code></a>.</td>
+</tr>
+
+<tr>
+<td align="left"><a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/callbacks/KeyringConfigCallbacks.java"><code>KeyringConfigCallbacks</code></a></td>
+<td align="left">Used by  <a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java"><code>KeyringConfigs</code></a>. Create default implementations to provide secret-key passwords.</td>
+</tr>
+
+<tr>
+<td align="left"><a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/algorithms/DefaultPGPAlgorithmSuites.java"><code>DefaultPGPAlgorithmSuites</code></a></td>
+<td align="left">Select from predefined algorithms suites or create your won with <code>PGPAlgorithmSuite</code>.</td>
+</tr>
+
+<tr>
+<td align="left"><a href="src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/reencryption/ReencryptExplodedZipSinglethread.java"><code>ReencryptExplodedZipSinglethread</code></a></td>
+<td align="left"><a href="examples/reencrypt/src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/example/MainExplodedSinglethreaded.java">Work with encrypted ZIPs</a></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="faq">FAQ</h2>
+
+<dl>
+  <dt>Why should I use this?</dt>
+  <dd>For common use cases this project is easier than vanilla Bouncy Castle. It also has a pretty decent unit test
+  coverage. It is free (speech & beer).</dd>
+
+  <dt>Can I just grab a class or two for my project?</dt>
+  <dd>Sure! Just grab it and hack away! The code is placed under the <a href="LICENSE">Apache License 2.0</a>, you can't get much
+   more permissive than this.</dd>
+
+   <dt>Why is the test coverage so low?</dt>
+   <dd>Test coverage for 'non-example' code is &gt;85%. Most of the not tested cases are either trivial OR lines that
+   throw exceptions when the input format is broken. </dd>
+
+   <dt>How can I contribute?</dt>
+   <dd>Pullrequests are welcome! Please state in your PR that you put your code under the LICENSE.</dd>
+   
+   <dt>I am getting 'org.bouncycastle.openpgp.PGPException: checksum mismatch ..' exceptions</dt>
+   <dd>The passphrase to your private key is very likely wrong (or you did not pass a passphrase).</dd>
+   
+   <dt>I am getting 'java.security.InvalidKeyException: Illegal key size' / 'java.lang.SecurityException: Unsupported keysize or algorithm parameters'</dt>
+   <dd>The unrestricted policy files for the JVM are <a href="http://www.bouncycastle.org/wiki/display/JA1/Frequently+Asked+Questions">probably not installed</a>.</dd>
+
+   <dt>Where is 'secring.pgp'?</dt>
+   <dd>'secring.gpg' has been <a href="https://gnupg.org/faq/whats-new-in-2.1.html#nosecring">removed in gpg 2.1</a>. Use the other methods to read private keys.</dd>
+</dl>
+
+<h2 id="building">Building</h2>
+
+<p>The project is a basic gradle build. All the scripts use <code>./gradlew  installDist</code></p>
+
+<p>The coverage report (incl. running tests) is generated with <code>./gradlew check</code>.</p>
+
+<h3 id="publish-to-jcenter">Publish to jcenter</h3>
+
+<p><code>./gradlew bintrayUpload</code></p>
+
+<h3 id="website">Website</h3>
+
+<ul>
+<li>Preview: <code>./gradlew previewWebsite</code></li>
+<li>Publish: <code>./gradlew publishWebsite</code></li>
+</ul>
+
+<p>All <a href="https//concordion.org">Concordion</a> <a href="src/test/resources/specs">specifications</a> are executed and the result is copied into <code>website/content/specification</code>.</p>
+
+<h2 id="cave">CAVE</h2>
+
+<ul>
+<li>GPG: Only one keyring per userid (&ldquo;sender@example.com&rdquo;) supported.</li>
+<li>GPG: Only one signing key per userid supported.</li>
+<li><a href="TODO.md">TODOs</a></li>
+</ul>
+
+<h2 id="license">LICENSE</h2>
+
+<p>This code is placed under the Apache License 2.0. Don&rsquo;t forget to adhere to the BouncyCastle License (<a href="http://bouncycastle.org/license.html">http://bouncycastle.org/license.html</a>).</p>
 	
-		<h1>Customize your own home page</h1>
-		<p>
-		  The site is working. Don't forget to customize this homepage with your own. You typically have 2 choices :
-		</p>
-		<ul>
-		  <li><b>1. </b> Create an _index.md document in the content folder</li>
-		  <li><b>2. </b> Configure your server to automatically redirect this home page to one of your documentation pages</li>
-		</ul>
-	
-	<p><i class="fa fa-heart fa-4x"></i></p>
   
 
       </div>
