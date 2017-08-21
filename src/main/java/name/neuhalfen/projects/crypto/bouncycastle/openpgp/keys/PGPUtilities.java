@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
 
 
 import java.util.Iterator;
+import javax.annotation.Nullable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
@@ -116,12 +117,14 @@ public final class PGPUtilities {
 
   /**
    * Extract a signing key from the keyring. The implementation tries to find the best matching key.
-   * . FIXME: refactor this, so that we use all key from the keyring as valid signing keys .
+   * . FIXME: refactor this, so that we use all keys from the keyring as valid signing keys .
    * Detection of possible signing keys is heuristic at best.
    *
    * @param keyring search here
-   * @return a public key that can be used for signing
+   * @return a public key that can be used for signing, null if non founf
    */
+  @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+  @Nullable
   public static PGPPublicKey extractSigningPublicKey(PGPPublicKeyRing keyring) {
 
     int highestScore = Integer.MIN_VALUE;

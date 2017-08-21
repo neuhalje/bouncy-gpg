@@ -77,6 +77,7 @@ public final class BuildEncryptionOutputStreamAPI {
     }
 
 
+    @SuppressWarnings("PMD.ShortClassName")
     public final class To {
 
       public SignWith toRecipient(String recipient) throws IOException, PGPException {

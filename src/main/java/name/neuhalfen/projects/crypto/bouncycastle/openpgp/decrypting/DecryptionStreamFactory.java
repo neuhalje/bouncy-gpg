@@ -98,20 +98,24 @@ public final class DecryptionStreamFactory {
       if (pgpObj instanceof PGPEncryptedDataList) {
         LOGGER.trace("Found instance of PGPEncryptedDataList");
         final PGPEncryptedDataList enc = (PGPEncryptedDataList) pgpObj;
-        final Iterator<?> it = enc.getEncryptedDataObjects();
+        final Iterator<?> encryptedDataObjects = enc.getEncryptedDataObjects();
 
-        if (!it.hasNext()) {
+        if (!encryptedDataObjects.hasNext()) {
           throw new PGPException("Decryption failed - No encrypted data found!");
         }
         //
         // find the secret key
         //
         PGPPrivateKey sKey = null;
-        PGPPublicKeyEncryptedData pbe = null;
-        while (sKey == null && it.hasNext()) {
-          pbe = (PGPPublicKeyEncryptedData) it.next();
+        PGPPublicKeyEncryptedData pbe = null; // NOPMD: mus initialize pbe
+        while (sKey == null && encryptedDataObjects.hasNext()) {
+          pbe = (PGPPublicKeyEncryptedData) encryptedDataObjects.next();
           sKey = PGPUtilities.findSecretKey(config.getSecretKeyRings(), pbe.getKeyID(),
               config.decryptionSecretKeyPassphraseForSecretKeyId(pbe.getKeyID()));
+        }
+        if (pbe == null) {
+          throw new PGPException(
+              "Decryption failed - No public key encrypted data found, aborting");
         }
         if (sKey == null) {
           // Wrong passphrases already trigger a throw in PGPUtilities.findSecretKey.

@@ -8,10 +8,12 @@
   <rule ref="rulesets/java/basic.xml">
   </rule>
   <rule ref="rulesets/java/naming.xml">
+    <exclude name="LongVariable" />
   </rule>
   <rule ref="rulesets/java/design.xml">
     <exclude name="UnnecessaryLocalBeforeReturn"/>
   </rule>
   <rule ref="rulesets/java/controversial.xml">
+    <exclude name="AtLeastOneConstructor" />
   </rule>
 </ruleset>

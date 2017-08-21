@@ -26,13 +26,13 @@ public final class KeyringConfigs {
       final File secretKeyring,
       KeyringConfigCallback callback) {
     if (publicKeyring == null) {
-      throw new IllegalArgumentException(("keyring must not be null"));
+      throw new IllegalArgumentException("keyring must not be null");
     }
     if (secretKeyring == null) {
-      throw new IllegalArgumentException(("secretKeyring must not be null"));
+      throw new IllegalArgumentException("secretKeyring must not be null");
     }
     if (callback == null) {
-      throw new IllegalArgumentException(("callback must not be null"));
+      throw new IllegalArgumentException("callback must not be null");
     }
 
     return new FileBasedKeyringConfig(callback, publicKeyring, secretKeyring);
@@ -52,13 +52,13 @@ public final class KeyringConfigs {
       final String secretKeyringPath,
       final KeyringConfigCallback callback) {
     if (publicKeyringPath == null) {
-      throw new IllegalArgumentException(("publicKeyringPath must not be null"));
+      throw new IllegalArgumentException("publicKeyringPath must not be null");
     }
     if (secretKeyringPath == null) {
-      throw new IllegalArgumentException(("secretKeyringPath must not be null"));
+      throw new IllegalArgumentException("secretKeyringPath must not be null");
     }
     if (callback == null) {
-      throw new IllegalArgumentException(("callback must not be null"));
+      throw new IllegalArgumentException("callback must not be null");
     }
 
     return new ResourceBasedKeyringConfig(callback, classLoader, publicKeyringPath,

@@ -20,14 +20,14 @@ final class SignatureValidatingInputStream extends FilterInputStream {
 
   /**
    * Creates a <code>SignatureValidatingInputStream</code> by assigning the  argument
-   * <code>in</code> to the field <code>this.in</code> so as to remember it for later use.
+   * <code>inputStream</code> to the field <code>this.inputStream</code> so as to remember it for later use.
    *
-   * @param in the underlying input stream, or <code>null</code> if this instance is to be created
+   * @param inputStream the underlying input stream, or <code>null</code> if this instance is to be created
    * without an underlying stream.
    */
-  SignatureValidatingInputStream(InputStream in, DecryptionState state,
+  SignatureValidatingInputStream(InputStream inputStream, DecryptionState state,
       SignatureValidationStrategy signatureValidationStrategy) {
-    super(in);
+    super(inputStream);
     this.state = state;
     this.signatureValidationStrategy = signatureValidationStrategy;
   }
@@ -35,10 +35,11 @@ final class SignatureValidatingInputStream extends FilterInputStream {
   @Override
   public int read() throws IOException {
     final int data = super.read();
-    if (data != -1) {
-      state.updateOnePassSignatures((byte) data);
-    } else {
+    final boolean endOfStream = data == -1;
+    if (endOfStream) {
       validateSignature();
+    } else {
+      state.updateOnePassSignatures((byte) data);
     }
     return data;
   }
@@ -51,10 +52,12 @@ final class SignatureValidatingInputStream extends FilterInputStream {
   @Override
   public int read(@Nonnull byte[] b, int off, int len) throws IOException {
     int read = super.read(b, off, len);
-    if (read != -1) {
-      state.updateOnePassSignatures(b, off, read);
-    } else {
+
+    final boolean endOfStream = read == -1;
+    if (endOfStream) {
       validateSignature();
+    } else {
+      state.updateOnePassSignatures(b, off, read);
     }
     return read;
   }
@@ -84,6 +87,7 @@ final class SignatureValidatingInputStream extends FilterInputStream {
     throw new UnsupportedOperationException("mark not supported");
   }
 
+  @SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")
   @Override
   public synchronized void reset() throws IOException {
     throw new UnsupportedOperationException("reset not supported");

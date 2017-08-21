@@ -3,6 +3,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
 
 
+@SuppressWarnings("PMD.ShortVariable")
 public enum PGPCompressionAlgorithms {
   /**
    * No compression.
@@ -20,7 +21,6 @@ public enum PGPCompressionAlgorithms {
    * BZIP2 compression. Better compression than ZIP but much slower to compress and decompress.
    */
   BZIP2(CompressionAlgorithmTags.BZIP2);
-
 
   public final int id;
 

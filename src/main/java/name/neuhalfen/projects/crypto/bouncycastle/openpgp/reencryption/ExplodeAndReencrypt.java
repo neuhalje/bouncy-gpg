@@ -37,11 +37,11 @@ final class ExplodeAndReencrypt {
 
     ZipEntry entry;
 
-    int numDirs = 0;
-    int numFiles = 0;
-    while ((entry = zis.getNextEntry()) != null) {
+    int numDirs = 0; // NOPMD: Need to initialize counter
+    int numFiles = 0; // NOPMD: Need to initialize counter@
+    while ((entry = zis.getNextEntry()) != null) { // NOPMD
 
-      final String sanitizedFileName = entityHandlingStrategy.rewriteName(entry.getName());
+      final String sanitizedFileName = entityHandlingStrategy.rewriteName(entry.getName()); // NOPMD: False positive for 'UR'-anomaly
 
       if (!entry.getName().equals(sanitizedFileName)) {
         LOGGER.trace("Rewriting '{}' to '{}'", entry.getName(), sanitizedFileName);
@@ -67,13 +67,13 @@ final class ExplodeAndReencrypt {
             final OutputStream outputStream = entityHandlingStrategy
                 .createOutputStream(sanitizedFileName)
         ) {
-          if (outputStream != null) {
+          if (outputStream == null) {
+            LOGGER.trace("Ignore {}", entry.getName());
+          } else {
             final OutputStream encryptedSmallFromZIP = encryptionFactory.andWriteTo(outputStream);
             Streams.pipeAll(zis, encryptedSmallFromZIP);
             encryptedSmallFromZIP.flush();
             encryptedSmallFromZIP.close();
-          } else {
-            LOGGER.trace("Ignore {}", entry.getName());
           }
         }
       }
