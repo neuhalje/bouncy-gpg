@@ -48,6 +48,7 @@ public final class PGPEncryptingStream extends OutputStream {
   private PGPCompressedDataGenerator compressionStreamGenerator;
 
   private PGPEncryptingStream(final KeyringConfig config, final PGPAlgorithmSuite algorithmSuite) {
+    super();
     this.config = config;
     this.algorithmSuite = algorithmSuite;
   }
@@ -132,13 +133,13 @@ public final class PGPEncryptingStream extends OutputStream {
 
       signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
 
-      final Iterator<?> it = pgpSec.getPublicKey().getUserIDs();
-      if (it.hasNext())
+      final Iterator<?> userIDs = pgpSec.getPublicKey().getUserIDs();
+      if (userIDs.hasNext())
 
       {
         final PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
 
-        spGen.setSignerUserID(false, (String) it.next());
+        spGen.setSignerUserID(false, (String) userIDs.next());
         signatureGenerator.setHashedSubpackets(spGen.generate());
       }
     }

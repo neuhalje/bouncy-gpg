@@ -16,7 +16,7 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 
 
-@SuppressWarnings({"PMD.AtLeastOneConstructor","PMD.AccessorMethodGeneration"})
+@SuppressWarnings({"PMD.AtLeastOneConstructor","PMD.AccessorMethodGeneration","PMD.LawOfDemeter"})
 public final class BuildEncryptionOutputStreamAPI {
 
   private OutputStream sinkForEncryptedData;

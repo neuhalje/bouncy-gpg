@@ -39,6 +39,8 @@ public final class PGPUtilities {
    * @return the decrypted secret key
    * @throws PGPException the pGP exception
    */
+  @SuppressWarnings("PMD.UseVarargs")
+  @Nullable
   public static PGPPrivateKey findSecretKey(final PGPSecretKeyRingCollection pgpSec,
       final long keyID, final char[] pass)
       throws PGPException {
@@ -59,6 +61,7 @@ public final class PGPUtilities {
    * @return the decrypted secret key
    * @throws PGPException E.g. wrong passphrase
    */
+  @SuppressWarnings("PMD.UseVarargs")
   public static PGPPrivateKey extractPrivateKey(PGPSecretKey encryptedKey, final char[] passphrase)
       throws PGPException {
     LOGGER.debug("Extracting secret key with key ID '0x{}'",
@@ -206,6 +209,7 @@ public final class PGPUtilities {
    * @param publicKeyRing the public key ring
    * @return the encryption key
    */
+  @Nullable
   public static PGPPublicKey getEncryptionKey(final PGPPublicKeyRing publicKeyRing) {
     int score;
     int highestScore = Integer.MIN_VALUE;

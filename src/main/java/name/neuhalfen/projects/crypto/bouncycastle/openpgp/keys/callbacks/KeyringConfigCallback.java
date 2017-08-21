@@ -18,6 +18,7 @@ public interface KeyringConfigCallback {
    * @param keyID The password for this key is needed
    * @return the passphrase OR null (if unknown/no passphrase)
    */
+  @SuppressWarnings("PMD.UseVarargs")
   @Nullable
   char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID);
 }

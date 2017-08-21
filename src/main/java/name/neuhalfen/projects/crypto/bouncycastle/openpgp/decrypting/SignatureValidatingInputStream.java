@@ -12,7 +12,7 @@ import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPOnePassSignature;
 
-
+@SuppressWarnings("PMD.ShortVariable")
 final class SignatureValidatingInputStream extends FilterInputStream {
 
   private final DecryptionState state;
@@ -82,6 +82,7 @@ final class SignatureValidatingInputStream extends FilterInputStream {
     throw new UnsupportedOperationException("Skipping not supported");
   }
 
+  @SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")
   @Override
   public synchronized void mark(int readlimit) {
     throw new UnsupportedOperationException("mark not supported");

@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.bouncycastle.crypto.generators.SCrypt;
 
 
+@SuppressWarnings("PMD.ShortVariable")
 public class SCryptKeyStretching implements KeyStretching {
 
   private final SCryptKeyStretchingParameters cfg;

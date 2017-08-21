@@ -14,7 +14,7 @@ import org.bouncycastle.openpgp.PGPException;
 /**
  * This class implements the builder for decrypting Streams.
  */
-@SuppressWarnings({"PMD.AtLeastOneConstructor","PMD.AccessorMethodGeneration"})
+@SuppressWarnings({"PMD.AtLeastOneConstructor","PMD.AccessorMethodGeneration","PMD.LawOfDemeter"})
 public final class BuildDecryptionInputStreamAPI {
 
   @Nonnull
