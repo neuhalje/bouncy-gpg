@@ -7,6 +7,8 @@
   <description>Just the braces rules I like</description>
   <rule ref="rulesets/java/basic.xml">
   </rule>
+  <rule ref="rulesets/java/naming.xml">
+  </rule>
   <rule ref="rulesets/java/design.xml">
     <exclude name="UnnecessaryLocalBeforeReturn"/>
   </rule>
