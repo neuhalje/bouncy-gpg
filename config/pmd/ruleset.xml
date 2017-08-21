@@ -17,6 +17,10 @@
     <exclude name="AtLeastOneConstructor"/>
     <exclude name="AvoidFinalLocalVariable"/>
     <exclude name="UseConcurrentHashMap"/>
+    <exclude name="DataflowAnomalyAnalysis">
+      <!-- DataflowAnomalyAnalysis currently has too many false positives
+      https://github.com/pmd/pmd/labels/in%3Adata-flow -->
+    </exclude>
   </rule>
   <rule ref="rulesets/java/coupling.xml">
   </rule>
