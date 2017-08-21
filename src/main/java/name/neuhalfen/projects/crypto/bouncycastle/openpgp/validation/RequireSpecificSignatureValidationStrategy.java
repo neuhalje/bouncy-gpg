@@ -48,7 +48,8 @@ final class RequireSpecificSignatureValidationStrategy implements SignatureValid
     for (PGPSignature messageSignature : signatureList) {
       final PGPOnePassSignature ops = onePassSignatures.get(messageSignature.getKeyID());
 
-      if (ops != null) {
+      final boolean isHasPubKeyForSignature = ops != null;
+      if (isHasPubKeyForSignature) {
         final boolean isThisSignatureGood = ops.verify(messageSignature);
 
         LOGGER.debug("{} validated signature with key 0x{}",

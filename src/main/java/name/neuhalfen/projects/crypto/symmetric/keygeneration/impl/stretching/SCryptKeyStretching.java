@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.bouncycastle.crypto.generators.SCrypt;
 
 
-@SuppressWarnings("PMD.ShortVariable")
+@SuppressWarnings({"PMD.ShortVariable", "PMD.VariableNamingConventions"})
 public class SCryptKeyStretching implements KeyStretching {
 
   private final SCryptKeyStretchingParameters cfg;
@@ -88,6 +88,7 @@ public class SCryptKeyStretching implements KeyStretching {
       return p;
     }
 
+    @SuppressWarnings("PMD.OnlyOneReturn")
     @Override
     public boolean equals(Object o) {
       if (this == o) {

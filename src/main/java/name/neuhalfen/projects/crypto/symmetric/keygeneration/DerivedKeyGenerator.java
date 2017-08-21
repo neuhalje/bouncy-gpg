@@ -1,9 +1,10 @@
 package name.neuhalfen.projects.crypto.symmetric.keygeneration;
 
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.KeyDerivationFunction;
 
@@ -11,6 +12,7 @@ public class DerivedKeyGenerator {
 
 
   private final KeyDerivationFunction kdFwithMasterKeyMixin;
+  private final static int MAXIMUM_CONTEXTNAME_LENGTH = 0xffff;
 
 
   public DerivedKeyGenerator(KeyDerivationFunction kdFwithMasterKeyMixin) {
@@ -52,12 +54,12 @@ public class DerivedKeyGenerator {
   }
 
 
-  @SuppressWarnings({"PMD.AvoidReassigningParameters","PMD.DefaultPackage"})
+  @SuppressWarnings({"PMD.AvoidReassigningParameters", "PMD.DefaultPackage"})
   String constructDerivedKeyIdentifier(String contextName, final String idUniqueInContext) {
     if (contextName == null) {
       contextName = "";
     }
-    if (contextName.length() > 0xffff) {
+    if (contextName.length() > MAXIMUM_CONTEXTNAME_LENGTH) {
       throw new IllegalArgumentException("ContextName must be <= 0xffff chars");
     }
     if (idUniqueInContext == null || idUniqueInContext.isEmpty()) {
@@ -67,13 +69,13 @@ public class DerivedKeyGenerator {
     return String.format("%4x:%s:%s", contextName.length(), contextName, idUniqueInContext);
   }
 
-
   /*
    * in: String
    * out: byte[] of the byte representation of the UTF-8 string
    */
+  @SuppressWarnings("PMD.LawOfDemeter")
   private byte[] byteRepresentationOf(String identifier) {
-    final ByteBuffer buffer = StandardCharsets.UTF_8.encode(CharBuffer.wrap(identifier));
+    final ByteBuffer buffer = UTF_8.encode(CharBuffer.wrap(identifier));
     final byte[] identifierByteRepresentation = new byte[buffer.limit()];
     buffer.get(identifierByteRepresentation);
     return identifierByteRepresentation;
