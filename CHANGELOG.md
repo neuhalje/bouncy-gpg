@@ -7,6 +7,7 @@
 
 ### API Changes
 * PGPHashAlgorithms / PGPSymmetricEncryptionAlgorithms  / PGPCompressionAlgorithms: Encapsulate public final fields with getter
+* Removed ReencryptExplodedZipMultithreaded
 
 
 ## V 2.0.1

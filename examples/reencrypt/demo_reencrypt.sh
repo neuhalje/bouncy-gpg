@@ -8,7 +8,6 @@ ASSEMBLY=reencrypt-1.0.0
 LOCATION=./build
 
 DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.MainExplodedSinglethreaded
-#DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.MainExplodedMultithreaded
 
 DEST=/tmp/gpg-example-$$
 
