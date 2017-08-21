@@ -18,24 +18,22 @@ final class ExplodeAndReencrypt {
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
       .getLogger(ExplodeAndReencrypt.class);
   private final ZipEntityStrategy entityHandlingStrategy;
-  private final InputStream is;
   private final BuildEncryptionOutputStreamAPI.Build encryptionFactory;
 
 
   @SuppressWarnings("PMD.DefaultPackage")
-  ExplodeAndReencrypt(InputStream is, ZipEntityStrategy entityHandlingStrategy,
+  ExplodeAndReencrypt( ZipEntityStrategy entityHandlingStrategy,
       BuildEncryptionOutputStreamAPI.Build encryptionFactory) {
-    this.is = is;
     this.entityHandlingStrategy = entityHandlingStrategy;
     this.encryptionFactory = encryptionFactory;
   }
 
 
   @SuppressWarnings("PMD.DefaultPackage")
-  void explodeAndReencrypt()
+  void explodeAndReencrypt(InputStream inputStream)
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
     boolean zipDataFound = false;
-    final ZipInputStream zis = new ZipInputStream(is);
+    final ZipInputStream zis = new ZipInputStream(inputStream);
 
     ZipEntry entry;
 

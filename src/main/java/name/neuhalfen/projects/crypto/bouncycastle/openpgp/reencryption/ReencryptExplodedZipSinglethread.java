@@ -12,9 +12,9 @@ public final class ReencryptExplodedZipSinglethread {
   public void explodeAndReencrypt(InputStream plainTextStream, ZipEntityStrategy zipEntityStrategy,
       BuildEncryptionOutputStreamAPI.Build encryptionFactory) throws Exception {
 
-    final ExplodeAndReencrypt explodeAndReencrypt = new ExplodeAndReencrypt(plainTextStream,
+    final ExplodeAndReencrypt explodeAndReencrypt = new ExplodeAndReencrypt(
         zipEntityStrategy, encryptionFactory);
-    explodeAndReencrypt.explodeAndReencrypt();
+    explodeAndReencrypt.explodeAndReencrypt(plainTextStream);
   }
 }
 

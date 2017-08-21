@@ -33,10 +33,10 @@ public final class ReencryptExplodedZipMultithreaded {
 
         try {
           LOGGER.trace("Unziping started");
-          final ExplodeAndReencrypt reencrypt = new ExplodeAndReencrypt(plainTextStreamOfZip,
+          final ExplodeAndReencrypt reencrypt = new ExplodeAndReencrypt(
               zipEntityStrategy, encryptionFactory);
 
-          reencrypt.explodeAndReencrypt();
+          reencrypt.explodeAndReencrypt(plainTextStreamOfZip);
           LOGGER.debug("Unziping stopped");
         } catch (Exception e) {
           LOGGER.warn("Unziping stopped with error", e);
