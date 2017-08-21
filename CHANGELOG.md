@@ -5,6 +5,10 @@
 * Add Concordion spec-test and tutorial
 * Support for key derivation use cases (--> https://github.com/neuhalje/presentation_content-encryption )
 
+### API Changes
+* PGPHashAlgorithms / PGPSymmetricEncryptionAlgorithms  / PGPCompressionAlgorithms: Encapsulate public final fields with getter
+
+
 ## V 2.0.1
 * Minor changes in build system
 

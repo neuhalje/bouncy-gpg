@@ -109,7 +109,7 @@ public final class PGPEncryptingStream extends OutputStream {
     }
 
     final BcPGPDataEncryptorBuilder dataEncryptorBuilder = new BcPGPDataEncryptorBuilder(
-        algorithmSuite.getSymmetricEncryptionAlgorithmCode().id);
+        algorithmSuite.getSymmetricEncryptionAlgorithmCode().getAlgorithmId());
     dataEncryptorBuilder.setWithIntegrityPacket(true);
 
     final PGPEncryptedDataGenerator cPk =
@@ -128,7 +128,7 @@ public final class PGPEncryptingStream extends OutputStream {
           config.decryptionSecretKeyPassphraseForSecretKeyId(pgpSec.getKeyID()));
       signatureGenerator = new PGPSignatureGenerator(
           new BcPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(),
-              algorithmSuite.getHashAlgorithmCode().id));
+              algorithmSuite.getHashAlgorithmCode().getAlgorithmId()));
 
       signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
 
@@ -144,7 +144,7 @@ public final class PGPEncryptingStream extends OutputStream {
     }
 
     compressionStreamGenerator = new PGPCompressedDataGenerator(
-        algorithmSuite.getCompressionEncryptionAlgorithmCode().id);
+        algorithmSuite.getCompressionEncryptionAlgorithmCode().getAlgorithmId());
     compressionStream = new BCPGOutputStream(
         compressionStreamGenerator.open(outerEncryptionStream));
 

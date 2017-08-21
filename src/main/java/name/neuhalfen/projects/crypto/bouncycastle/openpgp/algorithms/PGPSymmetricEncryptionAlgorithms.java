@@ -73,17 +73,23 @@ public enum PGPSymmetricEncryptionAlgorithms {
   CAMELLIA_256(SymmetricKeyAlgorithmTags.CAMELLIA_256, false);
 
 
-  public final int id;
+  private final int algorithmId;
+  private final boolean insecure;
+
+  public int getAlgorithmId() {
+    return algorithmId;
+  }
 
   /**
    * Is this algorithm KNOWN to be broken or are there any known attacks on it? <p> DO NOT TRUST
    * THIS JUDGEMENT! <p> A value of 'false' does not guarantee, that the algorithm is safe!
    */
-  public final boolean insecure;
+  public boolean isInsecure() {
+    return insecure;
+  }
 
-
-  PGPSymmetricEncryptionAlgorithms(int id, boolean insecure) {
-    this.id = id;
+  PGPSymmetricEncryptionAlgorithms(int algorithmId, boolean insecure) {
+    this.algorithmId = algorithmId;
     this.insecure = insecure;
   }
 

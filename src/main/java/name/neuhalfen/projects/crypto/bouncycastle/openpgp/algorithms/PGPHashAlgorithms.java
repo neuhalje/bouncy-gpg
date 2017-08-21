@@ -14,21 +14,29 @@ public enum PGPHashAlgorithms {
   TIGER_192(HashAlgorithmTags.TIGER_192),
   HAVAL_5_160(HashAlgorithmTags.HAVAL_5_160, true);
 
-  public final int id;
+  private final int algorithmId;
+
+  private final boolean insecure;
 
   /**
    * Is this algorithm KNOWN to be broken or are there any known attacks on it? <p> DO NOT TRUST
    * THIS JUDGEMENT! <p> A value of 'false' does not guarantee, that the algorithm is safe!
    */
-  @SuppressWarnings("WeakerAccess")
-  public final boolean insecure;
-
-  PGPHashAlgorithms(int id) {
-    this(id, false);
+  public int getAlgorithmId() {
+    return algorithmId;
   }
 
-  PGPHashAlgorithms(int id, boolean insecure) {
-    this.id = id;
+  public boolean isInsecure() {
+    return insecure;
+  }
+
+
+  PGPHashAlgorithms(int algorithmId) {
+    this(algorithmId, false);
+  }
+
+  PGPHashAlgorithms(int algorithmId, boolean insecure) {
+    this.algorithmId = algorithmId;
     this.insecure = insecure;
   }
 }
