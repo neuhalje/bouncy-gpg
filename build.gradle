@@ -28,6 +28,7 @@ checkstyle {
 pmd {
     toolVersion = "5.8.1"
     ruleSetFiles = files("config/pmd/ruleset.xml")
+    sourceSets = [ project.sourceSets.main ]
     ignoreFailures = true // for now ..
 }
 
