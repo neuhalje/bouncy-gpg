@@ -23,6 +23,31 @@ plugins {
 
 checkstyle {
     toolVersion = "8.1"
+    showViolations  = false
+    sourceSets = [ project.sourceSets.main ]
+    // maxWarnings = 0
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        xml.enabled true
+        // html.destination rootProject.file("build/reports/checkstyle.html")
+        // html.stylesheet resources.text.fromFile('config/xsl/checkstyle-custom.xsl')
+    }
+}
+
+jacoco {
+    toolVersion = "0.7.9"
+    reportsDir = file("${buildDir}/jacocoHtml")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.enabled true
+        html.destination file("${buildDir}/jacocoHtml")
+    }
 }
 
 pmd {
@@ -75,25 +100,8 @@ dependencies {
 }
 
 
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        csv.enabled false
-        html.enabled = true
-        html.destination "${buildDir}/jacocoHtml"
-    }
-}
-
-check.dependsOn jacocoTestReport
 
 test {
-    // Code coverage
-    jacoco {
-        append = false
-        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
-        classDumpFile = file("$buildDir/jacoco/classpathdumps")
-    }
-
     // Concordion
     // display test output on console? (for debugging)
     testLogging.showStandardStreams = false
@@ -113,5 +121,5 @@ if (hasProperty('bintray_Username')) {
 apply from: 'website.gradle'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.7'
+    gradleVersion = '4.1'
 }
