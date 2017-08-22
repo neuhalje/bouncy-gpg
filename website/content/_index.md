@@ -3,6 +3,7 @@
 <center>
 <a href="https://travis-ci.org/neuhalje/bouncy-gpg"><img src="https://travis-ci.org/neuhalje/bouncy-gpg.svg?branch=master" alt="Build Status" style="width: auto; height: auto; display: inline; margin: 0" /></a>
 <a href="https://codecov.io/gh/neuhalje/bouncy-gpg"><img src="https://codecov.io/gh/neuhalje/bouncy-gpg/branch/master/graph/badge.svg" alt="codecov"  style="width: auto; height: auto; display: inline; margin: 0"/></a>
+<a href="https://www.codacy.com/app/neuhalje/bouncy-gpg?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=neuhalje/bouncy-gpg&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/86c099743f8b484c8da833495d7dc209" style="width: auto; height: auto; display: inline; margin: 0"/></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/badge/license-APACHE%202.0-brightgreen.svg" alt="license"  style="width: auto; height: auto; display: inline; margin: 0"/></a>
 <a href="https://bintray.com/neuhalje/maven/bouncy-gpg/_latestVersion"><img src="https://api.bintray.com/packages/neuhalje/maven/bouncy-gpg/images/download.svg" alt="Download"  style="width: auto; height: auto; display: inline; margin: 0"/></a>
 </center>
