@@ -10,7 +10,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Keyrin
 /**
  * Load keyrings from files. These files are created and managed via gpg.
  */
-final class FileBasedKeyringConfig extends DefaultKeyringConfig {
+final class FileBasedKeyringConfig extends AbstractDefaultKeyringConfig {
 
   @Nonnull
   private final File publicKeyring;

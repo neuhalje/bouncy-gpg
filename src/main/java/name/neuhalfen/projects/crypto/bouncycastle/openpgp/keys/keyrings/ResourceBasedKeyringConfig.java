@@ -11,7 +11,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Keyrin
  * public keys) without distributing separate keyring files. . See the unit tests for an example:
  * (in tests)  name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs
  */
-final class ResourceBasedKeyringConfig extends DefaultKeyringConfig {
+final class ResourceBasedKeyringConfig extends AbstractDefaultKeyringConfig {
 
 
   private final ClassLoader classLoader;

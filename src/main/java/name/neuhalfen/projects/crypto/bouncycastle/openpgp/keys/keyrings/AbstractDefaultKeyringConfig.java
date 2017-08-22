@@ -15,7 +15,7 @@ import org.bouncycastle.openpgp.operator.KeyFingerPrintCalculator;
 import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 
 
-abstract class DefaultKeyringConfig implements KeyringConfig {
+abstract class AbstractDefaultKeyringConfig implements KeyringConfig {
 
   @Nonnull
   private final KeyringConfigCallback callback;
@@ -23,7 +23,7 @@ abstract class DefaultKeyringConfig implements KeyringConfig {
   private PGPPublicKeyRingCollection publicKeyRings;
   private PGPSecretKeyRingCollection secretKeyRings;
 
-  DefaultKeyringConfig(KeyringConfigCallback callback) {
+  AbstractDefaultKeyringConfig(KeyringConfigCallback callback) {
     if (callback == null) {
       throw new IllegalArgumentException("callback mus not be null");
     }
@@ -34,7 +34,7 @@ abstract class DefaultKeyringConfig implements KeyringConfig {
   @SuppressWarnings("PMD.ShortVariable")
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("DefaultKeyringConfig{");
+    final StringBuilder sb = new StringBuilder("AbstractDefaultKeyringConfig{");
     sb.append("callback=").append(callback);
     sb.append(", keyFingerPrintCalculator=").append(keyFingerPrintCalculator);
     sb.append(", publicKeyRings=").append(publicKeyRings);
