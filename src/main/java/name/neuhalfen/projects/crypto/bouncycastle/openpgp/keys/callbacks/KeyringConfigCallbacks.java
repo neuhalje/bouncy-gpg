@@ -13,6 +13,7 @@ public final class KeyringConfigCallbacks {
   private KeyringConfigCallbacks() {
   }
 
+  @SuppressWarnings("PMD.UseVarargs")
   public static KeyringConfigCallback withPassword(char[] passphrase) {
     return new StaticPasswordKeyringConfigCallback(passphrase);
   }
@@ -29,11 +30,11 @@ public final class KeyringConfigCallbacks {
   }
 
   public static KeyringConfigCallback withPasswordsFromMap(
-      Map<Long, char[]> copySourceKeyIdToPassphrase) {
-    if (copySourceKeyIdToPassphrase == null) {
-      throw new IllegalArgumentException("copySourceKeyIdToPassphrase must not be null");
+      Map<Long, char[]> mapSourceKeyIdToPassphrase) {
+    if (mapSourceKeyIdToPassphrase == null) {
+      throw new IllegalArgumentException("mapSourceKeyIdToPassphrase must not be null");
     }
 
-    return new StaticPasswordFromMapKeyringConfigCallback(copySourceKeyIdToPassphrase);
+    return new StaticPasswordFromMapKeyringConfigCallback(mapSourceKeyIdToPassphrase);
   }
 }

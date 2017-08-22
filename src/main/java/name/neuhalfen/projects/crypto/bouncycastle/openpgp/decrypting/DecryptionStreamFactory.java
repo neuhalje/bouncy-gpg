@@ -25,7 +25,7 @@ import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.bc.BcPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.bc.BcPublicKeyDataDecryptorFactory;
 
-@SuppressWarnings({"PMD.AtLeastOneConstructor","PMD.AccessorMethodGeneration","PMD.LawOfDemeter"})
+@SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter"})
 public final class DecryptionStreamFactory {
 
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
@@ -149,36 +149,40 @@ public final class DecryptionStreamFactory {
             final PGPPublicKey pubKey = config.getPublicKeyRings()
                 .getPublicKey(signature.getKeyID());
 
-            final boolean isHavePublicKeyForSignatureInKeyring = pubKey == null;
+            final boolean isHavePublicKeyForSignatureInKeyring = pubKey != null;
             if (isHavePublicKeyForSignatureInKeyring) {
-              LOGGER.trace("Found signature but public key '{}' was not found in the keyring.",
-                  Long.toHexString(signature.getKeyID()));
-            } else {
               LOGGER.trace("Found signature and the public key '{}' was found in the keyring.",
                   Long.toHexString(signature.getKeyID()));
               signature.init(pgpContentVerifierBuilderProvider, pubKey);
               state.addSignature(signature);
+            } else {
+              LOGGER.trace("Found signature but public key '{}' was not found in the keyring.",
+                  Long.toHexString(signature.getKeyID()));
             }
           }
-          if (state.numSignatures() == 0) {
+          if (!state.hasVerifiableSignatures()) {
             throw new PGPException(
                 "Signature checking is required but none of the public keys used to sign the data was found in the keyring'!");
           }
         } else {
-          LOGGER.info("Signature check disabled - ignoring contained signature");
+          LOGGER.trace("Signature check disabled - ignoring contained signature");
         }
       } else if (pgpObj instanceof PGPLiteralData) {
         LOGGER.trace("Found instance of PGPLiteralData");
 
+        final InputStream literalDataInputStream = ((PGPLiteralData) pgpObj).getInputStream();
+
         if (signatureValidationStrategy.isRequireSignatureCheck()) {
-          if (state.numSignatures() == 0) {
+          if (!state.hasVerifiableSignatures()) {
             throw new PGPException("Signature checking is required but message was not signed!");
-          } else {
-            return new SignatureValidatingInputStream(((PGPLiteralData) pgpObj).getInputStream(),
-                state, signatureValidationStrategy);  // NOPMD: OnlyOneReturn
           }
+          final SignatureValidatingInputStream signatureValidatingStream = new SignatureValidatingInputStream(
+              literalDataInputStream,
+              state, signatureValidationStrategy);
+          return signatureValidatingStream;  // NOPMD: OnlyOneReturn
+
         } else {
-          return ((PGPLiteralData) pgpObj).getInputStream(); // NOPMD: OnlyOneReturn
+          return literalDataInputStream; // NOPMD: OnlyOneReturn
         }
       } else {// keep on searching...
         LOGGER.trace("Skipping pgp Object of Type {}", pgpObj.getClass().getSimpleName());

@@ -39,7 +39,7 @@ public final class PGPUtilities {
    * @return the decrypted secret key
    * @throws PGPException the pGP exception
    */
-  @SuppressWarnings("PMD.UseVarargs")
+  @SuppressWarnings({"PMD.UseVarargs", "PMD.OnlyOneReturn"})
   @Nullable
   public static PGPPrivateKey findSecretKey(final PGPSecretKeyRingCollection pgpSec,
       final long keyID, final char[] pass)
@@ -49,9 +49,8 @@ public final class PGPUtilities {
 
     if (pgpSecKey == null) {
       return null;
-    } else {
-      return PGPUtilities.extractPrivateKey(pgpSecKey, pass);
     }
+    return PGPUtilities.extractPrivateKey(pgpSecKey, pass);
   }
 
   /**
@@ -233,6 +232,7 @@ public final class PGPUtilities {
   * Try to find the best encryption key.
   * - Try not to use master keys (if possible) because encryption should be done with subkeys
   */
+  @SuppressWarnings("PMD.OnlyOneReturn")
   private static int calculateEncryptionKeyScore(PGPPublicKey pubKey) {
     if (!pubKey.isEncryptionKey()) {
       return Integer.MIN_VALUE;

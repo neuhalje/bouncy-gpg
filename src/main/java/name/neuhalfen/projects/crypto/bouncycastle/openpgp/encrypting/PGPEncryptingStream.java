@@ -197,7 +197,7 @@ public final class PGPEncryptingStream extends OutputStream {
     if (isDoSign) {
 
       try {
-        signatureGenerator.generate().encode(compressionStream);
+        signatureGenerator.generate().encode(compressionStream);  // NOPMD:  Demeter (BC API)
       } catch (PGPException e) {
         throw new IOException(e);
       }

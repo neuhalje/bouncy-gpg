@@ -11,8 +11,8 @@ final class StaticPasswordFromMapKeyringConfigCallback implements KeyringConfigC
 
   private final Map<Long, char[]> keyIdToPassphrase;
 
-  public StaticPasswordFromMapKeyringConfigCallback(Map<Long, char[]> copySourceKeyIdToPassphrase) {
-    keyIdToPassphrase = new HashMap<>(copySourceKeyIdToPassphrase);
+  public StaticPasswordFromMapKeyringConfigCallback(Map<Long, char[]> mapSourceKeyIdToPassphrase) {
+    keyIdToPassphrase = new HashMap<>(mapSourceKeyIdToPassphrase);
   }
 
   @Override

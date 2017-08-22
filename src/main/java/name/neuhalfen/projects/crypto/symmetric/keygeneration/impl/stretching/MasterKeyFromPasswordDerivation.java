@@ -47,6 +47,7 @@ public class MasterKeyFromPasswordDerivation {
    * in: String
    * out: byte[] of the byte representation of the UTF-8 string
    */
+  @SuppressWarnings("PMD.LawOfDemeter")
   private byte[] byteRepresentationOf(String identifier) {
     final ByteBuffer buffer = StandardCharsets.UTF_8.encode(CharBuffer.wrap(identifier));
     final byte[] identifierByteRepresentation = new byte[buffer.limit()];

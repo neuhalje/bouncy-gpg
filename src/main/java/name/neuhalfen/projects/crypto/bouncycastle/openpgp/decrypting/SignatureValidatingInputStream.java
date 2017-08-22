@@ -20,10 +20,11 @@ final class SignatureValidatingInputStream extends FilterInputStream {
 
   /**
    * Creates a <code>SignatureValidatingInputStream</code> by assigning the  argument
-   * <code>inputStream</code> to the field <code>this.inputStream</code> so as to remember it for later use.
+   * <code>inputStream</code> to the field <code>this.inputStream</code> so as to remember it for
+   * later use.
    *
-   * @param inputStream the underlying input stream, or <code>null</code> if this instance is to be created
-   * without an underlying stream.
+   * @param inputStream the underlying input stream, or <code>null</code> if this instance is to be
+   * created without an underlying stream.
    */
   SignatureValidatingInputStream(InputStream inputStream, DecryptionState state,
       SignatureValidationStrategy signatureValidationStrategy) {
@@ -135,14 +136,22 @@ final class SignatureValidatingInputStream extends FilterInputStream {
       return onePassSignatures;
     }
 
+    /*
+     * @pre: the public key for the keyId is in our keyring.
+     */
     @SuppressWarnings("PMD.DefaultPackage")
     void addSignature(PGPOnePassSignature signature) {
       onePassSignatures.put(signature.getKeyID(), signature);
     }
 
     @SuppressWarnings("PMD.DefaultPackage")
-    int numSignatures() {
+    int numVerifiableSignatures() {
       return onePassSignatures.size();
+    }
+
+    @SuppressWarnings("PMD.DefaultPackage")
+    boolean hasVerifiableSignatures() {
+      return numVerifiableSignatures() > 0;
     }
   }
 }

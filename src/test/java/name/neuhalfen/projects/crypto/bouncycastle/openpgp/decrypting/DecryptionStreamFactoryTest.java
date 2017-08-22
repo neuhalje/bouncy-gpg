@@ -107,7 +107,7 @@ public class DecryptionStreamFactoryTest {
   }
 
   @Test
-  public void decryptingAndVerifyingMessageWith_SingleUnknown_Signature_requiringNoSignature_correctlyDecryptsCompressedAndArmored()
+  public void decryptingAndVerifyingMessageWith_unknownSignature_requiringNoSignature_correctlyDecryptsCompressedAndArmored()
       throws IOException, SignatureException, NoSuchAlgorithmException {
 
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
@@ -118,8 +118,18 @@ public class DecryptionStreamFactoryTest {
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
   }
 
+
   @Test(expected = IOException.class)
-  public void decryptingAndVerifyingMessageWith_SingleUnknown_Signature_requiringAnySignature_correctlyDecryptsCompressedAndArmored()
+  public void decryptingAndVerifyingMessageWith_noSignature_requiringAnySignature_fails()
+      throws IOException, SignatureException, NoSuchAlgorithmException {
+
+    final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
+
+    decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config,
+        SignatureValidationStrategies.requireAnySignature());
+  }
+  @Test(expected = IOException.class)
+  public void decryptingAndVerifyingMessageWith_unknownSignature_requiringAnySignature_fails()
       throws IOException, SignatureException, NoSuchAlgorithmException {
 
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
