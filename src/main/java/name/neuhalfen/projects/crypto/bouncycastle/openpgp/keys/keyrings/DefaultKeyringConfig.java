@@ -31,9 +31,14 @@ abstract class DefaultKeyringConfig implements KeyringConfig {
   }
 
 
+  @SuppressWarnings("PMD.ShortVariable")
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("KeyringConfig{");
+    final StringBuilder sb = new StringBuilder("DefaultKeyringConfig{");
+    sb.append("callback=").append(callback);
+    sb.append(", keyFingerPrintCalculator=").append(keyFingerPrintCalculator);
+    sb.append(", publicKeyRings=").append(publicKeyRings);
+    sb.append(", secretKeyRings=").append(secretKeyRings != null ? "<present>" : "null");
     sb.append('}');
     return sb.toString();
   }
