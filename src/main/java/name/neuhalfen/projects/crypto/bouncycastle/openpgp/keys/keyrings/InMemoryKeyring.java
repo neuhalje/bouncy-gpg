@@ -47,6 +47,7 @@ public final class InMemoryKeyring implements KeyringConfig {
    * @throws IOException IO is dangerous
    * @throws PGPException E.g. this is nor a valid key
    */
+  @SuppressWarnings({"PMD.LawOfDemeter", "PMD.UseVarargs"})
   public void addPublicKey(byte[] encodedPublicKey) throws IOException, PGPException {
 
     if (encodedPublicKey == null) {
@@ -74,6 +75,7 @@ public final class InMemoryKeyring implements KeyringConfig {
    * @throws IOException IO is dangerous
    * @throws PGPException E.g. this is nor a valid key
    */
+  @SuppressWarnings("PMD.LawOfDemeter")
   public void addSecretKey(byte[] encodedPrivateKey) throws IOException, PGPException {
 
     if (encodedPrivateKey == null) {
@@ -82,11 +84,13 @@ public final class InMemoryKeyring implements KeyringConfig {
 
     try (
         final InputStream raw = new ByteArrayInputStream(encodedPrivateKey);
-        final InputStream decoded = org.bouncycastle.openpgp.PGPUtil.getDecoderStream(raw)
+        final InputStream decoded = org.bouncycastle.openpgp.PGPUtil
+            .getDecoderStream(raw)
     ) {
       PGPSecretKeyRing pgpPRivate = new PGPSecretKeyRing(decoded, getKeyFingerPrintCalculator());
-      this.secretKeyRings = PGPSecretKeyRingCollection
-          .addSecretKeyRing(this.secretKeyRings, pgpPRivate);
+      this.secretKeyRings =
+          PGPSecretKeyRingCollection
+              .addSecretKeyRing(this.secretKeyRings, pgpPRivate);
     }
   }
 

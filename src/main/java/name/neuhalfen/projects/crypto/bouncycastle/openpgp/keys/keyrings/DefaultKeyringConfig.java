@@ -38,7 +38,7 @@ abstract class DefaultKeyringConfig implements KeyringConfig {
     sb.append("callback=").append(callback);
     sb.append(", keyFingerPrintCalculator=").append(keyFingerPrintCalculator);
     sb.append(", publicKeyRings=").append(publicKeyRings);
-    sb.append(", secretKeyRings=").append(secretKeyRings != null ? "<present>" : "null");
+    sb.append(", secretKeyRings=").append(secretKeyRings == null ? "null" : "<present>");
     sb.append('}');
     return sb.toString();
   }

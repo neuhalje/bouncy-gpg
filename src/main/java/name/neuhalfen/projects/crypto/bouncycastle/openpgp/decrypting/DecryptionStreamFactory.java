@@ -175,10 +175,10 @@ public final class DecryptionStreamFactory {
             throw new PGPException("Signature checking is required but message was not signed!");
           } else {
             return new SignatureValidatingInputStream(((PGPLiteralData) pgpObj).getInputStream(),
-                state, signatureValidationStrategy);
+                state, signatureValidationStrategy);  // NOPMD: OnlyOneReturn
           }
         } else {
-          return ((PGPLiteralData) pgpObj).getInputStream();
+          return ((PGPLiteralData) pgpObj).getInputStream(); // NOPMD: OnlyOneReturn
         }
       } else {// keep on searching...
         LOGGER.trace("Skipping pgp Object of Type {}", pgpObj.getClass().getSimpleName());

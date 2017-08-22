@@ -47,6 +47,7 @@ public class FSZipEntityStrategy implements ZipEntityStrategy {
     return fos;
   }
 
+  @SuppressWarnings("PMD.LawOfDemeter")
   @Override
   public String rewriteName(String nameFromZip) {
     final String withOutLeadingRelativePath = REMOVE_LEADING_RELATIVE_PATH.matcher(nameFromZip)

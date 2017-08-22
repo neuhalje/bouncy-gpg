@@ -29,7 +29,7 @@ final class ExplodeAndReencrypt {
   }
 
 
-  @SuppressWarnings("PMD.DefaultPackage")
+  @SuppressWarnings({"PMD.DefaultPackage","PMD.LawOfDemeter"})
   void explodeAndReencrypt(InputStream inputStream)
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
     boolean zipDataFound = false;
@@ -38,12 +38,12 @@ final class ExplodeAndReencrypt {
     ZipEntry entry;
 
     int numDirs = 0; // NOPMD: Need to initialize counter
-    int numFiles = 0; // NOPMD: Need to initialize counter@
+    int numFiles = 0; // NOPMD: Need to initialize counter
     while ((entry = zis.getNextEntry()) != null) { // NOPMD
 
       final String sanitizedFileName = entityHandlingStrategy.rewriteName(entry.getName()); // NOPMD: False positive for 'UR'-anomaly
 
-      if (!entry.getName().equals(sanitizedFileName)) {
+      if (!entry.getName().equals(sanitizedFileName)) { // NOPMD: Demeter
         LOGGER.trace("Rewriting '{}' to '{}'", entry.getName(), sanitizedFileName);
       }
 

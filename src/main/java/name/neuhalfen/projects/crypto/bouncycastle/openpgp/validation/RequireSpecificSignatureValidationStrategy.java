@@ -50,7 +50,7 @@ final class RequireSpecificSignatureValidationStrategy implements SignatureValid
 
       final boolean isHasPubKeyForSignature = ops != null;
       if (isHasPubKeyForSignature) {
-        final boolean isThisSignatureGood = ops.verify(messageSignature);
+        final boolean isThisSignatureGood = ops.verify(messageSignature); // NOPMD : Demeter
 
         LOGGER.debug("{} validated signature with key 0x{}",
             isThisSignatureGood ? "Successfully" : "Failed to",

@@ -49,8 +49,9 @@ public final class PGPUtilities {
 
     if (pgpSecKey == null) {
       return null;
+    } else {
+      return PGPUtilities.extractPrivateKey(pgpSecKey, pass);
     }
-    return PGPUtilities.extractPrivateKey(pgpSecKey, pass);
   }
 
   /**
@@ -86,6 +87,7 @@ public final class PGPUtilities {
    * @return the PGP public key ring containing the userId
    * @throws PGPException E.g. multiple keyrings for same uid OR key not found in keyrings
    */
+  @SuppressWarnings("PMD.LawOfDemeter")
   public static PGPPublicKeyRing extractPublicKeyRingForUserId(final String publicKeyUid,
       final PGPPublicKeyRingCollection publicKeyRings)
       throws PGPException {
@@ -114,7 +116,7 @@ public final class PGPUtilities {
     }
     LOGGER.debug("Extracted public key ring for UID '{}' with key strength {}.", publicKeyUid,
         returnKeyRing
-            .getPublicKey().getBitStrength());
+            .getPublicKey().getBitStrength()); // NOPMD: LawOfDemeter
     return returnKeyRing;
   }
 
@@ -170,6 +172,7 @@ public final class PGPUtilities {
    * @return the first secret key for signatureUid suitable for signatures
    * @throws PGPException if no key ring or key with that Uid is found
    */
+  @SuppressWarnings("PMD.LawOfDemeter")
   public static PGPSecretKey extractSecretSigningKeyFromKeyrings(
       final PGPSecretKeyRingCollection pgpSec, final String signingKeyUid)
       throws PGPException {
@@ -184,11 +187,11 @@ public final class PGPUtilities {
       final Iterator<PGPSecretKey> secretKeyIterator = kRing.getSecretKeys();
 
       while (secretKeyIterator.hasNext()) {
-        final PGPSecretKey k = secretKeyIterator.next();
-        int score = calculateSigningKeyScore(k.getPublicKey());
+        final PGPSecretKey secretKey = secretKeyIterator.next();
+        int score = calculateSigningKeyScore(secretKey.getPublicKey());
 
-        if (k.isSigningKey() && (score > highestScore)) {
-          key = k;
+        if (secretKey.isSigningKey() && (score > highestScore)) {
+          key = secretKey;
           highestScore = score;
         }
       }

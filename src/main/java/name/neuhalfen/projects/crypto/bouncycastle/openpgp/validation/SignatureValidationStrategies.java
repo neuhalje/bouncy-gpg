@@ -60,6 +60,7 @@ public final class SignatureValidationStrategies {
    * @return an instance of the requested strategy
    * @throws PGPException No or more than one public key found for a user id
    **/
+  @SuppressWarnings("PMD.LawOfDemeter")
   public static SignatureValidationStrategy requireSignatureFromAllKeys(
       PGPPublicKeyRingCollection publicKeyRings, String... userIds) throws PGPException {
     final List<Long> keyIds = new ArrayList<>(userIds.length);

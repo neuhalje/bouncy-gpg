@@ -94,6 +94,7 @@ public final class PGPEncryptingStream extends OutputStream {
    * @throws PGPException the pGP exception {@link org.bouncycastle.bcpg.HashAlgorithmTags} {@link
    * org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
    */
+  @SuppressWarnings("PMD.LawOfDemeter")
   private void setup(final OutputStream cipherTextSink,
       @Nullable final String signingUid,
       final PGPPublicKey pubEncKey,
@@ -159,11 +160,11 @@ public final class PGPEncryptingStream extends OutputStream {
   }
 
   @Override
-  public void write(int b) throws IOException {
-    encryptionDataStream.write(b);
+  public void write(int data) throws IOException {
+    encryptionDataStream.write(data);
 
     if (isDoSign) {
-      final byte asByte = (byte) (b & 0xff);
+      final byte asByte = (byte) (data & 0xff);
       signatureGenerator.update(asByte);
     }
   }
