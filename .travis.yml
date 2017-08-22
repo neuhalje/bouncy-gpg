@@ -12,14 +12,14 @@ jdk:
   - oraclejdk8
 
 script:
-  - sudo apt-get update
-  - sudo apt-get install git && echo installed git so that hugo can inject commit data into the website
-  - git --version
-  - sudo apt-get install snapd
-  - sudo snap install hugo
-  - export PATH
-  - /snap/bin/hugo version
-  - ./gradlew -PHUGO_EXEC="/snap/bin/hugo" --stacktrace check # generateWebsite
+  - # sudo apt-get update
+  - # sudo apt-get install git && echo installed git so that hugo can inject commit data into the website
+  - # git --version
+  - # sudo apt-get install snapd
+  - # sudo snap install hugo
+  - # export PATH
+  - # /snap/bin/hugo version
+  - ./gradlew -PHUGO_EXEC="/snap/bin/hugo" --stacktrace check jacocoTestReport # generateWebsite
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
