@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/86c099743f8b484c8da833495d7dc209)](https://www.codacy.com/app/neuhalje/bouncy-gpg?utm_source=github.com&utm_medium=referral&utm_content=neuhalje/bouncy-gpg&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/neuhalje/bouncy-gpg.svg?branch=master)](https://travis-ci.org/neuhalje/bouncy-gpg)
 [![codecov](https://codecov.io/gh/neuhalje/bouncy-gpg/branch/master/graph/badge.svg)](https://codecov.io/gh/neuhalje/bouncy-gpg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/86c099743f8b484c8da833495d7dc209)](https://www.codacy.com/app/neuhalje/bouncy-gpg?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=neuhalje/bouncy-gpg&amp;utm_campaign=Badge_Grade)
