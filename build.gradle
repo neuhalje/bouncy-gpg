@@ -66,6 +66,8 @@ project.ext.set("specifications_concordion_target", "$reporting.baseDir/specs/co
 project.ext.set("specifications_prepareForCms_source", "$reporting.baseDir/specs/concordion/specs")
 project.ext.set("specifications_prepareForCms_target", "$specifications_cms_cmsdRoot/content/specification")
 
+project.ext.set("javadoc_destination", "$specifications_cms_cmsdRoot/content/javadoc")
+
 // use ./gradlew -PHUGO_EXEC=/path/to/hugo to configure the executable for hugo
 project.ext.set("hugo", project.hasProperty("HUGO_EXEC") ? HUGO_EXEC : "hugo")
 
@@ -78,6 +80,7 @@ group = 'name.neuhalfen.projects.crypto.bouncycastle.openpgp'
 version = '2.0.1'
 
 repositories {
+    mavenLocal()
     jcenter()
 }
 
@@ -119,6 +122,7 @@ if (hasProperty('bintray_Username')) {
 }
 
 apply from: 'website.gradle'
+
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.1'

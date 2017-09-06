@@ -24,7 +24,24 @@ task removeOldWebsite(type: Delete) {
 }
 
 
-task generateWebsite(type: Exec, dependsOn: ['removeOldWebsite', 'prepareSpecsForCMS']) {
+// JavaDoc
+configurations {
+    cmsJavaDoclet
+}
+
+dependencies {
+    cmsJavaDoclet "name.neuhalfen.projects.markdowndoclet:markdown-doclet:0.0.1"
+}
+task generateApiDocsForCMS(type: Javadoc) {
+    source = sourceSets.main.allJava
+    destinationDir = file("${javadoc_destination}")
+    options.docletpath = configurations.cmsJavaDoclet.files.asType(List)
+    options.doclet = "name.neuhalfen.projects.markdowndoclet.MarkdownDoclet"
+   // options.addStringOption("jaxrscontext", "http://localhost:8080/myapp")
+}
+
+
+task generateWebsite(type: Exec, dependsOn: ['removeOldWebsite', 'prepareSpecsForCMS', 'generateApiDocsForCMS']) {
     commandLine = [hugo, '--cleanDestinationDir', '--destination', "${specifications_cms_target}", '--enableGitInfo']
     workingDir = file("${specifications_cms_cmsdRoot}")
 }
