@@ -14,7 +14,7 @@ import org.bouncycastle.openpgp.PGPException;
 /**
  * This class implements the builder for decrypting Streams.
  */
-@SuppressWarnings({"PMD.AtLeastOneConstructor","PMD.AccessorMethodGeneration","PMD.LawOfDemeter"})
+@SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter"})
 public final class BuildDecryptionInputStreamAPI {
 
   @Nonnull
@@ -26,6 +26,7 @@ public final class BuildDecryptionInputStreamAPI {
    * Start building by passing in the keyring config.
    *
    * @param keyringConfig Keyring
+   *
    * @return next build step
    */
   @Nonnull
@@ -47,7 +48,9 @@ public final class BuildDecryptionInputStreamAPI {
      * (reading the whole(!) plaintext stream).
      *
      * @param encryptedData An encrypted input stream. *Will not be closed.*
+     *
      * @return Plaintext stream. Signatures are checked the moment EOF is reached.
+     *
      * @throws IOException IO is dangerous. Also wraps several GPG exceptions.
      * @throws NoSuchProviderException BC provider is not registered
      */
@@ -60,13 +63,23 @@ public final class BuildDecryptionInputStreamAPI {
 
     /**
      * Decryption will enforce that the ciphertext has been signed by ALL of the public key ids
-     * passed. . Key-ids are long values. For example with the following keyring . # gpg -k
-     * --keyid-format=0xlong ... pub   2048R/0x3DF16BD7C3F280F3 2015-09-27 uid [ultimate] Rezi
-     * Recipient (Pasword: recipient) &lt;recipient@example.com&gt; sub 2048R/0x54A3DB374F787AB7
-     * 2015-09-27 ... . --&gt; . andRequireSignatureFromAllKeys(0x54A3DB374F787AB7L)
+     * passed.
      *
-     * @param publicKeyIds a valid signature from all of the passed keys is required. The keys MUST
+     * Given  the following keyring:
+     *
+     * <pre>{@code markdown: text
+     * $ gpg -k --keyid-format=0xlong
+     *
+     * ... pub 2048R/0x3DF16BD7C3F280F3 ... uid [ultimate] ...  <signer@example.com>
+     * ... sub 2048R/0x54A3DB374F787AB7 ... [S] ... }</pre>
+     *
+     * To require a valid signature from {@code signer@example.com} with the following keyring, call
+     *
+     * {@code ...andRequireSignatureFromAllKeys(0x54A3DB374F787AB7L)}:
+     *
+     * @param publicKeyIds A valid signature from ALL of the passed keys is required. Each key MUST
      * exist in the public keyring.
+     *
      * @return the next build step
      */
     @Nonnull
@@ -83,14 +96,25 @@ public final class BuildDecryptionInputStreamAPI {
 
     /**
      * Decryption will enforce that the ciphertext has been signed by ALL of the public key ids
-     * passed. . Key-ids are long values. For example with the following keyring . # gpg -k
-     * --keyid-format=0xlong . pub   2048R/0x3DF16BD7C3F280F3 2015-09-27 uid [ultimate] Rezi
-     * Recipient (Pasword: recipient) &lt;recipient@example.com&gt; sub 2048R/0x54A3DB374F787AB7
-     * 2015-09-27 . . --&gt; . andRequireSignatureFromAllKeys("recipient@example.com")
+     * passed.
+     *
+     * Given  the following keyring:
+     *
+     * <pre>{@code markdown: text
+     * $ gpg -k --keyid-format=0xlong
+     *
+     * ... pub 2048R/0x3DF16BD7C3F280F3 ... uid [ultimate] ...  <signer@example.com>
+     * ... sub 2048R/0x54A3DB374F787AB7 ... [S] ... }</pre>
+     *
+     * To require a valid signature from {@code signer@example.com} with the following keyring, call
+     *
+     * {@code ...andRequireSignatureFromAllKeys("signer@example.com")}
      *
      * @param userIds a valid signature from all of the passed keys is required. The keys MUST exist
      * in the public keyring.
+     *
      * @return the next build step
+     *
      * @throws PGPException error extracting public keys from keyring
      * @throws IOException IO is dangerous
      */
@@ -142,7 +166,9 @@ public final class BuildDecryptionInputStreamAPI {
        * decryption (reading the whole(!) plaintext stream).
        *
        * @param encryptedData An encrypted input stream. Will not be closed.
+       *
        * @return Plaintext stream. Signatures are checked the moment EOF is reached.
+       *
        * @throws IOException IO is dangerous. Also wraps several GPG exceptions.
        * @throws NoSuchProviderException BC provider is not registered
        */
