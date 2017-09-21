@@ -7,7 +7,7 @@
     <meta name="description" content="">
 
 
-    <title>Api :: Bouncy GPG</title>
+    <title>Example :: Bouncy GPG</title>
     <link rel="shortcut icon" href="https://neuhalje.github.io/bouncy-gpg/images/favicon.png" type="image/x-icon" />
     <link href="https://neuhalje.github.io/bouncy-gpg/css/nucleus.css" rel="stylesheet">
     <link href="https://neuhalje.github.io/bouncy-gpg/css/font-awesome.min.css" rel="stylesheet">
@@ -31,7 +31,7 @@
     
 
   </head>
-  <body class="" data-url="/categories/api/">
+  <body class="" data-url="/tags/example/">
     <nav id="sidebar" class="">
 
 
@@ -79,13 +79,85 @@
  
   
     
-    <li data-nav-id="/specification/" class="dd-item 
+    <li data-nav-id="/howto/" class="dd-item 
         
-        active
+        
         
         ">
-      <a href="https://neuhalje.github.io/bouncy-gpg/specification/">
-        <span>Specifications</span>
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/">
+        <span>HowTo</span>
+
+        
+        
+
+          
+            <i class="fa fa-angle-right fa-lg category-icon"></i>
+          
+
+        
+
+        
+      </a>
+      
+        <ul>
+          
+          
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/howto/key_derivation/" class="dd-item 
+        
+        
+        
+        ">
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/">
+        <span>Key derivation</span>
+
+        
+        
+
+          
+            <i class="fa fa-angle-right fa-lg category-icon"></i>
+          
+
+        
+
+        
+      </a>
+      
+        <ul>
+          
+          
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/howto/key_derivation/passwords/" class="dd-item 
+        
+        
+        
+        ">
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/">
+        <span>From password to key</span>
 
         
         
@@ -113,14 +185,32 @@
  
   
     
-      <li data-nav-id="/specification/key_derivation/convertingpasswordsintocryptographickeys/" class="dd-item
+      <li data-nav-id="/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/" class="dd-item
      
       ">
-        <a href="https://neuhalje.github.io/bouncy-gpg/specification/key_derivation/convertingpasswordsintocryptographickeys/">
-        <span>Converting a (master) password into a cryptographic key</span> 
+        <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/">
+        <span>Example: Converting a password into a cryptographic key</span> 
         
         </a></li>
      
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
   
  
 
@@ -185,7 +275,7 @@
                 <span class="links">
                 
 
- Api
+ Example
 
    
                 </span>
@@ -201,7 +291,7 @@
         
         <div id="body-inner">
           
-            <h1>Api</h1>
+            <h1>Example</h1>
           
 
 
@@ -227,14 +317,14 @@
 	</div>
 
 	
-	   <article class="post specification">
+	   <article class="post HowTo">
     <header class="post-header">
-        <h2 class="post-title"><a href="https://neuhalje.github.io/bouncy-gpg/specification/key_derivation/convertingpasswordsintocryptographickeys/">Converting a (master) password into a cryptographic key</a></h2>
+        <h2 class="post-title"><a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/">Example: Converting a password into a cryptographic key</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>Most systems use passwords to create (derive) cryptographic keys, e.g. the password to decrypt a ZIP file is used to create a cryptographic key.
-The process of creating a cryptographic key from a password is called password based key derivation. Because passwords are often to short/predictable this derivation often also implements some kind of key strengthening or key stretching (see below for more info).
-To properly derive a key from a passwords a few aspects are important to consider. <a class="read-more" href="https://neuhalje.github.io/bouncy-gpg/specification/key_derivation/convertingpasswordsintocryptographickeys/">&raquo;</a></p>
+        <p>The following code snippets are actually compiled and run during the BouncyGPG build process. This ensures that all examples are correct.
+Usage with Bouncy-GPGCryptographic key derivation functions should be used to derive a key from a password (or any other source material). Bouncy-GPG uses SCrypt for key stretching.
+The following snippet will derive a 256 bit key from a strong password. The derivation process is configured by SCryptKeyStretchingParameters.forStrongInputKeyMaterial(). This will give a very quick key derivation and is only secure because the password is very long and random. <a class="read-more" href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/">&raquo;</a></p>
     </section>
     <footer class=" footline" >
          
@@ -243,9 +333,13 @@ To properly derive a key from a passwords a few aspects are important to conside
         
           
             
-                <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg/tags/specification/">specification</a>
+                <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg/tags/howto/">howto</a>
             
-                <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg/tags/development/">development</a>
+                <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg/tags/key-derivation/">key derivation</a>
+            
+                <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg/tags/passwords/">passwords</a>
+            
+                <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg/tags/example/">example</a>
             
         
 
@@ -308,6 +402,36 @@ To properly derive a key from a passwords a few aspects are important to conside
 
                     
                     
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
                     
 
                     
@@ -332,13 +456,19 @@ To properly derive a key from a passwords a few aspects are important to conside
                     
             
         
+                    
+            
+        
+                    
+            
+        
         
         
 
 
         
         
-            <a class="nav nav-next" href="https://neuhalje.github.io/bouncy-gpg/specification/" title="Specifications" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+            <a class="nav nav-next" href="https://neuhalje.github.io/bouncy-gpg/howto/" title="HowTo" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 

@@ -4,17 +4,12 @@
   
   <url>
     <loc>https://neuhalje.github.io/bouncy-gpg/about/</loc>
-    <lastmod>2017-08-20T14:14:34+02:00</lastmod>
+    <lastmod>2017-08-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://neuhalje.github.io/bouncy-gpg/</loc>
-    <lastmod>2017-08-20T14:14:34+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://neuhalje.github.io/bouncy-gpg/categories/api/</loc>
-    <priority>0</priority>
+    <lastmod>2017-08-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -23,26 +18,53 @@
   </url>
   
   <url>
-    <loc>https://neuhalje.github.io/bouncy-gpg/specification/key_derivation/convertingpasswordsintocryptographickeys/</loc>
-  </url>
-  
-  <url>
-    <loc>https://neuhalje.github.io/bouncy-gpg/tags/development/</loc>
+    <loc>https://neuhalje.github.io/bouncy-gpg/tags/example/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://neuhalje.github.io/bouncy-gpg/tags/specification/</loc>
+    <loc>https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/</loc>
+  </url>
+  
+  <url>
+    <loc>https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/</loc>
+  </url>
+  
+  <url>
+    <loc>https://neuhalje.github.io/bouncy-gpg/howto/</loc>
+  </url>
+  
+  <url>
+    <loc>https://neuhalje.github.io/bouncy-gpg/tags/howto/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://neuhalje.github.io/bouncy-gpg/specification/</loc>
+    <loc>https://neuhalje.github.io/bouncy-gpg/tags/key-derivation/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/</loc>
+  </url>
+  
+  <url>
+    <loc>https://neuhalje.github.io/bouncy-gpg/categories/keys/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://neuhalje.github.io/bouncy-gpg/tags/passwords/</loc>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://neuhalje.github.io/bouncy-gpg/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://neuhalje.github.io/bouncy-gpg/tags/todo/</loc>
     <priority>0</priority>
   </url>
   
