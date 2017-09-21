@@ -1,4 +1,4 @@
-package specs.key_derivation.passwords;
+package specs.key_derivation;
 
 import static specs.helper.InputConverters.ByteArray.fromHexString;
 import static specs.helper.InputConverters.ByteArray.toHexString;

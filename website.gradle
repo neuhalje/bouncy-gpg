@@ -4,8 +4,6 @@ import name.neuhalfen.concordion.transform.ConcordionHtmlToMarkdownTransformer
 // https://github.com/ajoberstar/gradle-git-publish
 
 
-
-
 task prepareSpecsForCMS(type: Copy, dependsOn: ['test']) {
     description 'Transform the build output of concordion to include it in the CMS'
 
@@ -23,7 +21,7 @@ task removeOldSCmsBuildRoot(type: Delete) {
 }
 
 task prepareCmsBuildRoot(type: Copy, dependsOn: ['removeOldSCmsBuildRoot']) {
-    from "${specifications_cms_cmsdRoot}"
+    from("${specifications_cms_cmsdRoot}")
     into "${cms_BuildRoot}"
 }
 
