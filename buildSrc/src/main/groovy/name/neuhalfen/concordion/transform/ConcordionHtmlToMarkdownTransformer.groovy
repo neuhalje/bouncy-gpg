@@ -11,13 +11,40 @@ class ConcordionHtmlToMarkdownTransformer extends FilterReader {
 
         def body = document.body.get(0)
 
-
-        extractHeader(writer, document)
+        extractSlug(writer, document)
         extractBody(writer, body)
 
         return new StringReader(writer.toString())
     }
 
+    static def isTOMLFrontMatter(frontMatter) {
+        return frontMatter.startsWith("+++") && frontMatter.endsWith("+++")
+    }
+    static def isYAMLFrontMatter(frontMatter) {
+        return frontMatter.startsWith("---") && frontMatter.endsWith("---")
+    }
+    static def isJSONFrontMatter(frontMatter) {
+        return frontMatter.startsWith("{") && frontMatter.endsWith("}")
+    }
+    static def extractSlug(StringWriter writer, Node document) {
+
+        def body = document.body.get(0)
+        def slugNode = body.p[0]
+
+        def slug
+        if (slugNode) {
+            def nodeText = slugNode.text()
+            if  ( isJSONFrontMatter(nodeText)) {
+                slugNode.parent().remove(slugNode)
+                slug = nodeText
+            }
+        }
+        if (slug) {
+            writer.append(slug).append("\n")
+        } else {
+            extractHeader(writer, document)
+        }
+    }
 
     static def extractHeader(StringWriter writer, Node html) {
         def head = html.head.get(0)

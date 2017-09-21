@@ -1,4 +1,17 @@
-# Converting a (master) password into a cryptographic key
+{
+"title" : "From password to key",
+"linktitle" : "Converting a (master) password into a cryptographic key",
+"tags" : [
+    "howto",
+    "key derivation",
+    "passwords",
+    "TODO"
+],
+"categories" : [
+    "keys"
+]
+}
+
 
 Most systems use passwords to create (derive) cryptographic keys, e.g. the password to decrypt a ZIP file is used to create a cryptographic key.
 
