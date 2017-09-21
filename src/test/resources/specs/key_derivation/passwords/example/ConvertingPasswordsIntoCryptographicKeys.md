@@ -1,6 +1,5 @@
 {
-"title" : "Example",
-"linktitle" : "Converting a (master) password into a cryptographic key",
+"title" : "Example: Converting a password into a cryptographic key",
 "tags" : [
     "howto",
     "key derivation",
