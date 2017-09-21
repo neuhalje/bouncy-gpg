@@ -12,7 +12,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureV
 import org.bouncycastle.openpgp.PGPException;
 
 /**
- * This class implements the builder for decrypting Streams.
+ * This class implements the builder for decrypting GPG-encrypted streams.
  */
 @SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter"})
 public final class BuildDecryptionInputStreamAPI {
@@ -42,12 +42,17 @@ public final class BuildDecryptionInputStreamAPI {
   public interface Build {
 
     /**
-     * Build the final decrypted input stream. . This method will start reading the cipherstream
-     * until it finds the encrypted plaintext. . If the source data is NOT signed, but a signature
-     * is REQUIRED, then this function might even throw. . Signatures are verified AFTER decryption
-     * (reading the whole(!) plaintext stream).
+     * Build the final decrypted input stream.
      *
-     * @param encryptedData An encrypted input stream. *Will not be closed.*
+     * This method will start reading the cipherstream until it finds the encrypted plaintext.
+     *
+     * If the source data is NOT signed, but a signature is REQUIRED, then this function might
+     * throw.
+     *
+     * Signatures are verified AFTER decryption (reading the whole(!) plaintext stream). In this
+     * case the returned InputStream will validate the signatures.
+     *
+     * @param encryptedData An encrypted input stream. <b>Will not be closed</b>.
      *
      * @return Plaintext stream. Signatures are checked the moment EOF is reached.
      *
@@ -116,7 +121,7 @@ public final class BuildDecryptionInputStreamAPI {
      * @return the next build step
      *
      * @throws PGPException error extracting public keys from keyring
-     * @throws IOException IO is dangerous
+     * @throws IOException IO is dangerous. Accessing the keyring might tough the filesystem.
      */
     @Nonnull
     public Build andRequireSignatureFromAllKeys(@Nullable String... userIds)
