@@ -58,13 +58,15 @@ pmd {
 }
 
 // Global configuration
+project.ext.set("cms_BuildRoot", "$buildDir/website_src")
+
 project.ext.set("specifications_cms_cmsdRoot", "$projectDir/website")
 project.ext.set("specifications_cms_target", "$buildDir/website")
 
 project.ext.set("specifications_concordion_target", "$reporting.baseDir/specs/concordion")
 
-project.ext.set("specifications_prepareForCms_source", "$reporting.baseDir/specs/concordion/specs")
-project.ext.set("specifications_prepareForCms_target", "$specifications_cms_cmsdRoot/content/HowTo")
+project.ext.set("specifications_prepareForCms_source", "$specifications_concordion_target/specs")
+project.ext.set("specifications_prepareForCms_target", "$cms_BuildRoot/content/HowTo")
 
 // use ./gradlew -PHUGO_EXEC=/path/to/hugo to configure the executable for hugo
 project.ext.set("hugo", project.hasProperty("HUGO_EXEC") ? HUGO_EXEC : "hugo")
