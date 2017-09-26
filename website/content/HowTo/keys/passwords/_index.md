@@ -1,10 +1,10 @@
 {
 "title" : "From password to key",
+"description": "The process of deriving  a cryptographic key from a password is called password based key derivation. Because passwords are often to short/predictable this derivation often also implements some kind of key strengthening or key stretching.",
 "tags" : [
     "howto",
     "key derivation",
-    "passwords",
-    "TODO"
+    "passwords"
 ],
 "categories" : [
     "keys"

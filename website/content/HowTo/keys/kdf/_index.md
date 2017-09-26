@@ -1,5 +1,6 @@
 {
 "title" : "Derive more keys from a key",
+"description": "For many use cases it is desirable to derive multiple keys from one master key. This not only increases security, it also greatly simplifies key management.",
 "tags" : [
     "howto",
     "key derivation", "TODO"
@@ -9,6 +10,7 @@
 ]
 }
 
+For many use cases it is desirable to derive multiple keys from one master key. This not only increases security, it also greatly simplifies key management.
 
 {{<mermaid align="left">}}
 graph LR;

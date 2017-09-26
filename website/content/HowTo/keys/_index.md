@@ -3,7 +3,7 @@
 "description": "Cryptographic keys are the input parameters to many cryptographic operations, namely en-/decryption and signatures. This HOWTO will show you how to create keys from passwords, and how to derive multiple keys from one master key.",
 "tags" : [
     "howto",
-    "key derivation", "TODO"
+    "key derivation"
 ],
 "categories" : [
     "keys"
