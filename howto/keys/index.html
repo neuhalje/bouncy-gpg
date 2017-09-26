@@ -361,7 +361,7 @@
 <ul>
 <li><a href="#key-generation">Key Generation</a></li>
 <li><a href="#key-derivation">Key Derivation</a></li>
-<li><a href="#further-reading">Further Reading</a></li>
+<li><a href="#details">Details</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -439,6 +439,87 @@ graph LR;
 <li>Key  can be derived from other keys with <a href="kdf/">key derivation functions</a>.</li>
 </ul>
 
+<h2 id="details">Details</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ul class="children children-li">
+	
+    
+	    
+    
+    
+
+	
+		
+	
+		
+  
+
+
+<li>
+<a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/" >Derive more keys from a key</a>
+</li>
+
+
+
+
+
+
+			
+				
+<p> graph LR; MK(fa:fa-key Masterkey) -- KDF[fa:fa-cog Key Derivation Function] S(Salt) -- KDF ID(Context + SubKey ID) -- KDF KDF -- SK(fa:fa-key Subkey) SK -.- AES[fa:fa-cog AES]  TODO
+Examples   Example: Deriving record specific keys  Deriving record specific keys with HKDF.
+ </p>
+				
+			
+		
+
+		
+			
+
+		
+	
+		
+  
+
+
+<li>
+<a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/passwords/" >From password to key</a>
+</li>
+
+
+
+
+
+
+			
+				
+<p>The words password and cryptographic key are often used interchangeably, although they are technically very different. Most systems use passwords to derive cryptographic keys, e.g. the password entered to decrypt a ZIP file is used to derive a cryptographic key, which then is used to en-/decrypt the ZIP file.
+The process of deriving a cryptographic key from a password is called password based key derivation. Because passwords are often to short/predictable this derivation often also implements some kind of key strengthening or key stretching (see below for more info).</p>
+				
+			
+		
+
+		
+			
+
+		
+	
+
+	
+</ul>
+
 <h2 id="further-reading">Further Reading</h2>
 
 <ul>
@@ -446,6 +527,9 @@ graph LR;
 <li><a href="http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf">NIST Special Publication 800-132: Recommendation for Password-Based Key Derivation</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Key_derivation_function">Key derivation function</a> on Wikipedia.</li>
 </ul>
+
+
+
 
 
 <footer class=" footline" >
