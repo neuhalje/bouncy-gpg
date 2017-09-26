@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="generator" content="Hugo 0.26" />
-    <meta name="description" content="">
+    <meta name="description" content="Deriving record specific keys with HKDF.">
 
 
-    <title>From password to key :: Bouncy GPG</title>
+    <title>Example: Deriving record specific keys :: Bouncy GPG</title>
     <link rel="shortcut icon" href="https://neuhalje.github.io/bouncy-gpg/images/favicon.png" type="image/x-icon" />
     <link href="https://neuhalje.github.io/bouncy-gpg/css/nucleus.css" rel="stylesheet">
     <link href="https://neuhalje.github.io/bouncy-gpg/css/font-awesome.min.css" rel="stylesheet">
@@ -31,7 +31,7 @@
     
 
   </head>
-  <body class="" data-url="/howto/key_derivation/passwords/">
+  <body class="" data-url="/howto/keys/kdf/example/derivingfromcryptographickeys/">
     <nav id="sidebar" class="">
 
 
@@ -115,13 +115,13 @@
  
   
     
-    <li data-nav-id="/howto/key_derivation/" class="dd-item 
+    <li data-nav-id="/howto/keys/" class="dd-item 
         parent
         
         
         ">
-      <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/">
-        <span>Key derivation</span>
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/">
+        <span>Key generation and derivation</span>
 
         
         
@@ -151,19 +151,82 @@
  
   
     
-    <li data-nav-id="/howto/key_derivation/passwords/" class="dd-item 
+    <li data-nav-id="/howto/keys/kdf/" class="dd-item 
         parent
-        active
+        
         
         ">
-      <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/">
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/">
+        <span>Derive more keys from a key</span>
+
+        
+        
+
+          
+            <i class="fa fa-angle-down fa-lg category-icon"></i>
+          
+
+        
+
+        
+      </a>
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/howto/keys/kdf/example/derivingfromcryptographickeys/" class="dd-item
+     active
+      ">
+        <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/example/derivingfromcryptographickeys/">
+        <span>Example: Deriving record specific keys</span> 
+        
+        </a></li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/howto/keys/passwords/" class="dd-item 
+        
+        
+        
+        ">
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/passwords/">
         <span>From password to key</span>
 
         
         
 
           
-            <i class="fa fa-angle-down fa-lg category-icon"></i>
+            <i class="fa fa-angle-right fa-lg category-icon"></i>
           
 
         
@@ -185,10 +248,10 @@
  
   
     
-      <li data-nav-id="/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/" class="dd-item
+      <li data-nav-id="/howto/keys/passwords/example/convertingpasswordsintocryptographickeys/" class="dd-item
      
       ">
-        <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/">
+        <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/passwords/example/convertingpasswordsintocryptographickeys/">
         <span>Example: Converting a password into a cryptographic key</span> 
         
         </a></li>
@@ -284,7 +347,12 @@
 
 
 
- <a href='https://neuhalje.github.io/bouncy-gpg/'></a> > <a href='https://neuhalje.github.io/bouncy-gpg/howto/'>HowTo</a> > <a href='https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/'>Key derivation</a> > From password to key
+
+
+
+ <a href='https://neuhalje.github.io/bouncy-gpg/'></a> > <a href='https://neuhalje.github.io/bouncy-gpg/howto/'>HowTo</a> > <a href='https://neuhalje.github.io/bouncy-gpg/howto/keys/'>Key generation and derivation</a> > <a href='https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/'>Derive more keys from a key</a> > Example: Deriving record specific keys
+
+ 
 
  
 
@@ -297,22 +365,7 @@
             </div>
             <div class="progress">
     <div class="wrapper">
-<nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#tl-rd-recommendation">TL;RD: Recommendation</a></li>
-<li><a href="#requirements-for-key-derivation">Requirements for key derivation</a>
-<ul>
-<li><a href="#deterministic">Deterministic</a></li>
-<li><a href="#password-length">Password length</a></li>
-</ul></li>
-<li><a href="#prevent-pre-computation-with-salt">Prevent pre-computation with salt</a></li>
-<li><a href="#unwanted-structure-lacking-entropy">Unwanted structure / lacking entropy</a></li>
-<li><a href="#further-reading">Further Reading</a></li>
-</ul></li>
-</ul>
-</nav>
+
     </div>
 </div>
 
@@ -325,105 +378,23 @@
             
               <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg//tags/key-derivation">key derivation</a>
             
-              <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg//tags/passwords">passwords</a>
-            
-              <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg//tags/todo">TODO</a>
+              <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg//tags/example">example</a>
             
           </div>
         
         <div id="body-inner">
           
-            <h1>From password to key</h1>
+            <h1>Example: Deriving record specific keys</h1>
           
 
 
 
 
-
-
-<p>The words <em>password</em> and <em>cryptographic key</em> are often used interchangeably, although they are technically very different.
-Most systems use passwords to <em>derive</em> cryptographic keys, e.g. the password entered to decrypt a ZIP file is used to derive  a cryptographic key, which then is used to en-/decrypt the ZIP file.</p>
-
-<p>The process of deriving  a cryptographic key from a password is called <em>password based key derivation</em>. Because passwords are often to short/predictable this derivation often also implements some kind of <em>key strengthening</em> or <em>key stretching</em> (see below for more info).</p>
-
-<p>To properly derive a key from a passwords a few aspects are important to consider.</p>
-
-<h2 id="tl-rd-recommendation">TL;RD: Recommendation</h2>
-
-<ul>
-<li>Always use a key derivation function. <em>Never</em> use input key material without a key derivation function.</li>
-<li>Use long and complex passwords as key source (128 bit key =&gt; 22 characters, 256 bit keys =&gt; 44 characters!)</li>
-<li>Use a random salt value that is as long as the key (128 or 256 bits)</li>
-<li>Configure the key stretching to be as slow (sic!) as possible</li>
-</ul>
-
-<p>Cryptographic key derivation functions should be used to derive a key from a password (or <em>any</em> other source material).
-Bouncy-GPG uses <a href="https://en.wikipedia.org/wiki/Scrypt">SCrypt</a>  for key stretching.</p>
-
-<h2 id="requirements-for-key-derivation">Requirements for key derivation</h2>
-
-<p>For those interested in learning a bit of background about key derivation the following paragraphs give a very short overview of the basic requirements of key derivation (from a password).</p>
-
-<p>These are not all requirements for key derivation functions. The requirements shown here shed some light on key derivation  functions from an <em>API user</em> perspective.</p>
-
-<h3 id="deterministic">Deterministic</h3>
-
-<p>The process of key derivation has to be <a href="https://en.wikipedia.org/wiki/Deterministic_system">deterministic</a>. That is, given the same input parameters (password and other parameters of the <em>derivation function</em>) the generated key is always the same.</p>
-
-<h3 id="password-length">Password length</h3>
-
-<p>Cryptographically strong passwords are remarkably difficult to use because they are really, really long.
-For the sake of discussion assume a password with the allowed symbols <code>a-z + A-Z + 0-9</code>. That are 62 different symbols per character. This is a bit less than ~6 bit per character.</p>
-
-<p>A cryptographic key typically has a length of 128 or 256 completely random bits. E.g. a secure 128 bit key would require a completely random password of 22 characters (precisely <code>128 / log_2(62)</code> [*]). Sometimes this cannot be ensured, for example when the password is a users login password.</p>
-
-<p>To derive keys from passwords two length-related problems need to be solved:</p>
-
-<ol>
-<li>Squash arbitrary long passwords into 128 / 256 bit keys</li>
-<li>Prevent attackers from enumerating (to short) passwords</li>
-</ol>
-
-<p>[*] <em>Rule of thumb: <code>c</code> possible symbols are <code>log_2(c)</code> bits per character. <code>n</code> characters are then <code>n * log_2(c)</code> bits.  If your calculator does not have <code>log_2</code> use <code>num_bits ~= n * 3.3 * log_10(c)</code></em></p>
-
-<h2 id="prevent-pre-computation-with-salt">Prevent pre-computation with salt</h2>
-
-<p>Especially for short passwords it is desirable to prevent attackers from pre-computing (e.g. with <a href="https://en.wikipedia.org/wiki/Rainbow_table">Rainbow tables</a>)
-all possible keys upfront.</p>
-
-<p>There are two strategies to achieve this.</p>
-
-<p>First the calculation can include an additional parameter that makes key derivation specific to an application/installation.
-This raises the bar for the attacker because the pre-computation for one application cannot be used for a second application.
-Such a value is called a <a href="https://en.wikipedia.org/wiki/Salt_%28cryptography%29">salt</a> and can be public.</p>
-
-<p>Adding a salt value often is not enough. Even with <a href="http://cynosureprime.blogspot.de/2017/08/320-million-hashes-exposed.html">consumer hardware</a> simple hashes like SHA-1 or SHA-256 can be calculated at rates of <em>mega hashes per second</em>.</p>
-
-<p>Secondly, computation can be made very expensive, so that an attacker would need to spend to much time to compute all possible keys.
-This approach is implemented by functions such as  <a href="https://en.wikipedia.org/wiki/Scrypt">SCrypt</a> or <a href="https://tools.ietf.org/html/rfc2898">PBKDF2</a>.
-Slowing down computations is especially important for cases where the attacker has access to the database with the password hashes (and the salt). This is not unlikely because databases are stolen quite frequently.
-Brute force protection makes key generation much slower, thus hampering an attacker to just try out every possible user password to &ldquo;brute force&rdquo; the key.</p>
-
-<p>Changing the salt value will derive different keys from the same password (thus making  precomputing infeasible).</p>
-
-<h2 id="unwanted-structure-lacking-entropy">Unwanted structure / lacking entropy</h2>
-
-<p>Besides the length of the password, it also has a lot of inherent structure (e.g. the mentioned 62 symbols all have the most significant bit set to zero). This structure needs to be &ldquo;smoothed out&rdquo; before using the password das key material.</p>
-
-<h2 id="further-reading">Further Reading</h2>
-
-<ul>
-<li><a href="https://en.wikipedia.org/wiki/Key_stretching">Key stretching</a> on Wikipedia.</li>
-<li><a href="http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf">NIST Special Publication 800-132: Recommendation for Password-Based Key Derivation</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Key_derivation_function">Key derivation function</a> on Wikipedia.</li>
-</ul>
-
+<p><em>The following code snippets are actually compiled and run during the BouncyGPG build process. This ensures that all examples are correct.</em></p><div class="footer">Results generated by <a href="http://www.concordion.org" style="font-weight: bold; text-decoration: none; color: #89C;">Concordion</a><div class="testTime">in 24 ms on 26-Sep-2017 at 21:43:10 CEST</div></div>
 
 <footer class=" footline" >
 	
 </footer>
-
-
 
 
 
@@ -491,8 +462,55 @@ Brute force protection makes key generation much slower, thus hampering an attac
             
                 
                     
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
                         
                         
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
                     
                 
                 
@@ -513,15 +531,18 @@ Brute force protection makes key generation much slower, thus hampering an attac
                     
             
         
+                    
+            
+        
         
         
 
 
         
-            <a class="nav nav-prev" href="https://neuhalje.github.io/bouncy-gpg/howto/" title="HowTo"> <i class="fa fa-chevron-left"></i></a>
+            <a class="nav nav-prev" href="https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/" title="Derive more keys from a key"> <i class="fa fa-chevron-left"></i></a>
         
         
-            <a class="nav nav-next" href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/" title="Example: Converting a password into a cryptographic key" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+            <a class="nav nav-next" href="https://neuhalje.github.io/bouncy-gpg/howto/keys/passwords/" title="From password to key" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 
@@ -548,3 +569,4 @@ Brute force protection makes key generation much slower, thus hampering an attac
 
   </body>
 </html>
+

@@ -115,13 +115,13 @@
  
   
     
-    <li data-nav-id="/howto/key_derivation/" class="dd-item 
+    <li data-nav-id="/howto/keys/" class="dd-item 
         
         
         
         ">
-      <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/">
-        <span>Key derivation</span>
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/">
+        <span>Key generation and derivation</span>
 
         
         
@@ -151,12 +151,75 @@
  
   
     
-    <li data-nav-id="/howto/key_derivation/passwords/" class="dd-item 
+    <li data-nav-id="/howto/keys/kdf/" class="dd-item 
         
         
         
         ">
-      <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/">
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/">
+        <span>Derive more keys from a key</span>
+
+        
+        
+
+          
+            <i class="fa fa-angle-right fa-lg category-icon"></i>
+          
+
+        
+
+        
+      </a>
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/howto/keys/kdf/example/derivingfromcryptographickeys/" class="dd-item
+     
+      ">
+        <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/example/derivingfromcryptographickeys/">
+        <span>Example: Deriving record specific keys</span> 
+        
+        </a></li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/howto/keys/passwords/" class="dd-item 
+        
+        
+        
+        ">
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/passwords/">
         <span>From password to key</span>
 
         
@@ -185,10 +248,10 @@
  
   
     
-      <li data-nav-id="/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/" class="dd-item
+      <li data-nav-id="/howto/keys/passwords/example/convertingpasswordsintocryptographickeys/" class="dd-item
      
       ">
-        <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/">
+        <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/passwords/example/convertingpasswordsintocryptographickeys/">
         <span>Example: Converting a password into a cryptographic key</span> 
         
         </a></li>
@@ -287,7 +350,14 @@
             </div>
             <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#use-cases">Use Cases</a></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -302,9 +372,72 @@
 
 
 
-<p>Even with a library like BouncyGPG it is impossible to correctly use the cryptography toolbox without a bit of background.</p>
 
-<p>The following sections describe several key use-cases and provide tested example code as a starting point for you.</p>
+
+<p>Even with a library like BouncyGPG it is impossible to correctly use the cryptography toolbox without a bit of theoretical background. The HOWTOs will give solid implementation guidelines regarding selected use cases.</p>
+
+<p>The provide example code can act as starting point for your implementations.</p>
+
+<div class="notices warning" ><p>Reading the use cases will provide you with enough information to implement them for &ldquo;normal security&rdquo; applications. For high security applications, e.g. when the life of people is at stake involve a cryptographer!</p>
+</div>
+
+
+<h2 id="use-cases">Use Cases</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ul class="children children-li">
+	
+    
+	    
+    
+    
+
+	
+		
+	
+		
+  
+
+
+<li>
+<a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/" >Key generation and derivation</a>
+</li>
+
+
+
+
+
+
+			
+				
+<p>Cryptographic keys are the input parameters to many cryptographic operations, namely en-/decryption and signatures. This HOWTO will show you how to create keys from passwords, and how to derive multiple keys from one master key.</p>
+				
+			
+		
+
+		
+			
+
+		
+	
+
+	
+</ul>
+
+
+
+
 
 
 <footer class=" footline" >
@@ -408,6 +541,38 @@
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
             
         
                     
@@ -424,7 +589,7 @@
             <a class="nav nav-prev" href="https://neuhalje.github.io/bouncy-gpg/" title=""> <i class="fa fa-chevron-left"></i></a>
         
         
-            <a class="nav nav-next" href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/" title="Key derivation" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+            <a class="nav nav-next" href="https://neuhalje.github.io/bouncy-gpg/howto/keys/" title="Key generation and derivation" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 

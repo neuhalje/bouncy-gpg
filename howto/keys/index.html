@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="generator" content="Hugo 0.26" />
-    <meta name="description" content="">
+    <meta name="description" content="Cryptographic keys are the input parameters to many cryptographic operations, namely en-/decryption and signatures. This HOWTO will show you how to create keys from passwords, and how to derive multiple keys from one master key.">
 
 
-    <title>Example: Converting a password into a cryptographic key :: Bouncy GPG</title>
+    <title>Key generation and derivation :: Bouncy GPG</title>
     <link rel="shortcut icon" href="https://neuhalje.github.io/bouncy-gpg/images/favicon.png" type="image/x-icon" />
     <link href="https://neuhalje.github.io/bouncy-gpg/css/nucleus.css" rel="stylesheet">
     <link href="https://neuhalje.github.io/bouncy-gpg/css/font-awesome.min.css" rel="stylesheet">
@@ -31,7 +31,7 @@
     
 
   </head>
-  <body class="" data-url="/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/">
+  <body class="" data-url="/howto/keys/">
     <nav id="sidebar" class="">
 
 
@@ -115,13 +115,13 @@
  
   
     
-    <li data-nav-id="/howto/key_derivation/" class="dd-item 
+    <li data-nav-id="/howto/keys/" class="dd-item 
         parent
-        
+        active
         
         ">
-      <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/">
-        <span>Key derivation</span>
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/">
+        <span>Key generation and derivation</span>
 
         
         
@@ -151,19 +151,82 @@
  
   
     
-    <li data-nav-id="/howto/key_derivation/passwords/" class="dd-item 
-        parent
+    <li data-nav-id="/howto/keys/kdf/" class="dd-item 
+        
         
         
         ">
-      <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/">
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/">
+        <span>Derive more keys from a key</span>
+
+        
+        
+
+          
+            <i class="fa fa-angle-right fa-lg category-icon"></i>
+          
+
+        
+
+        
+      </a>
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/howto/keys/kdf/example/derivingfromcryptographickeys/" class="dd-item
+     
+      ">
+        <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/example/derivingfromcryptographickeys/">
+        <span>Example: Deriving record specific keys</span> 
+        
+        </a></li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/howto/keys/passwords/" class="dd-item 
+        
+        
+        
+        ">
+      <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/passwords/">
         <span>From password to key</span>
 
         
         
 
           
-            <i class="fa fa-angle-down fa-lg category-icon"></i>
+            <i class="fa fa-angle-right fa-lg category-icon"></i>
           
 
         
@@ -185,10 +248,10 @@
  
   
     
-      <li data-nav-id="/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/" class="dd-item
-     active
+      <li data-nav-id="/howto/keys/passwords/example/convertingpasswordsintocryptographickeys/" class="dd-item
+     
       ">
-        <a href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/">
+        <a href="https://neuhalje.github.io/bouncy-gpg/howto/keys/passwords/example/convertingpasswordsintocryptographickeys/">
         <span>Example: Converting a password into a cryptographic key</span> 
         
         </a></li>
@@ -281,17 +344,7 @@
 
 
 
-
-
-
-
-
-
- <a href='https://neuhalje.github.io/bouncy-gpg/'></a> > <a href='https://neuhalje.github.io/bouncy-gpg/howto/'>HowTo</a> > <a href='https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/'>Key derivation</a> > <a href='https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/'>From password to key</a> > Example: Converting a password into a cryptographic key
-
- 
-
- 
+ <a href='https://neuhalje.github.io/bouncy-gpg/'></a> > <a href='https://neuhalje.github.io/bouncy-gpg/howto/'>HowTo</a> > Key generation and derivation
 
  
 
@@ -302,7 +355,16 @@
             </div>
             <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#key-generation">Key Generation</a></li>
+<li><a href="#key-derivation">Key Derivation</a></li>
+<li><a href="#further-reading">Further Reading</a></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -315,55 +377,82 @@
             
               <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg//tags/key-derivation">key derivation</a>
             
-              <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg//tags/passwords">passwords</a>
-            
-              <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg//tags/example">example</a>
+              <a class="label label-default" href="https://neuhalje.github.io/bouncy-gpg//tags/todo">TODO</a>
             
           </div>
         
         <div id="body-inner">
           
-            <h1>Example: Converting a password into a cryptographic key</h1>
+            <h1>Key generation and derivation</h1>
           
 
 
 
 
-<p><em>The following code snippets are actually compiled and run during the BouncyGPG build process. This ensures that all examples are correct.</em></p><h3>Usage with Bouncy-GPG</h3><p>Cryptographic key derivation functions should be used to derive a key from a password (or <em>any</em> other source material). Bouncy-GPG uses <a href="https://en.wikipedia.org/wiki/Scrypt">SCrypt</a> for key stretching.</p><p>The following snippet will derive a 256 bit key from a strong password. The derivation process is configured by <code>SCryptKeyStretchingParameters.forStrongInputKeyMaterial()</code>. This will give a very quick key derivation and is only secure because the password is very long and random. If a shorter password was used the recommendation would be to use:</p><pre><code script:lang="groovy" xmlns:script="urn:concordion-extensions:2010" script:result="#generatedKey" id="groovy">import java.nio.charset.StandardCharsets;
 
-import org.bouncycastle.util.encoders.Hex;
 
-import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching.KeyStretching;
-import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching.SCryptKeyStretching;
+<p>Cryptographic keys are the input parameters to many cryptographic operations, namely en-/decryption and signatures. This HOWTO will show you how to create keys from passwords, and how to derive multiple keys from one master key.</p>
 
-// the password
-// Rather obviously the password should NOT be stored as part of the source code
-String password = "39akldsAFQqwmsx-+#aQcsvcu82cQd,.-ask72=cq8csf";
+<p>Cryptographic keys can be obtained by two methods:</p>
 
-// The salt value should be application or installation specific.
-// It is an absolute MUST that the salt is never changed! A different salt WILL result in a different
-// key being generated!
-// The salt value SHOULD be roughly as long as the key (e.g. 128/256 bit).
-// The salt value SHOULD be random (so this salt value is actually a bad example)
-final byte[] SALT = Hex.decode("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f");
+<ul>
+<li>by generating a key from random data (e.g. <code>SecureRandom</code>)</li>
+<li>by deriving the key from other data (<em>input key material</em>)</li>
+</ul>
 
-// In this case we are using a 256 bit key, e.g. for AES-256.
-final int DESIRED_KEY_LENGTH = 256;
+<h2 id="key-generation">Key Generation</h2>
 
-// Use forSensitiveStorage to derive e.g. a masterkey at application startup.
-// forSensitiveStorage is really slow. If you are very sure that you have a very
-// good (22 characters random or longer) password for 128 bit keys / 44 character 
-// passwords for 256 bit keys you can consider using forQuickDerivation.
-final SCryptKeyStretching.SCryptKeyStretchingParameters stretchingParameters = SCryptKeyStretching.SCryptKeyStretchingParameters.forStrongInputKeyMaterial();
+<p>Cryptographic keys can be generated by using a <a href="https://en.wikipedia.org/wiki/Random_number_generation">random number generator (RNG)</a>. Cryptographic keys should always be generated by using a key derivation function.</p>
 
-final KeyStretching streching = new SCryptKeyStretching(stretchingParameters);
+<div class="mermaid" align="left" >
+graph LR;
+    RNG(fa:fa-cog RNG) --> KDF[fa:fa-cog Key Derivation Function]
+    KDF --> K(fa:fa-key Key)
+    K -.-> AES[fa:fa-cog AES]
+</div>
 
-byte[] key = streching.strengthenKey(SALT, password.getBytes(StandardCharsets.UTF_8), DESIRED_KEY_LENGTH);
-return key;<p/></code></pre><p>The key generated by this sequence is <span concordion:assert-equals="toHex(#generatedKey)" xmlns:concordion="http://www.concordion.org/2007/concordion" class="success">0x89d4a9b23d8a88d09e559aeeaa7cfa4a029673b01d969a2f523a7c1f749c330b</span>.</p><div concordion:example="Key derivation is deterministic" xmlns:concordion="http://www.concordion.org/2007/concordion" id="Key derivation is deterministic"><h4>Example</h4><p>The password <em><span concordion:set="#password">s3cret</span></em> (which is <em>way</em> to short!) might be <span concordion:execute="#key = stretchWithFixedParameters(#password)">derived</span> to the key <span concordion:assert-equals="#key.derivedKey" class="success">0x81d0994d0aa21b786d6b8dc45fc09f31</span>.</p><p><span concordion:execute="#key2 = stretchWithFixedParameters(#password)">Calling</span> the derivation function with the same parameters again yields the same result (<span concordion:assert-equals="#key2.derivedKey" class="success">0x81d0994d0aa21b786d6b8dc45fc09f31</span>).</p><p>Using the same password with different configuration parameters for the same password (e.g. with a different <a href="https://en.wikipedia.org/wiki/Salt_%28cryptography%29">salt</a> value) <span concordion:assert-true="isSaltChangesKey(#password)" class="success">yields a different key</span>.</p></div><div concordion:example="Key length is independent from password length" xmlns:concordion="http://www.concordion.org/2007/concordion" id="Key length is independent from password length"><h4>Example: Key length is independent from password length</h4><p>The length of the derived key is independent from the length of the password [1]:</p><table concordion:execute="#key = stretchWithFixedParameters(#password, #desiredKeyLen)"><thead><tr><th concordion:set="#password">Password </th><th concordion:set="#desiredKeyLen">Desired key length in bit </th><th concordion:assert-equals="#key.derivedKey">derived key </th><th concordion:assert-equals="#key.derivedKeyLen">length of derived key </th></tr></thead><tbody><tr><td>x </td><td>128 </td><td class="success">0xec8bf237a7207690e91cf6bd27746f3b </td><td class="success">128 </td></tr><tr><td>short password </td><td>128 </td><td class="success">0x185e58c7cf69baef9d2866b70ec1581c </td><td class="success">128 </td></tr><tr><td>short password </td><td>256 </td><td class="success">0x185e58c7cf69baef9d2866b70ec1581ceb8ff7c5c2169170cba1cf4adc48815a </td><td class="success">256 </td></tr><tr><td>a bit longer PASSWORD </td><td>128 </td><td class="success">0xb201445d3bcdc7a07c469b7d7ef8988c </td><td class="success">128 </td></tr></tbody></table><p>[1] Salt and all other derivation parameters fixed for this run. Changing the salt or the parameters of the derivation function does not change the key length.</p></div><div concordion:example="Prevent pre-computation with salt" xmlns:concordion="http://www.concordion.org/2007/concordion" id="Prevent pre-computation with salt"><h4>Example: Prevent pre-computation with salt</h4><p>Changing the salt value will derive different keys from the same password (thus making precomputing infeasible):</p><table concordion:execute="#key = stretchWithSalt(#password, #salt)"><thead><tr><th concordion:set="#password">Password </th><th concordion:set="#salt">Salt </th><th concordion:assert-equals="#key.derivedKey">derived key </th></tr></thead><tbody><tr><td>a bit longer PASSWORD </td><td>0x00000000000000000000000000000000 </td><td class="success">0x31709b5748dd11a80de4ba31571928d3 </td></tr><tr><td>short password </td><td>0x00000000000000000000000000000000 </td><td class="success">0xefab7a10563f8d81347c8c4401553902 </td></tr><tr><td>short password </td><td>0x00000000000000000000000000000001 </td><td class="success">0xc0c153c9b79a92af8bdb08cb5defbd11 </td></tr><tr><td>short password </td><td>0x0123456789abcdef0123456789abcdef </td><td class="success">0x89b4d1be23e0f1f56ba29ee36f1e52ba </td></tr></tbody></table></div><div class="footer">Results generated by <a href="http://www.concordion.org" style="font-weight: bold; text-decoration: none; color: #89C;">Concordion</a><div class="testTime">in 1063 ms on 21-Sep-2017 at 22:10:17 CEST</div></div>
+<h2 id="key-derivation">Key Derivation</h2>
+
+<p>The words <em>password</em> and <em>cryptographic key</em> are often used interchangeably, although they are technically quite different.</p>
+
+<p>A <em>password</em> is a sequence of characters of often arbitrary length. A <em>cryptographic key</em> is a binary object that has an algorithm specific structure to it.</p>
+
+<div class="mermaid" align="left" >
+graph LR;
+    P(Password) --> PBKDF[fa:fa-cog Password based Key Derivation Function]
+    S(Salt) --> PBKDF
+    PBKDF --> K(fa:fa-key Key)
+    K -.-> AES[fa:fa-cog AES]
+</div>
+
+<div class="mermaid" align="left" >
+graph LR;
+    MK(fa:fa-key  Masterkey) --> KDF[fa:fa-cog Key Derivation Function]
+    S(Salt) --> KDF
+    ID(Context + SubKey ID) --> KDF
+    KDF --> SK(fa:fa-key Subkey)
+    SK -.-> AES[fa:fa-cog AES]
+</div>
+
+<ul>
+<li>Keys can be derived from passwords with <a href="passwords/">password based key derivation functions</a>.</li>
+<li>Key  can be derived from other keys with <a href="kdf/">key derivation functions</a>.</li>
+</ul>
+
+<h2 id="further-reading">Further Reading</h2>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Key_stretching">Key stretching</a> on Wikipedia.</li>
+<li><a href="http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf">NIST Special Publication 800-132: Recommendation for Password-Based Key Derivation</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Key_derivation_function">Key derivation function</a> on Wikipedia.</li>
+</ul>
+
 
 <footer class=" footline" >
 	
 </footer>
+
+
 
 
 
@@ -431,6 +520,8 @@ return key;<p/></code></pre><p>The key generated by this sequence is <span conco
             
                 
                     
+                        
+                        
                     
                 
                 
@@ -445,6 +536,37 @@ return key;<p/></code></pre><p>The key generated by this sequence is <span conco
             
                 
                     
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
                     
                 
                 
@@ -473,8 +595,10 @@ return key;<p/></code></pre><p>The key generated by this sequence is <span conco
 
 
         
-            <a class="nav nav-prev" href="https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/" title="From password to key"> <i class="fa fa-chevron-left"></i></a>
+            <a class="nav nav-prev" href="https://neuhalje.github.io/bouncy-gpg/howto/" title="HowTo"> <i class="fa fa-chevron-left"></i></a>
         
+        
+            <a class="nav nav-next" href="https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/" title="Derive more keys from a key" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 
@@ -501,4 +625,3 @@ return key;<p/></code></pre><p>The key generated by this sequence is <span conco
 
   </body>
 </html>
-

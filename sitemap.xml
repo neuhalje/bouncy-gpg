@@ -18,16 +18,24 @@
   </url>
   
   <url>
+    <loc>https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/</loc>
+  </url>
+  
+  <url>
     <loc>https://neuhalje.github.io/bouncy-gpg/tags/example/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/example/convertingpasswordsintocryptographickeys/</loc>
+    <loc>https://neuhalje.github.io/bouncy-gpg/howto/keys/passwords/example/convertingpasswordsintocryptographickeys/</loc>
   </url>
   
   <url>
-    <loc>https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/passwords/</loc>
+    <loc>https://neuhalje.github.io/bouncy-gpg/howto/keys/kdf/example/derivingfromcryptographickeys/</loc>
+  </url>
+  
+  <url>
+    <loc>https://neuhalje.github.io/bouncy-gpg/howto/keys/passwords/</loc>
   </url>
   
   <url>
@@ -45,7 +53,7 @@
   </url>
   
   <url>
-    <loc>https://neuhalje.github.io/bouncy-gpg/howto/key_derivation/</loc>
+    <loc>https://neuhalje.github.io/bouncy-gpg/howto/keys/</loc>
   </url>
   
   <url>
