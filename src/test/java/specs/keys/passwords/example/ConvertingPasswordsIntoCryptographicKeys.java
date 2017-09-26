@@ -1,4 +1,4 @@
-package specs.key_derivation.passwords.example;
+package specs.keys.passwords.example;
 
 import static specs.helper.InputConverters.ByteArray.fromHexString;
 import static specs.helper.InputConverters.ByteArray.toHexString;
@@ -12,7 +12,6 @@ import org.concordion.api.extension.Extensions;
 import org.concordion.ext.apidoc.ExecutableSpecExtension;
 import org.concordion.integration.junit4.ConcordionRunner;
 import org.junit.runner.RunWith;
-import specs.helper.InputConverters;
 
 @RunWith(ConcordionRunner.class)
 @Extensions(ExecutableSpecExtension.class)

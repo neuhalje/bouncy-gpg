@@ -16,13 +16,26 @@ Most systems use passwords to _derive_ cryptographic keys, e.g. the password ent
 
 The process of deriving  a cryptographic key from a password is called _password based key derivation_. Because passwords are often to short/predictable this derivation often also implements some kind of _key strengthening_ or _key stretching_ (see below for more info).
 
+{{<mermaid align="left">}}
+graph LR;
+    P(Password) --> KDF[Key Derivation Function]
+    S(Salt) --> KDF
+    KDF --> K(Key)
+    K -.-> AES[AES]
+{{< /mermaid >}}
+
 To properly derive a key from a passwords a few aspects are important to consider. 
 
-## TL;RD: Recommendation
+
+{{% panel theme="success" header="TL;RD: Recommendation" %}}
+
+*Recommendation*:
+
 * Always use a key derivation function. _Never_ use input key material without a key derivation function.
 * Use long and complex passwords as key source (128 bit key => 22 characters, 256 bit keys => 44 characters!)
 * Use a random salt value that is as long as the key (128 or 256 bits)
 * Configure the key stretching to be as slow (sic!) as possible 
+{{% /panel %}}
 
 Cryptographic key derivation functions should be used to derive a key from a password (or _any_ other source material).
 Bouncy-GPG uses [SCrypt](https://en.wikipedia.org/wiki/Scrypt)  for key stretching.

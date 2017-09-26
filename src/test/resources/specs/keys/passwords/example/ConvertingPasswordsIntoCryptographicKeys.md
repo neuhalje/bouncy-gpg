@@ -1,5 +1,6 @@
 {
 "title" : "Example: Converting a password into a cryptographic key",
+"description": "This example will derive a 256 bit AES key from passwords.",
 "tags" : [
     "howto",
     "key derivation",
@@ -20,7 +21,7 @@ Bouncy-GPG uses [SCrypt](https://en.wikipedia.org/wiki/Scrypt)  for key stretchi
 
 The following snippet will derive a 256 bit key from a strong password. The derivation process is configured
 by `SCryptKeyStretchingParameters.forStrongInputKeyMaterial()`. This will give a very quick key derivation and is only
-secure because the password is very long and random. If a shorter password was used the recommendation would be to use:
+secure because the password is very long and random. If a shorter password was used the recommendation would be to use `forModeratelyStongInputKeyMaterial` or `forWeakInputKeyMaterial`.
 
     ```groovy result:#generatedKey
     import java.nio.charset.StandardCharsets;
