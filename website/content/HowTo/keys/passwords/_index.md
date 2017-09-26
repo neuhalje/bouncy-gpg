@@ -18,10 +18,10 @@ The process of deriving  a cryptographic key from a password is called _password
 
 {{<mermaid align="left">}}
 graph LR;
-    P(Password) --> KDF[Key Derivation Function]
-    S(Salt) --> KDF
-    KDF --> K(Key)
-    K -.-> AES[AES]
+    P(Password) --> PBKDF[fa:fa-cog Password based Key Derivation Function]
+    S(Salt) --> PBKDF
+    PBKDF --> K(fa:fa-key Key)
+    K -.-> AES[fa:fa-cog AES]
 {{< /mermaid >}}
 
 To properly derive a key from a passwords a few aspects are important to consider. 
