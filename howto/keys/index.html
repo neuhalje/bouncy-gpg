@@ -478,9 +478,7 @@ graph LR;
 
 			
 				
-<p> graph LR; MK(fa:fa-key Masterkey) -- KDF[fa:fa-cog Key Derivation Function] S(Salt) -- KDF ID(Context + SubKey ID) -- KDF KDF -- SK(fa:fa-key Subkey) SK -.- AES[fa:fa-cog AES]  TODO
-Examples   Example: Deriving record specific keys  Deriving record specific keys with HKDF.
- </p>
+<p>For many use cases it is desirable to derive multiple keys from one master key. This not only increases security, it also greatly simplifies key management.</p>
 				
 			
 		
@@ -505,8 +503,7 @@ Examples   Example: Deriving record specific keys  Deriving record specific keys
 
 			
 				
-<p>The words password and cryptographic key are often used interchangeably, although they are technically very different. Most systems use passwords to derive cryptographic keys, e.g. the password entered to decrypt a ZIP file is used to derive a cryptographic key, which then is used to en-/decrypt the ZIP file.
-The process of deriving a cryptographic key from a password is called password based key derivation. Because passwords are often to short/predictable this derivation often also implements some kind of key strengthening or key stretching (see below for more info).</p>
+<p>The process of deriving  a cryptographic key from a password is called _password based key derivation_. Because passwords are often to short/predictable this derivation often also implements some kind of _key strengthening_ or _key stretching_.</p>
 				
 			
 		
