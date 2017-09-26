@@ -87,6 +87,9 @@ Changing the salt value will derive different keys from the same password (thus 
 
 Besides the length of the password, it also has a lot of inherent structure (e.g. the mentioned 62 symbols all have the most significant bit set to zero). This structure needs to be "smoothed out" before using the password das key material.
 
+## Examples
+{{% children description="true" depth="1"  %}}
+
 ## Further Reading
 * [Key stretching](https://en.wikipedia.org/wiki/Key_stretching) on Wikipedia.
 * [NIST Special Publication 800-132: Recommendation for Password-Based Key Derivation](http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf)

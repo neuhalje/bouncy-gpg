@@ -60,6 +60,8 @@ graph LR;
 * Key  can be derived from other keys with [key derivation functions](kdf/).
 
 
+## Details
+{{% children description="true" depth="1"  %}}
 
 ## Further Reading
 * [Key stretching](https://en.wikipedia.org/wiki/Key_stretching) on Wikipedia.
