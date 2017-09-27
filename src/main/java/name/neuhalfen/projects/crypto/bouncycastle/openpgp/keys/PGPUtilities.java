@@ -97,8 +97,9 @@ public final class PGPUtilities {
       throw new IllegalArgumentException("publicKeyRings must not be null");
     }
 
-    // the true parameter indicates, that partial matching of the publicKeyUid is enough.
-    final Iterator<?> keyRings = publicKeyRings.getKeyRings("<" + publicKeyUid + ">", true);
+    // the first true parameter indicates, that partial matching of the publicKeyUid is enough.
+    // the second true parameter indicates, that matching the publicKeyUid is case insensitive.
+    final Iterator<?> keyRings = publicKeyRings.getKeyRings("<" + publicKeyUid + ">", true, true);
     PGPPublicKeyRing returnKeyRing = null;
     while (keyRings.hasNext()) {
       final Object currentKeyRing = keyRings.next();
@@ -180,7 +181,7 @@ public final class PGPUtilities {
     PGPSecretKey key = null;
 
     final Iterator<PGPSecretKeyRing> ringIterator = pgpSec
-        .getKeyRings("<" + signingKeyUid + ">", true);
+        .getKeyRings("<" + signingKeyUid + ">", true, true);
     while (ringIterator.hasNext()) {
       final PGPSecretKeyRing kRing = ringIterator.next();
       final Iterator<PGPSecretKey> secretKeyIterator = kRing.getSecretKeys();
