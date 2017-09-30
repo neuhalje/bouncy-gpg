@@ -3,6 +3,7 @@ package name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation;
 
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import javax.annotation.Nullable;
 import org.bouncycastle.crypto.DerivationParameters;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
@@ -27,7 +28,7 @@ public class HKDFSHA256 implements KeyDerivationFunction {
   }
 
   @Override
-  public byte[] deriveKey(byte[] salt, byte[] info, int desiredKeyLengthInBits)
+  public byte[] deriveKey(@Nullable byte[] salt, byte[] info, int desiredKeyLengthInBits)
       throws GeneralSecurityException {
 
     if (desiredKeyLengthInBits % 8 != 0) {
