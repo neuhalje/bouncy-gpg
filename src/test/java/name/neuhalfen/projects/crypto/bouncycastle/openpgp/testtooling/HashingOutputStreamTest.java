@@ -2,10 +2,16 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.io.Streams;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -15,6 +21,9 @@ import org.junit.Test;
  * @see HashingOutputStream
  */
 public class HashingOutputStreamTest {
+
+  private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
+      .getLogger(HashingOutputStreamTest.class);
 
   @Test
   public void callingToString_onOpenStream_returnsEmptyString() throws NoSuchAlgorithmException {
@@ -100,4 +109,40 @@ public class HashingOutputStreamTest {
         is(equalTo("B06EE8C91425C5298AAC4B36897FE7260AC0581C5F407AA4BF52BC028391B169")));
   }
   //
+
+
+  /**
+   * This test is just a micro benchmark.
+   */
+  @Test
+  @Ignore("this test is not a test of functionality")
+  public void measureMaxPerformance()
+      throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
+    final int KB = 1024;
+    final int MB = 1024 * KB;
+
+    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+      Security.addProvider(new BouncyCastleProvider());
+    }
+
+    final long sampleSizeMB = 1024;
+    RandomDataInputStream in = new RandomDataInputStream(sampleSizeMB * MB);
+
+    HashingOutputStream out = HashingOutputStream.sha512_Oracle();
+
+    long start = System.currentTimeMillis();
+
+    Streams.pipeAll(in, out);
+
+    long end = System.currentTimeMillis();
+
+    double MBBperMilliSecond = ((double) sampleSizeMB) / (end - start);
+    double MBperSecond = MBBperMilliSecond * 1000;
+    String msg = String.format("HashingOutputStream: delivers ~%f.2 MB/s", MBperSecond);
+    LOGGER.warn(msg);
+
+    assertThat("We need ultra fast hashing: more than 100 MB/s", MBperSecond,
+        greaterThan(100.0));
+
+  }
 }
