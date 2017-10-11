@@ -2,6 +2,8 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import org.bouncycastle.openpgp.PGPException;
 
@@ -20,6 +22,7 @@ public final class KeyringConfigs {
    * @param publicKeyring E.g. src/test/resources/sender.gpg.d/pubring.gpg
    * @param secretKeyring E.g. src/test/resources/sender.gpg.d/secring.gpg
    * @param callback see KeyringConfigCallbacks
+   *
    * @return the config
    */
   public static KeyringConfig withKeyRingsFromFiles(final File publicKeyring,
@@ -39,12 +42,35 @@ public final class KeyringConfigs {
   }
 
   /**
+   * Create a config by reading keyrings from streams. The streams will be closed.
+   *
+   * The stream can be null, resulting in an empty keyring.
+   *
+   * @param publicKeyring E.g. a FileInputStream to src/test/resources/sender.gpg.d/pubring.gpg.
+   * @param secretKeyring E.g. src/test/resources/sender.gpg.d/secring.gpg
+   * @param callback see KeyringConfigCallbacks
+   *
+   * @return the config
+   */
+  public static KeyringConfig withKeyRingsFromStreams(@Nullable final InputStream publicKeyring,
+      @Nullable final InputStream secretKeyring,
+      KeyringConfigCallback callback) throws IOException, PGPException {
+
+    if (callback == null) {
+      throw new IllegalArgumentException("callback must not be null");
+    }
+
+    return StreamBasedKeyringConfig.build(callback, publicKeyring, secretKeyring);
+  }
+
+  /**
    * Create a config by reading keyrings from the classpath.
    *
    * @param classLoader E.g. DecryptWithOpenPGPTest.class.getClassLoader()
    * @param publicKeyringPath E.g. "recipient.gpg.d/pubring.gpg"
    * @param secretKeyringPath E.g. "recipient.gpg.d/secring.gpg"
    * @param callback see KeyringConfigCallbacks
+   *
    * @return the config
    */
   public static KeyringConfig withKeyRingsFromResources(final ClassLoader classLoader,
@@ -69,7 +95,9 @@ public final class KeyringConfigs {
    * Create a config that can parse keys exported in gpg.
    *
    * @param callback see KeyringConfigCallbacks
+   *
    * @return the config
+   *
    * @throws IOException IO is dangerous
    * @throws PGPException Could not create keyrings
    */

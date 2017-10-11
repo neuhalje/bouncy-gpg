@@ -45,13 +45,14 @@ abstract class AbstractDefaultKeyringConfig implements KeyringConfig {
 
   /**
    * @return Stream that connects to  secring.gpg
+   *
    * @throws FileNotFoundException File not found
    */
-
   protected abstract InputStream getSecretKeyRingStream() throws IOException;
 
   /**
    * @return Stream that connects to  pubring.gpg
+   *
    * @throws FileNotFoundException File not found
    */
   protected abstract InputStream getPublicKeyRingStream() throws IOException;
@@ -62,7 +63,6 @@ abstract class AbstractDefaultKeyringConfig implements KeyringConfig {
 
     if (publicKeyRings == null) {
       publicKeyRings = new
-
           PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(getPublicKeyRingStream()),
           keyFingerPrintCalculator);
 
