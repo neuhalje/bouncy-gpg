@@ -6,6 +6,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.KeyDerivationFunction;
 
@@ -27,7 +28,7 @@ public class DerivedKeyGenerator {
    */
   public DerivedKeyGenerator(KeyDerivationFunction kdFwithMasterKeyMixin, @Nullable byte[] salt) {
     this.kdFwithMasterKeyMixin = kdFwithMasterKeyMixin;
-    this.salt = salt;
+    this.salt = salt == null ? null : Arrays.copyOf(salt, salt.length);
   }
 
   /**
