@@ -9,7 +9,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.security.Security;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -83,6 +85,16 @@ public class KeyringConfigsTest {
   public void findSecretKeyDSA_works() throws IOException, PGPException {
     assertTrue(
         keyringConfig.getSecretKeyRings().contains(ExampleMessages.KEY_ID_SENDER_DSA_SIGN_ONLY));
+  }
+
+
+  // non parametrised
+  @Test
+  public void loadingEmptyKeyRing_doesNotThrow() throws IOException, PGPException {
+    KeyringConfig cfg = KeyringConfigs.forGpgExportedKeys(KeyringConfigCallbacks.withUnprotectedKeys());
+
+    assertThat(cfg.getPublicKeyRings(), is(notNullValue()));
+    assertThat(cfg.getSecretKeyRings(), is(notNullValue()));
   }
 
 }

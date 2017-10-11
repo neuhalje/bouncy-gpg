@@ -20,6 +20,9 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorit
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPCompressionAlgorithms;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPHashAlgorithms;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPSymmetricEncryptionAlgorithms;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -233,7 +236,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
    * This setup does not work. Keep the test as an example of how NOT to do it.
    */
   @Test(expected = EOFException.class)
-  public void encryptInTryWithResxources_decryptInTryWithRessources_fails()
+  public void encryptInTryWithResources_decryptInTryWithRessources_fails()
       throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
     ByteArrayOutputStream result = new ByteArrayOutputStream();
 
@@ -395,4 +398,57 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
 
     assertArrayEquals(ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(), plainBA.toByteArray());
   }
+
+
+  @Test
+  public void encryptWithOnlyPubkeyInRing_decryptWithOnlyPrivKeyInring_yieldsOriginalPlaintext()
+      throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
+
+    final byte[] ciphertext;
+    {
+      ByteArrayOutputStream result = new ByteArrayOutputStream();
+      BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(result);
+
+      final InMemoryKeyring encryptionKeyring = KeyringConfigs
+          .forGpgExportedKeys(KeyringConfigCallbacks.withUnprotectedKeys());
+      encryptionKeyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes());
+
+      final OutputStream outputStream = BouncyGPG
+          .encryptToStream()
+          .withConfig(encryptionKeyring)
+          .withAlgorithms(algorithmSuite)
+          .toRecipient("recipient@example.com")
+          .andDoNotSign()
+          .binaryOutput()
+          .andWriteTo(bufferedOutputStream);
+
+      final InputStream is = new ByteArrayInputStream(
+          ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes());
+      Streams.pipeAll(is, outputStream);
+      outputStream.close();
+      bufferedOutputStream.close();
+      is.close();
+      ciphertext = result.toByteArray();
+    }
+
+    // Decrypt
+
+    {
+      final InMemoryKeyring decryptionKeyring = KeyringConfigs
+          .forGpgExportedKeys(KeyringConfigCallbacks.withPassword("recipient"));
+      decryptionKeyring.addSecretKey(ExampleMessages.SECRET_KEY_RECIPIENT.getBytes());
+
+      final ByteArrayOutputStream plainBA = new ByteArrayOutputStream();
+
+      final InputStream plainIS = BouncyGPG.decryptAndVerifyStream()
+          .withConfig(decryptionKeyring)
+          .andIgnoreSignatures()
+          .fromEncryptedInputStream(new ByteArrayInputStream(ciphertext));
+
+      Streams.pipeAll(plainIS, plainBA);
+
+      assertArrayEquals(ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(), plainBA.toByteArray());
+    }
+  }
+
 }
