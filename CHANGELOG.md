@@ -5,6 +5,7 @@
 * Add Concordion spec-test and tutorial
 * Add [website](https://neuhalje.github.io/bouncy-gpg/) generated with [hugo](https://gohugo.io/)
 * Support for key derivation use cases (--> https://github.com/neuhalje/presentation_content-encryption )
+* Bump to BC 1.58
 
 ### API Changes
 #### Breaking
