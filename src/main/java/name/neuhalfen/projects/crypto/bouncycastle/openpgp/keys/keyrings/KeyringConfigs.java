@@ -51,6 +51,9 @@ public final class KeyringConfigs {
    * @param callback see KeyringConfigCallbacks
    *
    * @return the config
+   *
+   * @throws IOException the streams fail to deliver
+   * @throws PGPException failed to read the keyrings
    */
   public static KeyringConfig withKeyRingsFromStreams(@Nullable final InputStream publicKeyring,
       @Nullable final InputStream secretKeyring,

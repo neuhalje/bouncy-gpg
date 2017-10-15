@@ -11,13 +11,19 @@ import org.bouncycastle.crypto.params.HKDFParameters;
 
 /**
  * Implements HKDF with SHA256 as hashing algorithm. The master key ("IKM - input key material") is
- * stored as part of the instance. <p> <p> * <a href="https://en.wikipedia.org/wiki/Key_derivation_function">Key
- * derivation function</a>  on Wikipedia. * <a href="https://tools.ietf.org/html/rfc5869">RFC 5869
- * HMAC-based Extract-and-Expand Key Derivation Function (HKDF)</a> * <a
- * href="http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf">NIST
+ * stored as part of the instance.
+ * s
+ * <ul>
+ * <li><a href="https://en.wikipedia.org/wiki/Key_derivation_function">Key  derivation
+ * function</a>  on Wikipedia. </li>
+ * <li> <a href="https://tools.ietf.org/html/rfc5869">RFC 5869 HMAC-based Extract-and-Expand Key
+ * Derivation Function (HKDF)</a> </li>
+ * <li> <a href="http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf">NIST
  * Recommendation for Key Derivation through Extraction-then-Expansion, Special Publication
- * SP800-56C</a> * <a href="https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/TechnischeRichtlinien/TR02102/BSI-TR-02102.pdf?__blob=publicationFile">BSI
- * TR-02102-1  Kryptographische Verfahren: Empfehlungen und Schlussellaengen</a>
+ * SP800-56C</a> </li>
+ * <li> <a href="https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/TechnischeRichtlinien/TR02102/BSI-TR-02102.pdf?__blob=publicationFile">BSI
+ * TR-02102-1  Kryptographische Verfahren: Empfehlungen und Schlussellaengen</a></li>
+ * </ul>
  */
 public class HKDFSHA256 implements KeyDerivationFunction {
 

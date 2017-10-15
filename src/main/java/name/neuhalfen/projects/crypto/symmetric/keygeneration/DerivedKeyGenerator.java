@@ -20,6 +20,8 @@ public class DerivedKeyGenerator {
 
 
   /**
+   * @param kdFwithMasterKeyMixin The key derivation function to use. The function is responsible to
+   * mix some secret input key material into the result
    * @param salt (from rfc5869): Ideally, the salt value is a random (or pseudorandom) string of the
    * length HashLen (HashLen = 256/8 = 32 bytes). Yet, even a salt value of less quality (shorter in
    * size or with limited entropy) may still make a significant contribution to the security of the
@@ -45,9 +47,16 @@ public class DerivedKeyGenerator {
    * masterkey).
    * @param idUniqueInContext contextName and idUniqueInContext are combined to create the 'info'
    * value from rfc5869.
+   * @param recordVersion It is <b>very</b> important to use fresh keys to encrypt different data
+   * items. This also implies that an updated record <b>must</b> get a new key. The version
+   * parameters ensures this. Store the version parameter with your record and increment it every
+   * time you update the record.
    * @param desiredKeyLengthBytes the length of the derived key in bytes (e.g. 16 for AES-128)
    *
    * @return A derived key of length  desiredKeyLengthBytes
+   *
+   * @throws GeneralSecurityException Something went wrong deriving the key. The reason is very
+   * likely outside this libraries influence.
    */
   public byte[] deriveKey(final String contextName, final String idUniqueInContext,
       final String recordVersion,
