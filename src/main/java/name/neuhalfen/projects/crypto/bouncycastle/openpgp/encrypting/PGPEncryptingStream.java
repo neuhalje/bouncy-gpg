@@ -47,6 +47,11 @@ public final class PGPEncryptingStream extends OutputStream {
   private PGPLiteralDataGenerator encryptionDataStreamGenerator;
   private PGPCompressedDataGenerator compressionStreamGenerator;
 
+  /*
+   * true --> This stream is _already_ closed
+   */
+  private boolean isClosed = false;
+
   private PGPEncryptingStream(final KeyringConfig config, final PGPAlgorithmSuite algorithmSuite) {
     super();
     this.config = config;
@@ -90,6 +95,7 @@ public final class PGPEncryptingStream extends OutputStream {
    * @param signingUid Sign with this uid. null: do not sign
    * @param pubEncKey the pub enc key
    * @param armor if OutputStream should be "armored", that means base64 encoded
+   *
    * @throws IOException Signals that an I/O exception has occurred.
    * @throws PGPException the pGP exception {@link org.bouncycastle.bcpg.HashAlgorithmTags} {@link
    * org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
@@ -191,25 +197,29 @@ public final class PGPEncryptingStream extends OutputStream {
 
   @Override
   public void close() throws IOException {
-    encryptionDataStream.flush();
-    encryptionDataStream.close();
-    encryptionDataStreamGenerator.close();
-    if (isDoSign) {
+    if (!isClosed) {
 
-      try {
-        signatureGenerator.generate().encode(compressionStream);  // NOPMD:  Demeter (BC API)
-      } catch (PGPException e) {
-        throw new IOException(e);
+      encryptionDataStream.flush();
+      encryptionDataStream.close();
+      encryptionDataStreamGenerator.close();
+      if (isDoSign) {
+
+        try {
+          signatureGenerator.generate().encode(compressionStream);  // NOPMD:  Demeter (BC API)
+        } catch (PGPException e) {
+          throw new IOException(e);
+        }
       }
-    }
-    compressionStreamGenerator.close();
+      compressionStreamGenerator.close();
 
-    outerEncryptionStream.flush();
-    outerEncryptionStream.close();
+      outerEncryptionStream.flush();
+      outerEncryptionStream.close();
 
-    if (armoredOutputStream != null) {
-      armoredOutputStream.flush();
-      armoredOutputStream.close();
+      if (armoredOutputStream != null) {
+        armoredOutputStream.flush();
+        armoredOutputStream.close();
+      }
+      isClosed = true;
     }
   }
 }
