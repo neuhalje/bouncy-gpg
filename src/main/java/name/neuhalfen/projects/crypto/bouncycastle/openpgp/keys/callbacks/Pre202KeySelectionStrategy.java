@@ -25,7 +25,7 @@ import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
  * https://tools.ietf.org/html/rfc4880#section-5.2.3.21
  */
 @Deprecated()
-public class Pre202KeySelectionStrategy implements KeySelectionStrategy {
+public final class Pre202KeySelectionStrategy implements KeySelectionStrategy {
 
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
       .getLogger(Pre202KeySelectionStrategy.class);
@@ -57,7 +57,7 @@ public class Pre202KeySelectionStrategy implements KeySelectionStrategy {
   }
 
   @Override
-  public Set<PGPPublicKey> validPublicKeysForSignatures(String uid,
+  public Set<PGPPublicKey> validPublicKeysForVerifyingSignatures(String uid,
       KeyringConfig keyringConfig) throws PGPException, IOException {
 
     final Iterator<PGPPublicKeyRing> keyRings = keyringConfig.getPublicKeyRings().getKeyRings(uid,true,true);

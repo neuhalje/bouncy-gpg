@@ -49,6 +49,6 @@ public interface KeySelectionStrategy {
    *
    * @return public keys that can be accepted for signatues, empty set if none are found
    */
-  Set<PGPPublicKey> validPublicKeysForSignatures( final String uid,
+  Set<PGPPublicKey> validPublicKeysForVerifyingSignatures( final String uid,
       final KeyringConfig keyring) throws PGPException, IOException;
 }

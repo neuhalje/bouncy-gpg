@@ -38,6 +38,8 @@ import org.junit.Test;
  *
  * This tests that the pre-202 implementation and the strategy select the same
  * keys.
+ *
+ * These tests also include stray tests from other classes.
  */
 public class Pre202KeySelectionStrategyTest {
 

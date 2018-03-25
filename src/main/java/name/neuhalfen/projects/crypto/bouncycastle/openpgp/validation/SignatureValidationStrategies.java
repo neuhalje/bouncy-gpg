@@ -79,7 +79,7 @@ public final class SignatureValidationStrategies {
       final Set<PGPPublicKey> availableKeys;
       try {
         availableKeys = keySelectionStrategy
-            .validPublicKeysForSignatures(userId, config);
+            .validPublicKeysForVerifyingSignatures(userId, config);
       } catch (IOException e) {
         throw new PGPException("Failed to extract keys",e);
       }
