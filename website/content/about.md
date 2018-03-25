@@ -1,8 +1,26 @@
 +++
 title = "About Bouncy GPG"
-date = "2017-08-20"
+date = "2017-10-10"
 menu = "main"
 +++
+
+Cryptography is a powerful tool to implement some very tricky business requirements. 
+Requirement that include the words _confidentiality_,  _integrity_, or _availability_ are very likely to have efficient and effective solutions that leverage cryptography. 
+
+These requirements have many sources, and cryptography is not always the obvious answer. Here are some use cases that show how cryptography can help to solve problems seemingly unrelated to cryptography:
+
+* Minimise storage cost by using (public) cloud storage for storing large data sets
+* Show due diligence by provably protecting personal data (bonus: many laws explicitly name cryptography as a valid solution)
+* Prevent damage to the business by detecting unauthorised manipulation of critical data
+* Tamper proof audit logs
+
+The tutorials, examples, and documentation on this site are aimed at the application programmer that is tasked to design or implement these requirements.
+
+
+Most sources that teach cryptography aim to explain the inner workings of cryptographic primitives.
+For the average programming task this is a bit like having first to learn how to operate a nationwide powergrid before being allowed to plug in the plug of a TV. This site is different as it aims to present **patterns** for solving these problems.
+
+### Bouncy GPG
 
 Bouncy GPG is a java library that provides an opinionated API for cryptographic use cases. It also strives to provide the best documentation for programmers to solve problems without shooting theirselves in the foot.
 
