@@ -30,6 +30,8 @@ ssb  rsa2048/0x83063C3DA3814052
  */
 
 
+  public final static String UID_EMAIL="rfc4880@example.org";
+
   public final static Instant EXPIRED_KEY_CREATION_TIME = ZonedDateTime
       .parse("2018-03-25T10:55:31Z").toInstant();
 
