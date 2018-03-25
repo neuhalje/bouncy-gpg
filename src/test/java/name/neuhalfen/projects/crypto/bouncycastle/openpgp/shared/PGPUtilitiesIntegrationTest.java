@@ -73,28 +73,6 @@ public class PGPUtilitiesIntegrationTest {
     assertThat(publicKeys, Matchers.notNullValue());
   }
 
-  @Test()
-  public void extracting_exitingSigningPubKeyByName_returnsKey() throws Exception {
-    final PGPPublicKeyRing publicKeys = PGPUtilities
-        .extractPublicKeyRingForUserId("sender@example.com", keyringConfig.getPublicKeyRings());
-    assumeThat(publicKeys, Matchers.notNullValue());
-
-    final PGPPublicKey pgpPublicKey = PGPUtilities.extractSigningPublicKey(publicKeys);
-    assertThat(pgpPublicKey, Matchers.notNullValue());
-    assertThat(pgpPublicKey.getKeyID(), equalTo(ExampleMessages.KEY_ID_SENDER));
-  }
-
-  @Test()
-  public void extracting_anothereExitingSigningPubKeyByName_returnsKey() throws Exception {
-    final PGPPublicKeyRing publicKeys = PGPUtilities
-        .extractPublicKeyRingForUserId("sender2@example.com", keyringConfig.getPublicKeyRings());
-    assumeThat(publicKeys, Matchers.notNullValue());
-
-    final PGPPublicKey pgpPublicKey = PGPUtilities.extractSigningPublicKey(publicKeys);
-    assertThat(pgpPublicKey, Matchers.notNullValue());
-    assertThat(pgpPublicKey.getKeyID(), equalTo(ExampleMessages.KEY_ID_SENDER_2));
-  }
-
 
   @Test()
   public void findingUnknownPrivateKey_returnsNull() throws Exception {

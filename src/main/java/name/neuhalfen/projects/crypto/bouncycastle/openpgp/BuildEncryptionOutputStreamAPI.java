@@ -9,19 +9,23 @@ import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.PGPEncryptingStream;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Pre202KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
-import org.bouncycastle.openpgp.PGPPublicKeyRing;
+import org.bouncycastle.openpgp.PGPSecretKey;
 
 
-@SuppressWarnings({"PMD.AtLeastOneConstructor","PMD.AccessorMethodGeneration","PMD.LawOfDemeter"})
+@SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter"})
 public final class BuildEncryptionOutputStreamAPI {
 
   private OutputStream sinkForEncryptedData;
   private KeyringConfig encryptionConfig;
   private PGPAlgorithmSuite algorithmSuite;
+  private KeySelectionStrategy keySelectionStrategy = new Pre202KeySelectionStrategy();
+
   @Nullable
   private String signWith;
   private PGPPublicKey recipient;
@@ -85,14 +89,8 @@ public final class BuildEncryptionOutputStreamAPI {
           throw new IllegalArgumentException("recipient must be a string");
         }
 
-        final PGPPublicKeyRing publicKeyRing = PGPUtilities
-            .extractPublicKeyRingForUserId(recipient, encryptionConfig.getPublicKeyRings());
-        if (publicKeyRing == null) {
-          throw new PGPException(
-              "No (suitable) public key for encryption to " + recipient + " found");
-        }
-
-        final PGPPublicKey recipientEncryptionKey = PGPUtilities.getEncryptionKey(publicKeyRing);
+        final PGPPublicKey recipientEncryptionKey = keySelectionStrategy
+            .selectPublicKey(PURPOSE.FOR_ENCRYPTION, recipient, encryptionConfig);
 
         if (recipientEncryptionKey == null) {
           throw new PGPException(
@@ -108,8 +106,26 @@ public final class BuildEncryptionOutputStreamAPI {
         public Armor andSignWith(String userId) throws IOException, PGPException {
 
           if (encryptionConfig.getSecretKeyRings() == null) {
-            throw new IllegalArgumentException("encryptionConfig.getSecretKeyRings() must not be null");
+            throw new IllegalArgumentException(
+                "encryptionConfig.getSecretKeyRings() must not be null");
           }
+
+          final PGPPublicKey signingKeyPubKey = keySelectionStrategy
+              .selectPublicKey(PURPOSE.FOR_SIGNING, userId, encryptionConfig);
+
+          if (signingKeyPubKey == null) {
+            throw new PGPException(
+                "No (suitable) public key for signing with " + recipient + " found");
+          }
+
+          PGPSecretKey signingKey = encryptionConfig.getSecretKeyRings()
+              .getSecretKey(signingKeyPubKey.getKeyID());
+          if (signingKey == null) {
+            throw new PGPException(
+                "No (suitable) secret key for signing with " + recipient
+                    + " found (public key exists!)");
+          }
+
           BuildEncryptionOutputStreamAPI.this.signWith = userId;
           return new Armor();
         }
@@ -144,6 +160,7 @@ public final class BuildEncryptionOutputStreamAPI {
                   BuildEncryptionOutputStreamAPI.this.algorithmSuite,
                   BuildEncryptionOutputStreamAPI.this.signWith,
                   BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData,
+                  BuildEncryptionOutputStreamAPI.this.keySelectionStrategy,
                   BuildEncryptionOutputStreamAPI.this.armorOutput,
                   BuildEncryptionOutputStreamAPI.this.recipient);
               return outputStream;

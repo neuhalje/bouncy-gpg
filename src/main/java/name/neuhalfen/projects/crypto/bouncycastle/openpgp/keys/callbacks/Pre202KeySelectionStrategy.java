@@ -1,7 +1,12 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
@@ -16,7 +21,7 @@ import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
  * in violation of the key flags (see rfc4880 section-5.2.3.21).
  *
  * !! Only use this if the old behaviour pre-2.0.2 is needed !!
- * 
+ *
  * https://tools.ietf.org/html/rfc4880#section-5.2.3.21
  */
 @Deprecated()
@@ -28,18 +33,43 @@ public class Pre202KeySelectionStrategy implements KeySelectionStrategy {
 
   @Nullable
   @Override
-  public PGPPublicKey selectPublicKey(PURPOSE purpose, PGPPublicKeyRing keyring) {
+  public PGPPublicKey selectPublicKey(PURPOSE purpose, String uid, KeyringConfig keyringConfig)
+      throws PGPException, IOException {
+
+    final Iterator<PGPPublicKeyRing> keyRings = keyringConfig.getPublicKeyRings().getKeyRings(uid, true,true);
+
+    if (!keyRings.hasNext()) {
+      return null;
+    }
+
+    final PGPPublicKeyRing publicKeyRing = keyRings
+        .next();
+
     switch (purpose) {
       case FOR_SIGNING:
         // This DOES NOT CHECK FOR PRIVATE KEY EXISTENCE!
-        return extractSigningPublicKey(keyring);
-      case FOR_SIGNATURE_VALIDATION:
-        return extractSigningPublicKey(keyring);
+        return extractSigningPublicKey(publicKeyRing);
       case FOR_ENCRYPTION:
-        return getEncryptionKey(keyring);
+        return getEncryptionKey(publicKeyRing);
       default:
         return null;
     }
+  }
+
+  @Override
+  public Set<PGPPublicKey> validPublicKeysForSignatures(String uid,
+      KeyringConfig keyringConfig) throws PGPException, IOException {
+
+    final Iterator<PGPPublicKeyRing> keyRings = keyringConfig.getPublicKeyRings().getKeyRings(uid,true,true);
+
+    if (!keyRings.hasNext()) {
+      return Collections.EMPTY_SET;
+    }
+
+    final PGPPublicKey pgpPublicKey = extractSigningPublicKey(keyRings.next());
+    final HashSet<PGPPublicKey> hashSet = new HashSet<>();
+    hashSet.add(pgpPublicKey);
+    return hashSet;
   }
 
 
@@ -99,7 +129,7 @@ public class Pre202KeySelectionStrategy implements KeySelectionStrategy {
    * @throws PGPException if no key ring or key with that Uid is found
    */
   @SuppressWarnings("PMD.LawOfDemeter")
-   static PGPSecretKey extractSecretSigningKeyFromKeyrings(
+  static PGPSecretKey extractSecretSigningKeyFromKeyrings(
       final PGPSecretKeyRingCollection pgpSec, final String signingKeyUid)
       throws PGPException {
     int highestScore = Integer.MIN_VALUE;

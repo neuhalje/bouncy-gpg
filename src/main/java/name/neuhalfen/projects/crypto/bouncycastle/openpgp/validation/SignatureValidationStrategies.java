@@ -1,16 +1,16 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
+import java.util.Set;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
-import org.bouncycastle.openpgp.PGPPublicKeyRing;
-import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 
 /**
  * Defines strategies for signature checking.
@@ -34,6 +34,7 @@ public final class SignatureValidationStrategies {
    * Require any signature for a public key in the keyring.
    *
    * @return an instance of the requested strategy
+   *
    * @see KeyringConfig#getPublicKeyRings()
    **/
   public static SignatureValidationStrategy requireAnySignature() {
@@ -45,6 +46,7 @@ public final class SignatureValidationStrategies {
    * --keyid-format=0xlong)
    *
    * @param signaturesRequiredForTheseKeys KeyIds (32 bit IDs)
+   *
    * @return an instance of the requested strategy
    **/
   public static SignatureValidationStrategy requireSignatureFromAllKeys(
@@ -53,32 +55,45 @@ public final class SignatureValidationStrategies {
   }
 
   /**
-   * Require signature from all of the passed keys.
+   * Require signature from all of the passed uids.
    *
-   * @param publicKeyRings keyring
+   * This only really works if each uid has EXACTLY one key.
+   *
+   * @param config keyring config
+   * @param keySelectionStrategy  the key selection strategy to use
    * @param userIds A list of user IDs (e.g. 'sender@example.com')
+   *
    * @return an instance of the requested strategy
+   *
    * @throws PGPException No or more than one public key found for a user id
    **/
   @SuppressWarnings("PMD.LawOfDemeter")
+  @Deprecated
   public static SignatureValidationStrategy requireSignatureFromAllKeys(
-      PGPPublicKeyRingCollection publicKeyRings, String... userIds) throws PGPException {
+      KeySelectionStrategy keySelectionStrategy,
+      KeyringConfig config, String... userIds) throws PGPException {
     final List<Long> keyIds = new ArrayList<>(userIds.length);
 
     for (String userId : userIds) {
 
-      final PGPPublicKeyRing pgpPublicKeys = PGPUtilities
-          .extractPublicKeyRingForUserId(userId, publicKeyRings);
-      if (pgpPublicKeys == null) {
+      final Set<PGPPublicKey> availableKeys;
+      try {
+        availableKeys = keySelectionStrategy
+            .validPublicKeysForSignatures(userId, config);
+      } catch (IOException e) {
+        throw new PGPException("Failed to extract keys",e);
+      }
+
+      if (availableKeys.isEmpty() ) {
         throw new PGPException("Could not find public-key for userid '" + userId + "'");
       }
 
-      final PGPPublicKey signingKey = PGPUtilities.extractSigningPublicKey(pgpPublicKeys);
-      if (signingKey == null) {
-        throw new PGPException("Could not find public-key for userid '" + userId + "'");
+      if (availableKeys.size()>1 ) {
+        throw new PGPException("Found more than one (" + availableKeys.size() + ") keys for userid '" + userId + "'");
       }
-      keyIds.add(signingKey.getKeyID());
 
+      PGPPublicKey selectPublicKey = availableKeys.iterator().next();
+      keyIds.add(selectPublicKey.getKeyID());
     }
     return new RequireSpecificSignatureValidationStrategy(keyIds);
   }
@@ -87,6 +102,7 @@ public final class SignatureValidationStrategies {
    * Require signature from all of the passed keys.
    *
    * @param keyIds The IDs are 32 bit key-IDs ( --keyid-format=0xlong)
+   *
    * @return an instance of the requested strategy
    **/
   public static SignatureValidationStrategy requireSignatureFromAllKeys(Long... keyIds) {
@@ -97,6 +113,7 @@ public final class SignatureValidationStrategies {
    * Require signature from a specific key.
    *
    * @param signaturesRequiredForThisKey The ID is a 32 bit key-ID ( --keyid-format=0xlong)
+   *
    * @return an instance of the requested strategy
    **/
   public static SignatureValidationStrategy requireSignatureFromAllKeys(

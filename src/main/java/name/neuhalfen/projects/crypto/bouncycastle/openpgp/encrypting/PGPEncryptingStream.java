@@ -11,6 +11,8 @@ import java.util.Iterator;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
@@ -63,6 +65,7 @@ public final class PGPEncryptingStream extends OutputStream {
       final PGPAlgorithmSuite algorithmSuite,
       final String signingUid,
       final OutputStream cipherTextSink,
+      final KeySelectionStrategy keySelectionStrategy,
       final boolean armor,
       final PGPPublicKey pubEncKey)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
@@ -85,7 +88,7 @@ public final class PGPEncryptingStream extends OutputStream {
     }
 
     final PGPEncryptingStream encryptingStream = new PGPEncryptingStream(config, algorithmSuite);
-    encryptingStream.setup(cipherTextSink, signingUid, pubEncKey, armor);
+    encryptingStream.setup(cipherTextSink, signingUid, pubEncKey, keySelectionStrategy, armor);
     return encryptingStream;
   }
 
@@ -94,16 +97,21 @@ public final class PGPEncryptingStream extends OutputStream {
    * @param cipherTextSink Where the ciphertext goes
    * @param signingUid Sign with this uid. null: do not sign
    * @param pubEncKey the pub enc key
+   * @param keySelectionStrategy key selection strategy (for signatures)
    * @param armor if OutputStream should be "armored", that means base64 encoded
    *
    * @throws IOException Signals that an I/O exception has occurred.
-   * @throws PGPException the pGP exception {@link org.bouncycastle.bcpg.HashAlgorithmTags} {@link
+   * @throws PGPException the pGP exception
+   *
+   *
+   * {@link org.bouncycastle.bcpg.HashAlgorithmTags} {@link
    * org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
    */
   @SuppressWarnings("PMD.LawOfDemeter")
   private void setup(final OutputStream cipherTextSink,
       @Nullable final String signingUid,
       final PGPPublicKey pubEncKey,
+      final KeySelectionStrategy keySelectionStrategy,
       final boolean armor) throws
       IOException, PGPException {
     isDoSign = (signingUid != null);
@@ -129,8 +137,18 @@ public final class PGPEncryptingStream extends OutputStream {
     outerEncryptionStream = cPk.open(sink, new byte[1 << 16]);
 
     if (isDoSign) {
-      final PGPSecretKey pgpSec = PGPUtilities
-          .extractSecretSigningKeyFromKeyrings(config.getSecretKeyRings(), signingUid);
+      final PGPPublicKey signingPublicKey = keySelectionStrategy
+          .selectPublicKey(PURPOSE.FOR_SIGNING, signingUid, config);
+      if (signingPublicKey == null) {
+        throw new PGPException(
+            "No suitable private key found for signing with uid: '" + signingUid + "'");
+      }
+
+      final PGPSecretKey pgpSec = config.getSecretKeyRings().getSecretKey(signingPublicKey.getKeyID());
+      if (pgpSec == null) {
+        throw new PGPException(
+            "No suitable private key found for signing with uid: '" + signingUid + "' (although found pubkey: " +  signingPublicKey.getKeyID() + ")");
+      }
 
       final PGPPrivateKey pgpPrivKey = PGPUtilities.extractPrivateKey(pgpSec,
           config.decryptionSecretKeyPassphraseForSecretKeyId(pgpSec.getKeyID()));

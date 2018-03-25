@@ -6,6 +6,8 @@ import java.security.NoSuchProviderException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Pre202KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
@@ -21,6 +23,7 @@ public final class BuildDecryptionInputStreamAPI {
   private KeyringConfig keyringConfig;
   @Nonnull
   private SignatureValidationStrategy signatureCheckingMode;
+  private KeySelectionStrategy keySelectionStrategy = new Pre202KeySelectionStrategy();
 
   /**
    * Start building by passing in the keyring config.
@@ -130,9 +133,8 @@ public final class BuildDecryptionInputStreamAPI {
       if (userIds == null || userIds.length == 0) {
         throw new IllegalArgumentException("userIds must not be null or empty");
       }
-
       BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies
-          .requireSignatureFromAllKeys(keyringConfig.getPublicKeyRings(), userIds);
+          .requireSignatureFromAllKeys(keySelectionStrategy, keyringConfig, userIds);
       return new Builder();
     }
 

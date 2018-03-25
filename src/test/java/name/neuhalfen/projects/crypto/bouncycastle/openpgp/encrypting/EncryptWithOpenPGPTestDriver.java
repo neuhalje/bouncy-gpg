@@ -9,6 +9,9 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Pre202KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -35,6 +38,8 @@ final class EncryptWithOpenPGPTestDriver {
   private final KeyringConfig config;
 
   private final PGPAlgorithmSuite algorithmSuite;
+
+  private final KeySelectionStrategy keySelectionStrategy = new Pre202KeySelectionStrategy();
 
   /**
    * The signature uid.
@@ -71,7 +76,8 @@ final class EncryptWithOpenPGPTestDriver {
       NoSuchAlgorithmException, SignatureException, PGPException, NoSuchProviderException {
     final long starttime = System.currentTimeMillis();
 
-    final PGPPublicKey encryptionKey = PGPUtilities.getEncryptionKey(this.encryptionPublicKeyRing);
+    // FIXME: pass correct uid
+    final PGPPublicKey encryptionKey = keySelectionStrategy.selectPublicKey(PURPOSE.FOR_ENCRYPTION, "", config);
     if (encryptionKey == null) {
       throw new PGPException("Could not find a valid encryption key for uid ");
     }
@@ -101,7 +107,7 @@ final class EncryptWithOpenPGPTestDriver {
       NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
 
     try (final OutputStream encryptionStream = PGPEncryptingStream
-        .create(config, algorithmSuite, signatureUid, out, armor, pubEncKey)) {
+        .create(config, algorithmSuite, signatureUid, out, keySelectionStrategy,  armor, pubEncKey)) {
       Streams.pipeAll(in, encryptionStream);
       encryptionStream.flush();
     }
