@@ -151,18 +151,18 @@ public final class DecryptionStreamFactory {
 
             final boolean isHavePublicKeyForSignatureInKeyring = pubKey != null;
             if (isHavePublicKeyForSignatureInKeyring) {
-              LOGGER.trace("Found signature and the public key '{}' was found in the keyring.",
+              LOGGER.trace("Signature found, and the matching public key '0x{}' was also found in the keyring.",
                   Long.toHexString(signature.getKeyID()));
               signature.init(pgpContentVerifierBuilderProvider, pubKey);
               state.addSignature(signature);
             } else {
-              LOGGER.trace("Found signature but public key '{}' was not found in the keyring.",
+              LOGGER.info("Found signature but public key '0x{}' was not found in the keyring.",
                   Long.toHexString(signature.getKeyID()));
             }
           }
           if (!state.hasVerifiableSignatures()) {
             throw new PGPException(
-                "Signature checking is required but none of the public keys used to sign the data was found in the keyring'!");
+                "Signature checking is required but none of the public keys used to sign the data were found in the keyring'!");
           }
         } else {
           LOGGER.trace("Signature check disabled - ignoring contained signature");

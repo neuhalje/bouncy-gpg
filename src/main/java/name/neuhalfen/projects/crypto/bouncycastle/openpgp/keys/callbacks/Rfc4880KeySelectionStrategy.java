@@ -66,8 +66,16 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
     Set<PGPPublicKeyRing> keyringsForUid = new HashSet<>();
 
+    final String uidQuery;
+    final boolean uidAlreadyInBrackets = uid.matches(".*<.*>.*");
+    if (uidAlreadyInBrackets) {
+      uidQuery = uid;
+    } else {
+      uidQuery = "<" + uid + ">";
+    }
+
     final Iterator<PGPPublicKeyRing> keyRings = keyringConfig.getPublicKeyRings()
-        .getKeyRings(uid, true, true);
+        .getKeyRings(uidQuery, true, true);
 
     while (keyRings.hasNext()) {
       keyringsForUid.add(keyRings.next());
@@ -85,13 +93,11 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     final Set<PGPPublicKeyRing> publicKeyrings = this
         .publicKeyRingsForUid(PURPOSE.FOR_SIGNING, uid, keyringConfig);
 
-    final PGPSecretKeyRingCollection secretKeyRings = keyringConfig.getSecretKeyRings();
     return publicKeyrings.stream()
         .flatMap(keyring -> StreamSupport.stream(keyring.spliterator(), false))
         .filter(this::isVerificationKey)
         .filter(this::isNotRevoked)
         .filter(this::isNotExpired)
-        .filter(hasPrivateKey(secretKeyRings))
         .collect(Collectors.toSet());
   }
 
@@ -110,7 +116,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
       case FOR_SIGNING:
         return publicKeyrings.stream()
             .flatMap(keyring -> StreamSupport.stream(keyring.spliterator(), false))
-            .filter(this::isNotMasterKey)
+            // The master key _can_ be used, but should not. TODO: add some heuristics
+            // .filter(this::isNotMasterKey)
             .filter(this::isVerificationKey)
             .filter(this::isNotRevoked)
             .filter(this::isNotExpired)

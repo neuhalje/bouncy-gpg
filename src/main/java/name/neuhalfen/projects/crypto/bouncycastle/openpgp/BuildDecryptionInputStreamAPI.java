@@ -3,11 +3,12 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchProviderException;
+import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Pre202KeySelectionStrategy;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
@@ -25,7 +26,8 @@ public final class BuildDecryptionInputStreamAPI {
   private SignatureValidationStrategy signatureCheckingMode;
 
   // FIXME
-  private final KeySelectionStrategy keySelectionStrategy = new Pre202KeySelectionStrategy();
+  private final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
+      Instant.now());
 
   /**
    * Start building by passing in the keyring config.
@@ -120,13 +122,13 @@ public final class BuildDecryptionInputStreamAPI {
      *
      * {@code ...andRequireSignatureFromAllKeys("signer@example.com")}
      *
-     * @param userIds a valid signature from all of the passed keys is required. The keys MUST exist
+     * @param userIds a valid signature from all of the passed uids is required. The keys MUST exist
      * in the public keyring.
      *
      * @return the next build step
      *
      * @throws PGPException error extracting public keys from keyring
-     * @throws IOException IO is dangerous. Accessing the keyring might tough the filesystem.
+     * @throws IOException IO is dangerous. Accessing the keyring might touch the filesystem.
      */
     @Nonnull
     public Build andRequireSignatureFromAllKeys(@Nullable String... userIds)
@@ -136,7 +138,7 @@ public final class BuildDecryptionInputStreamAPI {
         throw new IllegalArgumentException("userIds must not be null or empty");
       }
       BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies
-          .requireSignatureFromAllKeys(keySelectionStrategy, keyringConfig, userIds);
+          .requireSignatureFromAllUids(keySelectionStrategy, keyringConfig, userIds);
       return new Builder();
     }
 

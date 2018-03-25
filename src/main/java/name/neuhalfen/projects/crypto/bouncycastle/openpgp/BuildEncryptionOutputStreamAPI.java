@@ -5,13 +5,14 @@ import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
+import java.time.Instant;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.PGPEncryptingStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Pre202KeySelectionStrategy;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -25,8 +26,7 @@ public final class BuildEncryptionOutputStreamAPI {
   private KeyringConfig encryptionConfig;
   private PGPAlgorithmSuite algorithmSuite;
 
-  // FIXME
-  private final KeySelectionStrategy keySelectionStrategy = new Pre202KeySelectionStrategy();
+  private KeySelectionStrategy keySelectionStrategy;
 
   @Nullable
   private String signWith;
@@ -35,7 +35,9 @@ public final class BuildEncryptionOutputStreamAPI {
 
   // Signature
 
-  public WithAlgorithmSuite withConfig(KeyringConfig encryptionConfig)
+
+  @SuppressWarnings("PMD.AccessorClassGeneration")
+  public WithKeySelectionStrategy withConfig(KeyringConfig encryptionConfig)
       throws IOException, PGPException {
     if (encryptionConfig == null) {
       throw new IllegalArgumentException("encryptionConfig must not be null");
@@ -51,7 +53,34 @@ public final class BuildEncryptionOutputStreamAPI {
     }
 
     BuildEncryptionOutputStreamAPI.this.encryptionConfig = encryptionConfig;
-    return new WithAlgorithmSuite();
+    return new WithKeySelectionStrategy();
+  }
+
+  public final class WithKeySelectionStrategy extends WithAlgorithmSuiteImpl {
+
+    private WithKeySelectionStrategy() {
+      super();
+      BuildEncryptionOutputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
+          Instant.now());
+    }
+
+    public WithAlgorithmSuite setReferenceDateForKeyValidityTo(
+        Instant dateOfTimestampVerification) {
+      if (dateOfTimestampVerification == null) {
+        throw new IllegalArgumentException("dateOfTimestampVerification must not be null");
+      }
+      BuildEncryptionOutputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
+          Instant.now());
+      return new WithAlgorithmSuiteImpl();
+    }
+
+    public WithAlgorithmSuite withKeySelectionStrategy(KeySelectionStrategy strategy) {
+      if (strategy == null) {
+        throw new IllegalArgumentException("strategy must not be null");
+      }
+      BuildEncryptionOutputStreamAPI.this.keySelectionStrategy = strategy;
+      return new WithAlgorithmSuiteImpl();
+    }
   }
 
 
@@ -61,17 +90,48 @@ public final class BuildEncryptionOutputStreamAPI {
         throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException;
   }
 
-  public final class WithAlgorithmSuite {
+
+  public interface WithAlgorithmSuite {
+
+    To withDefaultAlgorithms();
+
+    To withStrongAlgorithms();
+
+    To withAlgorithms(PGPAlgorithmSuite algorithmSuite);
+
+    @SuppressWarnings("PMD.ShortClassName")
+    interface To {
+
+      SignWith toRecipient(String recipient) throws PGPException;
+
+      interface SignWith {
+
+        Armor andSignWith(String userId) throws IOException, PGPException;
+
+        Armor andDoNotSign();
+
+        interface Armor {
+
+          Build binaryOutput();
+
+          Build armorAsciiOutput();
+        }
+      }
+    }
+  }
+
+
+  private class WithAlgorithmSuiteImpl implements WithAlgorithmSuite {
 
     public To withDefaultAlgorithms() {
       BuildEncryptionOutputStreamAPI.this.algorithmSuite = DefaultPGPAlgorithmSuites
           .defaultSuiteForGnuPG();
-      return new To();
+      return new ToImpl();
     }
 
     public To withStrongAlgorithms() {
       BuildEncryptionOutputStreamAPI.this.algorithmSuite = DefaultPGPAlgorithmSuites.strongSuite();
-      return new To();
+      return new ToImpl();
     }
 
     public To withAlgorithms(PGPAlgorithmSuite algorithmSuite) {
@@ -79,31 +139,35 @@ public final class BuildEncryptionOutputStreamAPI {
         throw new IllegalArgumentException("algorithmSuite must not be null");
       }
       BuildEncryptionOutputStreamAPI.this.algorithmSuite = algorithmSuite;
-      return new To();
+      return new ToImpl();
     }
 
 
     @SuppressWarnings("PMD.ShortClassName")
-    public final class To {
+    final class ToImpl implements To {
 
-      public SignWith toRecipient(String recipient) throws IOException, PGPException {
+      @Override
+      public SignWith toRecipient(String recipient) throws PGPException {
         if (recipient == null || recipient.isEmpty()) {
           throw new IllegalArgumentException("recipient must be a string");
         }
+        try {
+          final PGPPublicKey recipientEncryptionKey = keySelectionStrategy
+              .selectPublicKey(PURPOSE.FOR_ENCRYPTION, recipient, encryptionConfig);
 
-        final PGPPublicKey recipientEncryptionKey = keySelectionStrategy
-            .selectPublicKey(PURPOSE.FOR_ENCRYPTION, recipient, encryptionConfig);
-
-        if (recipientEncryptionKey == null) {
-          throw new PGPException(
-              "No (suitable) public key for encryption to " + recipient + " found");
+          if (recipientEncryptionKey == null) {
+            throw new PGPException(
+                "No (suitable) public key for encryption to " + recipient + " found");
+          }
+          BuildEncryptionOutputStreamAPI.this.recipient = recipientEncryptionKey;
+          return new SignWithImpl();
+        } catch (IOException e) {
+          throw new PGPException("Failed to load keys", e);
         }
-        BuildEncryptionOutputStreamAPI.this.recipient = recipientEncryptionKey;
-        return new SignWith();
       }
 
 
-      public final class SignWith {
+      final class SignWithImpl implements SignWith {
 
         public Armor andSignWith(String userId) throws IOException, PGPException {
 
@@ -117,7 +181,7 @@ public final class BuildEncryptionOutputStreamAPI {
 
           if (signingKeyPubKey == null) {
             throw new PGPException(
-                "No (suitable) public key for signing with " + recipient + " found");
+                "No (suitable) public key for signing with '" + userId + "' found");
           }
 
           PGPSecretKey signingKey = encryptionConfig.getSecretKeyRings()
@@ -129,17 +193,17 @@ public final class BuildEncryptionOutputStreamAPI {
           }
 
           BuildEncryptionOutputStreamAPI.this.signWith = userId;
-          return new Armor();
+          return new ArmorImpl();
         }
 
         @SuppressWarnings("PMD.NullAssignment")
         public Armor andDoNotSign() {
           BuildEncryptionOutputStreamAPI.this.signWith = null;
-          return new Armor();
+          return new ArmorImpl();
         }
 
 
-        public final class Armor {
+        public final class ArmorImpl implements Armor {
 
           public Build binaryOutput() {
             BuildEncryptionOutputStreamAPI.this.armorOutput = false;

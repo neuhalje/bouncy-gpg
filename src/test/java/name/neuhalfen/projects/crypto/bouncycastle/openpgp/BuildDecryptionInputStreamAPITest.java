@@ -15,6 +15,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.Keyring
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
 import org.junit.Before;
 import org.junit.Test;

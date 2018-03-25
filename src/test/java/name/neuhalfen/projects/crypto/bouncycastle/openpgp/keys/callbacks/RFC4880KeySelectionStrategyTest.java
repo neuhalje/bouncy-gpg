@@ -1,13 +1,19 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.junit.Test;
@@ -19,6 +25,26 @@ import org.junit.Test;
  */
 public class RFC4880KeySelectionStrategyTest {
 
+
+  @Test
+  public void findsPublicKeysForValidation() throws PGPException, IOException {
+    final KeySelectionStrategy sut = new Rfc4880KeySelectionStrategy(
+        RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
+
+    final KeyringConfig keyringConfig = Configs.keyringConfigFromResourceForRecipient();
+
+    final Set<PGPPublicKey> validPubKeys = sut
+        .validPublicKeysForVerifyingSignatures("sender@example.com", keyringConfig);
+
+    assertNotNull("Must never return null", validPubKeys);
+    assertEquals("There is a master and a subkey for 'sender@example.com'", 2,
+        validPubKeys.size());
+
+    final Set<Long> foundKeyIds = validPubKeys.stream().map(key -> key.getKeyID())
+        .collect(Collectors.toSet());
+
+    assertTrue("The correct key has been found", foundKeyIds.contains(ExampleMessages.KEY_ID_SENDER));
+  }
 
   @Test()
   public void noPrivateKeys_noSigningKey_isSelected() throws IOException, PGPException {
