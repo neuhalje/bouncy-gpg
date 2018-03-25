@@ -24,7 +24,9 @@ public final class BuildEncryptionOutputStreamAPI {
   private OutputStream sinkForEncryptedData;
   private KeyringConfig encryptionConfig;
   private PGPAlgorithmSuite algorithmSuite;
-  private KeySelectionStrategy keySelectionStrategy = new Pre202KeySelectionStrategy();
+
+  // FIXME
+  private final KeySelectionStrategy keySelectionStrategy = new Pre202KeySelectionStrategy();
 
   @Nullable
   private String signWith;

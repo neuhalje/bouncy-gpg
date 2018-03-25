@@ -67,7 +67,7 @@ public final class SignatureValidationStrategies {
    *
    * @throws PGPException No or more than one public key found for a user id
    **/
-  @SuppressWarnings("PMD.LawOfDemeter")
+  @SuppressWarnings({"PMD.LawOfDemeter","PMD.AvoidLiteralsInIfCondition"})
   @Deprecated
   public static SignatureValidationStrategy requireSignatureFromAllKeys(
       KeySelectionStrategy keySelectionStrategy,
@@ -88,7 +88,7 @@ public final class SignatureValidationStrategies {
         throw new PGPException("Could not find public-key for userid '" + userId + "'");
       }
 
-      if (availableKeys.size()>1 ) {
+      if (availableKeys.size() > 1) {
         throw new PGPException("Found more than one (" + availableKeys.size() + ") keys for userid '" + userId + "'");
       }
 

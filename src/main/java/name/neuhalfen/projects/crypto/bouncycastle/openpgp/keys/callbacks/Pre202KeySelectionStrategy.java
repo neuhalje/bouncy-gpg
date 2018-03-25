@@ -33,10 +33,12 @@ public final class Pre202KeySelectionStrategy implements KeySelectionStrategy {
 
   @Nullable
   @Override
+  @SuppressWarnings({"PMD.LawOfDemeter", "PMD.OnlyOneReturn"})
   public PGPPublicKey selectPublicKey(PURPOSE purpose, String uid, KeyringConfig keyringConfig)
       throws PGPException, IOException {
 
-    final Iterator<PGPPublicKeyRing> keyRings = keyringConfig.getPublicKeyRings().getKeyRings(uid, true,true);
+    final Iterator<PGPPublicKeyRing> keyRings = keyringConfig.getPublicKeyRings()
+        .getKeyRings(uid, true, true);
 
     if (!keyRings.hasNext()) {
       return null;
@@ -57,10 +59,12 @@ public final class Pre202KeySelectionStrategy implements KeySelectionStrategy {
   }
 
   @Override
+  @SuppressWarnings({"PMD.LawOfDemeter", "PMD.OnlyOneReturn"})
   public Set<PGPPublicKey> validPublicKeysForVerifyingSignatures(String uid,
       KeyringConfig keyringConfig) throws PGPException, IOException {
 
-    final Iterator<PGPPublicKeyRing> keyRings = keyringConfig.getPublicKeyRings().getKeyRings(uid,true,true);
+    final Iterator<PGPPublicKeyRing> keyRings = keyringConfig.getPublicKeyRings()
+        .getKeyRings(uid, true, true);
 
     if (!keyRings.hasNext()) {
       return Collections.EMPTY_SET;
@@ -82,8 +86,8 @@ public final class Pre202KeySelectionStrategy implements KeySelectionStrategy {
    *
    * @return a public key that can be used for signing, null if non founf
    */
-  @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
   @Nullable
+  @SuppressWarnings({"PMD.LawOfDemeter", "PMD.DataflowAnomalyAnalysis"})
   private static PGPPublicKey extractSigningPublicKey(PGPPublicKeyRing keyring) {
 
     int highestScore = Integer.MIN_VALUE;
@@ -105,6 +109,7 @@ public final class Pre202KeySelectionStrategy implements KeySelectionStrategy {
    * - Try not to use master keys (if possible) because signing should be done with subkeys
    * - Give a bonus to "sign only" keys (or 'AUTH' only keys - these are not detected)
    */
+  @SuppressWarnings("PMD.LawOfDemeter")
   private static int calculateSigningKeyScore(PGPPublicKey pubKey) {
     int score = 0;
     if (!pubKey.isMasterKey()) {
@@ -118,6 +123,8 @@ public final class Pre202KeySelectionStrategy implements KeySelectionStrategy {
 
 
   /**
+   * ONLY USED TO TEST AGAINST OLD BEHAVIOUR!!!
+   *
    * Extracts the first secret signing key for UID {@code signatureUid} suitable for signature
    * generation from a key ring collection {@code secretKeyRings}.
    *
@@ -128,7 +135,7 @@ public final class Pre202KeySelectionStrategy implements KeySelectionStrategy {
    *
    * @throws PGPException if no key ring or key with that Uid is found
    */
-  @SuppressWarnings("PMD.LawOfDemeter")
+  @SuppressWarnings({"PMD.LawOfDemeter","PMD.DefaultPackage"})
   static PGPSecretKey extractSecretSigningKeyFromKeyrings(
       final PGPSecretKeyRingCollection pgpSec, final String signingKeyUid)
       throws PGPException {
@@ -171,6 +178,7 @@ public final class Pre202KeySelectionStrategy implements KeySelectionStrategy {
    * @return the encryption key
    */
   @Nullable
+  @SuppressWarnings({"PMD.LawOfDemeter"})
   private static PGPPublicKey getEncryptionKey(final PGPPublicKeyRing publicKeyRing) {
     int score;
     int highestScore = Integer.MIN_VALUE;

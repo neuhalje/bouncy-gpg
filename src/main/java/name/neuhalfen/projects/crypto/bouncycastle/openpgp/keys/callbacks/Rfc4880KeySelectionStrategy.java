@@ -59,6 +59,7 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
    *
    * @return Set with keyrings, never null.
    */
+  @SuppressWarnings({"PMD.LawOfDemeter"})
   protected Set<PGPPublicKeyRing> publicKeyRingsForUid(final PURPOSE purpose, final String uid,
       KeyringConfig keyringConfig)
       throws IOException, PGPException {
@@ -77,6 +78,7 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
 
   @Override
+  @SuppressWarnings({"PMD.LawOfDemeter", "PMD.ShortVariable"})
   public Set<PGPPublicKey> validPublicKeysForVerifyingSignatures(String uid,
       KeyringConfig keyringConfig) throws PGPException, IOException {
 
@@ -95,6 +97,7 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
   @Nullable
   @Override
+  @SuppressWarnings({"PMD.LawOfDemeter", "PMD.ShortVariable", "PMD.OnlyOneReturn"})
   public PGPPublicKey selectPublicKey(PURPOSE purpose, String uid, KeyringConfig keyringConfig)
       throws PGPException, IOException {
 
@@ -131,30 +134,31 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
 
   protected Predicate<PGPPublicKey> hasPrivateKey(final PGPSecretKeyRingCollection secretKeyRings) {
-    return p -> {
+    return pubKey -> {
       try {
-        return secretKeyRings.contains(p.getKeyID());
+        return secretKeyRings.contains(pubKey.getKeyID());
       } catch (PGPException e) {
         // ignore this for filtering
-        LOGGER.debug("Failed to test for private key for pubkey " + p.getKeyID());
+        LOGGER.debug("Failed to test for private key for pubkey " + pubKey.getKeyID());
         return false;
       }
     };
   }
 
 
-  protected boolean isNotMasterKey(PGPPublicKey p) {
-    return !p.isMasterKey();
+  protected boolean isNotMasterKey(PGPPublicKey pubKey) {
+    return !pubKey.isMasterKey();
   }
 
-  protected boolean isNotExpired(PGPPublicKey p) {
+  @SuppressWarnings({"PMD.LawOfDemeter"})
+  protected boolean isNotExpired(PGPPublicKey pubKey) {
     // getValidSeconds == 0 means: no expiration date
-    boolean hasExpiryDate = p.getValidSeconds() > 0;
+    boolean hasExpiryDate = pubKey.getValidSeconds() > 0;
     final boolean isExpired;
 
     if (hasExpiryDate) {
-      isExpired = p.getCreationTime().toInstant()
-          .plusSeconds(p.getValidSeconds())
+      isExpired = pubKey.getCreationTime().toInstant()
+          .plusSeconds(pubKey.getValidSeconds())
           .isBefore(getDateOfTimestampVerification());
     } else {
       isExpired = false;
@@ -165,8 +169,14 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
   protected boolean isEncryptionKey(PGPPublicKey publicKey) {
     final long keyFlags = extractPublicKeyFlags(publicKey);
-    return (keyFlags & PGPKeyFlags.CAN_ENCRYPT_COMMS) == PGPKeyFlags.CAN_ENCRYPT_COMMS
-        || (keyFlags & PGPKeyFlags.CAN_ENCRYPT_STORAGE) == PGPKeyFlags.CAN_ENCRYPT_STORAGE;
+
+    final boolean canEncryptCommunication =
+        (keyFlags & PGPKeyFlags.CAN_ENCRYPT_COMMS) == PGPKeyFlags.CAN_ENCRYPT_COMMS;
+
+    final boolean canEncryptStorage =
+        (keyFlags & PGPKeyFlags.CAN_ENCRYPT_STORAGE) == PGPKeyFlags.CAN_ENCRYPT_STORAGE;
+
+    return canEncryptCommunication || canEncryptStorage;
   }
 
   protected boolean isVerificationKey(PGPPublicKey publicKey) {
@@ -177,6 +187,7 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     return !publicKey.hasRevocation();
   }
 
+  @SuppressWarnings({"PMD.LawOfDemeter"})
   protected long extractPublicKeyFlags(PGPPublicKey publicKey) {
     long aggregatedKeyFlags = 0;
 

@@ -23,7 +23,9 @@ public final class BuildDecryptionInputStreamAPI {
   private KeyringConfig keyringConfig;
   @Nonnull
   private SignatureValidationStrategy signatureCheckingMode;
-  private KeySelectionStrategy keySelectionStrategy = new Pre202KeySelectionStrategy();
+
+  // FIXME
+  private final KeySelectionStrategy keySelectionStrategy = new Pre202KeySelectionStrategy();
 
   /**
    * Start building by passing in the keyring config.
