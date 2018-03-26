@@ -39,8 +39,16 @@ ssb  rsa2048/0x83063C3DA3814052
       .parse("2018-03-26T10:56:21Z")
       .toInstant();
 
+  /**
+   * Key SIGNATURE_KEY_EXPIRED is no longer valid here.
+   */
   public final static Instant SIGNATURE_KEY_GUARANTEED_EXPIRED_AT = EXPIRED_KEY_EXPIRATION_DATE
       .plusSeconds(1);
+  /**
+   * Key SIGNATURE_KEY_EXPIRED is still valid here.
+   */
+  public final static Instant SIGNATURE_KEY_GUARANTEED_VALID_AT = EXPIRED_KEY_EXPIRATION_DATE
+      .minusSeconds(1);
 
   public final static long MASTER_KEY_ID = Long.parseUnsignedLong("F8BEA74E37D9F45D", 16);
   public final static long ENCRYPTION_KEY = Long.parseUnsignedLong("47377FEDD16C26B3", 16);

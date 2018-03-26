@@ -326,8 +326,8 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
 
     final OutputStream outputStream = BouncyGPG
         .encryptToStream()
-        .withConfig(Configs.keyringConfigFromFilesForSender()).setReferenceDateForKeyValidityTo(
-            Instant.MAX)
+        .withConfig(Configs.keyringConfigFromFilesForSender())
+        .setReferenceDateForKeyValidityTo(Instant.MAX)
         .withAlgorithms(algorithmSuite)
         .toRecipient("recipient@example.com")
         .andSignWith("sender@example.com")

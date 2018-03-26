@@ -159,8 +159,14 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
   @SuppressWarnings({"PMD.LawOfDemeter"})
   protected boolean isNotExpired(PGPPublicKey pubKey) {
+    return !isExpired(pubKey);
+  }
+
+  @SuppressWarnings({"PMD.LawOfDemeter"})
+  protected boolean isExpired(PGPPublicKey pubKey) {
     // getValidSeconds == 0 means: no expiration date
     boolean hasExpiryDate = pubKey.getValidSeconds() > 0;
+
     final boolean isExpired;
 
     if (hasExpiryDate) {
@@ -170,7 +176,7 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     } else {
       isExpired = false;
     }
-    return !isExpired;
+    return isExpired;
   }
 
 
@@ -190,8 +196,13 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     return (extractPublicKeyFlags(publicKey) & PGPKeyFlags.CAN_SIGN) == PGPKeyFlags.CAN_SIGN;
   }
 
+
+  public boolean isRevoked(PGPPublicKey publicKey) {
+    return publicKey.hasRevocation();
+  }
+
   protected boolean isNotRevoked(PGPPublicKey publicKey) {
-    return !publicKey.hasRevocation();
+    return !isRevoked(publicKey);
   }
 
   @SuppressWarnings({"PMD.LawOfDemeter"})
