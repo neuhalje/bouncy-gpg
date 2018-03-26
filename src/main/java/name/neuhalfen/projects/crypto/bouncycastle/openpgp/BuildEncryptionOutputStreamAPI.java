@@ -22,6 +22,9 @@ import org.bouncycastle.openpgp.PGPSecretKey;
 @SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter"})
 public final class BuildEncryptionOutputStreamAPI {
 
+  private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
+      .getLogger(BuildEncryptionOutputStreamAPI.class);
+
   private OutputStream sinkForEncryptedData;
   private KeyringConfig encryptionConfig;
   private PGPAlgorithmSuite algorithmSuite;
@@ -71,6 +74,8 @@ public final class BuildEncryptionOutputStreamAPI {
       }
       BuildEncryptionOutputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
           dateOfTimestampVerification);
+      LOGGER.trace("WithKeySelectionStrategy: setReferenceDateForKeyValidityTo {}",
+          dateOfTimestampVerification);
       return new WithAlgorithmSuiteImpl();
     }
 
@@ -79,6 +84,8 @@ public final class BuildEncryptionOutputStreamAPI {
         throw new IllegalArgumentException("strategy must not be null");
       }
       BuildEncryptionOutputStreamAPI.this.keySelectionStrategy = strategy;
+      LOGGER.trace("WithKeySelectionStrategy: override strategy to {}",
+          strategy.getClass().toGenericString());
       return new WithAlgorithmSuiteImpl();
     }
   }
@@ -126,11 +133,17 @@ public final class BuildEncryptionOutputStreamAPI {
     public To withDefaultAlgorithms() {
       BuildEncryptionOutputStreamAPI.this.algorithmSuite = DefaultPGPAlgorithmSuites
           .defaultSuiteForGnuPG();
+      LOGGER
+          .trace("use algorithms {}",
+              BuildEncryptionOutputStreamAPI.this.algorithmSuite.toString());
       return new ToImpl();
     }
 
     public To withStrongAlgorithms() {
       BuildEncryptionOutputStreamAPI.this.algorithmSuite = DefaultPGPAlgorithmSuites.strongSuite();
+      LOGGER
+          .trace("use algorithms {}",
+              BuildEncryptionOutputStreamAPI.this.algorithmSuite.toString());
       return new ToImpl();
     }
 
@@ -139,6 +152,9 @@ public final class BuildEncryptionOutputStreamAPI {
         throw new IllegalArgumentException("algorithmSuite must not be null");
       }
       BuildEncryptionOutputStreamAPI.this.algorithmSuite = algorithmSuite;
+      LOGGER
+          .trace("use algorithms {}",
+              BuildEncryptionOutputStreamAPI.this.algorithmSuite.toString());
       return new ToImpl();
     }
 
@@ -147,7 +163,7 @@ public final class BuildEncryptionOutputStreamAPI {
     final class ToImpl implements To {
 
       @Override
-      public SignWith toRecipient(String recipient) throws PGPException {
+      public SignWith toRecipient(final String recipient) throws PGPException {
         if (recipient == null || recipient.isEmpty()) {
           throw new IllegalArgumentException("recipient must be a string");
         }
@@ -160,6 +176,8 @@ public final class BuildEncryptionOutputStreamAPI {
                 "No (suitable) public key for encryption to " + recipient + " found");
           }
           BuildEncryptionOutputStreamAPI.this.recipient = recipientEncryptionKey;
+          LOGGER.trace("encrypt to recipient {} using key 0x{}", recipient,
+              Long.toHexString(BuildEncryptionOutputStreamAPI.this.recipient.getKeyID()));
           return new SignWithImpl();
         } catch (IOException e) {
           throw new PGPException("Failed to load keys", e);
@@ -193,12 +211,14 @@ public final class BuildEncryptionOutputStreamAPI {
           }
 
           BuildEncryptionOutputStreamAPI.this.signWith = userId;
+          LOGGER.trace("sign with {}", BuildEncryptionOutputStreamAPI.this.signWith);
           return new ArmorImpl();
         }
 
         @SuppressWarnings("PMD.NullAssignment")
         public Armor andDoNotSign() {
           BuildEncryptionOutputStreamAPI.this.signWith = null;
+          LOGGER.trace("do not sign ");
           return new ArmorImpl();
         }
 
@@ -207,11 +227,13 @@ public final class BuildEncryptionOutputStreamAPI {
 
           public Build binaryOutput() {
             BuildEncryptionOutputStreamAPI.this.armorOutput = false;
+            LOGGER.trace("binary output");
             return new Builder();
           }
 
           public Build armorAsciiOutput() {
             BuildEncryptionOutputStreamAPI.this.armorOutput = true;
+            LOGGER.trace("ascii armor output");
             return new Builder();
           }
 

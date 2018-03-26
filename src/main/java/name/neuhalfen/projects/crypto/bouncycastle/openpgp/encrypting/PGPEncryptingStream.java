@@ -13,6 +13,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorit
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
@@ -32,6 +33,8 @@ import org.bouncycastle.openpgp.operator.bc.BcPGPDataEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPublicKeyKeyEncryptionMethodGenerator;
 
 public final class PGPEncryptingStream extends OutputStream {
+  private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
+      .getLogger(PGPEncryptingStream.class);
 
   private final KeyringConfig config;
   private final PGPAlgorithmSuite algorithmSuite;
@@ -143,6 +146,7 @@ public final class PGPEncryptingStream extends OutputStream {
         throw new PGPException(
             "No suitable public key found for signing with uid: '" + signingUid + "'");
       }
+      LOGGER.trace("Signing for uid '{}' with key 0x{}.",signingUid, Long.toHexString(signingPublicKey.getKeyID()));
 
       final PGPSecretKey pgpSec = config.getSecretKeyRings().getSecretKey(signingPublicKey.getKeyID());
       if (pgpSec == null) {

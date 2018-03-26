@@ -66,7 +66,7 @@ public final class PGPUtilities {
   @SuppressWarnings("PMD.UseVarargs")
   public static PGPPrivateKey extractPrivateKey(PGPSecretKey encryptedKey, final char[] passphrase)
       throws PGPException {
-    LOGGER.debug("Extracting secret key with key ID '0x{}'",
+    LOGGER.trace("Extracting secret key with key ID '0x{}'",
         Long.toHexString(encryptedKey.getKeyID()));
 
     PGPDigestCalculatorProvider calcProvider = new JcaPGPDigestCalculatorProviderBuilder()

@@ -116,8 +116,6 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
       case FOR_SIGNING:
         return publicKeyrings.stream()
             .flatMap(keyring -> StreamSupport.stream(keyring.spliterator(), false))
-            // The master key _can_ be used, but should not. TODO: add some heuristics
-            // .filter(this::isNotMasterKey)
             .filter(this::isVerificationKey)
             .filter(this::isNotRevoked)
             .filter(this::isNotExpired)
@@ -143,7 +141,14 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   protected Predicate<PGPPublicKey> hasPrivateKey(final PGPSecretKeyRingCollection secretKeyRings) {
     return pubKey -> {
       try {
-        return secretKeyRings.contains(pubKey.getKeyID());
+        final boolean hasPrivateKey = secretKeyRings.contains(pubKey.getKeyID());
+
+        if (!hasPrivateKey) {
+          LOGGER.trace("Skipping pubkey {} (no private key found)",
+              Long.toHexString(pubKey.getKeyID()));
+        }
+
+        return hasPrivateKey;
       } catch (PGPException e) {
         // ignore this for filtering
         LOGGER.debug("Failed to test for private key for pubkey " + pubKey.getKeyID());
@@ -170,12 +175,19 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     final boolean isExpired;
 
     if (hasExpiryDate) {
-      isExpired = pubKey.getCreationTime().toInstant()
-          .plusSeconds(pubKey.getValidSeconds())
+      final Instant expiryDate = pubKey.getCreationTime().toInstant()
+          .plusSeconds(pubKey.getValidSeconds());
+      isExpired = expiryDate
           .isBefore(getDateOfTimestampVerification());
+
+      if (isExpired) {
+        LOGGER.trace("Skipping pubkey {} (expired since {})",
+            Long.toHexString(pubKey.getKeyID()), expiryDate.toString());
+      }
     } else {
       isExpired = false;
     }
+
     return isExpired;
   }
 
@@ -192,13 +204,25 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     return canEncryptCommunication || canEncryptStorage;
   }
 
-  protected boolean isVerificationKey(PGPPublicKey publicKey) {
-    return (extractPublicKeyFlags(publicKey) & PGPKeyFlags.CAN_SIGN) == PGPKeyFlags.CAN_SIGN;
+  protected boolean isVerificationKey(PGPPublicKey pubKey) {
+    final boolean isVerficationKey =
+        (extractPublicKeyFlags(pubKey) & PGPKeyFlags.CAN_SIGN) == PGPKeyFlags.CAN_SIGN;
+
+    if (!isVerficationKey) {
+      LOGGER.trace("Skipping pubkey {} (no signing key)",
+          Long.toHexString(pubKey.getKeyID()));
+    }
+    return isVerficationKey;
   }
 
 
-  public boolean isRevoked(PGPPublicKey publicKey) {
-    return publicKey.hasRevocation();
+  public boolean isRevoked(PGPPublicKey pubKey) {
+    final boolean hasRevocation = pubKey.hasRevocation();
+    if (hasRevocation) {
+      LOGGER.trace("Skipping pubkey {} (revoked)",
+          Long.toHexString(pubKey.getKeyID()));
+    }
+    return hasRevocation;
   }
 
   protected boolean isNotRevoked(PGPPublicKey publicKey) {
