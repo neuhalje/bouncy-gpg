@@ -25,8 +25,7 @@ public final class BuildDecryptionInputStreamAPI {
   @Nonnull
   private SignatureValidationStrategy signatureCheckingMode;
 
-  // FIXME
-  private final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
+  private KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
       Instant.now());
 
   /**
@@ -37,14 +36,43 @@ public final class BuildDecryptionInputStreamAPI {
    * @return next build step
    */
   @Nonnull
-  public Validation withConfig(@Nullable KeyringConfig keyringConfig) {
+  public ValidationWithKeySelectionStrategy withConfig(@Nullable KeyringConfig keyringConfig) {
     if (keyringConfig == null) {
       throw new IllegalArgumentException("keyringConfig must not be null");
     }
 
     BuildDecryptionInputStreamAPI.this.keyringConfig = keyringConfig;
-    return new Validation();
+    return new ValidationWithKeySelectionStrategy();
   }
+
+
+  public final class ValidationWithKeySelectionStrategy extends ValidationImpl {
+
+    private ValidationWithKeySelectionStrategy() {
+      super();
+      BuildDecryptionInputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
+          Instant.now());
+    }
+
+    public Validation setReferenceDateForKeyValidityTo(
+        Instant dateOfTimestampVerification) {
+      if (dateOfTimestampVerification == null) {
+        throw new IllegalArgumentException("dateOfTimestampVerification must not be null");
+      }
+      BuildDecryptionInputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
+          Instant.now());
+      return new ValidationImpl();
+    }
+
+    public Validation withKeySelectionStrategy(KeySelectionStrategy strategy) {
+      if (strategy == null) {
+        throw new IllegalArgumentException("strategy must not be null");
+      }
+      BuildDecryptionInputStreamAPI.this.keySelectionStrategy = strategy;
+      return new ValidationImpl();
+    }
+  }
+
 
   public interface Build {
 
@@ -71,7 +99,7 @@ public final class BuildDecryptionInputStreamAPI {
         throws IOException, NoSuchProviderException;
   }
 
-  public final class Validation {
+  public interface Validation {
 
     /**
      * Decryption will enforce that the ciphertext has been signed by ALL of the public key ids
@@ -95,16 +123,7 @@ public final class BuildDecryptionInputStreamAPI {
      * @return the next build step
      */
     @Nonnull
-    public Build andRequireSignatureFromAllKeys(@Nullable Long... publicKeyIds) {
-      if (publicKeyIds == null || publicKeyIds.length == 0) {
-        throw new IllegalArgumentException("publicKeyIds must not be null or empty");
-      }
-
-      BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies
-          .requireSignatureFromAllKeys(publicKeyIds);
-      return new Builder();
-    }
-
+    Build andRequireSignatureFromAllKeys(@Nullable Long... publicKeyIds);
 
     /**
      * Decryption will enforce that the ciphertext has been signed by ALL of the public key ids
@@ -131,6 +150,44 @@ public final class BuildDecryptionInputStreamAPI {
      * @throws IOException IO is dangerous. Accessing the keyring might touch the filesystem.
      */
     @Nonnull
+    Build andRequireSignatureFromAllKeys(@Nullable String... userIds)
+        throws PGPException, IOException;
+
+    /**
+     * Enforce a valid signature from *any* public key in the keyring. . Signatures of keys NOT
+     * present in the keyring are IGNORED (treated as not existing).
+     *
+     * @return next build step
+     */
+    @Nonnull
+    Build andValidateSomeoneSigned();
+
+    /**
+     * Ignore all, even invalid(!) signatures.
+     *
+     * @return next build step
+     */
+    @Nonnull
+    Build andIgnoreSignatures();
+  }
+
+  private class ValidationImpl implements Validation {
+
+    @Override
+    @Nonnull
+    public Build andRequireSignatureFromAllKeys(@Nullable Long... publicKeyIds) {
+      if (publicKeyIds == null || publicKeyIds.length == 0) {
+        throw new IllegalArgumentException("publicKeyIds must not be null or empty");
+      }
+
+      BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies
+          .requireSignatureFromAllKeys(publicKeyIds);
+      return new Builder();
+    }
+
+
+    @Override
+    @Nonnull
     public Build andRequireSignatureFromAllKeys(@Nullable String... userIds)
         throws PGPException, IOException {
 
@@ -142,12 +199,7 @@ public final class BuildDecryptionInputStreamAPI {
       return new Builder();
     }
 
-    /**
-     * Enforce a valid signature from *any* public key in the keyring. . Signatures of keys NOT
-     * present in the keyring are IGNORED (treated as not existing).
-     *
-     * @return next build step
-     */
+    @Override
     @Nonnull
     public Build andValidateSomeoneSigned() {
       BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies
@@ -155,11 +207,7 @@ public final class BuildDecryptionInputStreamAPI {
       return new Builder();
     }
 
-    /**
-     * Ignore all, even invalid(!) signatures.
-     *
-     * @return next build step
-     */
+    @Override
     @Nonnull
     public Build andIgnoreSignatures() {
       BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies
