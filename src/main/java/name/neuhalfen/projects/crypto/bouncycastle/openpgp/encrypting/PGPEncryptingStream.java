@@ -141,7 +141,7 @@ public final class PGPEncryptingStream extends OutputStream {
           .selectPublicKey(PURPOSE.FOR_SIGNING, signingUid, config);
       if (signingPublicKey == null) {
         throw new PGPException(
-            "No suitable private key found for signing with uid: '" + signingUid + "'");
+            "No suitable public key found for signing with uid: '" + signingUid + "'");
       }
 
       final PGPSecretKey pgpSec = config.getSecretKeyRings().getSecretKey(signingPublicKey.getKeyID());

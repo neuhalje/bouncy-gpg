@@ -48,7 +48,7 @@ public final class BuildDecryptionInputStreamAPI {
 
   public final class ValidationWithKeySelectionStrategy extends ValidationImpl {
 
-    private ValidationWithKeySelectionStrategy() {
+    ValidationWithKeySelectionStrategy() {
       super();
       BuildDecryptionInputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
           Instant.now());

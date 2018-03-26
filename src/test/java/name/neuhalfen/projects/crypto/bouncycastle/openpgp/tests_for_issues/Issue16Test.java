@@ -32,7 +32,7 @@ public class Issue16Test {
   }
 
   @Test
-  public void issue16_encryotToStdout()
+  public void issue16_encryptToStdout()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
     final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
 

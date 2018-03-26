@@ -38,7 +38,6 @@ public class RFC4880KeySelectionStrategyTest {
     assertFalse("Key without expiration is not expired", sut.isExpired(nonExpiredKey));
   }
 
-
   @Test
   public void expiryDetectionWorks_withExpirationDate_beforeExpiration()
       throws IOException, PGPException {
