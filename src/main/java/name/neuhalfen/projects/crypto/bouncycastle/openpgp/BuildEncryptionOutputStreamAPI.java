@@ -70,11 +70,11 @@ public final class BuildEncryptionOutputStreamAPI {
         throw new IllegalArgumentException("dateOfTimestampVerification must not be null");
       }
       BuildEncryptionOutputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-          Instant.now());
+          dateOfTimestampVerification);
       return new WithAlgorithmSuiteImpl();
     }
 
-    public WithAlgorithmSuite withKeySelectionStrategy(KeySelectionStrategy strategy) {
+    public WithAlgorithmSuite withKeySelectionStrategy(final KeySelectionStrategy strategy) {
       if (strategy == null) {
         throw new IllegalArgumentException("strategy must not be null");
       }

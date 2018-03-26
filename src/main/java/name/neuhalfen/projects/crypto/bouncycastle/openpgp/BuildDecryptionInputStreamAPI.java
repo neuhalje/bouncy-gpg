@@ -60,7 +60,7 @@ public final class BuildDecryptionInputStreamAPI {
         throw new IllegalArgumentException("dateOfTimestampVerification must not be null");
       }
       BuildDecryptionInputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-          Instant.now());
+          dateOfTimestampVerification);
       return new ValidationImpl();
     }
 
