@@ -17,6 +17,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.io.Streams;
 
 public class EncryptMain {
+  private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
+      .getLogger(EncryptMain.class);
 
   static void installBCProvider() {
     if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
@@ -43,7 +45,7 @@ public class EncryptMain {
         long startTime = System.currentTimeMillis();
 
         final int BUFFSIZE = 8 * 1024;
-        System.out.format("-- Using a write buffer of %d bytes\n", BUFFSIZE);
+        LOGGER.trace("Using a write buffer of {} bytes\n", BUFFSIZE);
 
         final KeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
             secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));
@@ -67,10 +69,9 @@ public class EncryptMain {
         }
         long endTime = System.currentTimeMillis();
 
-        System.out.format("Encryption took %.2f s\n", ((double) endTime - startTime) / 1000);
+        LOGGER.info(String.format("Encryption took %.2f s",  ((double) endTime - startTime) / 1000));
       } catch (Exception e) {
-        System.err.format("ERROR: %s", e.getMessage());
-        e.printStackTrace();
+        LOGGER.error("ERROR", e);
       }
     }
   }

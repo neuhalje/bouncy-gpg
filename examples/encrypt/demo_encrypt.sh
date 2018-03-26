@@ -10,7 +10,7 @@ then
   echo "$0  sourceFile destFile"
 else
 
-CP=${LOCATION}/libs/${ASSEMBLY}.jar
+#CP=${LOCATION}/libs/${ASSEMBLY}.jar
 for JAR in ${LOCATION}/install/encrypt/lib/*.jar
 do
    CP=${CP}:${JAR}
