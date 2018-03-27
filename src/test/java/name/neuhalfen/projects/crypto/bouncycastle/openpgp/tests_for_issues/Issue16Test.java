@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,9 +16,11 @@ import java.security.Security;
 import java.security.SignatureException;
 import java.time.Instant;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.RFC4880TestKeyringsDedicatedSigningKey;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.RFC4880TestKeyringsMasterKeyAsSigningKey;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
@@ -35,6 +38,26 @@ public class Issue16Test {
       Security.addProvider(new BouncyCastleProvider());
     }
   }
+
+
+  @Test
+  @Ignore("This only helps in manual investigation")
+  public void forManualAnalysis__with_keysFromGPG_files()
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+
+    final KeyringConfig config = KeyringConfigs
+        .withKeyRingsFromFiles(new File("path/to/pubring.gpg"), new File("/path/to/secring.gpg"),
+            KeyringConfigCallbacks.withPassword("s3cret"));
+
+    final String recipient = "recipient@example.com";
+    final String signer = "signer@example.com";
+
+    encryptToStdout(config,
+       recipient,
+        signer,
+        Instant.now());
+  }
+
 
   @Test
   @Ignore("This only helps in manual investigation")
