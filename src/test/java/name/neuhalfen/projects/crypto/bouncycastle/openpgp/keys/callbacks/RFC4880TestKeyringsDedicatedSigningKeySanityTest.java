@@ -1,87 +1,100 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
-import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.RFC4880TestKeyrings.EXPIRED_KEY_CREATION_TIME;
+import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.RFC4880TestKeyringsDedicatedSigningKey.EXPIRED_KEY_CREATION_TIME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.security.Security;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
-import org.bouncycastle.openpgp.PGPKeyFlags;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
-import org.bouncycastle.openpgp.PGPSignature;
-import org.bouncycastle.openpgp.PGPSignatureSubpacketVector;
+import org.junit.Before;
 import org.junit.Test;
 
 
 /**
  * Sanity test for the rfc4880  test keyrings.
  */
-public class RFC4880TestKeyringsSanityTest {
+public class RFC4880TestKeyringsDedicatedSigningKeySanityTest {
+
+  @Before
+  public void before() {
+    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+      Security.addProvider(new BouncyCastleProvider());
+    }
+  }
 
   @Test
   public void publicKeys_containsOnlyOneCollection() throws IOException, PGPException {
-    final KeyringConfig sut = RFC4880TestKeyrings.publicKeyOnlyKeyringConfig();
+    final KeyringConfig sut = RFC4880TestKeyringsDedicatedSigningKey.publicKeyOnlyKeyringConfig();
     assertEquals("Only one public keyring in the sut", 1, sut.getPublicKeyRings().size());
   }
 
   @Test
   public void privateKeys_containsOnlyOneCollection() throws IOException, PGPException {
-    final KeyringConfig sut = RFC4880TestKeyrings.publicAndPrivateKeyKeyringConfig();
+    final KeyringConfig sut = RFC4880TestKeyringsDedicatedSigningKey
+        .publicAndPrivateKeyKeyringConfig();
     assertEquals("Only one private keyring in the sut", 1, sut.getSecretKeyRings().size());
   }
 
   @Test
   public void validate_pubKeyOnly_TestSetup() throws IOException, PGPException {
-    final KeyringConfig sut = RFC4880TestKeyrings.publicKeyOnlyKeyringConfig();
+    final KeyringConfig sut = RFC4880TestKeyringsDedicatedSigningKey.publicKeyOnlyKeyringConfig();
 
     assertFalse("Master private key does not exist",
-        sut.getSecretKeyRings().contains(RFC4880TestKeyrings.MASTER_KEY_ID));
+        sut.getSecretKeyRings().contains(RFC4880TestKeyringsDedicatedSigningKey.MASTER_KEY_ID));
 
     final PGPPublicKeyRingCollection keyRings = sut.getPublicKeyRings();
-    assertTrue("Master key exists", keyRings.contains(RFC4880TestKeyrings.MASTER_KEY_ID));
-    assertTrue("Encryption key exists", keyRings.contains(RFC4880TestKeyrings.ENCRYPTION_KEY));
+    assertTrue("Master key exists",
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.MASTER_KEY_ID));
+    assertTrue("Encryption key exists",
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.ENCRYPTION_KEY));
     assertTrue("Active Signature Key key exists",
-        keyRings.contains(RFC4880TestKeyrings.SIGNATURE_KEY_ACTIVE));
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_ACTIVE));
     assertTrue("Expired Signature key exists",
-        keyRings.contains(RFC4880TestKeyrings.SIGNATURE_KEY_EXPIRED));
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_EXPIRED));
     assertTrue("Revokes Signature key exists",
-        keyRings.contains(RFC4880TestKeyrings.SIGNATURE_KEY_REVOKED));
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_REVOKED));
     assertTrue("Authentication key exists",
-        keyRings.contains(RFC4880TestKeyrings.AUTHENTICATION_KEY));
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.AUTHENTICATION_KEY));
   }
 
 
   @Test
   public void validate_privateKey_TestSetup() throws IOException, PGPException {
-    final KeyringConfig sut = RFC4880TestKeyrings.publicAndPrivateKeyKeyringConfig();
+    final KeyringConfig sut = RFC4880TestKeyringsDedicatedSigningKey
+        .publicAndPrivateKeyKeyringConfig();
 
     final PGPSecretKeyRingCollection keyRings = sut.getSecretKeyRings();
 
-    assertTrue("Master key exists", keyRings.contains(RFC4880TestKeyrings.MASTER_KEY_ID));
-    assertTrue("Encryption key exists", keyRings.contains(RFC4880TestKeyrings.ENCRYPTION_KEY));
+    assertTrue("Master key exists",
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.MASTER_KEY_ID));
+    assertTrue("Encryption key exists",
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.ENCRYPTION_KEY));
     assertTrue("Active Signature Key key exists",
-        keyRings.contains(RFC4880TestKeyrings.SIGNATURE_KEY_ACTIVE));
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_ACTIVE));
     assertTrue("Expired Signature key exists",
-        keyRings.contains(RFC4880TestKeyrings.SIGNATURE_KEY_EXPIRED));
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_EXPIRED));
     assertTrue("Revokes Signature key exists",
-        keyRings.contains(RFC4880TestKeyrings.SIGNATURE_KEY_REVOKED));
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_REVOKED));
     assertTrue("Authentication key exists",
-        keyRings.contains(RFC4880TestKeyrings.AUTHENTICATION_KEY));
+        keyRings.contains(RFC4880TestKeyringsDedicatedSigningKey.AUTHENTICATION_KEY));
   }
 
 
   @Test
   public void validate_expiredKey_isExpired() throws IOException, PGPException {
-    final KeyringConfig sut = RFC4880TestKeyrings.publicKeyOnlyKeyringConfig();
+    final KeyringConfig sut = RFC4880TestKeyringsDedicatedSigningKey.publicKeyOnlyKeyringConfig();
 
     final PGPPublicKeyRingCollection keyRings = sut.getPublicKeyRings();
-    final PGPPublicKey publicKey = keyRings.getPublicKey(RFC4880TestKeyrings.SIGNATURE_KEY_EXPIRED);
+    final PGPPublicKey publicKey = keyRings
+        .getPublicKey(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_EXPIRED);
 
     assertNotNull("Expired Signature key exists", publicKey);
 
@@ -93,10 +106,11 @@ public class RFC4880TestKeyringsSanityTest {
 
   @Test
   public void validate_revokedKey_isRevoked() throws IOException, PGPException {
-    final KeyringConfig sut = RFC4880TestKeyrings.publicKeyOnlyKeyringConfig();
+    final KeyringConfig sut = RFC4880TestKeyringsDedicatedSigningKey.publicKeyOnlyKeyringConfig();
 
     final PGPPublicKeyRingCollection keyRings = sut.getPublicKeyRings();
-    final PGPPublicKey publicKey = keyRings.getPublicKey(RFC4880TestKeyrings.SIGNATURE_KEY_REVOKED);
+    final PGPPublicKey publicKey = keyRings
+        .getPublicKey(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_REVOKED);
 
     assertNotNull("Revoked Signature key exists", publicKey);
 
@@ -107,10 +121,12 @@ public class RFC4880TestKeyringsSanityTest {
 
   @Test
   public void validate_goodSignatureKey_isSignatureKey() throws IOException, PGPException {
-    final KeyringConfig sut = RFC4880TestKeyrings.publicAndPrivateKeyKeyringConfig();
+    final KeyringConfig sut = RFC4880TestKeyringsDedicatedSigningKey
+        .publicAndPrivateKeyKeyringConfig();
 
     final PGPPublicKeyRingCollection keyRings = sut.getPublicKeyRings();
-    final PGPPublicKey publicKey = keyRings.getPublicKey(RFC4880TestKeyrings.SIGNATURE_KEY_ACTIVE);
+    final PGPPublicKey publicKey = keyRings
+        .getPublicKey(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_ACTIVE);
 
     assertNotNull("Active Signature key exists", publicKey);
 

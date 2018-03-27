@@ -8,7 +8,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.Keyring
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
 import org.bouncycastle.openpgp.PGPException;
 
-public class RFC4880TestKeyrings {
+public class RFC4880TestKeyringsDedicatedSigningKey {
 /*
     <code><pre>
 sec  rsa2048/0xF8BEA74E37D9F45D
@@ -30,7 +30,7 @@ ssb  rsa2048/0x83063C3DA3814052
  */
 
 
-  public final static String UID_EMAIL="rfc4880@example.org";
+  public final static String UID_EMAIL = "rfc4880@example.org";
 
   public final static Instant EXPIRED_KEY_CREATION_TIME = ZonedDateTime
       .parse("2018-03-25T10:55:31Z").toInstant();
@@ -56,25 +56,6 @@ ssb  rsa2048/0x83063C3DA3814052
   public final static long SIGNATURE_KEY_ACTIVE = Long.parseUnsignedLong("C811CA8F998DD2E4", 16);
   public final static long SIGNATURE_KEY_EXPIRED = Long.parseUnsignedLong("83063C3DA3814052", 16);
   public final static long AUTHENTICATION_KEY = Long.parseUnsignedLong("D6FB1B2CCFC1926A", 16);
-
-  public static KeyringConfig publicKeyOnlyKeyringConfig() throws IOException, PGPException {
-    final InMemoryKeyring keyring = newKeyring();
-    keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
-    return keyring;
-  }
-
-  public static KeyringConfig publicAndPrivateKeyKeyringConfig() throws IOException, PGPException {
-    final InMemoryKeyring keyring = newKeyring();
-    keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
-    keyring.addSecretKey(PRIVATE_KEY.getBytes("US-ASCII"));
-    return keyring;
-  }
-
-  private static InMemoryKeyring newKeyring() throws IOException, PGPException {
-    return KeyringConfigs
-        .forGpgExportedKeys(KeyringConfigCallbacks.withPassword("rfc4880"));
-  }
-
   private final static String PUBLIC_KEY = "-----BEGIN PGP PUBLIC KEY BLOCK-----\n"
       + "\n"
       + "mQENBFq3fPsBCADH7PQ1+VIQ4GU7AzYfGIlpWQYMMdcCMAjoARtCvjn0u5btm/VX\n"
@@ -180,8 +161,6 @@ ssb  rsa2048/0x83063C3DA3814052
       + "wRk8fAa2lOWtzUWsxfeGvw4R6ejRVHqw30qOsD1d4qtLlgdo\n"
       + "=fkLr\n"
       + "-----END PGP PUBLIC KEY BLOCK-----";
-
-
   private final static String PRIVATE_KEY = "-----BEGIN PGP PRIVATE KEY BLOCK-----\n"
       + "\n"
       + "lQPGBFq3fPsBCADH7PQ1+VIQ4GU7AzYfGIlpWQYMMdcCMAjoARtCvjn0u5btm/VX\n"
@@ -374,4 +353,22 @@ ssb  rsa2048/0x83063C3DA3814052
       + "RAuiWIJswRk8fAa2lOWtzUWsxfeGvw4R6ejRVHqw30qOsD1d4qtLlgdo\n"
       + "=rT0P\n"
       + "-----END PGP PRIVATE KEY BLOCK-----";
+
+  public static KeyringConfig publicKeyOnlyKeyringConfig() throws IOException, PGPException {
+    final InMemoryKeyring keyring = newKeyring();
+    keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
+    return keyring;
+  }
+
+  public static KeyringConfig publicAndPrivateKeyKeyringConfig() throws IOException, PGPException {
+    final InMemoryKeyring keyring = newKeyring();
+    keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
+    keyring.addSecretKey(PRIVATE_KEY.getBytes("US-ASCII"));
+    return keyring;
+  }
+
+  private static InMemoryKeyring newKeyring() throws IOException, PGPException {
+    return KeyringConfigs
+        .forGpgExportedKeys(KeyringConfigCallbacks.withPassword("rfc4880"));
+  }
 }

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Security;
 import java.security.SignatureException;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
@@ -23,6 +24,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
@@ -31,6 +33,7 @@ import org.bouncycastle.util.io.Streams;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -43,36 +46,53 @@ import org.junit.Test;
  */
 public class Pre202KeySelectionStrategyTest {
 
+
+  private static final long PRIVATE_MASTER_KEY_RECIPIENT = 0x3DF16BD7C3F280F3L;
+  private static final char[] PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE = "recipient".toCharArray();
+  private static final long PRIVATE_SUB_KEY_RECIPIENT = 0x54A3DB374F787AB7L;
+  private static final long PRIVATE_KEY_ID__ONLY_HAVE_PUB_KEY = 0xaff0658d23fb56e6L;
+
+  @Before
+  public void before() {
+    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+      Security.addProvider(new BouncyCastleProvider());
+    }
+  }
+
   @Test
   public void correct_signingKey_isSelected() throws IOException, PGPException {
-    final KeyringConfig keyringConfig = RFC4880TestKeyrings.publicKeyOnlyKeyringConfig();
+    final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
+        .publicKeyOnlyKeyringConfig();
 
     KeySelectionStrategy sut = new Pre202KeySelectionStrategy();
 
     final PGPPublicKey signingPublicKey = sut
-        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyrings.UID_EMAIL, keyringConfig);
+        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+            keyringConfig);
 
     final long selectedKeyId = signingPublicKey.getKeyID();
 
     // this is not what the RFC expects but what the pre 202 behaviour is
     assertEquals("It should  select the encryption key",
-        RFC4880TestKeyrings.ENCRYPTION_KEY,
+        RFC4880TestKeyringsDedicatedSigningKey.ENCRYPTION_KEY,
         selectedKeyId);
 
   }
 
   @Test
   public void oldAndNewImplementation_seelctSameSigningKey() throws IOException, PGPException {
-    final KeyringConfig keyringConfig = RFC4880TestKeyrings.publicAndPrivateKeyKeyringConfig();
+    final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
+        .publicAndPrivateKeyKeyringConfig();
 
     final PGPSecretKey pgpSecPre202 =
         extractSecretSigningKeyFromKeyrings(keyringConfig.getSecretKeyRings(),
-            RFC4880TestKeyrings.UID_EMAIL);
+            RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL);
 
     KeySelectionStrategy sut = new Pre202KeySelectionStrategy();
 
     final PGPPublicKey selectedPublicKey = sut
-        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyrings.UID_EMAIL, keyringConfig);
+        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+            keyringConfig);
 
     assertEquals("Old and new should select the same private key", pgpSecPre202.getKeyID(),
         selectedPublicKey.getKeyID());
@@ -84,12 +104,6 @@ public class Pre202KeySelectionStrategyTest {
     // only one keyring in the example
     return keyringConfig.getPublicKeyRings().getKeyRings().next();
   }
-
-
-  private static final long PRIVATE_MASTER_KEY_RECIPIENT = 0x3DF16BD7C3F280F3L;
-  private static final char[] PRIVATE_MASTER_KEY_RECIPIENT_PASSPHRASE = "recipient".toCharArray();
-  private static final long PRIVATE_SUB_KEY_RECIPIENT = 0x54A3DB374F787AB7L;
-  private static final long PRIVATE_KEY_ID__ONLY_HAVE_PUB_KEY = 0xaff0658d23fb56e6L;
 
   @Test()
   public void extracting_exitingSigningPubKeyByName_returnsKey() throws Exception {

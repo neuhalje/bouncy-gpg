@@ -8,14 +8,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
+import java.security.Security;
+import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
+import org.junit.Before;
 import org.junit.Test;
 
 
@@ -25,16 +29,24 @@ import org.junit.Test;
  */
 public class RFC4880KeySelectionStrategyTest {
 
+  @Before
+  public void before() {
+    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+      Security.addProvider(new BouncyCastleProvider());
+    }
+  }
+
   @Test
   public void expiryDetectionWorks_forKeys_withoutExpirationDate()
       throws IOException, PGPException {
 
     final Rfc4880KeySelectionStrategy sut = new Rfc4880KeySelectionStrategy(
-        RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
-    final KeyringConfig keyringConfig = RFC4880TestKeyrings.publicKeyOnlyKeyringConfig();
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
+    final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
+        .publicKeyOnlyKeyringConfig();
 
     final PGPPublicKey nonExpiredKey = keyringConfig.getPublicKeyRings()
-        .getPublicKey(RFC4880TestKeyrings.SIGNATURE_KEY_ACTIVE);
+        .getPublicKey(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_ACTIVE);
     assertFalse("Key without expiration is not expired", sut.isExpired(nonExpiredKey));
   }
 
@@ -43,12 +55,13 @@ public class RFC4880KeySelectionStrategyTest {
       throws IOException, PGPException {
 
     final Rfc4880KeySelectionStrategy sut = new Rfc4880KeySelectionStrategy(
-        RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_VALID_AT);
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_VALID_AT);
 
-    final KeyringConfig keyringConfig = RFC4880TestKeyrings.publicKeyOnlyKeyringConfig();
+    final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
+        .publicKeyOnlyKeyringConfig();
 
     final PGPPublicKey nonExpiredKey = keyringConfig.getPublicKeyRings()
-        .getPublicKey(RFC4880TestKeyrings.SIGNATURE_KEY_EXPIRED);
+        .getPublicKey(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_EXPIRED);
 
     assertFalse("Expiring key is not expired before expiration date", sut.isExpired(nonExpiredKey));
   }
@@ -59,12 +72,13 @@ public class RFC4880KeySelectionStrategyTest {
       throws IOException, PGPException {
 
     final Rfc4880KeySelectionStrategy sut = new Rfc4880KeySelectionStrategy(
-        RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
-    final KeyringConfig keyringConfig = RFC4880TestKeyrings.publicKeyOnlyKeyringConfig();
+    final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
+        .publicKeyOnlyKeyringConfig();
 
     final PGPPublicKey expiredKey = keyringConfig.getPublicKeyRings()
-        .getPublicKey(RFC4880TestKeyrings.SIGNATURE_KEY_EXPIRED);
+        .getPublicKey(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_EXPIRED);
 
     assertTrue("Expired key is expired after expiration date", sut.isExpired(expiredKey));
   }
@@ -73,24 +87,25 @@ public class RFC4880KeySelectionStrategyTest {
   public void revocationDetectionWorks() throws IOException, PGPException {
 
     final Rfc4880KeySelectionStrategy sut = new Rfc4880KeySelectionStrategy(
-        RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
-    final KeyringConfig keyringConfig = RFC4880TestKeyrings.publicKeyOnlyKeyringConfig();
+    final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
+        .publicKeyOnlyKeyringConfig();
 
     final PGPPublicKey revokedKey = keyringConfig.getPublicKeyRings()
-        .getPublicKey(RFC4880TestKeyrings.SIGNATURE_KEY_REVOKED);
+        .getPublicKey(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_REVOKED);
 
     assertTrue("Revoked key is expired", sut.isRevoked(revokedKey));
 
     final PGPPublicKey nonRevokedKey = keyringConfig.getPublicKeyRings()
-        .getPublicKey(RFC4880TestKeyrings.SIGNATURE_KEY_ACTIVE);
+        .getPublicKey(RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_ACTIVE);
     assertFalse("Non-revoked key  is not revoked", sut.isRevoked(nonRevokedKey));
   }
 
   @Test
   public void findsPublicKeysForValidation() throws PGPException, IOException {
     final KeySelectionStrategy sut = new Rfc4880KeySelectionStrategy(
-        RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
     final KeyringConfig keyringConfig = Configs.keyringConfigFromResourceForRecipient();
 
@@ -110,13 +125,15 @@ public class RFC4880KeySelectionStrategyTest {
 
   @Test()
   public void noPrivateKeys_noSigningKey_isSelected() throws IOException, PGPException {
-    final KeyringConfig keyringConfig = RFC4880TestKeyrings.publicKeyOnlyKeyringConfig();
+    final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
+        .publicKeyOnlyKeyringConfig();
 
     final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-        RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
     final PGPPublicKey signingPublicKey = keySelectionStrategy
-        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyrings.UID_EMAIL, keyringConfig);
+        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+            keyringConfig);
 
     assertNull("It should not select a signing key without private key", signingPublicKey);
 
@@ -131,20 +148,22 @@ public class RFC4880KeySelectionStrategyTest {
     // same object may resolve the ambiguity in any way it sees fit, but it
     // is RECOMMENDED that priority be given to the most recent self-
     //  signature."
-    final KeyringConfig keyringConfig = RFC4880TestKeyrings.publicAndPrivateKeyKeyringConfig();
+    final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
+        .publicAndPrivateKeyKeyringConfig();
 
     final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-        RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_VALID_AT);
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_VALID_AT);
 
     final PGPPublicKey signingPublicKey = keySelectionStrategy
-        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyrings.UID_EMAIL, keyringConfig);
+        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+            keyringConfig);
 
     assertNotNull("It should select a signing key", signingPublicKey);
 
     final long selectedKeyId = signingPublicKey.getKeyID();
 
     assertEquals("It should select the last valid key in the list",
-        RFC4880TestKeyrings.SIGNATURE_KEY_EXPIRED,
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_EXPIRED,
         selectedKeyId);
 
   }
@@ -157,59 +176,87 @@ public class RFC4880KeySelectionStrategyTest {
     // same object may resolve the ambiguity in any way it sees fit, but it
     // is RECOMMENDED that priority be given to the most recent self-
     //  signature."
-    final KeyringConfig keyringConfig = RFC4880TestKeyrings.publicAndPrivateKeyKeyringConfig();
+    final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
+        .publicAndPrivateKeyKeyringConfig();
 
     final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-        RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
     final PGPPublicKey signingPublicKey = keySelectionStrategy
-        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyrings.UID_EMAIL, keyringConfig);
+        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+            keyringConfig);
 
     assertNotNull("It should select a signing key", signingPublicKey);
 
     final long selectedKeyId = signingPublicKey.getKeyID();
 
     assertEquals("It should select the last valid key in the list",
-        RFC4880TestKeyrings.SIGNATURE_KEY_ACTIVE,
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_ACTIVE,
         selectedKeyId);
   }
 
 
   @Test()
-  public void correct_signingKey_isSelected() throws IOException, PGPException {
-    final KeyringConfig keyringConfig = RFC4880TestKeyrings.publicAndPrivateKeyKeyringConfig();
+  public void dedicatedSigningKeys_selectSigningKey_DedicatedKeyisSelected()
+      throws IOException, PGPException {
+    final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
+        .publicAndPrivateKeyKeyringConfig();
 
     final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-        RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
     final PGPPublicKey signingPublicKey = keySelectionStrategy
-        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyrings.UID_EMAIL, keyringConfig);
+        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+            keyringConfig);
 
     assertNotNull("It should select a signing key", signingPublicKey);
 
     final long selectedKeyId = signingPublicKey.getKeyID();
 
-    assertNotEquals("It should not select the master key", RFC4880TestKeyrings.MASTER_KEY_ID,
+    assertNotEquals("It should not select the master key",
+        RFC4880TestKeyringsDedicatedSigningKey.MASTER_KEY_ID,
         selectedKeyId);
 
     assertNotEquals("It should not select the authentication key",
-        RFC4880TestKeyrings.AUTHENTICATION_KEY,
+        RFC4880TestKeyringsDedicatedSigningKey.AUTHENTICATION_KEY,
         selectedKeyId);
 
     assertNotEquals("It should not select the encryption key",
-        RFC4880TestKeyrings.ENCRYPTION_KEY,
+        RFC4880TestKeyringsDedicatedSigningKey.ENCRYPTION_KEY,
         selectedKeyId);
 
     assertNotEquals("It should not select the revoked key",
-        RFC4880TestKeyrings.SIGNATURE_KEY_REVOKED,
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_REVOKED,
         selectedKeyId);
 
     assertNotEquals("It should not select the expired key",
-        RFC4880TestKeyrings.SIGNATURE_KEY_EXPIRED,
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_EXPIRED,
         selectedKeyId);
 
     assertEquals("It should select the correct signing key",
-        RFC4880TestKeyrings.SIGNATURE_KEY_ACTIVE,
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_ACTIVE,
+        selectedKeyId);
+  }
+
+
+  @Test()
+  public void masterIsSigningKey_selectSigningKey_MasterKeyIsSelected()
+      throws IOException, PGPException {
+    final KeyringConfig keyringConfig = RFC4880TestKeyringsMasterKeyAsSigningKey
+        .publicAndPrivateKeyKeyringConfig();
+
+    final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(Instant.MAX);
+
+    final PGPPublicKey signingPublicKey = keySelectionStrategy
+        .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyringsMasterKeyAsSigningKey.UID_EMAIL,
+            keyringConfig);
+
+    assertNotNull("It should select a signing key", signingPublicKey);
+
+    final long selectedKeyId = signingPublicKey.getKeyID();
+
+    assertEquals("It should  select the master key",
+        RFC4880TestKeyringsMasterKeyAsSigningKey.MASTER_KEY_ID,
         selectedKeyId);
   }
 }

@@ -1,6 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.tests_for_issues;
 
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,12 +15,15 @@ import java.security.Security;
 import java.security.SignatureException;
 import java.time.Instant;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.RFC4880TestKeyrings;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.RFC4880TestKeyringsDedicatedSigningKey;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.RFC4880TestKeyringsMasterKeyAsSigningKey;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class Issue16Test {
@@ -32,7 +37,30 @@ public class Issue16Test {
   }
 
   @Test
-  public void issue16_encryptToStdout()
+  @Ignore("This only helps in manual investigation")
+  public void forManualAnalysis__with_dedicatedSigningKey_encryptToStdout()
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+
+    encryptToStdout(RFC4880TestKeyringsDedicatedSigningKey.publicAndPrivateKeyKeyringConfig(),
+        RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+        RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
+  }
+
+  @Test
+  @Ignore("This only helps in manual investigation")
+  public void forManualAnalysis__with_masterKeyAsSigningKey_encryptToStdout()
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+
+    encryptToStdout(RFC4880TestKeyringsMasterKeyAsSigningKey.publicAndPrivateKeyKeyringConfig(),
+        RFC4880TestKeyringsMasterKeyAsSigningKey.UID_EMAIL,
+        RFC4880TestKeyringsMasterKeyAsSigningKey.UID_EMAIL,
+        Instant.MAX);
+  }
+
+  void encryptToStdout(final KeyringConfig config, final String recipientUid,
+      final String signingUid,
+      final Instant dateOfTimestampVerification)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
     final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
 
@@ -43,12 +71,11 @@ public class Issue16Test {
 
         final OutputStream outputStream = BouncyGPG
             .encryptToStream()
-            .withConfig(RFC4880TestKeyrings.publicAndPrivateKeyKeyringConfig())
-            .setReferenceDateForKeyValidityTo(
-                RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT)
+            .withConfig(config)
+            .setReferenceDateForKeyValidityTo(dateOfTimestampVerification)
             .withStrongAlgorithms()
-            .toRecipient("rfc4880@example.org")
-            .andSignWith("rfc4880@example.org")
+            .toRecipient(recipientUid)
+            .andSignWith(signingUid)
             .armorAsciiOutput()
             .andWriteTo(byteOutput)
     ) {
@@ -60,27 +87,50 @@ public class Issue16Test {
 
     final String ciphertext = new String(bytes, "US-ASCII");
     System.out.println(
-        "This should be to 'rfc4880@example.org' and also signed by 'rfc4880@example.org'\n\n\necho '"
+        "Key expiration check for " + dateOfTimestampVerification.toString() + ", encrypted to '"
+            + recipientUid + "', and signed by '" + signingUid
+            + "'\n\n\necho '"
             + ciphertext + "'| gpg -v -d");
   }
-
 
   @Test
   public void issue16_validateCorrectSigningKey_skipExpired()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-    signAtDateAndValidateExpectedKey(RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT,
-        RFC4880TestKeyrings.SIGNATURE_KEY_ACTIVE);
+    signAtDateAndValidateExpectedKey(
+        RFC4880TestKeyringsDedicatedSigningKey.publicAndPrivateKeyKeyringConfig(),
+        RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+        RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT,
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_ACTIVE);
   }
 
   @Test
   public void issue16_validateCorrectSigningKey_useLastValidKey()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-    signAtDateAndValidateExpectedKey(RFC4880TestKeyrings.SIGNATURE_KEY_GUARANTEED_VALID_AT,
-        RFC4880TestKeyrings.SIGNATURE_KEY_EXPIRED);
+    signAtDateAndValidateExpectedKey(
+        RFC4880TestKeyringsDedicatedSigningKey.publicAndPrivateKeyKeyringConfig(),
+        RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+        RFC4880TestKeyringsDedicatedSigningKey.UID_EMAIL,
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_VALID_AT,
+        RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_EXPIRED);
   }
 
 
-  private void signAtDateAndValidateExpectedKey(Instant dateOfTimestampVerification,
+  @Test
+  public void issue16_validateCorrectSigningKey_whenMasterKeyIsSigningKey()
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+    signAtDateAndValidateExpectedKey(
+        RFC4880TestKeyringsMasterKeyAsSigningKey.publicAndPrivateKeyKeyringConfig(),
+        RFC4880TestKeyringsMasterKeyAsSigningKey.UID_EMAIL,
+        RFC4880TestKeyringsMasterKeyAsSigningKey.UID_EMAIL,
+        Instant.MAX,
+        RFC4880TestKeyringsMasterKeyAsSigningKey.MASTER_KEY_ID);
+  }
+
+
+  private void signAtDateAndValidateExpectedKey(final KeyringConfig config,
+      final String recipientUid,
+      final String signingUid, final Instant dateOfTimestampVerification,
       long expectedSignatureKey)
       throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
     final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
@@ -92,11 +142,11 @@ public class Issue16Test {
 
         final OutputStream outputStream = BouncyGPG
             .encryptToStream()
-            .withConfig(RFC4880TestKeyrings.publicAndPrivateKeyKeyringConfig())
+            .withConfig(config)
             .setReferenceDateForKeyValidityTo(dateOfTimestampVerification)
             .withStrongAlgorithms()
-            .toRecipient("rfc4880@example.org")
-            .andSignWith("rfc4880@example.org")
+            .toRecipient(recipientUid)
+            .andSignWith(signingUid)
             .armorAsciiOutput()
             .andWriteTo(byteOutput)
     ) {
@@ -106,17 +156,17 @@ public class Issue16Test {
       bytes = byteOutput.toByteArray();
     }
 
-    ByteArrayOutputStream fileOutput = new ByteArrayOutputStream();
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
 
     try (
         final ByteArrayInputStream cipherTextStream = new ByteArrayInputStream(bytes);
 
-        final BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOutput);
+        final BufferedOutputStream bufferedOut = new BufferedOutputStream(output);
 
         // test that the active key is used
         final InputStream plaintextStream = BouncyGPG
             .decryptAndVerifyStream()
-            .withConfig(RFC4880TestKeyrings.publicAndPrivateKeyKeyringConfig())
+            .withConfig(config)
             .setReferenceDateForKeyValidityTo(dateOfTimestampVerification)
             .andRequireSignatureFromAllKeys(expectedSignatureKey)
             .fromEncryptedInputStream(cipherTextStream)
@@ -124,6 +174,8 @@ public class Issue16Test {
     ) {
       Streams.pipeAll(plaintextStream, bufferedOut);
     }
+
+    assertEquals(ExampleMessages.IMPORTANT_QUOTE_TEXT, output.toString("US-ASCII"));
   }
 
 
