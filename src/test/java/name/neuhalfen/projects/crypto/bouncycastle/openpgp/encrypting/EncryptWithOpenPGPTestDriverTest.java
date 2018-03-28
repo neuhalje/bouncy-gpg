@@ -31,6 +31,7 @@ import org.junit.Test;
 
 public class EncryptWithOpenPGPTestDriverTest {
 
+
   @Before
   public void installBCProvider() {
     if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
@@ -42,8 +43,10 @@ public class EncryptWithOpenPGPTestDriverTest {
   public void encryptionAndSigning_anyData_doesNotCloseInputStream()
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
 
+    final EncryptionConfig config = Configs.buildConfigForEncryptionFromResources();
+
     EncryptWithOpenPGPTestDriver sut = new EncryptWithOpenPGPTestDriver(
-        Configs.buildConfigForEncryptionFromResources(),
+        config,
         DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
     InputStream in = mock(InputStream.class);
@@ -53,7 +56,7 @@ public class EncryptWithOpenPGPTestDriverTest {
     when(in.read(any(byte[].class), any(int.class), any(int.class))).thenReturn(-1);
     when(in.read()).thenReturn(-1);
 
-    sut.encryptAndSign(in, mock(OutputStream.class));
+    sut.encryptAndSign(in, mock(OutputStream.class), config.getEncryptionPublicKeys(), false);
 
     verify(in, never()).close();
   }
@@ -63,8 +66,10 @@ public class EncryptWithOpenPGPTestDriverTest {
   public void encryptionAndSigning_anyData_doesNotCloseOutputStream()
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
 
+    final EncryptionConfig config = Configs.buildConfigForEncryptionFromResources();
+
     EncryptWithOpenPGPTestDriver sut = new EncryptWithOpenPGPTestDriver(
-        Configs.buildConfigForEncryptionFromResources(),
+        config,
         DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
     InputStream in = mock(InputStream.class);
@@ -76,7 +81,7 @@ public class EncryptWithOpenPGPTestDriverTest {
 
     OutputStream os = mock(OutputStream.class);
 
-    sut.encryptAndSign(in, os);
+    sut.encryptAndSign(in, mock(OutputStream.class), config.getEncryptionPublicKeys(), false);
 
     verify(os, never()).close();
   }
@@ -85,28 +90,35 @@ public class EncryptWithOpenPGPTestDriverTest {
   public void encryptionAndSigning_wrongSigningKeyID_throws()
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
 
+    final EncryptionConfig config = Configs.buildConfigForEncryptionFromResources("unknown", "");
+
     EncryptWithOpenPGPTestDriver sut = new EncryptWithOpenPGPTestDriver(
-        Configs.buildConfigForEncryptionFromResources("unknown", ""),
+        config,
         DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
     DevNullOutputStream out = new DevNullOutputStream();
 
     final int sampleSize = Configs.KB;
-    sut.encryptAndSign(someRandomInputData(sampleSize), out);
+    sut.encryptAndSign(someRandomInputData(sampleSize), out, config.getEncryptionPublicKeys(),
+        false);
   }
 
   @Test(expected = PGPException.class)
   public void encryptionAndSigning_wrongSigningKeyPassword_throws()
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
 
+    final EncryptionConfig config = Configs
+        .buildConfigForEncryptionFromResources("sender@example.com", "wrong");
+
     EncryptWithOpenPGPTestDriver sut = new EncryptWithOpenPGPTestDriver(
-        Configs.buildConfigForEncryptionFromResources("sender@example.com", "wrong"),
+        config,
         DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
     DevNullOutputStream out = new DevNullOutputStream();
 
     final int sampleSize = Configs.KB;
-    sut.encryptAndSign(someRandomInputData(sampleSize), out);
+    sut.encryptAndSign(someRandomInputData(sampleSize), out, config.getEncryptionPublicKeys(),
+        false);
   }
 
   @Test(expected = PGPException.class)
@@ -127,7 +139,8 @@ public class EncryptWithOpenPGPTestDriverTest {
         DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
     final int sampleSize = Configs.KB;
-    sut.encryptAndSign(someRandomInputData(sampleSize), new DevNullOutputStream());
+    sut.encryptAndSign(someRandomInputData(sampleSize), new DevNullOutputStream(),
+        encryptAndSignConfig.getEncryptionPublicKeysNoValidation(), false);
   }
 
 
@@ -135,14 +148,16 @@ public class EncryptWithOpenPGPTestDriverTest {
   public void encryptionAndSigning_smallAmountsOfData_doesNotCrash()
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
 
+    final EncryptionConfig config = Configs.buildConfigForEncryptionFromResources();
     EncryptWithOpenPGPTestDriver sut = new EncryptWithOpenPGPTestDriver(
-        Configs.buildConfigForEncryptionFromResources(),
+        config,
         DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
     DevNullOutputStream out = new DevNullOutputStream();
 
     final int sampleSize = 1 * Configs.KB;
-    sut.encryptAndSign(someRandomInputData(sampleSize), out);
+    sut.encryptAndSign(someRandomInputData(sampleSize), out, config.getEncryptionPublicKeys(),
+        false);
 
     assertThat("A compression>50% is fishy!", out.getBytesWritten(), greaterThan(sampleSize / 2));
   }
@@ -165,7 +180,8 @@ public class EncryptWithOpenPGPTestDriverTest {
         DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
     final int sampleSize = Configs.KB;
-    sut.encryptAndSign(someRandomInputData(sampleSize), new DevNullOutputStream());
+    sut.encryptAndSign(someRandomInputData(sampleSize), new DevNullOutputStream(),
+        encryptAndSignConfig.getEncryptionPublicKeys(), false);
   }
 
   /**
@@ -175,14 +191,16 @@ public class EncryptWithOpenPGPTestDriverTest {
   @Ignore("this test is  slow (~2sec)")
   public void encryptionAndSigning_10MB_isFast()
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
+    final EncryptionConfig config = Configs.buildConfigForEncryptionFromResources();
     EncryptWithOpenPGPTestDriver sut = new EncryptWithOpenPGPTestDriver(
-        Configs.buildConfigForEncryptionFromResources(),
+        config,
         DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
     DevNullOutputStream out = new DevNullOutputStream();
 
     final int sampleSize = 10 * Configs.MB;
-    sut.encryptAndSign(someRandomInputData(sampleSize), out);
+    sut.encryptAndSign(someRandomInputData(sampleSize), out, config.getEncryptionPublicKeys(),
+        false);
 
     assertThat("A compression>50% is fishy!", out.getBytesWritten(), greaterThan(sampleSize / 2));
   }
@@ -192,14 +210,16 @@ public class EncryptWithOpenPGPTestDriverTest {
   @Ignore("this test is very slow (~2min)")
   public void encryptionAndSigning_1GB_doesNotCrash()
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
+    final EncryptionConfig config = Configs.buildConfigForEncryptionFromResources();
     EncryptWithOpenPGPTestDriver sut = new EncryptWithOpenPGPTestDriver(
-        Configs.buildConfigForEncryptionFromResources(),
+        config,
         DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
 
     DevNullOutputStream out = new DevNullOutputStream();
 
     final int sampleSize = 1 * Configs.GB;
-    sut.encryptAndSign(someRandomInputData(sampleSize), out);
+    sut.encryptAndSign(someRandomInputData(sampleSize), out, config.getEncryptionPublicKeys(),
+        false);
 
     assertThat("A compression>50% is fishy!", out.getBytesWritten(), greaterThan(sampleSize / 2));
   }

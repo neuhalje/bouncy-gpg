@@ -6,6 +6,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
@@ -33,7 +35,7 @@ public final class BuildEncryptionOutputStreamAPI {
 
   @Nullable
   private String signWith;
-  private PGPPublicKey recipient;
+  private Set<PGPPublicKey> recipients;
   private boolean armorOutput;
 
   // Signature
@@ -111,6 +113,8 @@ public final class BuildEncryptionOutputStreamAPI {
 
       SignWith toRecipient(String recipient) throws PGPException;
 
+      SignWith toRecipients(String... recipients) throws PGPException;
+
       interface SignWith {
 
         Armor andSignWith(String userId) throws IOException, PGPException;
@@ -162,8 +166,7 @@ public final class BuildEncryptionOutputStreamAPI {
     @SuppressWarnings("PMD.ShortClassName")
     final class ToImpl implements To {
 
-      @Override
-      public SignWith toRecipient(final String recipient) throws PGPException {
+      private PGPPublicKey extractValidKey(final String recipient) throws PGPException {
         if (recipient == null || recipient.isEmpty()) {
           throw new IllegalArgumentException("recipient must be a string");
         }
@@ -175,13 +178,34 @@ public final class BuildEncryptionOutputStreamAPI {
             throw new PGPException(
                 "No (suitable) public key for encryption to " + recipient + " found");
           }
-          BuildEncryptionOutputStreamAPI.this.recipient = recipientEncryptionKey;
+
           LOGGER.trace("encrypt to recipient {} using key 0x{}", recipient,
-              Long.toHexString(BuildEncryptionOutputStreamAPI.this.recipient.getKeyID()));
-          return new SignWithImpl();
+              Long.toHexString(recipientEncryptionKey.getKeyID()));
+          return recipientEncryptionKey;
         } catch (IOException e) {
           throw new PGPException("Failed to load keys", e);
         }
+
+      }
+
+      @Override
+      public SignWith toRecipient(final String recipient) throws PGPException {
+
+        BuildEncryptionOutputStreamAPI.this.recipients = new HashSet<>();
+        BuildEncryptionOutputStreamAPI.this.recipients.add(extractValidKey(recipient));
+
+        return new SignWithImpl();
+      }
+
+      @Override
+      public SignWith toRecipients(String... recipients) throws PGPException {
+        BuildEncryptionOutputStreamAPI.this.recipients = new HashSet<>();
+
+        for (final String recipient : recipients) {
+          BuildEncryptionOutputStreamAPI.this.recipients.add(extractValidKey(recipient));
+        }
+
+        return new SignWithImpl();
       }
 
 
@@ -206,7 +230,7 @@ public final class BuildEncryptionOutputStreamAPI {
               .getSecretKey(signingKeyPubKey.getKeyID());
           if (signingKey == null) {
             throw new PGPException(
-                "No (suitable) secret key for signing with " + recipient
+                "No (suitable) secret key for signing with " + userId
                     + " found (public key exists!)");
           }
 
@@ -250,7 +274,7 @@ public final class BuildEncryptionOutputStreamAPI {
                   BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData,
                   BuildEncryptionOutputStreamAPI.this.keySelectionStrategy,
                   BuildEncryptionOutputStreamAPI.this.armorOutput,
-                  BuildEncryptionOutputStreamAPI.this.recipient);
+                  BuildEncryptionOutputStreamAPI.this.recipients);
               return outputStream;
 
             }

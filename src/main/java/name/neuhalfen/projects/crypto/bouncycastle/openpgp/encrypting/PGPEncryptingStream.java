@@ -8,6 +8,7 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Set;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
@@ -71,7 +72,7 @@ public final class PGPEncryptingStream extends OutputStream {
       final OutputStream cipherTextSink,
       final KeySelectionStrategy keySelectionStrategy,
       final boolean armor,
-      final PGPPublicKey pubEncKey)
+      final Set<PGPPublicKey> pubEncKeys)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
 
     if (config == null) {
@@ -82,17 +83,19 @@ public final class PGPEncryptingStream extends OutputStream {
       throw new IllegalArgumentException("no cipherTextSink");
     }
 
-    if (pubEncKey == null) {
-      throw new IllegalArgumentException("No pubEncKey");
+    if ((pubEncKeys == null) || pubEncKeys.isEmpty()) {
+      throw new IllegalArgumentException("No pubEncKeys");
     }
 
-    if (!pubEncKey.isEncryptionKey()) {
-      throw new PGPException(String
-          .format("This public key (0x%x) is not suitable for encryption", pubEncKey.getKeyID()));
+    for (final PGPPublicKey pubEncKey : pubEncKeys) {
+      if (!pubEncKey.isEncryptionKey()) {
+        throw new PGPException(String
+            .format("This public key (0x%x) is not suitable for encryption", pubEncKey.getKeyID()));
+      }
     }
 
     final PGPEncryptingStream encryptingStream = new PGPEncryptingStream(config, algorithmSuite);
-    encryptingStream.setup(cipherTextSink, signingUid, pubEncKey, keySelectionStrategy, armor);
+    encryptingStream.setup(cipherTextSink, signingUid, pubEncKeys, keySelectionStrategy, armor);
     return encryptingStream;
   }
 
@@ -100,7 +103,7 @@ public final class PGPEncryptingStream extends OutputStream {
   /**
    * @param cipherTextSink Where the ciphertext goes
    * @param signingUid Sign with this uid. null: do not sign
-   * @param pubEncKey the pub enc key
+   * @param pubEncKeys the pub enc keys
    * @param keySelectionStrategy key selection strategy (for signatures)
    * @param armor if OutputStream should be "armored", that means base64 encoded
    *
@@ -114,7 +117,7 @@ public final class PGPEncryptingStream extends OutputStream {
   @SuppressWarnings("PMD.LawOfDemeter")
   private void setup(final OutputStream cipherTextSink,
       @Nullable final String signingUid,
-      final PGPPublicKey pubEncKey,
+      final Set<PGPPublicKey> pubEncKeys,
       final KeySelectionStrategy keySelectionStrategy,
       final boolean armor) throws
       IOException, PGPException {
@@ -135,7 +138,9 @@ public final class PGPEncryptingStream extends OutputStream {
     final PGPEncryptedDataGenerator cPk =
         new PGPEncryptedDataGenerator(dataEncryptorBuilder);
 
-    cPk.addMethod(new BcPublicKeyKeyEncryptionMethodGenerator(pubEncKey));
+    for (final PGPPublicKey pubEncKey : pubEncKeys) {
+      cPk.addMethod(new BcPublicKeyKeyEncryptionMethodGenerator(pubEncKey));
+    }
 
     // this wraps the output stream in an encrypting output stream
     outerEncryptionStream = cPk.open(sink, new byte[1 << 16]);

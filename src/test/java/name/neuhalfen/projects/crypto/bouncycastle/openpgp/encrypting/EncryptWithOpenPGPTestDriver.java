@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
+import java.util.Set;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
@@ -72,28 +73,12 @@ final class EncryptWithOpenPGPTestDriver {
   }
 
 
-  public void encryptAndSign(final InputStream is, final OutputStream os) throws IOException,
-      NoSuchAlgorithmException, SignatureException, PGPException, NoSuchProviderException {
-    final long starttime = System.currentTimeMillis();
-
-    // FIXME: pass correct uid
-    final PGPPublicKey encryptionKey = keySelectionStrategy.selectPublicKey(PURPOSE.FOR_ENCRYPTION, "", config);
-    if (encryptionKey == null) {
-      throw new PGPException("Could not find a valid encryption key for uid ");
-    }
-    encryptAndSign(is, os, encryptionKey, true);
-
-    LOGGER.debug("Encrypt and sign duration {}s",
-        (System.currentTimeMillis() - starttime) / MLLIES_PER_SEC);
-  }
-
-
   /**
    * Method to sign-and-encrypt.
    *
    * @param in the in
    * @param out the out
-   * @param pubEncKey the pub enc key
+   * @param pubEncKeys the pub enc keys
    * @param armor if OutputStream should be "armored", that means base64 encoded
    * @throws IOException Signals that an I/O exception has occurred.
    * @throws NoSuchAlgorithmException the no such algorithm exception
@@ -102,12 +87,12 @@ final class EncryptWithOpenPGPTestDriver {
    * @throws SignatureException the signature exception {@link org.bouncycastle.bcpg.HashAlgorithmTags}
    * {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
    */
-  private void encryptAndSign(final InputStream in, OutputStream out, final PGPPublicKey pubEncKey,
+  void encryptAndSign(final InputStream in, OutputStream out, final Set<PGPPublicKey> pubEncKeys,
       final boolean armor) throws IOException,
       NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
 
     try (final OutputStream encryptionStream = PGPEncryptingStream
-        .create(config, algorithmSuite, signatureUid, out, keySelectionStrategy,  armor, pubEncKey)) {
+        .create(config, algorithmSuite, signatureUid, out, keySelectionStrategy,  armor, pubEncKeys)) {
       Streams.pipeAll(in, encryptionStream);
       encryptionStream.flush();
     }

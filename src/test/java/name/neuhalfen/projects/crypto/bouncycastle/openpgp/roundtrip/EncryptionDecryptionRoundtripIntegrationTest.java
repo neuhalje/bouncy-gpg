@@ -453,4 +453,42 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
     }
   }
 
+
+  @Test
+  public void encryptMultipleRecipients_decrypt_yieldsOriginalPlaintext()
+      throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
+    ByteArrayOutputStream result = new ByteArrayOutputStream();
+    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(result, 16384 * 1024);
+
+    final OutputStream outputStream = BouncyGPG
+        .encryptToStream()
+        .withConfig(Configs.keyringConfigFromResourceForSender())
+        .setReferenceDateForKeyValidityTo(Instant.MAX)
+        .withAlgorithms(algorithmSuite)
+        .toRecipients("sender@example.com", "recipient@example.com")
+        .andSignWith("sender@example.com")
+        .binaryOutput()
+        .andWriteTo(bufferedOutputStream);
+
+    final InputStream is = new ByteArrayInputStream(
+        ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes());
+    Streams.pipeAll(is, outputStream);
+    outputStream.close();
+    bufferedOutputStream.close();
+    is.close();
+
+    final byte[] ciphertext = result.toByteArray();
+    final ByteArrayOutputStream plainBA = new ByteArrayOutputStream();
+
+    final InputStream plainIS = BouncyGPG.decryptAndVerifyStream()
+        .withConfig(Configs.keyringConfigFromFilesForRecipient())
+        .andRequireSignatureFromAllKeys("sender@example.com")
+        .fromEncryptedInputStream(new ByteArrayInputStream(ciphertext));
+
+    Streams.pipeAll(plainIS, plainBA);
+
+    assertArrayEquals(ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(), plainBA.toByteArray());
+  }
+
+
 }

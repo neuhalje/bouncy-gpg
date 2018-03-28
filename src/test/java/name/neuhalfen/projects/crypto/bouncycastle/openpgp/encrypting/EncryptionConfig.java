@@ -2,8 +2,15 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 
@@ -19,6 +26,8 @@ public class EncryptionConfig {
   private final int pgpHashAlgorithmCode;
   private final KeyringConfig keyringConfig;
 
+  private final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
+      Instant.MAX);
 
   public EncryptionConfig(String signatureSecretKeyId,
       String encryptionPublicKeyId,
@@ -55,5 +64,22 @@ public class EncryptionConfig {
 
   public KeyringConfig getConfig() {
     return keyringConfig;
+  }
+
+  public Set<PGPPublicKey> getEncryptionPublicKeys() throws PGPException, IOException {
+    Set<PGPPublicKey> keys = new HashSet<>();
+    keys.add(keySelectionStrategy
+        .selectPublicKey(PURPOSE.FOR_ENCRYPTION, getEncryptionPublicKeyId(), keyringConfig));
+
+    return keys;
+  }
+
+  public Set<PGPPublicKey> getEncryptionPublicKeysNoValidation() throws IOException, PGPException {
+    Set<PGPPublicKey> keys = new HashSet<>();
+    keys.add(
+        keyringConfig.getPublicKeyRings().getKeyRings(getEncryptionPublicKeyId(), true, true).next()
+            .getPublicKey());
+
+    return keys;
   }
 }
