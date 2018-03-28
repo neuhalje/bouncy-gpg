@@ -56,8 +56,12 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
    *
    * @param uid the userid as passed by upstream.
    * @param keyringConfig the keyring config
+   * @param purpose what is the requested key to be used for
    *
    * @return Set with keyrings, never null.
+   *
+   * @throws PGPException  Something with BouncyCastle went wrong
+   * @throws IOException  IO is dangerous
    */
   @SuppressWarnings({"PMD.LawOfDemeter"})
   protected Set<PGPPublicKeyRing> publicKeyRingsForUid(final PURPOSE purpose, final String uid,

@@ -34,6 +34,9 @@ public interface KeySelectionStrategy {
    * @param keyring search here
    *
    * @return a public key that can be used for signing, null if non is found
+   *
+   * @throws IOException something with IO went wrong
+   * @throws PGPException something with PGP went wrong
    */
   @Nullable
   PGPPublicKey selectPublicKey(final PURPOSE purpose, final String uid,
@@ -48,7 +51,10 @@ public interface KeySelectionStrategy {
    * @param keyring search here
    *
    * @return public keys that can be accepted for signatues, empty set if none are found
+   *
+   * @throws IOException something with IO went wrong
+   * @throws PGPException something with PGP went wrong
    */
-  Set<PGPPublicKey> validPublicKeysForVerifyingSignatures( final String uid,
+  Set<PGPPublicKey> validPublicKeysForVerifyingSignatures(final String uid,
       final KeyringConfig keyring) throws PGPException, IOException;
 }
