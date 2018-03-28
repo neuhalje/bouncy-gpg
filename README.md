@@ -29,67 +29,77 @@ The unit tests have some [examples creating/reading keyrings](src/test/java/name
 
 The easiest way to manage keyrings is to use the pre-defined [KeyringConfigs](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java).
 
-Encrypting a file
+Encrypt & sign a file and then decrypt it & validate the signature
 -------------------
 
-The following snippet encrypts `/tmp/plaintext.txt` to `recipient@example.com` and signs with `sender@example.com`.
-The encrypted file is written to `/tmp/encrypted.gpg`.
+The following snippet encrypts a secret message to `recipient@example.com` (and also self-encrypts it to `sender@example.com`), and signs with `sender@example.com`.
+
+The encrypted message is then decrypted and the signature is verified. (This is from a [documentation test](https://github.com/neuhalje/bouncy-gpg/blob/master/src/test/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/roundtrip/EncryptionDecryptionRoundtripIntegrationTest.java#L496-L556)).
 
 ```java
-final KeyringConfig keyringConfig = KeyringConfigs
-   .withKeyRingsFromFiles(
-        "pubring.gpg",
-        "secring.gpg", 
-        KeyringConfigCallbacks.withPassword("s3cr3t"));
 
-try (
-        final FileOutputStream fileOutput = new FileOutputStream("/tmp/encrypted.gpg");
-        final BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOutput);
+    final String original_message = "I love deadlines. I like the whooshing sound they make as they fly by. Douglas Adams";
+
+    // Most likely you will use  one of the KeyringConfigs.... methods.
+    // These are wrappers for the test.
+    KeyringConfig keyringConfigOfSender = Configs
+        .keyringConfigFromResourceForSender();
+
+    ByteArrayOutputStream result = new ByteArrayOutputStream();
+
+    try (
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(result, 16384 * 1024);
 
         final OutputStream outputStream = BouncyGPG
-                .encryptToStream()
-                .withConfig(keyringConfig)
-                .withStrongAlgorithms()
-                .toRecipient("recipient@example.com")
-                .andSignWith("sender@example.com")
-                .binaryOutput()
-                .andWriteTo(bufferedOut);
+            .encryptToStream()
+            .withConfig(keyringConfigOfSender)
+            .withStrongAlgorithms()
+            .toRecipients("recipient@example.com", "sender@example.com")
+            .andSignWith("sender@example.com")
+            .binaryOutput()
+            .andWriteTo(bufferedOutputStream);
+        // Maybe read a file or a webservice?
+        final ByteArrayInputStream is = new ByteArrayInputStream(original_message.getBytes())
+    ) {
+      Streams.pipeAll(is, outputStream);
+    // It is very important that outputStream is closed before the result stream is read.
+    // The reason is that GPG writes the signature at the end of the stream. 
+    // This is triggered by closing the stream.
+    // In this example outputStream is closed via the try-with-resources mechanism of Java
+    }
 
-        final FileInputStream is = new FileInputStream("/tmp/plaintext.txt")
-) {
-    Streams.pipeAll(is, outputStream);
-}
-```
+    result.close();
+    byte[] chipertext = result.toByteArray();
 
-Decrypting a file and validating the signature
--------------------------------------------------
+    //////// Now decrypt the stream and check the signature
 
-The following snippet decrypts the file created in the snippet above.
+    // Most likely you will use  one of the KeyringConfigs.... methods.
+    // These are wrappers for the test.
+    KeyringConfig keyringConfigOfRecipient = Configs
+        .keyringConfigFromResourceForRecipient();
 
+    final OutputStream output = new ByteArrayOutputStream();
+    try (
+        final InputStream cipherTextStream = new ByteArrayInputStream(chipertext);
 
-```java
-final KeyringConfig keyringConfig = KeyringConfigs
-   .withKeyRingsFromFiles(
-         "pubring.gpg",
-         "secring.gpg", 
-         KeyringConfigCallbacks.withPassword("s3cr3t"));
-
-try (
-        final FileInputStream cipherTextStream = new FileInputStream("/tmp/encrypted.gpg");
-
-        final FileOutputStream fileOutput = new FileOutputStream(destFile);
-        final BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOutput);
+        final BufferedOutputStream bufferedOut = new BufferedOutputStream(output);
 
         final InputStream plaintextStream = BouncyGPG
-               .decryptAndVerifyStream()
-               .withConfig(keyringConfig)
-               .andIgnoreSignatures()
-               .fromEncryptedInputStream(cipherTextStream)
+            .decryptAndVerifyStream()
+            .withConfig(keyringConfigOfRecipient)
+            .andRequireSignatureFromAllKeys("sender@example.com")
+            .fromEncryptedInputStream(cipherTextStream)
 
-) {
-    Streams.pipeAll(plaintextStream, bufferedOut);
-}
+    ) {
+      Streams.pipeAll(plaintextStream, bufferedOut);
+    }
+
+    output.close();
+    final String decrypted_message = new String(((ByteArrayOutputStream) output).toByteArray());
+
+    assertEquals(original_message, decrypted_message);
 ```
+
 
 Performance
 --------------
@@ -186,8 +196,8 @@ repositories {
 
 //  ...
 dependencies {
-    compile 'org.bouncycastle:bcprov-jdk15on:1.57'
-    compile 'org.bouncycastle:bcpg-jdk15on:1.57'
+    compile 'org.bouncycastle:bcprov-jdk15on:1.59'
+    compile 'org.bouncycastle:bcpg-jdk15on:1.59'
     //  ...
     compile 'name.neuhalfen.projects.crypto.bouncycastle.openpgp:bouncy-gpg:2.+'
    // ...
@@ -262,6 +272,9 @@ FAQ
    
    <dt>I am getting 'java.security.InvalidKeyException: Illegal key size' / 'java.lang.SecurityException: Unsupported keysize or algorithm parameters'</dt>
    <dd>The unrestricted policy files for the JVM are <a href="http://www.bouncycastle.org/wiki/display/JA1/Frequently+Asked+Questions">probably not installed</a>.</dd>
+   
+   <dt>I am getting 'java.io.EOFException: premature end of stream in PartialInputStream' while decrypting / Sender can't validate signature</dt>
+   <dd>This often happens when encrypting to a 'ByteArrayOutputStream' and the <a href="https://stackoverflow.com/questions/48870074/bouncy-castle-pgp-premature-end-of-stream-in-partialinputstream/49544870#49544870">encryption stream is not propely closed</a>. The reason is that GPG writes the signature at the end of the stream. This is triggered by closing the stream.</dd>
 
    <dt>Where is 'secring.pgp'?</dt>
    <dd>'secring.gpg' has been <a href="https://gnupg.org/faq/whats-new-in-2.1.html#nosecring">removed in gpg 2.1</a>. Use the other methods to read private keys.</dd>
