@@ -14,6 +14,8 @@
 * Selection of keys was not compliant with [RFC 4880](https://tools.ietf.org/html/rfc4880#section-5.2.3.3). _Probably_ this is non-breaking for most users. Use [Pre202KeySelectionStrategy](src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/callbacks/Pre202KeySelectionStrategy.java) for old behaviour.
 
 #### New
+* Encrypt to multiple recipients
+* Finer grained control over key selection
 * Symmertric key derivation (`name.neuhalfen.projects.crypto.symmetric.keygeneration`) (BETA!!)
 
 ## V 2.0.1
