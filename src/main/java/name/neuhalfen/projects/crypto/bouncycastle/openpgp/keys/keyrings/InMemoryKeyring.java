@@ -54,13 +54,21 @@ public final class InMemoryKeyring implements KeyringConfig {
       throw new IllegalArgumentException("encodedPublicKey must not be null");
     }
 
-    try (
-        final InputStream raw = new ByteArrayInputStream(encodedPublicKey);
-        final InputStream decoded = org.bouncycastle.openpgp.PGPUtil.getDecoderStream(raw)
-    ) {
+    InputStream raw = null;
+    InputStream decoded = null;
+    try {
+      raw = new ByteArrayInputStream(encodedPublicKey);
+      decoded = org.bouncycastle.openpgp.PGPUtil.getDecoderStream(raw);
       PGPPublicKeyRing pgpPub = new PGPPublicKeyRing(decoded, getKeyFingerPrintCalculator());
       this.publicKeyRings = PGPPublicKeyRingCollection
-          .addPublicKeyRing(this.publicKeyRings, pgpPub);
+              .addPublicKeyRing(this.publicKeyRings, pgpPub);
+    }
+    catch (IOException e) {
+      if (decoded != null) {
+        decoded.close();
+      }
+      raw.close();
+      throw e;
     }
   }
 
@@ -82,15 +90,22 @@ public final class InMemoryKeyring implements KeyringConfig {
       throw new IllegalArgumentException("encodedPrivateKey must not be null");
     }
 
-    try (
-        final InputStream raw = new ByteArrayInputStream(encodedPrivateKey);
-        final InputStream decoded = org.bouncycastle.openpgp.PGPUtil
-            .getDecoderStream(raw)
-    ) {
+    InputStream raw = null;
+    InputStream decoded = null;
+    try {
+      raw = new ByteArrayInputStream(encodedPrivateKey);
+      decoded = org.bouncycastle.openpgp.PGPUtil
+              .getDecoderStream(raw);
       PGPSecretKeyRing pgpPRivate = new PGPSecretKeyRing(decoded, getKeyFingerPrintCalculator());
       this.secretKeyRings =
-          PGPSecretKeyRingCollection
-              .addSecretKeyRing(this.secretKeyRings, pgpPRivate);
+              PGPSecretKeyRingCollection
+                      .addSecretKeyRing(this.secretKeyRings, pgpPRivate);
+    } catch (IOException e) {
+      if (decoded != null) {
+        decoded.close();
+      }
+      raw.close();
+      throw e;
     }
   }
 

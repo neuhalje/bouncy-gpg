@@ -1,8 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.ZonedDateTime;
+import java.util.Date;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
@@ -32,23 +32,22 @@ ssb  rsa2048/0x83063C3DA3814052
 
   public final static String UID_EMAIL = "rfc4880@example.org";
 
-  public final static Instant EXPIRED_KEY_CREATION_TIME = ZonedDateTime
-      .parse("2018-03-25T10:55:31Z").toInstant();
+  public final static Date EXPIRED_KEY_CREATION_TIME =
+          new Date(1521975331000L);
 
-  public final static Instant EXPIRED_KEY_EXPIRATION_DATE = ZonedDateTime
-      .parse("2018-03-26T10:56:21Z")
-      .toInstant();
+  public final static Date EXPIRED_KEY_EXPIRATION_DATE =
+          new Date(1522061781000L);
 
   /**
    * Key SIGNATURE_KEY_EXPIRED is no longer valid here.
    */
-  public final static Instant SIGNATURE_KEY_GUARANTEED_EXPIRED_AT = EXPIRED_KEY_EXPIRATION_DATE
-      .plusSeconds(1);
+  public final static Date SIGNATURE_KEY_GUARANTEED_EXPIRED_AT =
+          new Date(EXPIRED_KEY_EXPIRATION_DATE.getTime() + 1000L);
   /**
    * Key SIGNATURE_KEY_EXPIRED is still valid here.
    */
-  public final static Instant SIGNATURE_KEY_GUARANTEED_VALID_AT = EXPIRED_KEY_EXPIRATION_DATE
-      .minusSeconds(1);
+  public final static Date SIGNATURE_KEY_GUARANTEED_VALID_AT =
+          new Date(EXPIRED_KEY_EXPIRATION_DATE.getTime() - 1000L);
 
   public final static long MASTER_KEY_ID = Long.parseUnsignedLong("F8BEA74E37D9F45D", 16);
   public final static long ENCRYPTION_KEY = Long.parseUnsignedLong("47377FEDD16C26B3", 16);

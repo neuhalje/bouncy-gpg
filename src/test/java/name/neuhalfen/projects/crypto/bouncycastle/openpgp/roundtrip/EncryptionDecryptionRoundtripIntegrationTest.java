@@ -15,6 +15,8 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.SignatureException;
 import java.time.Instant;
+import java.util.Date;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
@@ -327,7 +329,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
     final OutputStream outputStream = BouncyGPG
         .encryptToStream()
         .withConfig(Configs.keyringConfigFromFilesForSender())
-        .setReferenceDateForKeyValidityTo(Instant.MAX)
+        .setReferenceDateForKeyValidityTo(new Date(Long.MAX_VALUE))
         .withAlgorithms(algorithmSuite)
         .toRecipient("recipient@example.com")
         .andSignWith("sender@example.com")
@@ -463,7 +465,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
     final OutputStream outputStream = BouncyGPG
         .encryptToStream()
         .withConfig(Configs.keyringConfigFromResourceForSender())
-        .setReferenceDateForKeyValidityTo(Instant.MAX)
+        .setReferenceDateForKeyValidityTo(new Date(Long.MAX_VALUE))
         .withAlgorithms(algorithmSuite)
         .toRecipients("sender@example.com", "recipient@example.com")
         .andSignWith("sender@example.com")

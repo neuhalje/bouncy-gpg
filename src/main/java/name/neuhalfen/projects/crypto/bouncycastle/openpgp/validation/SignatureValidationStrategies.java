@@ -6,10 +6,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
@@ -134,8 +135,10 @@ public final class SignatureValidationStrategies {
         throw new PGPException("Could not find public-key for userid '" + userId + "'");
       }
 
-      Set<Long> keysForUid = availableKeys.stream().map(key -> key.getKeyID())
-          .collect(Collectors.toSet());
+      Set<Long> keysForUid = new HashSet<>();
+      for (PGPPublicKey p : availableKeys) {
+        keysForUid.add(p.getKeyID());
+      }
 
       keyIdsByUid.put(userId, keysForUid);
     }

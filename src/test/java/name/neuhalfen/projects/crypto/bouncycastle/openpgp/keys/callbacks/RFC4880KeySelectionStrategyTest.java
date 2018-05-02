@@ -9,9 +9,10 @@ import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.security.Security;
-import java.time.Instant;
+import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
@@ -245,7 +246,7 @@ public class RFC4880KeySelectionStrategyTest {
     final KeyringConfig keyringConfig = RFC4880TestKeyringsMasterKeyAsSigningKey
         .publicAndPrivateKeyKeyringConfig();
 
-    final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(Instant.MAX);
+    final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(new Date(Long.MAX_VALUE));
 
     final PGPPublicKey signingPublicKey = keySelectionStrategy
         .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyringsMasterKeyAsSigningKey.UID_EMAIL,

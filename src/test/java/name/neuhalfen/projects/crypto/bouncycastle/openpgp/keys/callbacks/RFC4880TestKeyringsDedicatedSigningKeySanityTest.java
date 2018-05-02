@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.security.Security;
+import java.util.Date;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
@@ -99,7 +101,7 @@ public class RFC4880TestKeyringsDedicatedSigningKeySanityTest {
     assertNotNull("Expired Signature key exists", publicKey);
 
     assertEquals("Expired key has correct creation date set", EXPIRED_KEY_CREATION_TIME,
-        publicKey.getCreationTime().toInstant());
+        new Date(publicKey.getCreationTime().getTime()));
     assertEquals("Expired key has correct expiry time set", 86450, publicKey.getValidSeconds());
   }
 
