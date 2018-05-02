@@ -63,11 +63,13 @@ public final class InMemoryKeyring implements KeyringConfig {
       this.publicKeyRings = PGPPublicKeyRingCollection
               .addPublicKeyRing(this.publicKeyRings, pgpPub);
     }
-    catch (IOException e) {
+    catch (Exception e) {
       if (decoded != null) {
         decoded.close();
       }
-      raw.close();
+      if (raw != null) {
+        raw.close();
+      }
       throw e;
     }
   }
@@ -100,11 +102,13 @@ public final class InMemoryKeyring implements KeyringConfig {
       this.secretKeyRings =
               PGPSecretKeyRingCollection
                       .addSecretKeyRing(this.secretKeyRings, pgpPRivate);
-    } catch (IOException e) {
+    } catch (Exception e) {
       if (decoded != null) {
         decoded.close();
       }
-      raw.close();
+      if (raw != null) {
+        raw.close();
+      }
       throw e;
     }
   }
