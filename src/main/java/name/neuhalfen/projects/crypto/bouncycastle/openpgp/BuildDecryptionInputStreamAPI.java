@@ -26,7 +26,8 @@ public final class BuildDecryptionInputStreamAPI {
   @Nonnull
   private SignatureValidationStrategy signatureCheckingMode;
 
-  private KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(new Date());
+  private KeySelectionStrategy keySelectionStrategy =
+          new Rfc4880KeySelectionStrategy(new Date());
 
   /**
    * Start building by passing in the keyring config.
@@ -50,7 +51,8 @@ public final class BuildDecryptionInputStreamAPI {
 
     ValidationWithKeySelectionStrategy() {
       super();
-      BuildDecryptionInputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(new Date());
+      BuildDecryptionInputStreamAPI.this.keySelectionStrategy =
+              new Rfc4880KeySelectionStrategy(new Date());
     }
 
     public Validation setReferenceDateForKeyValidityTo(

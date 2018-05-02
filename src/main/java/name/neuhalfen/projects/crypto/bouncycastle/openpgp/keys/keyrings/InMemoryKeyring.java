@@ -62,8 +62,7 @@ public final class InMemoryKeyring implements KeyringConfig {
       PGPPublicKeyRing pgpPub = new PGPPublicKeyRing(decoded, getKeyFingerPrintCalculator());
       this.publicKeyRings = PGPPublicKeyRingCollection
               .addPublicKeyRing(this.publicKeyRings, pgpPub);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       if (decoded != null) {
         decoded.close();
       }

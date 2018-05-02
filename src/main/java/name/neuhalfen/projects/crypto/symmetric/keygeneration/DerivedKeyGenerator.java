@@ -109,9 +109,5 @@ public class DerivedKeyGenerator {
   @SuppressWarnings("PMD.LawOfDemeter")
   private byte[] byteRepresentationOf(String identifier) {
     return identifier.getBytes(Charset.forName("UTF-8"));
-//    final ByteBuffer buffer = UTF_8.encode(CharBuffer.wrap(identifier));
-//    final byte[] identifierByteRepresentation = new byte[buffer.limit()];
-//    buffer.get(identifierByteRepresentation);
-//    return identifierByteRepresentation;
   }
 }

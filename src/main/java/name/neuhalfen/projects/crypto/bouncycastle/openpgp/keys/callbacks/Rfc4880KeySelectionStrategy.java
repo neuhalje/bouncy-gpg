@@ -126,10 +126,10 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
           Iterator<PGPPublicKey> iterator = ring.iterator();
           while (iterator.hasNext()) {
             PGPPublicKey key = iterator.next();
-            if (isVerificationKey(key) &&
-                    isNotRevoked(key) &&
-                    isNotExpired(key) &&
-                    hasPrivateKey(key, secretKeyRings)) {
+            if (isVerificationKey(key)
+                    && isNotRevoked(key)
+                    && isNotExpired(key)
+                    && hasPrivateKey(key, secretKeyRings)) {
               publicKey = key;
             }
           }
@@ -141,9 +141,9 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
           Iterator<PGPPublicKey> iterator = ring.iterator();
           while (iterator.hasNext()) {
             PGPPublicKey key = iterator.next();
-            if (isEncryptionKey(key) &&
-                    isNotRevoked(key) &&
-                    isNotExpired(key)) {
+            if (isEncryptionKey(key)
+                    && isNotRevoked(key)
+                    && isNotExpired(key)) {
               publicKey = key;
             }
           }
@@ -191,7 +191,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     final boolean isExpired;
 
     if (hasExpiryDate) {
-      final Date expiryDate = new Date(pubKey.getCreationTime().getTime() + 1000L * pubKey.getValidSeconds());
+      final Date expiryDate = new Date(pubKey.getCreationTime().getTime()
+              + 1000L * pubKey.getValidSeconds());
       isExpired = expiryDate
           .before(getDateOfTimestampVerification());
 
