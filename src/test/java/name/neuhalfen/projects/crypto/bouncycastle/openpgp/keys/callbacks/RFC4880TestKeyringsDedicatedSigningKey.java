@@ -1,7 +1,10 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
@@ -32,11 +35,19 @@ ssb  rsa2048/0x83063C3DA3814052
 
   public final static String UID_EMAIL = "rfc4880@example.org";
 
-  public final static Date EXPIRED_KEY_CREATION_TIME =
-          new Date(1521975331000L);
+  public static Date EXPIRED_KEY_CREATION_TIME;
+  public static Date EXPIRED_KEY_EXPIRATION_DATE;
 
-  public final static Date EXPIRED_KEY_EXPIRATION_DATE =
-          new Date(1522061781000L);
+  static {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+    try {
+      EXPIRED_KEY_CREATION_TIME = sdf.parse("2018-03-25T10:55:31Z");
+      EXPIRED_KEY_EXPIRATION_DATE = sdf.parse("2018-03-26T10:56:21Z");
+    } catch (ParseException e) {
+      throw new AssertionError(e);
+    }
+  }
 
   /**
    * Key SIGNATURE_KEY_EXPIRED is no longer valid here.
