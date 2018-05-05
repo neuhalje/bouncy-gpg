@@ -5,10 +5,11 @@ import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
-import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nullable;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.PGPEncryptingStream;
@@ -66,11 +67,11 @@ public final class BuildEncryptionOutputStreamAPI {
     private WithKeySelectionStrategy() {
       super();
       BuildEncryptionOutputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-          Instant.now());
+          new Date());
     }
 
     public WithAlgorithmSuite setReferenceDateForKeyValidityTo(
-        Instant dateOfTimestampVerification) {
+        Date dateOfTimestampVerification) {
       if (dateOfTimestampVerification == null) {
         throw new IllegalArgumentException("dateOfTimestampVerification must not be null");
       }
@@ -87,7 +88,7 @@ public final class BuildEncryptionOutputStreamAPI {
       }
       BuildEncryptionOutputStreamAPI.this.keySelectionStrategy = strategy;
       LOGGER.trace("WithKeySelectionStrategy: override strategy to {}",
-          strategy.getClass().toGenericString());
+          strategy.getClass().getName());
       return new WithAlgorithmSuiteImpl();
     }
   }

@@ -3,9 +3,10 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchProviderException;
-import java.time.Instant;
+import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy;
@@ -25,8 +26,8 @@ public final class BuildDecryptionInputStreamAPI {
   @Nonnull
   private SignatureValidationStrategy signatureCheckingMode;
 
-  private KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-      Instant.now());
+  private KeySelectionStrategy keySelectionStrategy =
+          new Rfc4880KeySelectionStrategy(new Date());
 
   /**
    * Start building by passing in the keyring config.
@@ -50,12 +51,12 @@ public final class BuildDecryptionInputStreamAPI {
 
     ValidationWithKeySelectionStrategy() {
       super();
-      BuildDecryptionInputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-          Instant.now());
+      BuildDecryptionInputStreamAPI.this.keySelectionStrategy =
+              new Rfc4880KeySelectionStrategy(new Date());
     }
 
     public Validation setReferenceDateForKeyValidityTo(
-        Instant dateOfTimestampVerification) {
+        Date dateOfTimestampVerification) {
       if (dateOfTimestampVerification == null) {
         throw new IllegalArgumentException("dateOfTimestampVerification must not be null");
       }

@@ -1,7 +1,7 @@
 package name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching;
 
 import java.io.Serializable;
-import java.util.Objects;
+
 import org.bouncycastle.crypto.generators.SCrypt;
 
 
@@ -105,7 +105,7 @@ public class SCryptKeyStretching implements KeyStretching {
 
     @Override
     public int hashCode() {
-      return Objects.hash(N, r, p);
+      return 31 * N + 17 * r + p;
     }
 
     @Override

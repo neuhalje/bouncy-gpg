@@ -19,7 +19,17 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id "com.jfrog.bintray" version "1.7.3"
+    id 'ru.vyarus.animalsniffer' version '1.4.3'
 }
+
+apply plugin: 'ru.vyarus.animalsniffer'
+dependencies {
+    signature "net.sf.androidscents.signature:android-api-level-9:2.3.1_r2@signature"
+}
+animalsniffer {
+    sourceSets = [sourceSets.main]
+}
+
 
 checkstyle {
     toolVersion = "8.1"

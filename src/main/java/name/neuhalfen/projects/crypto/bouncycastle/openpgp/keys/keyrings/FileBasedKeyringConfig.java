@@ -1,10 +1,11 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import javax.annotation.Nonnull;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 
 /**
@@ -27,12 +28,12 @@ final class FileBasedKeyringConfig extends AbstractDefaultKeyringConfig {
   @Nonnull
   @Override
   protected InputStream getPublicKeyRingStream() throws IOException {
-    return Files.newInputStream(publicKeyring.toPath());
+    return new FileInputStream(publicKeyring);
   }
 
   @Nonnull
   @Override
   protected InputStream getSecretKeyRingStream() throws IOException {
-    return Files.newInputStream(secretKeyring.toPath());
+    return new FileInputStream(secretKeyring);
   }
 }

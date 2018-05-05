@@ -62,11 +62,9 @@ final class ExplodeAndReencrypt {
         numFiles++;
 
         LOGGER.debug("found file '{}'", entry.getName());
-
-        try (
-            final OutputStream outputStream = entityHandlingStrategy
-                .createOutputStream(sanitizedFileName)
-        ) {
+        OutputStream outputStream = null;
+        try {
+          outputStream = entityHandlingStrategy.createOutputStream(sanitizedFileName);
           if (outputStream == null) {
             LOGGER.trace("Ignore {}", entry.getName());
           } else {
@@ -74,6 +72,10 @@ final class ExplodeAndReencrypt {
             Streams.pipeAll(zis, encryptedSmallFromZIP);
             encryptedSmallFromZIP.flush();
             encryptedSmallFromZIP.close();
+          }
+        } finally {
+          if (outputStream != null) {
+            outputStream.close();
           }
         }
       }

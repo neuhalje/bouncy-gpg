@@ -1,9 +1,7 @@
 package name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching;
 
 
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 
 public class MasterKeyFromPasswordDerivation {
@@ -49,9 +47,6 @@ public class MasterKeyFromPasswordDerivation {
    */
   @SuppressWarnings("PMD.LawOfDemeter")
   private byte[] byteRepresentationOf(String identifier) {
-    final ByteBuffer buffer = StandardCharsets.UTF_8.encode(CharBuffer.wrap(identifier));
-    final byte[] identifierByteRepresentation = new byte[buffer.limit()];
-    buffer.get(identifierByteRepresentation);
-    return identifierByteRepresentation;
+    return identifier.getBytes(Charset.forName("UTF-8"));
   }
 }

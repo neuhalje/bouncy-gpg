@@ -1,14 +1,12 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 import java.io.IOException;
-import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import javax.annotation.Nullable;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPKeyFlags;
@@ -30,14 +28,14 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
       .getLogger(Rfc4880KeySelectionStrategy.class);
 
-  private final Instant dateOfTimestampVerification;
+  private final Date dateOfTimestampVerification;
 
   /**
    * The date used for key expiration date checks as "now".
    *
    * @return dateOfTimestampVerification
    */
-  protected Instant getDateOfTimestampVerification() {
+  protected Date getDateOfTimestampVerification() {
     return dateOfTimestampVerification;
   }
 
@@ -45,7 +43,7 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   /**
    * @param dateOfTimestampVerification The date used for key expiration date checks as "now".
    */
-  public Rfc4880KeySelectionStrategy(final Instant dateOfTimestampVerification) {
+  public Rfc4880KeySelectionStrategy(final Date dateOfTimestampVerification) {
     this.dateOfTimestampVerification = dateOfTimestampVerification;
   }
 
@@ -97,12 +95,17 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     final Set<PGPPublicKeyRing> publicKeyrings = this
         .publicKeyRingsForUid(PURPOSE.FOR_SIGNING, uid, keyringConfig);
 
-    return publicKeyrings.stream()
-        .flatMap(keyring -> StreamSupport.stream(keyring.spliterator(), false))
-        .filter(this::isVerificationKey)
-        .filter(this::isNotRevoked)
-        .filter(this::isNotExpired)
-        .collect(Collectors.toSet());
+    Set<PGPPublicKey> validKeys = new HashSet<>();
+    for (PGPPublicKeyRing p : publicKeyrings) {
+      Iterator<PGPPublicKey> keys = p.iterator();
+      while (keys.hasNext()) {
+        PGPPublicKey key = keys.next();
+        if (isVerificationKey(key) && isNotRevoked(key) && isNotExpired(key)) {
+          validKeys.add(key);
+        }
+      }
+    }
+    return validKeys;
   }
 
   @Nullable
@@ -116,51 +119,60 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
     final PGPSecretKeyRingCollection secretKeyRings = keyringConfig.getSecretKeyRings();
 
+    PGPPublicKey publicKey = null;
     switch (purpose) {
       case FOR_SIGNING:
-        return publicKeyrings.stream()
-            .flatMap(keyring -> StreamSupport.stream(keyring.spliterator(), false))
-            .filter(this::isVerificationKey)
-            .filter(this::isNotRevoked)
-            .filter(this::isNotExpired)
-            .filter(hasPrivateKey(secretKeyRings))
-            .reduce((a, b) -> b)
-            .orElse(null);
+        for (PGPPublicKeyRing ring : publicKeyrings) {
+          Iterator<PGPPublicKey> iterator = ring.iterator();
+          while (iterator.hasNext()) {
+            PGPPublicKey key = iterator.next();
+            if (isVerificationKey(key)
+                    && isNotRevoked(key)
+                    && isNotExpired(key)
+                    && hasPrivateKey(key, secretKeyRings)) {
+              publicKey = key;
+            }
+          }
+        }
+        return publicKey;
 
       case FOR_ENCRYPTION:
-        return publicKeyrings.stream()
-            .flatMap(keyring -> StreamSupport.stream(keyring.spliterator(), false))
-            .filter(this::isEncryptionKey)
-            .filter(this::isNotRevoked)
-            .filter(this::isNotExpired)
-            .reduce((a, b) -> b)
-            .orElse(null);
+        for (PGPPublicKeyRing ring : publicKeyrings) {
+          Iterator<PGPPublicKey> iterator = ring.iterator();
+          while (iterator.hasNext()) {
+            PGPPublicKey key = iterator.next();
+            if (isEncryptionKey(key)
+                    && isNotRevoked(key)
+                    && isNotExpired(key)) {
+              publicKey = key;
+            }
+          }
+        }
+        return publicKey;
 
       default:
         return null;
     }
   }
 
+  protected boolean hasPrivateKey(PGPPublicKey pubKey, PGPSecretKeyRingCollection secretKeyRings) {
+    boolean result = false;
+    try {
+      final boolean hasPrivateKey = secretKeyRings.contains(pubKey.getKeyID());
 
-  protected Predicate<PGPPublicKey> hasPrivateKey(final PGPSecretKeyRingCollection secretKeyRings) {
-    return pubKey -> {
-      try {
-        final boolean hasPrivateKey = secretKeyRings.contains(pubKey.getKeyID());
-
-        if (!hasPrivateKey) {
-          LOGGER.trace("Skipping pubkey {} (no private key found)",
-              Long.toHexString(pubKey.getKeyID()));
-        }
-
-        return hasPrivateKey;
-      } catch (PGPException e) {
-        // ignore this for filtering
-        LOGGER.debug("Failed to test for private key for pubkey " + pubKey.getKeyID());
-        return false;
+      if (!hasPrivateKey) {
+        LOGGER.trace("Skipping pubkey {} (no private key found)",
+                Long.toHexString(pubKey.getKeyID()));
       }
-    };
-  }
 
+      result = hasPrivateKey;
+    } catch (PGPException e) {
+      // ignore this for filtering
+      LOGGER.debug("Failed to test for private key for pubkey " + pubKey.getKeyID());
+    }
+
+    return result;
+  }
 
   protected boolean isNotMasterKey(PGPPublicKey pubKey) {
     return !pubKey.isMasterKey();
@@ -179,10 +191,10 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     final boolean isExpired;
 
     if (hasExpiryDate) {
-      final Instant expiryDate = pubKey.getCreationTime().toInstant()
-          .plusSeconds(pubKey.getValidSeconds());
+      final Date expiryDate = new Date(pubKey.getCreationTime().getTime()
+              + 1000L * pubKey.getValidSeconds());
       isExpired = expiryDate
-          .isBefore(getDateOfTimestampVerification());
+          .before(getDateOfTimestampVerification());
 
       if (isExpired) {
         LOGGER.trace("Skipping pubkey {} (expired since {})",

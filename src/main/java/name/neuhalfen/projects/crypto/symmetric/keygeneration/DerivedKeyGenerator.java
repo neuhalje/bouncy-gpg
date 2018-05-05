@@ -1,13 +1,11 @@
 package name.neuhalfen.projects.crypto.symmetric.keygeneration;
 
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import javax.annotation.Nullable;
+
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.KeyDerivationFunction;
 
 public class DerivedKeyGenerator {
@@ -110,9 +108,6 @@ public class DerivedKeyGenerator {
    */
   @SuppressWarnings("PMD.LawOfDemeter")
   private byte[] byteRepresentationOf(String identifier) {
-    final ByteBuffer buffer = UTF_8.encode(CharBuffer.wrap(identifier));
-    final byte[] identifierByteRepresentation = new byte[buffer.limit()];
-    buffer.get(identifierByteRepresentation);
-    return identifierByteRepresentation;
+    return identifier.getBytes(Charset.forName("UTF-8"));
   }
 }
