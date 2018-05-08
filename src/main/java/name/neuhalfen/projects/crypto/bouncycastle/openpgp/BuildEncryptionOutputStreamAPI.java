@@ -131,6 +131,20 @@ public final class BuildEncryptionOutputStreamAPI {
     To withStrongAlgorithms();
 
     /**
+     * Use the default algorithm suite for <a href="https://xmpp.org/extensions/xep-0373.html">XEP-0373</a>,
+     * OpenPGP for XMPP.
+     * It is a sensible suite with strong algorithms but without compression.:
+     * <dl>
+     * <dt>hash</dt><dd>SHA-256</dd>
+     * <dt>chipher</dt><dd>AES-128</dd>
+     * <dt>compression</dt><dd>uncompressed</dd>
+     * </dl>
+     *
+     * @return next step
+     */
+    To withOxAlgorithms();
+
+    /**
      * Use a custom algorithm set.
      *
      * @param algorithmSuite algorithm suite to use
@@ -140,6 +154,7 @@ public final class BuildEncryptionOutputStreamAPI {
      * @see DefaultPGPAlgorithmSuites
      */
     To withAlgorithms(PGPAlgorithmSuite algorithmSuite);
+
 
     @SuppressWarnings("PMD.ShortClassName")
     interface To {
@@ -356,6 +371,15 @@ public final class BuildEncryptionOutputStreamAPI {
       LOGGER
           .trace("use algorithms {}",
               BuildEncryptionOutputStreamAPI.this.algorithmSuite.toString());
+      return new ToImpl();
+    }
+
+    @Override
+    public To withOxAlgorithms() {
+      BuildEncryptionOutputStreamAPI.this.algorithmSuite = DefaultPGPAlgorithmSuites.oxSuite();
+      LOGGER
+          .trace("use algorithms {}",
+              BuildEncryptionOutputStreamAPI.this.toString());
       return new ToImpl();
     }
 
