@@ -18,6 +18,14 @@ public final class DefaultPGPAlgorithmSuites {
       PGPSymmetricEncryptionAlgorithms.AES_128,
       PGPCompressionAlgorithms.ZLIB);
 
+  /**
+   * Algorithm suite for XEP-0373: OpenPGP for XMPP.
+   */
+  private final static PGPAlgorithmSuite DEFAULT_OX = new PGPAlgorithmSuite(
+      PGPHashAlgorithms.SHA_256,
+      PGPSymmetricEncryptionAlgorithms.AES_128,
+      PGPCompressionAlgorithms.UNCOMPRESSED);
+
   // no construction
   private DefaultPGPAlgorithmSuites() {
   }
@@ -38,6 +46,10 @@ public final class DefaultPGPAlgorithmSuites {
    */
   public static PGPAlgorithmSuite strongSuite() {
     return STRONG_GPG;
+  }
+
+  public static PGPAlgorithmSuite oxSuite() {
+    return DEFAULT_OX;
   }
 
 }
