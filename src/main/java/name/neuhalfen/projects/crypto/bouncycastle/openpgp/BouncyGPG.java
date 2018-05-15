@@ -47,4 +47,11 @@ public final class BouncyGPG {
   public static BuildEncryptionOutputStreamAPI encryptToStream() {
     return new BuildEncryptionOutputStreamAPI();
   }
+
+  /**
+  * Entry point into key generation.
+  */
+  public static BuildPGPKeyGeneratorAPI createKeyPair() {
+    return new BuildPGPKeyGeneratorAPI();
+  }
 }
