@@ -31,6 +31,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
       .getLogger(Rfc4880KeySelectionStrategy.class);
 
   private final Instant dateOfTimestampVerification;
+  private final boolean ignoreCase;
+  private final boolean matchPartial;
 
   /**
    * The date used for key expiration date checks as "now".
@@ -46,7 +48,20 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
    * @param dateOfTimestampVerification The date used for key expiration date checks as "now".
    */
   public Rfc4880KeySelectionStrategy(final Instant dateOfTimestampVerification) {
+    this(dateOfTimestampVerification, true, true);
+  }
+
+  /**
+   * @param matchPartial if true userID need only be a substring of an actual ID string to match.
+   * @param ignoreCase if true case is ignored in user ID comparisons.
+   * @param dateOfTimestampVerification The date used for key expiration date checks as "now".
+   */
+  public Rfc4880KeySelectionStrategy(final Instant dateOfTimestampVerification,
+      final boolean matchPartial, final boolean ignoreCase) {
     this.dateOfTimestampVerification = dateOfTimestampVerification;
+    this.matchPartial = matchPartial;
+    this.ignoreCase = ignoreCase;
+
   }
 
   /**
@@ -60,8 +75,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
    *
    * @return Set with keyrings, never null.
    *
-   * @throws PGPException  Something with BouncyCastle went wrong
-   * @throws IOException  IO is dangerous
+   * @throws PGPException Something with BouncyCastle went wrong
+   * @throws IOException IO is dangerous
    */
   @SuppressWarnings({"PMD.LawOfDemeter"})
   protected Set<PGPPublicKeyRing> publicKeyRingsForUid(final PURPOSE purpose, final String uid,
@@ -70,16 +85,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
     Set<PGPPublicKeyRing> keyringsForUid = new HashSet<>();
 
-    final String uidQuery;
-    final boolean uidAlreadyInBrackets = uid.matches(".*<.*>.*");
-    if (uidAlreadyInBrackets) {
-      uidQuery = uid;
-    } else {
-      uidQuery = "<" + uid + ">";
-    }
-
     final Iterator<PGPPublicKeyRing> keyRings = keyringConfig.getPublicKeyRings()
-        .getKeyRings(uidQuery, true, true);
+        .getKeyRings(uid, matchPartial, ignoreCase);
 
     while (keyRings.hasNext()) {
       keyringsForUid.add(keyRings.next());

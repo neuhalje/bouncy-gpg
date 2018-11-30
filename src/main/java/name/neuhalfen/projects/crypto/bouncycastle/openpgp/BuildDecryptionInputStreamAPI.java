@@ -7,6 +7,7 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.ByEMailKeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
@@ -17,7 +18,8 @@ import org.bouncycastle.openpgp.PGPException;
 /**
  * This class implements the builder for decrypting GPG-encrypted streams.
  */
-@SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter"})
+@SuppressWarnings({"PMD.GodClass", "PMD.AtLeastOneConstructor",
+    "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter"})
 public final class BuildDecryptionInputStreamAPI {
 
   @Nonnull
@@ -25,8 +27,14 @@ public final class BuildDecryptionInputStreamAPI {
   @Nonnull
   private SignatureValidationStrategy signatureCheckingMode;
 
-  private KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-      Instant.now());
+
+  @SuppressWarnings({"PMD.ImmutableField"})
+  private ValidationWithKeySelectionStrategy keySelectionStrategyBuilder;
+
+  /*
+   * lazily populated by getKeySelectionStrategy()
+   */
+  private KeySelectionStrategy keySelectionStrategy;
 
   /**
    * Start building by passing in the keyring config.
@@ -46,34 +54,116 @@ public final class BuildDecryptionInputStreamAPI {
   }
 
 
+  /**
+   * Select keys from keyring.
+   */
   public final class ValidationWithKeySelectionStrategy extends ValidationImpl {
+
+    @Nullable
+    private Instant dateOfTimestampVerification = null;
+    @Nullable
+    private Boolean selectUidByEMailOnly = null;
+    private final static boolean SELECT_UID_BY_E_MAIL_ONLY_DEFAULT = true;
+    @Nullable
+    private KeySelectionStrategy keySelectionStrategy = null;
+
 
     ValidationWithKeySelectionStrategy() {
       super();
-      BuildDecryptionInputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-          Instant.now());
+      BuildDecryptionInputStreamAPI.this.keySelectionStrategyBuilder = this;
     }
 
+    /**
+     * In order to determine key validity a reference point in time for "now" is needed.
+     * The default value is "Instant.now()". If this needs to be overridden, pass the value
+     * here. To effectively disable time based key verification pass Instant.MAX (NOT recommended)
+     *
+     * This is not possible in combination with #withKeySelectionStrategy.
+     *
+     * @param dateOfTimestampVerification reference point in time
+     * @return next step in build
+     */
     public Validation setReferenceDateForKeyValidityTo(
-        Instant dateOfTimestampVerification) {
+       final Instant dateOfTimestampVerification) {
+      if (keySelectionStrategy != null) {
+        throw new IllegalStateException(
+            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together with" +
+                " 'withKeySelectionStrategy' ");
+      }
       if (dateOfTimestampVerification == null) {
         throw new IllegalArgumentException("dateOfTimestampVerification must not be null");
       }
-      BuildDecryptionInputStreamAPI.this.keySelectionStrategy = new Rfc4880KeySelectionStrategy(
-          dateOfTimestampVerification);
-      return new ValidationImpl();
+      this.dateOfTimestampVerification = dateOfTimestampVerification;
+      return this;
     }
 
+    /**
+     * The default strategy to search for keys is to *just* search for the email address (the part
+     * between &lt; and &gt;).
+     *
+     * Set this flag to search for any part in the user id.
+     * @return  next build step
+     */
+    public Validation selectUidByAnyUidPart() {
+      if (keySelectionStrategy != null) {
+        throw new IllegalStateException(
+            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together" +
+                " with 'withKeySelectionStrategy' ");
+      }
+      selectUidByEMailOnly = false;
+      return this;
+    }
+
+    /**
+     * Provide a custom strategy for key selection. Ideally a class derived from
+     * Rfc4880KeySelectionStrategy is used.
+     *
+     * @param strategy the actual instance to use
+     *
+     * @return next step in builder
+     *
+     * @see name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy
+     */
     public Validation withKeySelectionStrategy(KeySelectionStrategy strategy) {
       if (strategy == null) {
         throw new IllegalArgumentException("strategy must not be null");
       }
-      BuildDecryptionInputStreamAPI.this.keySelectionStrategy = strategy;
-      return new ValidationImpl();
+      if (selectUidByEMailOnly != null || dateOfTimestampVerification != null) {
+        throw new IllegalStateException(
+            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together"
+                + " with 'withKeySelectionStrategy' ");
+      }
+      this.keySelectionStrategy = strategy;
+      return this;
+    }
+
+
+    // Duplicate of BuildEncryptionInputStreamAPI
+    @SuppressWarnings({"PMD.OnlyOneReturn"})
+    private KeySelectionStrategy buildKeySelectionStrategy() {
+      final boolean hasExistingStrategy = this.keySelectionStrategy != null;
+      if (hasExistingStrategy) {
+        return this.keySelectionStrategy;
+      } else {
+        if (this.selectUidByEMailOnly == null) {
+          this.selectUidByEMailOnly = SELECT_UID_BY_E_MAIL_ONLY_DEFAULT;
+        }
+        if (this.dateOfTimestampVerification == null) {
+          this.dateOfTimestampVerification = Instant.now();
+        }
+
+        if (this.selectUidByEMailOnly) {
+          return new ByEMailKeySelectionStrategy(this.dateOfTimestampVerification);
+        } else {
+          return new Rfc4880KeySelectionStrategy(this.dateOfTimestampVerification);
+        }
+      }
     }
   }
 
-
+  /**
+   * Final build step.
+   */
   public interface Build {
 
     /**
@@ -118,7 +208,7 @@ public final class BuildDecryptionInputStreamAPI {
      * {@code ...andRequireSignatureFromAllKeys(0x54A3DB374F787AB7L)}:
      *
      * @param publicKeyIds A valid signature from ALL of the passed keys is required. Each key MUST
-     * exist in the public keyring.
+     *     exist in the public keyring.
      *
      * @return the next build step
      */
@@ -195,7 +285,7 @@ public final class BuildDecryptionInputStreamAPI {
         throw new IllegalArgumentException("userIds must not be null or empty");
       }
       BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies
-          .requireSignatureFromAllUids(keySelectionStrategy, keyringConfig, userIds);
+          .requireSignatureFromAllUids(getKeySelectionStrategy(), keyringConfig, userIds);
       return new Builder();
     }
 
@@ -246,5 +336,14 @@ public final class BuildDecryptionInputStreamAPI {
         return pgpInputStreamFactory.wrapWithDecryptAndVerify(encryptedData);
       }
     }
+  }
+
+
+  private KeySelectionStrategy getKeySelectionStrategy() {
+    if (this.keySelectionStrategy == null) {
+      this.keySelectionStrategy = this.keySelectionStrategyBuilder
+          .buildKeySelectionStrategy();
+    }
+    return this.keySelectionStrategy;
   }
 }

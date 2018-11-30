@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.security.Security;
 import java.time.Instant;
 import java.util.Set;
@@ -21,13 +22,41 @@ import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 
 /**
  * Test for compliance with https://tools.ietf.org/html/rfc4880#section-5.2.3.3
  * when selecting keys.
  */
+@RunWith(Parameterized.class)
 public class RFC4880KeySelectionStrategyTest {
+
+  @Parameterized.Parameter
+  public /* NOT private */ Class<? extends Rfc4880KeySelectionStrategy> strategyUnderTest;
+
+  /*
+   * make sure that all Rfc4880KeySelectionStrategies work as expected
+   */
+  @Parameterized.Parameters(name = "{0}")
+  public static Object[] data() {
+    return new Object[]{
+        Rfc4880KeySelectionStrategy.class,
+        ByEMailKeySelectionStrategy.class};
+  }
+
+  Rfc4880KeySelectionStrategy buildSut(final Instant dateOfTimestampVerification) {
+    assert strategyUnderTest != null;
+    try {
+      final Constructor<? extends Rfc4880KeySelectionStrategy> constructor = strategyUnderTest
+          .getConstructor(Instant.class);
+      return constructor.newInstance(dateOfTimestampVerification);
+    } catch (Exception e) {
+      throw new AssertionError(
+          "Could not create " + strategyUnderTest.getCanonicalName() + " with timestamp");
+    }
+  }
 
   @Before
   public void before() {
@@ -40,7 +69,7 @@ public class RFC4880KeySelectionStrategyTest {
   public void expiryDetectionWorks_forKeys_withoutExpirationDate()
       throws IOException, PGPException {
 
-    final Rfc4880KeySelectionStrategy sut = new Rfc4880KeySelectionStrategy(
+    final Rfc4880KeySelectionStrategy sut = buildSut(
         RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
     final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
         .publicKeyOnlyKeyringConfig();
@@ -54,7 +83,7 @@ public class RFC4880KeySelectionStrategyTest {
   public void expiryDetectionWorks_withExpirationDate_beforeExpiration()
       throws IOException, PGPException {
 
-    final Rfc4880KeySelectionStrategy sut = new Rfc4880KeySelectionStrategy(
+    final Rfc4880KeySelectionStrategy sut = buildSut(
         RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_VALID_AT);
 
     final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
@@ -71,7 +100,7 @@ public class RFC4880KeySelectionStrategyTest {
   public void expiryDetectionWorks_withExpirationDate_afterExpiration()
       throws IOException, PGPException {
 
-    final Rfc4880KeySelectionStrategy sut = new Rfc4880KeySelectionStrategy(
+    final Rfc4880KeySelectionStrategy sut = buildSut(
         RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
     final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
@@ -86,7 +115,7 @@ public class RFC4880KeySelectionStrategyTest {
   @Test
   public void revocationDetectionWorks() throws IOException, PGPException {
 
-    final Rfc4880KeySelectionStrategy sut = new Rfc4880KeySelectionStrategy(
+    final Rfc4880KeySelectionStrategy sut = buildSut(
         RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
     final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
@@ -104,7 +133,7 @@ public class RFC4880KeySelectionStrategyTest {
 
   @Test
   public void findsPublicKeysForValidation() throws PGPException, IOException {
-    final KeySelectionStrategy sut = new Rfc4880KeySelectionStrategy(
+    final KeySelectionStrategy sut = buildSut(
         RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
     final KeyringConfig keyringConfig = Configs.keyringConfigFromResourceForRecipient();
@@ -128,7 +157,7 @@ public class RFC4880KeySelectionStrategyTest {
     final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
         .publicKeyOnlyKeyringConfig();
 
-    final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
+    final KeySelectionStrategy keySelectionStrategy = buildSut(
         RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
     final PGPPublicKey signingPublicKey = keySelectionStrategy
@@ -151,7 +180,7 @@ public class RFC4880KeySelectionStrategyTest {
     final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
         .publicAndPrivateKeyKeyringConfig();
 
-    final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
+    final KeySelectionStrategy keySelectionStrategy = buildSut(
         RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_VALID_AT);
 
     final PGPPublicKey signingPublicKey = keySelectionStrategy
@@ -179,7 +208,7 @@ public class RFC4880KeySelectionStrategyTest {
     final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
         .publicAndPrivateKeyKeyringConfig();
 
-    final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
+    final KeySelectionStrategy keySelectionStrategy = buildSut(
         RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
     final PGPPublicKey signingPublicKey = keySelectionStrategy
@@ -202,7 +231,7 @@ public class RFC4880KeySelectionStrategyTest {
     final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey
         .publicAndPrivateKeyKeyringConfig();
 
-    final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(
+    final KeySelectionStrategy keySelectionStrategy = buildSut(
         RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
 
     final PGPPublicKey signingPublicKey = keySelectionStrategy
@@ -245,7 +274,7 @@ public class RFC4880KeySelectionStrategyTest {
     final KeyringConfig keyringConfig = RFC4880TestKeyringsMasterKeyAsSigningKey
         .publicAndPrivateKeyKeyringConfig();
 
-    final KeySelectionStrategy keySelectionStrategy = new Rfc4880KeySelectionStrategy(Instant.MAX);
+    final KeySelectionStrategy keySelectionStrategy = buildSut(Instant.MAX);
 
     final PGPPublicKey signingPublicKey = keySelectionStrategy
         .selectPublicKey(PURPOSE.FOR_SIGNING, RFC4880TestKeyringsMasterKeyAsSigningKey.UID_EMAIL,

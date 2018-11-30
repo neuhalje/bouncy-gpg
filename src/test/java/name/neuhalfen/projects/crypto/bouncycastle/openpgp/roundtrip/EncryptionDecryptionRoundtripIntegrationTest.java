@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.roundtrip;
 
 
+import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages.FULL_USER_ID_SENDER;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.io.BufferedOutputStream;
@@ -491,4 +492,41 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
   }
 
 
+  @Test
+  public void changingKeySelection_selectUidByAnyUidPart_works()
+      throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
+    ByteArrayOutputStream result = new ByteArrayOutputStream();
+    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(result);
+
+    final OutputStream outputStream = BouncyGPG
+        .encryptToStream()
+        .withConfig(Configs.keyringConfigFromFilesForSender())
+        .selectUidByAnyUidPart()
+        .setReferenceDateForKeyValidityTo(Instant.MAX)
+        .withAlgorithms(algorithmSuite)
+        .toRecipient("<recipient@example.com>")
+        .andSignWith(FULL_USER_ID_SENDER)
+        .binaryOutput()
+        .andWriteTo(bufferedOutputStream);
+
+    final InputStream is = new ByteArrayInputStream(
+        ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes());
+    Streams.pipeAll(is, outputStream);
+    outputStream.close();
+    bufferedOutputStream.close();
+    is.close();
+
+    final byte[] ciphertext = result.toByteArray();
+    final ByteArrayOutputStream plainBA = new ByteArrayOutputStream();
+
+    final InputStream plainIS = BouncyGPG.decryptAndVerifyStream()
+        .withConfig(Configs.keyringConfigFromFilesForRecipient())
+        .selectUidByAnyUidPart()
+        .andRequireSignatureFromAllKeys("Sven Sender")
+        .fromEncryptedInputStream(new ByteArrayInputStream(ciphertext));
+
+    Streams.pipeAll(plainIS, plainBA);
+
+    assertArrayEquals(ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(), plainBA.toByteArray());
+  }
 }

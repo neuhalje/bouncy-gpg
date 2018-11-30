@@ -354,17 +354,28 @@ ssb  rsa2048/0x83063C3DA3814052
       + "=rT0P\n"
       + "-----END PGP PRIVATE KEY BLOCK-----";
 
-  public static KeyringConfig publicKeyOnlyKeyringConfig() throws IOException, PGPException {
-    final InMemoryKeyring keyring = newKeyring();
-    keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
-    return keyring;
+  public static KeyringConfig publicKeyOnlyKeyringConfig() {
+
+    try {
+      final InMemoryKeyring keyring = newKeyring();
+      keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
+      return keyring;
+    } catch (Exception e) {
+      throw new AssertionError("Failed to initialise test keyring", e);
+
+    }
   }
 
-  public static KeyringConfig publicAndPrivateKeyKeyringConfig() throws IOException, PGPException {
-    final InMemoryKeyring keyring = newKeyring();
-    keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
-    keyring.addSecretKey(PRIVATE_KEY.getBytes("US-ASCII"));
-    return keyring;
+  public static KeyringConfig publicAndPrivateKeyKeyringConfig() {
+    try {
+      final InMemoryKeyring keyring = newKeyring();
+      keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
+      keyring.addSecretKey(PRIVATE_KEY.getBytes("US-ASCII"));
+      return keyring;
+    } catch (Exception e) {
+      throw new AssertionError("Failed to initialise test keyring", e);
+
+    }
   }
 
   private static InMemoryKeyring newKeyring() throws IOException, PGPException {
