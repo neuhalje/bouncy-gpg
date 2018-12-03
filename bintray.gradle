@@ -52,9 +52,6 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-            groupId group
-            artifactId 'bouncy-gpg'
-            version property('version')
 
             pom.withXml {
                 def root = asNode()
@@ -68,12 +65,11 @@ publishing {
 }
 
 bintray {
-    user = property('bintray_Username')
-    key = property('bintray_Password')
+    user = bintray_Username
+    key = bintray_Password
 
-    dryRun = false
-    //property('bintray_dryRun')//[Default: false] Whether to run this as dry-run, without deploying
-    publish = true //[Default: false] Whether version should be auto published after an upload
+    dryRun = false //bintray_dryRun//[Default: false] Whether to run this as dry-run, without deploying
+    publish = false //bintray_publish//[Default: false] Whether version should be auto published after an upload
     override = false //[Default: false] Whether to override version artifacts already published
 
     pkg {
@@ -82,7 +78,7 @@ bintray {
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/neuhalje/bouncy-gpg.git'
         websiteUrl = 'https://neuhalje.github.io/bouncy-gpg/'
-        labels = ['batch-job', 'bouncycastle', 'bouncy-castle', 'gpg', 'gnupg', 'security', 'encryption', 'decryption']
+        labels = ['batch-job', 'bouncycastle', 'bouncy-castle', 'gpg', 'gnupg', 'pgp', 'security', 'encryption', 'decryption', 'rfc4880']
 
         githubRepo = 'neuhalje/bouncy-gpg'
         githubReleaseNotesFile = 'README.md'
@@ -91,7 +87,7 @@ bintray {
             name = property('version')
             desc = 'Make using Bouncy Castle with OpenPGP fun again!'
             released = new Date()
-            vcsTag = property('version')
+            vcsTag = "release/v" + property('version')
 
             gpg {
                 sign = true
