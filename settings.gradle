@@ -1,1 +1,3 @@
 rootProject.name = 'bouncy-gpg'
+enableFeaturePreview('STABLE_PUBLISHING')
+
