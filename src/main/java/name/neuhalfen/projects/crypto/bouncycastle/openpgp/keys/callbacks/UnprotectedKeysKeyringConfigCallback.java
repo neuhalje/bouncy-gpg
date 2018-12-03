@@ -5,7 +5,7 @@ final class UnprotectedKeysKeyringConfigCallback implements KeyringConfigCallbac
 
   @SuppressWarnings("PMD.ReturnEmptyArrayRatherThanNull")
   @Override
-  public char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID) {
+  public char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyId) {
     return null;
   }
 }

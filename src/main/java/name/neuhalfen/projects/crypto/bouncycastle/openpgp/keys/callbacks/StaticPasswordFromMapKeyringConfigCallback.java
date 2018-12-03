@@ -16,10 +16,10 @@ final class StaticPasswordFromMapKeyringConfigCallback implements KeyringConfigC
   }
 
   @Override
-  public char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID) {
-    final char[] password = keyIdToPassphrase.get(keyID);
+  public char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyId) {
+    final char[] password = keyIdToPassphrase.get(keyId);
     if (password == null) {
-      LOGGER.debug("No passphrase found for keyID 0x{}.", Long.toHexString(keyID));
+      LOGGER.debug("No passphrase found for keyID 0x{}.", Long.toHexString(keyId));
     }
     return password;
   }

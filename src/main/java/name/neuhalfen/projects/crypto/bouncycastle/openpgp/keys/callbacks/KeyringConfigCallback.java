@@ -15,10 +15,10 @@ public interface KeyringConfigCallback {
    * 2048R/0x3DF16BD7C3F280F3 2015-09-27 uid [ultimate] Rezi Recipient (Password: recipient)
    * &lt;recipient@example.com&gt; sub 2048R/0x54A3DB374F787AB7 2015-09-27
    *
-   * @param keyID The password for this key is needed
+   * @param keyId The password for this key is needed
    * @return the passphrase OR null (if unknown/no passphrase)
    */
   @SuppressWarnings("PMD.UseVarargs")
   @Nullable
-  char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID);
+  char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyId);
 }

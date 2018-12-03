@@ -20,9 +20,7 @@ import org.bouncycastle.openpgp.PGPSignatureSubpacketVector;
 
 /**
  * This implements the key selection strategy for BouncyGPG .
- *
  * This strategy is tries to implement rfc4880 section-5.2.3.21.
- * *
  * https://tools.ietf.org/html/rfc4880#section-5.2.3.21
  */
 public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
@@ -45,6 +43,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
 
   /**
+   * Construct an instance with matchPartial and ignoreCase set to true.
+   *
    * @param dateOfTimestampVerification The date used for key expiration date checks as "now".
    */
   public Rfc4880KeySelectionStrategy(final Instant dateOfTimestampVerification) {
@@ -52,6 +52,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   }
 
   /**
+   * Create an instance of this strategy.
+   *
    * @param matchPartial if true userID need only be a substring of an actual ID string to match.
    * @param ignoreCase if true case is ignored in user ID comparisons.
    * @param dateOfTimestampVerification The date used for key expiration date checks as "now".
@@ -227,7 +229,7 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   }
 
 
-  public boolean isRevoked(PGPPublicKey pubKey) {
+  protected boolean isRevoked(PGPPublicKey pubKey) {
     final boolean hasRevocation = pubKey.hasRevocation();
     if (hasRevocation) {
       LOGGER.trace("Skipping pubkey {} (revoked)",

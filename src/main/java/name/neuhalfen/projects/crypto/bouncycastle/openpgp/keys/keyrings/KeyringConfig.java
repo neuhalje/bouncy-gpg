@@ -28,11 +28,11 @@ public interface KeyringConfig {
    * &lt;recipient@example.com&gt; sub 2048R/0x54A3DB374F787AB7 2015-09-27 . Most implementations
    * delegate to an implementation of {@link name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback}
    *
-   * @param keyID The password for this key is needed
+   * @param keyId The password for this key is needed
    * @return the passphrase OR null (if unknown/no passphrase)
    */
   @Nullable
-  char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID);
+  char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyId);
 
   /**
    * E.g. cache a 'new BcKeyFingerprintCalculator()'

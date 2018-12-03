@@ -15,7 +15,7 @@ final class StaticPasswordKeyringConfigCallback implements KeyringConfigCallback
 
   @SuppressWarnings("PMD.UseVarargs")
   @Override
-  public char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyID) {
+  public char[] decryptionSecretKeyPassphraseForSecretKeyId(long keyId) {
     return  Arrays.clone(passphrase);
   }
 }

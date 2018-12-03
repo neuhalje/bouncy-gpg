@@ -63,7 +63,7 @@ public final class BuildDecryptionInputStreamAPI {
     private Instant dateOfTimestampVerification = null;
     @Nullable
     private Boolean selectUidByEMailOnly = null;
-    private final static boolean SELECT_UID_BY_E_MAIL_ONLY_DEFAULT = true;
+    private static final boolean SELECT_UID_BY_E_MAIL_ONLY_DEFAULT = true;
     @Nullable
     private KeySelectionStrategy keySelectionStrategy = null;
 
@@ -81,10 +81,10 @@ public final class BuildDecryptionInputStreamAPI {
      * This is not possible in combination with #withKeySelectionStrategy.
      *
      * @param dateOfTimestampVerification reference point in time
+     *
      * @return next step in build
      */
-    public Validation setReferenceDateForKeyValidityTo(
-       final Instant dateOfTimestampVerification) {
+    public Validation setReferenceDateForKeyValidityTo(final Instant dateOfTimestampVerification) {
       if (keySelectionStrategy != null) {
         throw new IllegalStateException(
             "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together with" +
@@ -102,7 +102,8 @@ public final class BuildDecryptionInputStreamAPI {
      * between &lt; and &gt;).
      *
      * Set this flag to search for any part in the user id.
-     * @return  next build step
+     *
+     * @return next build step
      */
     public Validation selectUidByAnyUidPart() {
       if (keySelectionStrategy != null) {
@@ -208,7 +209,7 @@ public final class BuildDecryptionInputStreamAPI {
      * {@code ...andRequireSignatureFromAllKeys(0x54A3DB374F787AB7L)}:
      *
      * @param publicKeyIds A valid signature from ALL of the passed keys is required. Each key MUST
-     *     exist in the public keyring.
+     * exist in the public keyring.
      *
      * @return the next build step
      */

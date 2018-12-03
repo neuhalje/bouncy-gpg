@@ -13,11 +13,11 @@ import javax.annotation.Nullable;
  */
 public class FSZipEntityStrategy implements ZipEntityStrategy {
 
-  private final static Pattern REMOVE_LEADING_RELATIVE_PATH = Pattern
+  private static final Pattern REMOVE_LEADING_RELATIVE_PATH = Pattern
       .compile("^(([.]{2,})|/|\\\\)*", Pattern.COMMENTS);
 
-  private final static Pattern REMOVE_DOT_DOT_REGEXP = Pattern.compile("[.]{2,}", Pattern.COMMENTS);
-  private final static Pattern REMOVE_FOLLOWING_REGEXP = Pattern
+  private static final Pattern REMOVE_DOT_DOT_REGEXP = Pattern.compile("[.]{2,}", Pattern.COMMENTS);
+  private static final Pattern REMOVE_FOLLOWING_REGEXP = Pattern
       .compile("[^a-zA-Z0-9_, +-./\\\\]", Pattern.COMMENTS);
 
   private final File destRootDir;
