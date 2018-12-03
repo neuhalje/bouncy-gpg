@@ -77,7 +77,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 group = 'name.neuhalfen.projects.crypto.bouncycastle.openpgp'
-version = '2.1.0'
+version = '2.1.1'
 
 repositories {
     jcenter()
