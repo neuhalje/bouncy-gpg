@@ -1,4 +1,22 @@
-## V 2.1.0 (NEXT)
+## V 2.x.x (NEXT)
+
+* _tbd_
+
+## V 2.1.1 Bugfix release
+
+* Fix: Add support to search for the whole UID instead of e-mail only
+* Dep: Bump to BC 1.60
+* Doc: Add code of conduct, list of authors
+
+### API Changes
+
+* Loosen restriction to search for e-mail only in `Rfc4880KeySelectionStrategy`.
+  Old behaviour in `ByEMailKeySelectionStrategy`
+
+#### Breaking
+* _none_ if you only used the builder API (see `ByEMailKeySelectionStrategy`).
+
+## V 2.1.0
 * Switch to APACHE2.0 license
 * New maven example
 * Improved test coverage

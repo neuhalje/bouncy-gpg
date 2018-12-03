@@ -19,7 +19,7 @@ Version 2.1
 - [ ] Unit tests: Factor all tests in EncryptionConfig and EncryptWithOpenPGPTestDriver to test the new API
 - [ ] Allow to enforce algorithm "minimum level", e.g. for decryption/validation
 - [ ] Unit tests: iterate different DefaultPGPAlgorithmSuites.secureSuiteForGnuPG() (incl. compression & no signature!)
-- [ ] Code quality reports (Sonar e.g.)
+- [x] Code quality reports (Sonar e.g.)
 - [ ] Extend documentation of key derivation
 - [ ] add .github files
 
