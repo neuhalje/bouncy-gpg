@@ -224,7 +224,7 @@ and this dependency snippet:
     <dependency>
         <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
         <artifactId>bouncy-gpg</artifactId>
-        <version>2.1.0</version>
+        <version>2.1.1</version>
     </dependency>
 ```
    
@@ -263,7 +263,7 @@ FAQ
 
    <dt>Why is the test coverage so low?</dt>
    <dd>Test coverage for 'non-example' code is &gt;85%. Most of the not tested cases are either trivial OR lines that
-   throw exceptions when the input format is broken. </dd>
+   throw exceptions when the input format is broken/handled by bouncycastle directly. </dd>
 
    <dt>How can I contribute?</dt>
    <dd>Pullrequests are welcome! Please state in your PR that you put your code under the LICENSE.</dd>
@@ -279,7 +279,85 @@ FAQ
 
    <dt>Where is 'secring.pgp'?</dt>
    <dd>'secring.gpg' has been <a href="https://gnupg.org/faq/whats-new-in-2.1.html#nosecring">removed in gpg 2.1</a>. Use the other methods to read private keys.</dd>
+   
+   <dt>Should I <i>use</i> secring.pgp?</dt>
+   <dd>No, you should implement your own key handling strategy. See <a href="#using_sec_pubring">On using (sec|pub)ring.gpg</a> below.
 </dl>
+
+
+## <a name="using_sec_pubring"></a>On using (sec|pub)ring.gpg
+
+*I strongly advise against using `secring.gpg` or `pubring.gpg` for production systems*. These files are an undocumented API of gnupg: usable, but can change or show unexpected results. E.g. with GPG 2.1 the `secring.gpg` file gets no longer updated [and will provide you with stale data](https://gnupg.org/faq/whats-new-in-2.1.html#nosecring) (emphasis by me):
+
+> To ease the migration to the no-secring method, gpg detects the presence of a secring.gpg and converts the keys on-the-fly to the the key store of gpg-agent (this is the private-keys-v1.d directory below the GnuPG home directory (~/.gnupg)). **This is done only once and an existing secring.gpg is then not anymore touched by gpg.** This allows co-existence of older GnuPG versions with GnuPG 2.1. However, any change to the private keys using the new gpg will not show up when using pre-2.1 versions of GnuPG and vice versa.
+
+## Recommendation: InMemoryKeyring
+
+Most applications should manage their keys in an application specific database. Though this might seem more complex than just using the existing keyring files it has a some nice advantages:
+
+* No dependency on the `gpg` executable 
+* Keys can be managed remotely (e.g. via the applications database)
+* Key management is enforced to happen via the application
+* Key management for distributed (_scale out_ / _cloud_) systems is much easier when keys are not managed by the operating system 
+
+### HOWTO use InMemoryKeyring
+
+To use the  [InMemoryKeyring](https://github.com/neuhalje/bouncy-gpg/blob/master/src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java) you first need to export the keys. Then you put them in your  application data(base).
+
+#### Exporting the keys from gpg
+
+Export the keys  with `gpg` (`gpg --export-secret-key -a user@example.com` and `gpg --export -a user@example.com`):
+
+```text
+gpg --export -a user@example.com > user@example.com.pub.gpg
+cat user@example.com.pub.gpg
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+...
+-----END PGP PUBLIC KEY BLOCK-----
+
+# You need to input keys passphrase here
+gpg --export-secret-key -a user@example.com > user@example.com.secret.gpg
+cat user@example.com.secret.gpg
+
+-----BEGIN PGP PRIVATE KEY BLOCK-----
+...
+-----END PGP PRIVATE KEY BLOCK-----
+```
+
+#### Importing the keys
+
+A few examples for using the [InMemoryKeyring](https://github.com/neuhalje/bouncy-gpg/blob/master/src/main/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/keys/keyrings/KeyringConfigs.java)  can be found in the [Test code](https://github.com/neuhalje/bouncy-gpg/blob/master/src/test/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/testtooling/Configs.java).
+
+Here is the short version:
+
+```java
+  public static KeyringConfig keyringConfigInMemoryForKeys(final String exportedPubKey, final String exportedPrivateKey, final String passphrase) throws IOException, PGPException {
+
+    final InMemoryKeyring keyring = KeyringConfigs.forGpgExportedKeys(KeyringConfigCallbacks.withPassword(passphrase);
+
+    keyring.addPublicKey(exportedPubKey.getBytes("US-ASCII"));
+   // you can add many more public keys
+
+    keyring.addSecretKey(exportedPrivateKey.getBytes("US-ASCII"));
+   // you can add many more privvate keys
+
+    return keyring;
+  }
+```
+
+
+#### Using the config
+
+```java
+
+final InMemoryKeyring keyring = keyringConfigInMemoryForKeys(...);
+
+final InputStream decryptedPlaintextStream = BouncyGPG
+        .decryptAndVerifyStream()
+        .withConfig(keyring)
+        ....
+```
 
 Building
 =======
