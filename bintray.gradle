@@ -41,6 +41,7 @@ ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 signing {
     required { isReleaseVersion && gradle.taskGraph.hasTask("bintrayUpload") }
+    useGpgCmd()
 
     sign configurations.archives
 }
