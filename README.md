@@ -5,6 +5,8 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/neuhalje/bouncy-gpg/badge.svg?targetFile=build.gradle)](https://snyk.io/test/github/neuhalje/bouncy-gpg?targetFile=build.gradle)
 [![Download](https://api.bintray.com/packages/neuhalje/maven/bouncy-gpg/images/download.svg)](https://bintray.com/neuhalje/maven/bouncy-gpg/_latestVersion)
 [![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/neuhalje)
+[![Known Vulnerabilities](https://snyk.io/test/github/neuhalje/bouncy-gpg/badge.svg?targetFile=build.gradle)](https://snyk.io/test/github/neuhalje/bouncy-gpg?targetFile=build.gradle)
+
 
 Mission Statement
 =======================
