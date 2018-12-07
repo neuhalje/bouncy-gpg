@@ -15,7 +15,6 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.Keyring
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +77,6 @@ public class BuildDecryptionInputStreamAPITest {
 
   @Test()
   public void decryptAndValidateSignature_withGoodSettings_works() throws Exception {
-
     try (InputStream ciphertext = new ByteArrayInputStream(
         ExampleMessages.IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"))) {
       final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
@@ -111,6 +109,24 @@ public class BuildDecryptionInputStreamAPITest {
     }
   }
 
+  @Test(expected = IOException.class)
+  public void decryptAndValidateSignature_signedData_missingSignatureFromUid()
+      throws Exception {
+
+    try (InputStream ciphertext = new ByteArrayInputStream(
+        ExampleMessages.IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"))) {
+      final String uidThatDidNotSignMessage = "sender.signonly@example.com";
+      final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
+          .withConfig(Configs.keyringConfigFromResourceForRecipient())
+          .andRequireSignatureFromAllKeys(uidThatDidNotSignMessage)
+          .fromEncryptedInputStream(ciphertext);
+
+      final String plainText = inputStreamToText(plaintextStream);
+
+      assertThat(plainText, equalTo(ExampleMessages.IMPORTANT_QUOTE_TEXT));
+      plaintextStream.close();
+    }
+  }
 
   @Test()
   public void decryptNoSignatureValidation_withUnsignedData_works() throws Exception {
