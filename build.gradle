@@ -37,7 +37,7 @@ tasks.withType(Checkstyle) {
 }
 
 jacoco {
-    toolVersion = "0.7.9"
+    toolVersion = "0.8.2"
     reportsDir = file("${buildDir}/jacocoHtml")
 }
 
@@ -111,6 +111,9 @@ test {
     systemProperties['concordion.output.dir'] = "${specifications_concordion_target}"
     // force tests to run even if code hasn't changed
     outputs.upToDateWhen { false }
+    jacoco {
+         enabled = true
+    }
 }
 
 // bintray deployment
