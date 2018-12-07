@@ -6,6 +6,7 @@ import static specs.helper.InputConverters.ByteArray.toHexString;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching.KeyStretching;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching.SCryptKeyStretching;
 import org.concordion.api.extension.Extensions;
@@ -25,9 +26,8 @@ public class ConvertingPasswordsIntoCryptographicKeys {
   public KeyAndMetaData stretchWithFixedParameters(String password, int desiredLenInBits)
       throws GeneralSecurityException {
 
-    if (password == null) {
-      throw new IllegalArgumentException("password not set");
-    }
+    Preconditions.checkNotNull(password, "password must not be null");
+
     password = password.trim();
 
     final KeyStretching streching = new SCryptKeyStretching(
@@ -45,12 +45,9 @@ public class ConvertingPasswordsIntoCryptographicKeys {
   public KeyAndMetaData stretchWithSalt(String password, String saltAsHexString)
       throws GeneralSecurityException {
 
-    if (password == null) {
-      throw new IllegalArgumentException("password not set");
-    }
-    if (saltAsHexString == null) {
-      throw new IllegalArgumentException("salt not set");
-    }
+    Preconditions.checkNotNull(password, "password must not be null");
+    Preconditions.checkNotNull(saltAsHexString, "saltAsHexString must not be null");
+
     password = password.trim();
     saltAsHexString = saltAsHexString.trim();
 
@@ -65,9 +62,7 @@ public class ConvertingPasswordsIntoCryptographicKeys {
   }
 
   public boolean isSaltChangesKey(String password) throws GeneralSecurityException {
-    if (password == null) {
-      throw new IllegalArgumentException("password not set");
-    }
+    Preconditions.checkNotNull(password, "password must not be null");
 
     final KeyStretching streching = new SCryptKeyStretching(
         SCryptKeyStretching.SCryptKeyStretchingParameters.forModeratelyStongInputKeyMaterial());
