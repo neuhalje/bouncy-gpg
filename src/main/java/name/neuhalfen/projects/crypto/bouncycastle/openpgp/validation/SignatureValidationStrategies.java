@@ -46,21 +46,53 @@ public final class SignatureValidationStrategies {
   }
 
   /**
-   * Require signature from all of the passed keys. . The IDs are 32 bit key-IDs (
-   * --keyid-format=0xlong)
+   * Require signature from all of the passed uids.
    *
-   * @param signaturesRequiredForTheseKeys KeyIds (32 bit IDs)
+   * @param config keyring config
+   * @param keySelectionStrategy the key selection strategy to use
+   * @param userIds A list of user IDs (e.g. 'sender@example.com')
    *
    * @return an instance of the requested strategy
+   *
+   * @throws PGPException No or more than one public key found for a user id
    **/
-  public static SignatureValidationStrategy requireSignatureFromAllKeys(
-      Collection<Long> signaturesRequiredForTheseKeys) {
-    return new RequireSpecificSignatureValidationStrategy(signaturesRequiredForTheseKeys);
+  @SuppressWarnings({"PMD.LawOfDemeter", "PMD.AvoidLiteralsInIfCondition"})
+  public static SignatureValidationStrategy requireSignatureFromAllUids(
+      KeySelectionStrategy keySelectionStrategy,
+      KeyringConfig config, String... userIds) throws PGPException {
+
+    Preconditions.checkNotNull(keySelectionStrategy, "keySelectionStrategy must not be null");
+    Preconditions.checkNotNull(config, "config must not be null");
+    Preconditions.checkNotNull(userIds, "userIds must not be null");
+
+    final Map<String, Set<Long>> keyIdsByUid = new HashMap<>();
+
+    for (String userId : userIds) {
+
+      final Set<PGPPublicKey> availableKeys;
+      try {
+        availableKeys = keySelectionStrategy
+            .validPublicKeysForVerifyingSignatures(userId, config);
+      } catch (IOException e) {
+        throw new PGPException("Failed to extract keys", e);
+      }
+
+      if (availableKeys.isEmpty()) {
+        throw new PGPException("Could not find public-key for userid '" + userId + "'");
+      }
+
+      Set<Long> keysForUid = availableKeys.stream().map(key -> key.getKeyID())
+          .collect(Collectors.toSet());
+
+      keyIdsByUid.put(userId, keysForUid);
+    }
+    return new RequireSpecificSignatureValidationForUserIdsStrategy(keyIdsByUid);
   }
+
 
   /**
    * Require signature from all of the passed uids.
-   *
+   * <p/>
    * This only really works if each uid has EXACTLY one key.
    *
    * @param config keyring config
@@ -110,47 +142,16 @@ public final class SignatureValidationStrategies {
 
 
   /**
-   * Require signature from all of the passed uids.
+   * Require signature from all of the passed keys. . The IDs are 32 bit key-IDs (
+   * --keyid-format=0xlong)
    *
-   * @param config keyring config
-   * @param keySelectionStrategy the key selection strategy to use
-   * @param userIds A list of user IDs (e.g. 'sender@example.com')
+   * @param signaturesRequiredForTheseKeys KeyIds (32 bit IDs)
    *
    * @return an instance of the requested strategy
-   *
-   * @throws PGPException No or more than one public key found for a user id
    **/
-  @SuppressWarnings({"PMD.LawOfDemeter", "PMD.AvoidLiteralsInIfCondition"})
-  public static SignatureValidationStrategy requireSignatureFromAllUids(
-      KeySelectionStrategy keySelectionStrategy,
-      KeyringConfig config, String... userIds) throws PGPException {
-
-    Preconditions.checkNotNull(keySelectionStrategy, "keySelectionStrategy must not be null");
-    Preconditions.checkNotNull(config, "config must not be null");
-    Preconditions.checkNotNull(userIds, "userIds must not be null");
-
-    final Map<String, Set<Long>> keyIdsByUid = new HashMap<>();
-
-    for (String userId : userIds) {
-
-      final Set<PGPPublicKey> availableKeys;
-      try {
-        availableKeys = keySelectionStrategy
-            .validPublicKeysForVerifyingSignatures(userId, config);
-      } catch (IOException e) {
-        throw new PGPException("Failed to extract keys", e);
-      }
-
-      if (availableKeys.isEmpty()) {
-        throw new PGPException("Could not find public-key for userid '" + userId + "'");
-      }
-
-      Set<Long> keysForUid = availableKeys.stream().map(key -> key.getKeyID())
-          .collect(Collectors.toSet());
-
-      keyIdsByUid.put(userId, keysForUid);
-    }
-    return new RequireSpecificSignatureValidationForUserIdsStrategy(keyIdsByUid);
+  public static SignatureValidationStrategy requireSignatureFromAllKeys(
+      Collection<Long> signaturesRequiredForTheseKeys) {
+    return new RequireSpecificSignatureValidationStrategy(signaturesRequiredForTheseKeys);
   }
 
   /**

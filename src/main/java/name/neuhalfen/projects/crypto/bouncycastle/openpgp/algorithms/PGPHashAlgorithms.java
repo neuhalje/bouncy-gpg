@@ -62,6 +62,7 @@ public enum PGPHashAlgorithms {
    * Returns the corresponding BouncyCastle  algorithm tag.
    *
    * @return algorithmId
+   *
    * @see HashAlgorithmTags
    */
   public int getAlgorithmId() {
@@ -69,9 +70,11 @@ public enum PGPHashAlgorithms {
   }
 
   /**
-   * Is this algorithm KNOWN to be broken or are there any known attacks on it?
+   * Known insecurities. Is this algorithm KNOWN to be broken or are there any known attacks on it?
    * A value of 'false' does not guarantee, that the algorithm is safe!
-   * @return true: insecure,do not use; false: please double check if the algorithm is appropriate for you.
+   *
+   * @return true: insecure,do not use; false: please double check if the algorithm is
+   *     appropriate for you.
    */
   public boolean isInsecure() {
     return insecure;

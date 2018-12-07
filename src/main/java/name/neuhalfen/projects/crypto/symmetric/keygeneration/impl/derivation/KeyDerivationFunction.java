@@ -5,5 +5,6 @@ import javax.annotation.Nullable;
 
 public interface KeyDerivationFunction {
 
-  byte[] deriveKey(@Nullable byte[] salt, byte[] info, int desiredKeyLengthInBits) throws GeneralSecurityException;
+  byte[] deriveKey(@Nullable byte[] salt, byte[] info, int desiredKeyLengthInBits)
+      throws GeneralSecurityException;
 }

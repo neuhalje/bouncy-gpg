@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.SignatureException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
@@ -66,22 +65,40 @@ public final class PGPEncryptingStream extends OutputStream {
     this.algorithmSuite = algorithmSuite;
   }
 
-  //Return a stream that, when written plaintext into, writes the ciphertext into cipherTextSink.
+  /**
+   * Return a stream that, when written plaintext into, writes the ciphertext into cipherTextSink.
+   *
+   * @param config key configuration
+   * @param algorithmSuite algorithm suite to use.
+   * @param signingUid sign with this uid (optionally)
+   * @param cipherTextSink write the ciphertext in here
+   * @param keySelectionStrategy selection strategy
+   * @param armor armor the file (true) or use binary.
+   * @param encryptTo encrypt to
+   *
+   * @return stream where plaintext gets written into
+   *
+   * @throws IOException streams, IO, ...
+   * @throws PGPException pgp error
+   * @throws NoSuchAlgorithmException algorithmSuite not supported
+   * @throws NoSuchProviderException bouncy castle not registered
+   * @see name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites
+   */
   public static OutputStream create(final KeyringConfig config,
       final PGPAlgorithmSuite algorithmSuite,
-      final String signingUid,
+      @Nullable final String signingUid,
       final OutputStream cipherTextSink,
       final KeySelectionStrategy keySelectionStrategy,
       final boolean armor,
-      final Set<PGPPublicKey> pubEncKeys)
-      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+      final Set<PGPPublicKey> encryptTo)
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException {
 
     Preconditions.checkNotNull(config, "callback must not be null");
     Preconditions.checkNotNull(cipherTextSink, "cipherTextSink must not be null");
-    Preconditions.checkNotNull(pubEncKeys, "pubEncKeys must not be null");
-    Preconditions.checkArgument(!pubEncKeys.isEmpty(), "pubEncKeys must not be empty");
+    Preconditions.checkNotNull(encryptTo, "pubEncKeys must not be null");
+    Preconditions.checkArgument(!encryptTo.isEmpty(), "pubEncKeys must not be empty");
 
-    for (final PGPPublicKey pubEncKey : pubEncKeys) {
+    for (final PGPPublicKey pubEncKey : encryptTo) {
       if (!pubEncKey.isEncryptionKey()) {
         throw new PGPException(String
             .format("This public key (0x%x) is not suitable for encryption", pubEncKey.getKeyID()));
@@ -89,7 +106,7 @@ public final class PGPEncryptingStream extends OutputStream {
     }
 
     final PGPEncryptingStream encryptingStream = new PGPEncryptingStream(config, algorithmSuite);
-    encryptingStream.setup(cipherTextSink, signingUid, pubEncKeys, keySelectionStrategy, armor);
+    encryptingStream.setup(cipherTextSink, signingUid, encryptTo, keySelectionStrategy, armor);
     return encryptingStream;
   }
 
@@ -166,9 +183,7 @@ public final class PGPEncryptingStream extends OutputStream {
       signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
 
       final Iterator<?> userIDs = pgpSec.getPublicKey().getUserIDs();
-      if (userIDs.hasNext())
-
-      {
+      if (userIDs.hasNext()) {
         final PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
 
         spGen.setSignerUserID(false, (String) userIDs.next());

@@ -2,6 +2,7 @@ package specs.helper;
 
 import static specs.helper.InputConverters.ByteArray.toHexString;
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import org.bouncycastle.util.encoders.Hex;
 
 public class InputConverters {
@@ -22,9 +23,8 @@ public class InputConverters {
       if (hexString.startsWith("0x")) {
         hexString = hexString.substring(2);
       }
-      if (hexString.length() % 2 != 0) {
-        throw new IllegalArgumentException("String  length must be a multiple of 2");
-      }
+      Preconditions.checkArgument(hexString.length() % 2 == 0,
+          "String  length must be a multiple of 2");
 
       return Hex.decode(hexString);
     }

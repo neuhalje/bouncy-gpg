@@ -22,12 +22,12 @@ public class DerivedKeyGenerator {
 
   /**
    * @param kdFwithMasterKeyMixin The key derivation function to use. The function is responsible to
-   * mix some secret input key material into the result
+   *     mix some secret input key material into the result
    * @param salt (from rfc5869): Ideally, the salt value is a random (or pseudorandom) string of the
-   * length HashLen (HashLen = 256/8 = 32 bytes). Yet, even a salt value of less quality (shorter in
-   * size or with limited entropy) may still make a significant contribution to the security of the
-   * output keying material; designers of applications are therefore encouraged to provide salt
-   * values to HKDF if such values can be obtained by the application.
+   *     length HashLen (HashLen = 256/8 = 32 bytes). Yet, even a salt value of less quality
+   *     (shorter in size or with limited entropy) may still make a significant contribution
+   *     to the security of the output keying material; designers of applications are therefore
+   *     encouraged to provide salt values to HKDF if such values can be obtained by the application.
    */
   public DerivedKeyGenerator(KeyDerivationFunction kdFwithMasterKeyMixin, @Nullable byte[] salt) {
     this.kdFwithMasterKeyMixin = kdFwithMasterKeyMixin;
@@ -36,28 +36,29 @@ public class DerivedKeyGenerator {
 
   /**
    * @param contextName contextName and idUniqueInContext are combined to create the 'info' value
-   * from rfc5869: (from rfc5869): While the 'info' value is optional in the definition of HKDF, it
-   * is often of great importance in applications.  Its main objective is to bind the derived key
-   * material to application- and context-specific information.  For example, 'info' may contain a
-   * protocol number, algorithm identifiers, user identities, etc.  In particular, it may prevent
-   * the derivation of the same keying material for different contexts (when the same input key
-   * material (IKM) is used in such different contexts). It may also accommodate additional inputs
-   * to the key expansion part, if so desired (e.g., an application may want to bind the key
-   * material to its length L, thus making L part of the 'info' field). <p> There is one technical
-   * requirement from 'info': it should be independent of the input key material value IKM (the
-   * masterkey).
+   *     from rfc5869: (from rfc5869): While the 'info' value is optional in the definition of HKDF,
+   *     it is often of great importance in applications.  Its main objective is to bind the derived
+   *     key material to application- and context-specific information.  For example, 'info' may
+   *     contain a protocol number, algorithm identifiers, user identities, etc.  In particular, it
+   *     may prevent the derivation of the same keying material for different contexts (when the
+   *     same input key material (IKM) is used in such different contexts). It may also accommodate
+   *     additional inputs to the key expansion part, if so desired (e.g., an application may want
+   *     to bind the key material to its length L, thus making L part of the 'info' field).
+   *     <p>
+   *     There is one technical requirement from 'info': it should be independent of the input
+   *     key material value IKM (the masterkey).
    * @param idUniqueInContext contextName and idUniqueInContext are combined to create the 'info'
-   * value from rfc5869.
+   *     value from rfc5869.
    * @param recordVersion It is <b>very</b> important to use fresh keys to encrypt different data
-   * items. This also implies that an updated record <b>must</b> get a new key. The version
-   * parameters ensures this. Store the version parameter with your record and increment it every
-   * time you update the record.
+   *     items. This also implies that an updated record <b>must</b> get a new key. The version
+   *     parameters ensures this. Store the version parameter with your record and increment it
+   *     every time you update the record.
    * @param desiredKeyLengthBytes the length of the derived key in bytes (e.g. 16 for AES-128)
    *
    * @return A derived key of length  desiredKeyLengthBytes
    *
    * @throws GeneralSecurityException Something went wrong deriving the key. The reason is very
-   * likely outside this libraries influence.
+   *     likely outside this libraries influence.
    */
   public byte[] deriveKey(final String contextName, final String idUniqueInContext,
       final String recordVersion,
@@ -80,22 +81,21 @@ public class DerivedKeyGenerator {
       contextName = "";
     }
 
-    Preconditions.checkNotNull(contextName,"contextName must not be null");
+    Preconditions.checkNotNull(contextName, "contextName must not be null");
     Preconditions.checkArgument(contextName.length() <= MAXIMUM_CONTEXT_ELEMENT_LENGTH,
         "ContextName must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");
 
-    Preconditions.checkNotNull(idUniqueInContext,"idUniqueInContext must not be null");
-    Preconditions.checkArgument(!idUniqueInContext.isEmpty(),"idUniqueInContext must not be empty");
+    Preconditions.checkNotNull(idUniqueInContext, "idUniqueInContext must not be null");
+    Preconditions
+        .checkArgument(!idUniqueInContext.isEmpty(), "idUniqueInContext must not be empty");
 
     Preconditions.checkArgument(idUniqueInContext.length() <= MAXIMUM_CONTEXT_ELEMENT_LENGTH,
         "idUniqueInContext must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");
 
-
-    Preconditions.checkNotNull(recordVersion,"recordVersion must not be null");
-    Preconditions.checkArgument(!recordVersion.isEmpty(),"recordVersion must not be empty");
+    Preconditions.checkNotNull(recordVersion, "recordVersion must not be null");
+    Preconditions.checkArgument(!recordVersion.isEmpty(), "recordVersion must not be empty");
     Preconditions.checkArgument(recordVersion.length() <= MAXIMUM_CONTEXT_ELEMENT_LENGTH,
         "recordVersion must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");
-
 
     return String
         .format("%04x:%s:%04x:%s:%04x:%s", contextName.length(), contextName,

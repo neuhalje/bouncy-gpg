@@ -31,7 +31,8 @@ final class SignatureValidatingInputStream extends FilterInputStream {
       SignatureValidationStrategy signatureValidationStrategy) {
     super(inputStream);
     Preconditions.checkNotNull(state, "state must not be null");
-    Preconditions.checkNotNull(signatureValidationStrategy, "signatureValidationStrategy must not be null");
+    Preconditions.checkNotNull(signatureValidationStrategy,
+        "signatureValidationStrategy must not be null");
 
     this.state = state;
     this.signatureValidationStrategy = signatureValidationStrategy;
@@ -105,7 +106,7 @@ final class SignatureValidatingInputStream extends FilterInputStream {
   }
 
   @SuppressWarnings("PMD.DefaultPackage")
-  final static class DecryptionState {
+  static final class DecryptionState {
 
     private final Map<Long, PGPOnePassSignature> onePassSignatures = new HashMap<>();
     private PGPObjectFactory signatureFactory;

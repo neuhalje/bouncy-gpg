@@ -29,7 +29,7 @@ public class BuildEncryptionOutputStreamAPITest {
     }
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = NullPointerException.class)
   public void encryptConfigure_NoConfigPassed_throws() throws Exception {
     BouncyGPG.encryptToStream().withConfig(null);
   }

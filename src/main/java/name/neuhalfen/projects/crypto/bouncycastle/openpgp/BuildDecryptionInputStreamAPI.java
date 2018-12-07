@@ -76,19 +76,19 @@ public final class BuildDecryptionInputStreamAPI {
      * In order to determine key validity a reference point in time for "now" is needed.
      * The default value is "Instant.now()". If this needs to be overridden, pass the value
      * here. To effectively disable time based key verification pass Instant.MAX (NOT recommended)
-     *
+     * <p/>
      * This is not possible in combination with #withKeySelectionStrategy.
      *
      * @param dateOfTimestampVerification reference point in time
-     *
      * @return next step in build
      */
     public Validation setReferenceDateForKeyValidityTo(final Instant dateOfTimestampVerification) {
       Preconditions.checkArgument(keySelectionStrategy == null,
-          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot "+
-              "be used together with 'withKeySelectionStrategy' ");
+          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot "
+              + "be used together with 'withKeySelectionStrategy' ");
 
-      Preconditions.checkNotNull(dateOfTimestampVerification,"dateOfTimestampVerification must not be null");
+      Preconditions.checkNotNull(dateOfTimestampVerification,
+          "dateOfTimestampVerification must not be null");
 
       this.dateOfTimestampVerification = dateOfTimestampVerification;
       return this;
@@ -104,8 +104,8 @@ public final class BuildDecryptionInputStreamAPI {
      */
     public Validation selectUidByAnyUidPart() {
       Preconditions.checkArgument(keySelectionStrategy == null,
-          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot "+
-              "be used together with 'withKeySelectionStrategy' ");
+          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot "
+              + "be used together with 'withKeySelectionStrategy' ");
 
       selectUidByEMailOnly = false;
       return this;
@@ -116,14 +116,13 @@ public final class BuildDecryptionInputStreamAPI {
      * Rfc4880KeySelectionStrategy is used.
      *
      * @param strategy the actual instance to use
-     *
      * @return next step in builder
      *
      * @see name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy
      */
     public Validation withKeySelectionStrategy(KeySelectionStrategy strategy) {
 
-      Preconditions.checkNotNull(strategy,"strategy must not be null");
+      Preconditions.checkNotNull(strategy, "strategy must not be null");
 
       if (selectUidByEMailOnly != null || dateOfTimestampVerification != null) {
         throw new IllegalStateException(
@@ -165,12 +164,12 @@ public final class BuildDecryptionInputStreamAPI {
 
     /**
      * Build the final decrypted input stream.
-     *
+     * <p/>
      * This method will start reading the cipherstream until it finds the encrypted plaintext.
-     *
+     * <p/>
      * If the source data is NOT signed, but a signature is REQUIRED, then this function might
      * throw.
-     *
+     * <p/>
      * Signatures are verified AFTER decryption (reading the whole(!) plaintext stream). In this
      * case the returned InputStream will validate the signatures.
      *
@@ -191,9 +190,9 @@ public final class BuildDecryptionInputStreamAPI {
     /**
      * Decryption will enforce that the ciphertext has been signed by ALL of the public key ids
      * passed.
-     *
+     * <p/>
      * Given  the following keyring:
-     *
+     * <p/>
      * <pre>{@code markdown: text
      * $ gpg -k --keyid-format=0xlong
      *
@@ -263,8 +262,8 @@ public final class BuildDecryptionInputStreamAPI {
     @Override
     @Nonnull
     public Build andRequireSignatureFromAllKeys(Long... publicKeyIds) {
-      Preconditions.checkNotNull(publicKeyIds,"publicKeyIds must not be null");
-      Preconditions.checkArgument(publicKeyIds.length>0,"publicKeyIds must not be empty");
+      Preconditions.checkNotNull(publicKeyIds, "publicKeyIds must not be null");
+      Preconditions.checkArgument(publicKeyIds.length > 0, "publicKeyIds must not be empty");
 
       BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies
           .requireSignatureFromAllKeys(publicKeyIds);
@@ -277,8 +276,8 @@ public final class BuildDecryptionInputStreamAPI {
     public Build andRequireSignatureFromAllKeys(String... userIds)
         throws PGPException, IOException {
 
-      Preconditions.checkNotNull(userIds,"userIds must not be null");
-      Preconditions.checkArgument(userIds.length>0,"userIds must not be empty");
+      Preconditions.checkNotNull(userIds, "userIds must not be null");
+      Preconditions.checkArgument(userIds.length > 0, "userIds must not be empty");
 
       BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies
           .requireSignatureFromAllUids(getKeySelectionStrategy(), keyringConfig, userIds);
@@ -321,8 +320,7 @@ public final class BuildDecryptionInputStreamAPI {
       public InputStream fromEncryptedInputStream(@Nullable InputStream encryptedData)
           throws IOException, NoSuchProviderException {
 
-        Preconditions.checkNotNull(encryptedData,"encryptedData must not be null");
-
+        Preconditions.checkNotNull(encryptedData, "encryptedData must not be null");
 
         final DecryptionStreamFactory pgpInputStreamFactory =
             DecryptionStreamFactory.create(

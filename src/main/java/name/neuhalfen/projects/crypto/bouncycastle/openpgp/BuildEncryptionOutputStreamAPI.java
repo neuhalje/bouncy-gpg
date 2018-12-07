@@ -12,10 +12,12 @@ import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.PGPEncryptingStream;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.ByEMailKeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -49,33 +51,43 @@ public final class BuildEncryptionOutputStreamAPI {
   // Signature
 
 
+  /**
+   * Use the passed keyring config for the crypto operations. The KeyringConfig wraps the
+   * public- and private keyrings.
+   * <p/>
+   * Generally the best KeyringConfig variant to use is the {@link InMemoryKeyring} which can be
+   * created by calling {@see KeyringConfigs.forGpgExportedKeys}.
+   *
+   * @see name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs
+   * @see name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring
+   * @param encryptionConfig  the keyring config.
+   * @return  the next step in the builder
+   * @throws IOException  bouncy castle uses IO
+   * @throws PGPException errors in the config
+   */
   @SuppressWarnings("PMD.AccessorClassGeneration")
-  public WithKeySelectionStrategy withConfig(KeyringConfig encryptionConfig)
+  public WithKeySelectionStrategy withConfig(final KeyringConfig encryptionConfig)
       throws IOException, PGPException {
-    if (encryptionConfig == null) {
-      throw new IllegalArgumentException("encryptionConfig must not be null");
-    }
-
-    if (encryptionConfig.getKeyFingerPrintCalculator() == null) {
-      throw new IllegalArgumentException(
-          "encryptionConfig.getKeyFingerPrintCalculator() must not be null");
-    }
-
-    if (encryptionConfig.getPublicKeyRings() == null) {
-      throw new IllegalArgumentException("encryptionConfig.getPublicKeyRings() must not be null");
-    }
+    Preconditions.checkNotNull(encryptionConfig,"encryptionConfig must not be null");
+    Preconditions.checkNotNull(encryptionConfig.getKeyFingerPrintCalculator(),
+        "encryptionConfig.getKeyFingerPrintCalculator() must not be null");
+    Preconditions.checkNotNull(encryptionConfig.getPublicKeyRings(),
+        "encryptionConfig.getPublicKeyRings() must not be null");
 
     BuildEncryptionOutputStreamAPI.this.encryptionConfig = encryptionConfig;
     return new WithKeySelectionStrategy();
   }
 
+  /**
+   * Combined step for key- and algorithm selection.
+   */
   public final class WithKeySelectionStrategy extends WithAlgorithmSuiteImpl {
 
     @Nullable
     private Instant dateOfTimestampVerification;
     @Nullable
     private Boolean selectUidByEMailOnly = null;
-    private final static boolean SELECT_UID_BY_E_MAIL_ONLY_DEFAULT = true;
+    private  static final boolean SELECT_UID_BY_E_MAIL_ONLY_DEFAULT = true;
     @Nullable
     private KeySelectionStrategy keySelectionStrategy = null;
 
@@ -84,6 +96,17 @@ public final class BuildEncryptionOutputStreamAPI {
       BuildEncryptionOutputStreamAPI.this.keySelectionStrategyBuilder = this;
     }
 
+    /**
+     * Normally keys are only searched by e-mail (between &lt; and &gt;). Calling
+     * selectUidByAnyUidPart() will search everywhere.
+     * <p/>
+     * E.g. given the uid 'Juliet Capulet &lt;juliet@example.org&gt;' a search normally would
+     * look for the e-mail 'juliet@example.org'. E.g. searching for 'juliet' would be found,
+     * searching for 'Capulet' would not be found.
+     * <p/>
+     * After calling selectUidByAnyUidPart() the key will also be found by searching for 'Capulet'
+     * @return next step
+     */
     public WithKeySelectionStrategy selectUidByAnyUidPart() {
       if (keySelectionStrategy != null) {
         throw new IllegalStateException(
@@ -106,6 +129,7 @@ public final class BuildEncryptionOutputStreamAPI {
      */
     public WithAlgorithmSuite setReferenceDateForKeyValidityTo(
         Instant dateOfTimestampVerification) {
+
       if (keySelectionStrategy != null) {
         throw new IllegalStateException(
             "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together "+
