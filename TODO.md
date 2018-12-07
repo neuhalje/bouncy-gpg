@@ -21,7 +21,7 @@ Version 2.1
 - [ ] Unit tests: iterate different DefaultPGPAlgorithmSuites.secureSuiteForGnuPG() (incl. compression & no signature!)
 - [x] Code quality reports (Sonar e.g.)
 - [ ] Extend documentation of key derivation
-- [ ] add .github files
+- [x] add .github files
 
 Version 3.0
 --------------
