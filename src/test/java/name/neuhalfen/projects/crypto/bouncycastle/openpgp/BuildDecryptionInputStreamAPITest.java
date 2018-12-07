@@ -29,7 +29,7 @@ public class BuildDecryptionInputStreamAPITest {
     }
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = NullPointerException.class)
   public void decryptConfigure_NoConfigPassed_throws() throws Exception {
     BouncyGPG.decryptAndVerifyStream().withConfig(null);
   }
@@ -50,7 +50,7 @@ public class BuildDecryptionInputStreamAPITest {
     assertNotNull(withConfig.andRequireSignatureFromAllKeys(1L));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = NullPointerException.class)
   public void decryptConfigureValidate_pasNullCiphertext_throws() throws Exception {
     final BuildDecryptionInputStreamAPI.Build build = BouncyGPG.decryptAndVerifyStream()
         .withConfig(mock(KeyringConfig.class)).andIgnoreSignatures();

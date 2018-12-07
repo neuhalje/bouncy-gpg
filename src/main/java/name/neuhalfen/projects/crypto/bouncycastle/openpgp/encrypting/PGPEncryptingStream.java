@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.Set;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
@@ -75,17 +76,10 @@ public final class PGPEncryptingStream extends OutputStream {
       final Set<PGPPublicKey> pubEncKeys)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
 
-    if (config == null) {
-      throw new IllegalArgumentException("No config");
-    }
-
-    if (cipherTextSink == null) {
-      throw new IllegalArgumentException("no cipherTextSink");
-    }
-
-    if ((pubEncKeys == null) || pubEncKeys.isEmpty()) {
-      throw new IllegalArgumentException("No pubEncKeys");
-    }
+    Preconditions.checkNotNull(config, "callback must not be null");
+    Preconditions.checkNotNull(cipherTextSink, "cipherTextSink must not be null");
+    Preconditions.checkNotNull(pubEncKeys, "pubEncKeys must not be null");
+    Preconditions.checkArgument(!pubEncKeys.isEmpty(), "pubEncKeys must not be empty");
 
     for (final PGPPublicKey pubEncKey : pubEncKeys) {
       if (!pubEncKey.isEncryptionKey()) {

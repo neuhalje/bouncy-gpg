@@ -32,7 +32,7 @@ public class InMemoryKeyringTest {
     assertNotNull(sut.getKeyFingerPrintCalculator());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = NullPointerException.class)
   public void create_passNullAsCallback_throws() throws IOException, PGPException {
     new InMemoryKeyring(null);
   }
@@ -82,7 +82,7 @@ public class InMemoryKeyringTest {
   }
 
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = NullPointerException.class)
   public void emptyKeyRing_tryToNullAsPublicKey_throws() throws IOException, PGPException {
     final InMemoryKeyring sut = new InMemoryKeyring(mock(KeyringConfigCallback.class));
     sut.addPublicKey(null);
@@ -124,7 +124,7 @@ public class InMemoryKeyringTest {
     assertNotNull("The key is found", keyRingsWithSenderKey.next().getPublicKey(KEY_ID_SENDER));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = NullPointerException.class)
   public void emptyKeyRing_tryToNullAsSecretKey_throws() throws IOException, PGPException {
     final InMemoryKeyring sut = new InMemoryKeyring(mock(KeyringConfigCallback.class));
     sut.addSecretKey(null);

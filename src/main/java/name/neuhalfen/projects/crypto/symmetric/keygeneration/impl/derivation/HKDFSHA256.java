@@ -4,6 +4,7 @@ package name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import org.bouncycastle.crypto.DerivationParameters;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
@@ -30,6 +31,8 @@ public class HKDFSHA256 implements KeyDerivationFunction {
   private final byte[] masterKey;
 
   public HKDFSHA256(byte[] masterKey) {
+    Preconditions.checkNotNull(masterKey, "masterKey must not be null");
+
     this.masterKey = Arrays.copyOf(masterKey, masterKey.length);
   }
 
@@ -37,10 +40,9 @@ public class HKDFSHA256 implements KeyDerivationFunction {
   public byte[] deriveKey(@Nullable byte[] salt, byte[] info, int desiredKeyLengthInBits)
       throws GeneralSecurityException {
 
-    if (desiredKeyLengthInBits % 8 != 0) {
-      throw new IllegalArgumentException(
-          "desiredKeyLengthInBits must be multiple of 8 but is " + desiredKeyLengthInBits);
-    }
+    Preconditions.checkNotNull(info, "info must not be null");
+    Preconditions.checkArgument(desiredKeyLengthInBits % 8 == 0,
+        "desiredKeyLengthInBits must be multiple of 8 but is " + desiredKeyLengthInBits);
 
     int desiredKeyLengthInBytes = desiredKeyLengthInBits / 8;
 

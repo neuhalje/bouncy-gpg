@@ -7,7 +7,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.security.Security;
+import java.time.Instant;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -31,6 +33,8 @@ public class BuildEncryptionOutputStreamAPITest {
   public void encryptConfigure_NoConfigPassed_throws() throws Exception {
     BouncyGPG.encryptToStream().withConfig(null);
   }
+
+
 
   @Test
   public void encryptConfigure_ConfigPassed_notNull() throws Exception {
@@ -66,6 +70,28 @@ public class BuildEncryptionOutputStreamAPITest {
     to.toRecipient("not existing");
   }
 
+
+  @Test(expected = IllegalArgumentException.class)
+  public void withKeySelectionStrategy_NoStrategyPassed_throws() throws Exception {
+    BouncyGPG.encryptToStream().withConfig(mockKeyringConfig()).withKeySelectionStrategy(null);
+  }
+
+
+
+  @Test(expected = IllegalStateException.class)
+  public void withKeySelectionStrategy_isExclusiveWithSelectUidByAnyUidPart() throws Exception {
+    BouncyGPG.encryptToStream().withConfig(mockKeyringConfig()).selectUidByAnyUidPart().withKeySelectionStrategy(mockKeySelectionStrategy());
+  }
+
+
+  @Test()
+  public void keySelectionStrategy_SelectUidByAnyUidPart_compatible_with_setReferenceDateForKeyValidityTo() throws Exception {
+    BouncyGPG.encryptToStream().withConfig(mockKeyringConfig()).selectUidByAnyUidPart().setReferenceDateForKeyValidityTo(Instant.MAX).withDefaultAlgorithms();
+  }
+
+  private KeySelectionStrategy mockKeySelectionStrategy(){
+    return mock(KeySelectionStrategy.class);
+  }
   private KeyringConfig mockKeyringConfig() throws IOException, PGPException {
     final KeyringConfig mockKeyringConfig = mock(KeyringConfig.class);
     when(mockKeyringConfig.getKeyFingerPrintCalculator())

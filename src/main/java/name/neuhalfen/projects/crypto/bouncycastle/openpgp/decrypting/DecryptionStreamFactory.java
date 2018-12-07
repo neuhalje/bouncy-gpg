@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.security.NoSuchProviderException;
 import java.util.Iterator;
 import javax.annotation.Nonnull;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
@@ -49,22 +50,16 @@ public final class DecryptionStreamFactory {
 
   public static DecryptionStreamFactory create(final KeyringConfig config,
       final SignatureValidationStrategy signatureValidationStrategy) {
-    if (config == null) {
-      throw new IllegalArgumentException("keyring config must not be null");
-    }
-    if (signatureValidationStrategy == null) {
-      throw new IllegalArgumentException("signatureValidationStrategy config must not be null");
+    Preconditions.checkNotNull(config, "config must not be null");
+    Preconditions.checkNotNull(signatureValidationStrategy, "signatureValidationStrategy must not be null");
 
-    }
     return new DecryptionStreamFactory(config, signatureValidationStrategy);
   }
 
   public InputStream wrapWithDecryptAndVerify(InputStream inputStream)
       throws IOException, NoSuchProviderException {
     LOGGER.trace("Trying to decrypt and verify PGP Encryption.");
-    if (inputStream == null) {
-      throw new IllegalArgumentException("in config must not be null");
-    }
+    Preconditions.checkNotNull(inputStream, "inputStream must not be null");
 
     try {
       final PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(inputStream),

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPOnePassSignature;
@@ -26,11 +27,12 @@ final class RequireSpecificSignatureValidationForUserIdsStrategy implements
    * @param keysByUid Each uid requires a signature that can be satisfied by any of its keys.
    */
   RequireSpecificSignatureValidationForUserIdsStrategy(Map<String, Set<Long>> keysByUid) {
+    Preconditions.checkNotNull(keysByUid, "keysByUid must not be null");
     this.keysByUid = new HashMap<>(keysByUid);
   }
 
   @Nullable
-  @SuppressWarnings({"PMD.LawOfDemeter","PMD.OnlyOneReturn"})
+  @SuppressWarnings({"PMD.LawOfDemeter", "PMD.OnlyOneReturn"})
   private String uidForKeyId(long keyId) {
     for (String uid : keysByUid.keySet()) {
       final Set<Long> keyIds = keysByUid.get(uid);
@@ -45,6 +47,9 @@ final class RequireSpecificSignatureValidationForUserIdsStrategy implements
   public void validateSignatures(PGPObjectFactory factory,
       Map<Long, PGPOnePassSignature> onePassSignatures) throws
       SignatureException, PGPException, IOException {
+
+    Preconditions.checkNotNull(factory, "factory must not be null");
+    Preconditions.checkNotNull(onePassSignatures, "onePassSignatures must not be null");
 
     // verify the signature
     final PGPSignatureList signatureList = (PGPSignatureList) factory.nextObject();

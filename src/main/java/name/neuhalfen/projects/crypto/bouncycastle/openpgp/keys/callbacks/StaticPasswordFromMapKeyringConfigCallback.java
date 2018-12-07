@@ -3,6 +3,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 import java.util.HashMap;
 import java.util.Map;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 
 final class StaticPasswordFromMapKeyringConfigCallback implements KeyringConfigCallback {
 
@@ -12,6 +13,8 @@ final class StaticPasswordFromMapKeyringConfigCallback implements KeyringConfigC
   private final Map<Long, char[]> keyIdToPassphrase;
 
   public StaticPasswordFromMapKeyringConfigCallback(Map<Long, char[]> mapSourceKeyIdToPassphrase) {
+    Preconditions
+        .checkNotNull(mapSourceKeyIdToPassphrase, "mapSourceKeyIdToPassphrase must not be null");
     keyIdToPassphrase = new HashMap<>(mapSourceKeyIdToPassphrase);
   }
 

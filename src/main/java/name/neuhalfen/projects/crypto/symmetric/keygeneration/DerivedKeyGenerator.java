@@ -8,6 +8,7 @@ import java.nio.CharBuffer;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.KeyDerivationFunction;
 
 public class DerivedKeyGenerator {
@@ -78,25 +79,23 @@ public class DerivedKeyGenerator {
     if (contextName == null) {
       contextName = "";
     }
-    if (contextName.length() > MAXIMUM_CONTEXT_ELEMENT_LENGTH) {
-      throw new IllegalArgumentException(
-          "ContextName must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");
-    }
-    if (idUniqueInContext == null || idUniqueInContext.isEmpty()) {
-      throw new IllegalArgumentException("idUniqueInContext must be set");
-    }
-    if (idUniqueInContext.length() > MAXIMUM_CONTEXT_ELEMENT_LENGTH) {
-      throw new IllegalArgumentException(
-          "idUniqueInContext must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");
-    }
 
-    if (recordVersion == null || recordVersion.isEmpty()) {
-      throw new IllegalArgumentException("recordVersion must be set");
-    }
-    if (recordVersion.length() > MAXIMUM_CONTEXT_ELEMENT_LENGTH) {
-      throw new IllegalArgumentException(
-          "recordVersion must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");
-    }
+    Preconditions.checkNotNull(contextName,"contextName must not be null");
+    Preconditions.checkArgument(contextName.length() <= MAXIMUM_CONTEXT_ELEMENT_LENGTH,
+        "ContextName must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");
+
+    Preconditions.checkNotNull(idUniqueInContext,"idUniqueInContext must not be null");
+    Preconditions.checkArgument(!idUniqueInContext.isEmpty(),"idUniqueInContext must not be empty");
+
+    Preconditions.checkArgument(idUniqueInContext.length() <= MAXIMUM_CONTEXT_ELEMENT_LENGTH,
+        "idUniqueInContext must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");
+
+
+    Preconditions.checkNotNull(recordVersion,"recordVersion must not be null");
+    Preconditions.checkArgument(!recordVersion.isEmpty(),"recordVersion must not be empty");
+    Preconditions.checkArgument(recordVersion.length() <= MAXIMUM_CONTEXT_ELEMENT_LENGTH,
+        "recordVersion must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");
+
 
     return String
         .format("%04x:%s:%04x:%s:%04x:%s", contextName.length(), contextName,

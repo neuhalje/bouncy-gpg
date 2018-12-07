@@ -9,6 +9,7 @@ import java.security.SignatureException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BuildEncryptionOutputStreamAPI;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
 
@@ -24,14 +25,20 @@ final class ExplodeAndReencrypt {
   @SuppressWarnings("PMD.DefaultPackage")
   ExplodeAndReencrypt( ZipEntityStrategy entityHandlingStrategy,
       BuildEncryptionOutputStreamAPI.Build encryptionFactory) {
+    Preconditions.checkNotNull(entityHandlingStrategy, "entityHandlingStrategy must not be null");
+    Preconditions.checkNotNull(encryptionFactory, "encryptionFactory must not be null");
+
     this.entityHandlingStrategy = entityHandlingStrategy;
     this.encryptionFactory = encryptionFactory;
   }
 
 
   @SuppressWarnings({"PMD.DefaultPackage","PMD.LawOfDemeter"})
-  void explodeAndReencrypt(InputStream inputStream)
+  void explodeAndReencrypt(final InputStream inputStream)
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
+
+    Preconditions.checkNotNull(inputStream, "inputStream must not be null");
+
     boolean zipDataFound = false;
     final ZipInputStream zis = new ZipInputStream(inputStream);
 

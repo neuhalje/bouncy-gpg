@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
@@ -75,6 +76,11 @@ public final class SignatureValidationStrategies {
   public static SignatureValidationStrategy requireSignatureFromAllKeys(
       KeySelectionStrategy keySelectionStrategy,
       KeyringConfig config, String... userIds) throws PGPException {
+
+    Preconditions.checkNotNull(keySelectionStrategy, "keySelectionStrategy must not be null");
+    Preconditions.checkNotNull(config, "config must not be null");
+    Preconditions.checkNotNull(userIds, "userIds must not be null");
+
     final List<Long> keyIds = new ArrayList<>(userIds.length);
 
     for (String userId : userIds) {
@@ -118,6 +124,11 @@ public final class SignatureValidationStrategies {
   public static SignatureValidationStrategy requireSignatureFromAllUids(
       KeySelectionStrategy keySelectionStrategy,
       KeyringConfig config, String... userIds) throws PGPException {
+
+    Preconditions.checkNotNull(keySelectionStrategy, "keySelectionStrategy must not be null");
+    Preconditions.checkNotNull(config, "config must not be null");
+    Preconditions.checkNotNull(userIds, "userIds must not be null");
+
     final Map<String, Set<Long>> keyIdsByUid = new HashMap<>();
 
     for (String userId : userIds) {
@@ -150,6 +161,7 @@ public final class SignatureValidationStrategies {
    * @return an instance of the requested strategy
    **/
   public static SignatureValidationStrategy requireSignatureFromAllKeys(Long... keyIds) {
+    Preconditions.checkNotNull(keyIds, "keyIds must not be null");
     return new RequireSpecificSignatureValidationStrategy(Arrays.asList(keyIds));
   }
 

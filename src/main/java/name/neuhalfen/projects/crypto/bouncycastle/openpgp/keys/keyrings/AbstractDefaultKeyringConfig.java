@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
@@ -24,9 +25,8 @@ abstract class AbstractDefaultKeyringConfig implements KeyringConfig {
   private PGPSecretKeyRingCollection secretKeyRings;
 
   AbstractDefaultKeyringConfig(KeyringConfigCallback callback) {
-    if (callback == null) {
-      throw new IllegalArgumentException("callback mus not be null");
-    }
+    Preconditions.checkNotNull(callback, "callback must not be null");
+
     this.callback = callback;
   }
 

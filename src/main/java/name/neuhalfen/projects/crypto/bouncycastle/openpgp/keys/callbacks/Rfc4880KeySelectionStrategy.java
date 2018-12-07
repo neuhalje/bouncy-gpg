@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPKeyFlags;
@@ -60,6 +61,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
    */
   public Rfc4880KeySelectionStrategy(final Instant dateOfTimestampVerification,
       final boolean matchPartial, final boolean ignoreCase) {
+    Preconditions
+        .checkNotNull(dateOfTimestampVerification, "dateOfTimestampVerification must not be null");
     this.dateOfTimestampVerification = dateOfTimestampVerification;
     this.matchPartial = matchPartial;
     this.ignoreCase = ignoreCase;
@@ -103,6 +106,9 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   public Set<PGPPublicKey> validPublicKeysForVerifyingSignatures(String uid,
       KeyringConfig keyringConfig) throws PGPException, IOException {
 
+    Preconditions.checkNotNull(uid, "uid must not be null");
+    Preconditions.checkNotNull(keyringConfig, "keyringConfig must not be null");
+
     final Set<PGPPublicKeyRing> publicKeyrings = this
         .publicKeyRingsForUid(PURPOSE.FOR_SIGNING, uid, keyringConfig);
 
@@ -119,6 +125,10 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   @SuppressWarnings({"PMD.LawOfDemeter", "PMD.ShortVariable", "PMD.OnlyOneReturn"})
   public PGPPublicKey selectPublicKey(PURPOSE purpose, String uid, KeyringConfig keyringConfig)
       throws PGPException, IOException {
+
+    Preconditions.checkNotNull(purpose, "purpose must not be null");
+    Preconditions.checkNotNull(uid, "uid must not be null");
+    Preconditions.checkNotNull(keyringConfig, "keyringConfig must not be null");
 
     final Set<PGPPublicKeyRing> publicKeyrings = this
         .publicKeyRingsForUid(purpose, uid, keyringConfig);

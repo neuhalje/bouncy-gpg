@@ -7,6 +7,7 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.ByEMailKeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy;
@@ -44,10 +45,8 @@ public final class BuildDecryptionInputStreamAPI {
    * @return next build step
    */
   @Nonnull
-  public ValidationWithKeySelectionStrategy withConfig(@Nullable KeyringConfig keyringConfig) {
-    if (keyringConfig == null) {
-      throw new IllegalArgumentException("keyringConfig must not be null");
-    }
+  public ValidationWithKeySelectionStrategy withConfig(KeyringConfig keyringConfig) {
+    Preconditions.checkNotNull(keyringConfig, "keyringConfig must not be null");
 
     BuildDecryptionInputStreamAPI.this.keyringConfig = keyringConfig;
     return new ValidationWithKeySelectionStrategy();
@@ -85,14 +84,12 @@ public final class BuildDecryptionInputStreamAPI {
      * @return next step in build
      */
     public Validation setReferenceDateForKeyValidityTo(final Instant dateOfTimestampVerification) {
-      if (keySelectionStrategy != null) {
-        throw new IllegalStateException(
-            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together with" +
-                " 'withKeySelectionStrategy' ");
-      }
-      if (dateOfTimestampVerification == null) {
-        throw new IllegalArgumentException("dateOfTimestampVerification must not be null");
-      }
+      Preconditions.checkArgument(keySelectionStrategy == null,
+          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot "+
+              "be used together with 'withKeySelectionStrategy' ");
+
+      Preconditions.checkNotNull(dateOfTimestampVerification,"dateOfTimestampVerification must not be null");
+
       this.dateOfTimestampVerification = dateOfTimestampVerification;
       return this;
     }
@@ -106,11 +103,10 @@ public final class BuildDecryptionInputStreamAPI {
      * @return next build step
      */
     public Validation selectUidByAnyUidPart() {
-      if (keySelectionStrategy != null) {
-        throw new IllegalStateException(
-            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together" +
-                " with 'withKeySelectionStrategy' ");
-      }
+      Preconditions.checkArgument(keySelectionStrategy == null,
+          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot "+
+              "be used together with 'withKeySelectionStrategy' ");
+
       selectUidByEMailOnly = false;
       return this;
     }
@@ -126,9 +122,9 @@ public final class BuildDecryptionInputStreamAPI {
      * @see name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy
      */
     public Validation withKeySelectionStrategy(KeySelectionStrategy strategy) {
-      if (strategy == null) {
-        throw new IllegalArgumentException("strategy must not be null");
-      }
+
+      Preconditions.checkNotNull(strategy,"strategy must not be null");
+
       if (selectUidByEMailOnly != null || dateOfTimestampVerification != null) {
         throw new IllegalStateException(
             "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together"
@@ -186,7 +182,7 @@ public final class BuildDecryptionInputStreamAPI {
      * @throws NoSuchProviderException BC provider is not registered
      */
     @Nonnull
-    InputStream fromEncryptedInputStream(@Nullable InputStream encryptedData)
+    InputStream fromEncryptedInputStream(InputStream encryptedData)
         throws IOException, NoSuchProviderException;
   }
 
@@ -214,7 +210,7 @@ public final class BuildDecryptionInputStreamAPI {
      * @return the next build step
      */
     @Nonnull
-    Build andRequireSignatureFromAllKeys(@Nullable Long... publicKeyIds);
+    Build andRequireSignatureFromAllKeys(Long... publicKeyIds);
 
     /**
      * Decryption will enforce that the ciphertext has been signed by ALL of the public key ids
@@ -241,7 +237,7 @@ public final class BuildDecryptionInputStreamAPI {
      * @throws IOException IO is dangerous. Accessing the keyring might touch the filesystem.
      */
     @Nonnull
-    Build andRequireSignatureFromAllKeys(@Nullable String... userIds)
+    Build andRequireSignatureFromAllKeys(String... userIds)
         throws PGPException, IOException;
 
     /**
@@ -266,10 +262,9 @@ public final class BuildDecryptionInputStreamAPI {
 
     @Override
     @Nonnull
-    public Build andRequireSignatureFromAllKeys(@Nullable Long... publicKeyIds) {
-      if (publicKeyIds == null || publicKeyIds.length == 0) {
-        throw new IllegalArgumentException("publicKeyIds must not be null or empty");
-      }
+    public Build andRequireSignatureFromAllKeys(Long... publicKeyIds) {
+      Preconditions.checkNotNull(publicKeyIds,"publicKeyIds must not be null");
+      Preconditions.checkArgument(publicKeyIds.length>0,"publicKeyIds must not be empty");
 
       BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies
           .requireSignatureFromAllKeys(publicKeyIds);
@@ -279,12 +274,12 @@ public final class BuildDecryptionInputStreamAPI {
 
     @Override
     @Nonnull
-    public Build andRequireSignatureFromAllKeys(@Nullable String... userIds)
+    public Build andRequireSignatureFromAllKeys(String... userIds)
         throws PGPException, IOException {
 
-      if (userIds == null || userIds.length == 0) {
-        throw new IllegalArgumentException("userIds must not be null or empty");
-      }
+      Preconditions.checkNotNull(userIds,"userIds must not be null");
+      Preconditions.checkArgument(userIds.length>0,"userIds must not be empty");
+
       BuildDecryptionInputStreamAPI.this.signatureCheckingMode = SignatureValidationStrategies
           .requireSignatureFromAllUids(getKeySelectionStrategy(), keyringConfig, userIds);
       return new Builder();
@@ -325,9 +320,9 @@ public final class BuildDecryptionInputStreamAPI {
       @Nonnull
       public InputStream fromEncryptedInputStream(@Nullable InputStream encryptedData)
           throws IOException, NoSuchProviderException {
-        if (encryptedData == null) {
-          throw new IllegalArgumentException("encryptedData must not be null");
-        }
+
+        Preconditions.checkNotNull(encryptedData,"encryptedData must not be null");
+
 
         final DecryptionStreamFactory pgpInputStreamFactory =
             DecryptionStreamFactory.create(

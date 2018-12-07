@@ -3,6 +3,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
 
 import java.util.Iterator;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
@@ -94,12 +95,9 @@ public final class PGPUtilities {
   public static PGPPublicKeyRing extractPublicKeyRingForUserId(final String publicKeyUid,
       final PGPPublicKeyRingCollection publicKeyRings)
       throws PGPException {
-    if (publicKeyUid == null) {
-      throw new IllegalArgumentException("publicKeyUid must not be null");
-    }
-    if (publicKeyRings == null) {
-      throw new IllegalArgumentException("publicKeyRings must not be null");
-    }
+
+    Preconditions.checkNotNull(publicKeyUid, "publicKeyUid must not be null");
+    Preconditions.checkNotNull(publicKeyRings, "publicKeyRings must not be null");
 
     // the true parameter indicates, that partial matching of the publicKeyUid is enough.
     final Iterator<?> keyRings = publicKeyRings.getKeyRings("<" + publicKeyUid + ">", true);

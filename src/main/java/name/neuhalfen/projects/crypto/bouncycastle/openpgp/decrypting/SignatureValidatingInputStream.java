@@ -7,6 +7,7 @@ import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
@@ -29,6 +30,9 @@ final class SignatureValidatingInputStream extends FilterInputStream {
   SignatureValidatingInputStream(InputStream inputStream, DecryptionState state,
       SignatureValidationStrategy signatureValidationStrategy) {
     super(inputStream);
+    Preconditions.checkNotNull(state, "state must not be null");
+    Preconditions.checkNotNull(signatureValidationStrategy, "signatureValidationStrategy must not be null");
+
     this.state = state;
     this.signatureValidationStrategy = signatureValidationStrategy;
   }

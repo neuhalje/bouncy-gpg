@@ -1,6 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
 
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
+
 public final class PGPAlgorithmSuite {
 
   private final PGPHashAlgorithms hashAlgorithmCode;
@@ -11,15 +13,11 @@ public final class PGPAlgorithmSuite {
       PGPSymmetricEncryptionAlgorithms symmetricEncryptionAlgorithmCode,
       PGPCompressionAlgorithms compressionEncryptionAlgorithmCode) {
 
-    if (hashAlgorithmCode == null) {
-      throw new IllegalArgumentException("hashAlgorithmCode must not be null");
-    }
-    if (symmetricEncryptionAlgorithmCode == null) {
-      throw new IllegalArgumentException("symmetricEncryptionAlgorithmCode must not be null");
-    }
-    if (compressionEncryptionAlgorithmCode == null) {
-      throw new IllegalArgumentException("compressionEncryptionAlgorithmCode must not be null");
-    }
+    Preconditions.checkNotNull(hashAlgorithmCode, "hashAlgorithmCode must not be null");
+    Preconditions.checkNotNull(symmetricEncryptionAlgorithmCode,
+        "symmetricEncryptionAlgorithmCode must not be null");
+    Preconditions.checkNotNull(compressionEncryptionAlgorithmCode,
+        "compressionEncryptionAlgorithmCode must not be null");
 
     this.hashAlgorithmCode = hashAlgorithmCode;
     this.symmetricEncryptionAlgorithmCode = symmetricEncryptionAlgorithmCode;

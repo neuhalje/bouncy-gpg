@@ -3,6 +3,7 @@ package name.neuhalfen.projects.crypto.symmetric.keygeneration;
 
 import java.util.Arrays;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.HKDFSHA256;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.KeyDerivationFunction;
 
@@ -21,17 +22,17 @@ public final class DerivedKeyGeneratorFactory {
     private final byte[] key;
 
     private WithMasterKey(byte[] key) {
-      if (key == null) {
-        throw new IllegalArgumentException("key must not be null");
-      }
+      Preconditions.checkNotNull(key, "key must not be null");
+      Preconditions.checkArgument(key.length > 0, "key must not be empty");
+
       this.key = Arrays.copyOf(key, key.length);
     }
 
 
     public WithSalt andSalt(byte[] salt) {
-      if (salt == null) {
-        throw new IllegalArgumentException("salt must not be null");
-      }
+      Preconditions.checkNotNull(key, "salt must not be null");
+      Preconditions.checkArgument(salt.length > 0, "salt must not be empty");
+
       return new WithSalt(salt);
     }
 

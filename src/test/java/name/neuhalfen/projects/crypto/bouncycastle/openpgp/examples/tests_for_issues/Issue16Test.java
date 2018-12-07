@@ -1,4 +1,4 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.tests_for_issues;
+package name.neuhalfen.projects.crypto.bouncycastle.openpgp.examples.tests_for_issues;
 
 
 import static org.junit.Assert.assertEquals;

@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPOnePassSignature;
@@ -24,6 +25,7 @@ final class RequireSpecificSignatureValidationStrategy implements SignatureValid
    * @param signaturesRequiredForTheseKeys Signatures for all keys are needed
    */
   RequireSpecificSignatureValidationStrategy(Collection<Long> signaturesRequiredForTheseKeys) {
+    Preconditions.checkNotNull(signaturesRequiredForTheseKeys, "signaturesRequiredForTheseKeys must not be null");
     this.signaturesRequiredForTheseKeys = new HashSet<>(signaturesRequiredForTheseKeys);
   }
 
@@ -31,6 +33,8 @@ final class RequireSpecificSignatureValidationStrategy implements SignatureValid
   public void validateSignatures(PGPObjectFactory factory,
       Map<Long, PGPOnePassSignature> onePassSignatures) throws
       SignatureException, PGPException, IOException {
+    Preconditions.checkNotNull(factory, "factory must not be null");
+    Preconditions.checkNotNull(onePassSignatures, "onePassSignatures must not be null");
 
     // verify the signature
     final PGPSignatureList signatureList = (PGPSignatureList) factory.nextObject();

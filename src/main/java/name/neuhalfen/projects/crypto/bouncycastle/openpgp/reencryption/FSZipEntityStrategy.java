@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 
 /**
  * A file based ZipEntityStrategy that puts the contents of the exploded ZIP under a given root
@@ -28,6 +29,8 @@ public class FSZipEntityStrategy implements ZipEntityStrategy {
 
   @Override
   public void handleDirectory(String sanitizedDirectoryName) throws IOException {
+    Preconditions.checkNotNull(sanitizedDirectoryName, "sanitizedDirectoryName must not be null");
+
     File destPath = new File(destRootDir, sanitizedDirectoryName);
     boolean success = destPath.mkdir();
     if (!success) {
@@ -39,6 +42,8 @@ public class FSZipEntityStrategy implements ZipEntityStrategy {
   public
   @Nullable
   OutputStream createOutputStream(String sanitizedFileName) throws IOException {
+    Preconditions.checkNotNull(sanitizedFileName, "sanitizedFileName must not be null");
+
     final String fileName = sanitizedFileName + ".gpg";
 
     File destPath = new File(destRootDir, fileName);
@@ -50,6 +55,8 @@ public class FSZipEntityStrategy implements ZipEntityStrategy {
   @SuppressWarnings("PMD.LawOfDemeter")
   @Override
   public String rewriteName(String nameFromZip) {
+    Preconditions.checkNotNull(nameFromZip, "nameFromZip must not be null");
+
     final String withOutLeadingRelativePath = REMOVE_LEADING_RELATIVE_PATH.matcher(nameFromZip)
         .replaceAll("");
     final String withoutDotDot = REMOVE_DOT_DOT_REGEXP.matcher(withOutLeadingRelativePath)

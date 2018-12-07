@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
@@ -29,9 +30,8 @@ public final class InMemoryKeyring implements KeyringConfig {
 
   @SuppressWarnings("unchecked")
   InMemoryKeyring(final KeyringConfigCallback callback) throws IOException, PGPException {
-    if (callback == null) {
-      throw new IllegalArgumentException("callback must not be null");
-    }
+    Preconditions.checkNotNull(callback, "callback must not be null");
+
     this.callback = callback;
     //noinspection unchecked
     this.publicKeyRings = new PGPPublicKeyRingCollection(EMPTY_LIST);
@@ -49,10 +49,8 @@ public final class InMemoryKeyring implements KeyringConfig {
    */
   @SuppressWarnings({"PMD.LawOfDemeter", "PMD.UseVarargs"})
   public void addPublicKey(byte[] encodedPublicKey) throws IOException, PGPException {
+    Preconditions.checkNotNull(encodedPublicKey, "encodedPublicKey must not be null");
 
-    if (encodedPublicKey == null) {
-      throw new IllegalArgumentException("encodedPublicKey must not be null");
-    }
 
     try (
         final InputStream raw = new ByteArrayInputStream(encodedPublicKey);
@@ -77,10 +75,7 @@ public final class InMemoryKeyring implements KeyringConfig {
    */
   @SuppressWarnings("PMD.LawOfDemeter")
   public void addSecretKey(byte[] encodedPrivateKey) throws IOException, PGPException {
-
-    if (encodedPrivateKey == null) {
-      throw new IllegalArgumentException("encodedPrivateKey must not be null");
-    }
+    Preconditions.checkNotNull(encodedPrivateKey, "encodedPrivateKey must not be null");
 
     try (
         final InputStream raw = new ByteArrayInputStream(encodedPrivateKey);

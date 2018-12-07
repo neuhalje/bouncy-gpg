@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching;
 
 import java.io.Serializable;
 import java.util.Objects;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import org.bouncycastle.crypto.generators.SCrypt;
 
 
@@ -20,9 +21,8 @@ public class SCryptKeyStretching implements KeyStretching {
 
   @Override
   public byte[] strengthenKey(byte[] salt, byte[] keyToStrengthen, int desiredKeyLengthInBit) {
-    if (desiredKeyLengthInBit % 8 != 0) {
-      throw new IllegalArgumentException("desiredKeyLengthInBit must be a multiple of 8");
-    }
+    Preconditions.checkArgument(desiredKeyLengthInBit % 8 == 0,
+        "desiredKeyLengthInBits must be multiple of 8 but is " + desiredKeyLengthInBit);
 
     final int desiredKeyLengthInBytes = desiredKeyLengthInBit / 8;
     final byte[] key = SCrypt.generate(keyToStrengthen, salt, cfg.getN(), cfg.getR(), cfg.getP(),
