@@ -1,8 +1,9 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Map;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 
 /**
  * Factory for convenience implementations of KeyringConfigCallback. . {@link
@@ -21,7 +22,7 @@ public final class KeyringConfigCallbacks {
   }
 
   public static KeyringConfigCallback withPassword(String passphrase) {
-    Preconditions.checkNotNull(passphrase,"passphrase must not be null");
+    requireNonNull(passphrase, "passphrase must not be null");
 
     return withPassword(passphrase.toCharArray());
   }
@@ -32,7 +33,7 @@ public final class KeyringConfigCallbacks {
 
   public static KeyringConfigCallback withPasswordsFromMap(
       Map<Long, char[]> mapSourceKeyIdToPassphrase) {
-    Preconditions.checkNotNull(mapSourceKeyIdToPassphrase, "mapSourceKeyIdToPassphrase must not be null");
+    requireNonNull(mapSourceKeyIdToPassphrase, "mapSourceKeyIdToPassphrase must not be null");
 
     return new StaticPasswordFromMapKeyringConfigCallback(mapSourceKeyIdToPassphrase);
   }

@@ -58,6 +58,15 @@ public enum PGPHashAlgorithms {
 
   private final boolean insecure;
 
+  PGPHashAlgorithms(int algorithmId) {
+    this(algorithmId, false);
+  }
+
+  PGPHashAlgorithms(int algorithmId, boolean insecure) {
+    this.algorithmId = algorithmId;
+    this.insecure = insecure;
+  }
+
   /**
    * Returns the corresponding BouncyCastle  algorithm tag.
    *
@@ -78,15 +87,5 @@ public enum PGPHashAlgorithms {
    */
   public boolean isInsecure() {
     return insecure;
-  }
-
-
-  PGPHashAlgorithms(int algorithmId) {
-    this(algorithmId, false);
-  }
-
-  PGPHashAlgorithms(int algorithmId, boolean insecure) {
-    this.algorithmId = algorithmId;
-    this.insecure = insecure;
   }
 }

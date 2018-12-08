@@ -1,10 +1,11 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnull;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 
 /**
@@ -30,9 +31,9 @@ final class ResourceBasedKeyringConfig extends AbstractDefaultKeyringConfig {
       @Nonnull String publicKeyringPath,
       @Nonnull String secretKeyringPath) {
     super(callback);
-    Preconditions.checkNotNull(classLoader, "classLoader must not be null");
-    Preconditions.checkNotNull(publicKeyringPath, "publicKeyringPath must not be null");
-    Preconditions.checkNotNull(secretKeyringPath, "secretKeyringPath must not be null");
+    requireNonNull(classLoader, "classLoader must not be null");
+    requireNonNull(publicKeyringPath, "publicKeyringPath must not be null");
+    requireNonNull(secretKeyringPath, "secretKeyringPath must not be null");
 
     this.classLoader = classLoader;
     this.publicKeyringPath = publicKeyringPath;

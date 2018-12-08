@@ -1,5 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,7 +9,6 @@ import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
@@ -24,14 +25,15 @@ final class SignatureValidatingInputStream extends FilterInputStream {
    * <code>inputStream</code> to the field <code>this.inputStream</code> so as to remember it for
    * later use.
    *
-   * @param inputStream the underlying input stream, or <code>null</code> if this instance is to be
-   * created without an underlying stream.
+   * @param inputStream the underlying input stream, or <code>null</code> if this instance is to
+   *     be
+   *     created without an underlying stream.
    */
   SignatureValidatingInputStream(InputStream inputStream, DecryptionState state,
       SignatureValidationStrategy signatureValidationStrategy) {
     super(inputStream);
-    Preconditions.checkNotNull(state, "state must not be null");
-    Preconditions.checkNotNull(signatureValidationStrategy,
+    requireNonNull(state, "state must not be null");
+    requireNonNull(signatureValidationStrategy,
         "signatureValidationStrategy must not be null");
 
     this.state = state;
@@ -57,7 +59,7 @@ final class SignatureValidatingInputStream extends FilterInputStream {
 
   @Override
   public int read(@Nonnull byte[] b, int off, int len) throws IOException {
-    int read = super.read(b, off, len);
+    final int read = super.read(b, off, len);
 
     final boolean endOfStream = read == -1;
     if (endOfStream) {
@@ -124,14 +126,14 @@ final class SignatureValidatingInputStream extends FilterInputStream {
 
     @SuppressWarnings("PMD.DefaultPackage")
     void updateOnePassSignatures(byte data) {
-      for (PGPOnePassSignature sig : onePassSignatures.values()) {
+      for (final PGPOnePassSignature sig : onePassSignatures.values()) {
         sig.update(data);
       }
     }
 
     @SuppressWarnings("PMD.DefaultPackage")
     void updateOnePassSignatures(byte[] b, int off, int len) {
-      for (PGPOnePassSignature sig : onePassSignatures.values()) {
+      for (final PGPOnePassSignature sig : onePassSignatures.values()) {
         sig.update(b, off, len);
       }
     }

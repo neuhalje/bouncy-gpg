@@ -1,9 +1,10 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
 
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Iterator;
 import javax.annotation.Nullable;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
@@ -71,10 +72,10 @@ public final class PGPUtilities {
     LOGGER.trace("Extracting secret key with key ID '0x{}'",
         Long.toHexString(encryptedKey.getKeyID()));
 
-    PGPDigestCalculatorProvider calcProvider = new JcaPGPDigestCalculatorProviderBuilder()
+    final PGPDigestCalculatorProvider calcProvider = new JcaPGPDigestCalculatorProviderBuilder()
         .setProvider(BouncyCastleProvider.PROVIDER_NAME).build();
 
-    PBESecretKeyDecryptor decryptor = new JcePBESecretKeyDecryptorBuilder(
+    final PBESecretKeyDecryptor decryptor = new JcePBESecretKeyDecryptorBuilder(
         calcProvider).setProvider(BouncyCastleProvider.PROVIDER_NAME)
         .build(passphrase);
 
@@ -97,8 +98,8 @@ public final class PGPUtilities {
       final PGPPublicKeyRingCollection publicKeyRings)
       throws PGPException {
 
-    Preconditions.checkNotNull(publicKeyUid, "publicKeyUid must not be null");
-    Preconditions.checkNotNull(publicKeyRings, "publicKeyRings must not be null");
+    requireNonNull(publicKeyUid, "publicKeyUid must not be null");
+    requireNonNull(publicKeyRings, "publicKeyRings must not be null");
 
     // the true parameter indicates, that partial matching of the publicKeyUid is enough.
     final Iterator<?> keyRings = publicKeyRings.getKeyRings("<" + publicKeyUid + ">", true);

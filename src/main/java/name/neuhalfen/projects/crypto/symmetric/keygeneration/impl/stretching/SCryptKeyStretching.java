@@ -6,7 +6,8 @@ import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.crypto.generators.SCrypt;
 
 
-@SuppressWarnings({"PMD.ShortVariable", "PMD.VariableNamingConventions"})
+@SuppressWarnings({"PMD.ShortVariable", "PMD.VariableNamingConventions",
+    "PMD.FieldNamingConventions", "PMD.FormalParameterNamingConventions"})
 public class SCryptKeyStretching implements KeyStretching {
 
   private final SCryptKeyStretchingParameters cfg;
@@ -25,13 +26,15 @@ public class SCryptKeyStretching implements KeyStretching {
         "desiredKeyLengthInBits must be multiple of 8 but is " + desiredKeyLengthInBit);
 
     final int desiredKeyLengthInBytes = desiredKeyLengthInBit / 8;
-    final byte[] key = SCrypt.generate(keyToStrengthen, salt, cfg.getN(), cfg.getR(), cfg.getP(),
+    return SCrypt.generate(keyToStrengthen, salt, cfg.getN(), cfg.getR(), cfg.getP(),
         desiredKeyLengthInBytes);
-    return key;
   }
 
+  @SuppressWarnings({"PMD.ShortVariable", "PMD.VariableNamingConventions",
+      "PMD.FieldNamingConventions"})
   public final static class SCryptKeyStretchingParameters implements Serializable {
 
+    private static final long serialVersionUID = 3949486467011133166L;
     private final int N;
     private final int r;
     private final int p;
@@ -99,7 +102,7 @@ public class SCryptKeyStretching implements KeyStretching {
       if (o == null || getClass() != o.getClass()) {
         return false;
       }
-      SCryptKeyStretchingParameters that = (SCryptKeyStretchingParameters) o;
+      final SCryptKeyStretchingParameters that = (SCryptKeyStretchingParameters) o;
       return N == that.N &&
           r == that.r &&
           p == that.p;
@@ -112,12 +115,11 @@ public class SCryptKeyStretching implements KeyStretching {
 
     @Override
     public String toString() {
-      final StringBuilder sb = new StringBuilder("PBKDF2KeyStretchingParameters{");
-      sb.append("N=").append(N);
-      sb.append(", r=").append(r);
-      sb.append(", p=").append(p);
-      sb.append('}');
-      return sb.toString();
+      return "PBKDF2KeyStretchingParameters{"
+          + "N=" + N
+          + ", r=" + r
+          + ", p=" + p
+          + '}';
     }
   }
 }

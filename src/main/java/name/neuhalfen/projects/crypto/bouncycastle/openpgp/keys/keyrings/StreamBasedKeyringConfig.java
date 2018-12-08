@@ -1,11 +1,12 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
@@ -27,11 +28,27 @@ final class StreamBasedKeyringConfig implements KeyringConfig {
   private final KeyFingerPrintCalculator keyFingerPrintCalculator;
 
   /**
+   * @param callback Callback to resolve secret key passwords
+   * @param publicKeyRings public keyring, can be empty.
+   * @param secretKeyRings secret keyring, can be empty.
+   */
+  private StreamBasedKeyringConfig(KeyringConfigCallback callback,
+      KeyFingerPrintCalculator keyFingerPrintCalculator,
+      PGPPublicKeyRingCollection publicKeyRings,
+      PGPSecretKeyRingCollection secretKeyRings) {
+
+    this.callback = callback;
+    this.keyFingerPrintCalculator = keyFingerPrintCalculator;
+    this.publicKeyRings = publicKeyRings;
+    this.secretKeyRings = secretKeyRings;
+  }
+
+  /**
    * @param callback Callback to provide paraphrases
    * @param publicKeyringStream GPG keyring "public keys" file, will be closed. null --> empty
-   * keyring
+   *     keyring
    * @param secretKeyringStream GPG keyring "private keys" file, will be closed. null --> empty
-   * keyring
+   *     keyring
    */
   @SuppressWarnings("PMD.DefaultPackage")
   static KeyringConfig build(
@@ -39,9 +56,9 @@ final class StreamBasedKeyringConfig implements KeyringConfig {
       @Nullable InputStream publicKeyringStream,
       @Nullable InputStream secretKeyringStream) throws IOException, PGPException {
 
-    Preconditions.checkNotNull(callback, "callback must not be null");
+    requireNonNull(callback, "callback must not be null");
 
-    KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
+    final KeyFingerPrintCalculator keyFingerPrintCalculator = new BcKeyFingerprintCalculator();
 
     final PGPPublicKeyRingCollection publicKeyRings;
 
@@ -75,38 +92,21 @@ final class StreamBasedKeyringConfig implements KeyringConfig {
     if (stream != null) {
       try {
         stream.close();
-      } catch (IOException e) {
+      } catch (IOException e) { // NOPMD: EmptyCatchBlock
         /* Ignore */
       }
     }
   }
 
-  /**
-   * @param callback Callback to resolve secret key passwords
-   * @param publicKeyRings public keyring, can be empty.
-   * @param secretKeyRings secret keyring, can be empty.
-   */
-  private StreamBasedKeyringConfig(KeyringConfigCallback callback,
-      KeyFingerPrintCalculator keyFingerPrintCalculator,
-      PGPPublicKeyRingCollection publicKeyRings,
-      PGPSecretKeyRingCollection secretKeyRings) {
-
-    this.callback = callback;
-    this.keyFingerPrintCalculator = keyFingerPrintCalculator;
-    this.publicKeyRings = publicKeyRings;
-    this.secretKeyRings = secretKeyRings;
-  }
-
-
   @SuppressWarnings("PMD.ShortVariable")
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("StreamBasedKeyringConfig{");
-    sb.append("callback=").append(callback);
-    sb.append(", publicKeyRings=").append(publicKeyRings);
-    sb.append(", secretKeyRings=").append(secretKeyRings == null ? "null" : "<present>");
-    sb.append('}');
-    return sb.toString();
+    return "StreamBasedKeyringConfig{"
+        + "callback="
+        + callback
+        + ", publicKeyRings=" + publicKeyRings
+        + ", secretKeyRings=" + (secretKeyRings == null ? "null" : "<present>")
+        + '}';
   }
 
   @Override

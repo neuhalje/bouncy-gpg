@@ -71,7 +71,7 @@ public class BuildEncryptionOutputStreamAPITest {
   }
 
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = NullPointerException.class)
   public void withKeySelectionStrategy_NoStrategyPassed_throws() throws Exception {
     BouncyGPG.encryptToStream().withConfig(mockKeyringConfig()).withKeySelectionStrategy(null);
   }

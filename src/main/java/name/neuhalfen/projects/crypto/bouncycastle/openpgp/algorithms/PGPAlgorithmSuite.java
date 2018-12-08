@@ -1,7 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
 
-import name.neuhalfen.projects.crypto.internal.Preconditions;
+import static java.util.Objects.requireNonNull;
 
 public final class PGPAlgorithmSuite {
 
@@ -13,10 +13,10 @@ public final class PGPAlgorithmSuite {
       PGPSymmetricEncryptionAlgorithms symmetricEncryptionAlgorithmCode,
       PGPCompressionAlgorithms compressionEncryptionAlgorithmCode) {
 
-    Preconditions.checkNotNull(hashAlgorithmCode, "hashAlgorithmCode must not be null");
-    Preconditions.checkNotNull(symmetricEncryptionAlgorithmCode,
+    requireNonNull(hashAlgorithmCode, "hashAlgorithmCode must not be null");
+    requireNonNull(symmetricEncryptionAlgorithmCode,
         "symmetricEncryptionAlgorithmCode must not be null");
-    Preconditions.checkNotNull(compressionEncryptionAlgorithmCode,
+    requireNonNull(compressionEncryptionAlgorithmCode,
         "compressionEncryptionAlgorithmCode must not be null");
 
     this.hashAlgorithmCode = hashAlgorithmCode;
@@ -36,6 +36,7 @@ public final class PGPAlgorithmSuite {
     return compressionEncryptionAlgorithmCode;
   }
 
+  @Override
   public String toString() {
     return String.format("%s/%s/%s", hashAlgorithmCode, symmetricEncryptionAlgorithmCode,
         compressionEncryptionAlgorithmCode);

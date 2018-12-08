@@ -47,11 +47,6 @@ final class EncryptWithOpenPGPTestDriver {
    */
   private final String signatureUid;
 
-  /**
-   * The encryption public key ring.
-   */
-  private final PGPPublicKeyRing encryptionPublicKeyRing;
-
 
   @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
   public EncryptWithOpenPGPTestDriver(final EncryptionConfig config,
@@ -61,8 +56,11 @@ final class EncryptWithOpenPGPTestDriver {
 
       this.signatureUid = config.getSignatureSecretKeyId();
 
-      this.encryptionPublicKeyRing =
-          PGPUtilities.extractPublicKeyRingForUserId(config.getEncryptionPublicKeyId(),
+      /**
+       * The encryption public key ring.
+       */
+      final PGPPublicKeyRing encryptionPublicKeyRing = PGPUtilities
+          .extractPublicKeyRingForUserId(config.getEncryptionPublicKeyId(),
               config.getPublicKeyRings());
 
     } catch (PGPException e) {

@@ -1,5 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.time.Instant;
 import java.util.HashSet;
@@ -9,7 +11,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nullable;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPKeyFlags;
@@ -34,16 +35,6 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   private final boolean matchPartial;
 
   /**
-   * The date used for key expiration date checks as "now".
-   *
-   * @return dateOfTimestampVerification
-   */
-  protected Instant getDateOfTimestampVerification() {
-    return dateOfTimestampVerification;
-  }
-
-
-  /**
    * Construct an instance with matchPartial and ignoreCase set to true.
    *
    * @param dateOfTimestampVerification The date used for key expiration date checks as "now".
@@ -52,21 +43,31 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     this(dateOfTimestampVerification, true, true);
   }
 
+
   /**
    * Create an instance of this strategy.
    *
-   * @param matchPartial if true userID need only be a substring of an actual ID string to match.
+   * @param matchPartial if true userID need only be a substring of an actual ID string to
+   *     match.
    * @param ignoreCase if true case is ignored in user ID comparisons.
    * @param dateOfTimestampVerification The date used for key expiration date checks as "now".
    */
   public Rfc4880KeySelectionStrategy(final Instant dateOfTimestampVerification,
       final boolean matchPartial, final boolean ignoreCase) {
-    Preconditions
-        .checkNotNull(dateOfTimestampVerification, "dateOfTimestampVerification must not be null");
+    requireNonNull(dateOfTimestampVerification, "dateOfTimestampVerification must not be null");
     this.dateOfTimestampVerification = dateOfTimestampVerification;
     this.matchPartial = matchPartial;
     this.ignoreCase = ignoreCase;
 
+  }
+
+  /**
+   * The date used for key expiration date checks as "now".
+   *
+   * @return dateOfTimestampVerification
+   */
+  protected Instant getDateOfTimestampVerification() {
+    return dateOfTimestampVerification;
   }
 
   /**
@@ -88,7 +89,7 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
       KeyringConfig keyringConfig)
       throws IOException, PGPException {
 
-    Set<PGPPublicKeyRing> keyringsForUid = new HashSet<>();
+    final Set<PGPPublicKeyRing> keyringsForUid = new HashSet<>();
 
     final Iterator<PGPPublicKeyRing> keyRings = keyringConfig.getPublicKeyRings()
         .getKeyRings(uid, matchPartial, ignoreCase);
@@ -106,8 +107,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   public Set<PGPPublicKey> validPublicKeysForVerifyingSignatures(String uid,
       KeyringConfig keyringConfig) throws PGPException, IOException {
 
-    Preconditions.checkNotNull(uid, "uid must not be null");
-    Preconditions.checkNotNull(keyringConfig, "keyringConfig must not be null");
+    requireNonNull(uid, "uid must not be null");
+    requireNonNull(keyringConfig, "keyringConfig must not be null");
 
     final Set<PGPPublicKeyRing> publicKeyrings = this
         .publicKeyRingsForUid(PURPOSE.FOR_SIGNING, uid, keyringConfig);
@@ -126,9 +127,9 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   public PGPPublicKey selectPublicKey(PURPOSE purpose, String uid, KeyringConfig keyringConfig)
       throws PGPException, IOException {
 
-    Preconditions.checkNotNull(purpose, "purpose must not be null");
-    Preconditions.checkNotNull(uid, "uid must not be null");
-    Preconditions.checkNotNull(keyringConfig, "keyringConfig must not be null");
+    requireNonNull(purpose, "purpose must not be null");
+    requireNonNull(uid, "uid must not be null");
+    requireNonNull(keyringConfig, "keyringConfig must not be null");
 
     final Set<PGPPublicKeyRing> publicKeyrings = this
         .publicKeyRingsForUid(purpose, uid, keyringConfig);
@@ -161,8 +162,11 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   }
 
 
+  @SuppressWarnings({"PMD.LinguisticNaming"})
   protected Predicate<PGPPublicKey> hasPrivateKey(final PGPSecretKeyRingCollection secretKeyRings) {
     return pubKey -> {
+      requireNonNull(pubKey, "pubKey must not be null");
+
       try {
         final boolean hasPrivateKey = secretKeyRings.contains(pubKey.getKeyID());
 
@@ -174,7 +178,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
         return hasPrivateKey;
       } catch (PGPException e) {
         // ignore this for filtering
-        LOGGER.debug("Failed to test for private key for pubkey " + pubKey.getKeyID());
+        LOGGER.debug("Failed to test for private key for pubkey " + pubKey//NOPMD:GuardLogStatement
+            .getKeyID());
         return false;
       }
     };
@@ -192,8 +197,10 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
   @SuppressWarnings({"PMD.LawOfDemeter"})
   protected boolean isExpired(PGPPublicKey pubKey) {
+    requireNonNull(pubKey, "pubKey must not be null");
+
     // getValidSeconds == 0 means: no expiration date
-    boolean hasExpiryDate = pubKey.getValidSeconds() > 0;
+    final boolean hasExpiryDate = pubKey.getValidSeconds() > 0;
 
     final boolean isExpired;
 
@@ -216,6 +223,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
 
   protected boolean isEncryptionKey(PGPPublicKey publicKey) {
+    requireNonNull(publicKey, "publicKey must not be null");
+
     final long keyFlags = extractPublicKeyFlags(publicKey);
 
     final boolean canEncryptCommunication =
@@ -240,6 +249,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
 
   protected boolean isRevoked(PGPPublicKey pubKey) {
+    requireNonNull(pubKey, "pubKey must not be null");
+
     final boolean hasRevocation = pubKey.hasRevocation();
     if (hasRevocation) {
       LOGGER.trace("Skipping pubkey {} (revoked)",
@@ -254,6 +265,8 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
   @SuppressWarnings({"PMD.LawOfDemeter"})
   protected long extractPublicKeyFlags(PGPPublicKey publicKey) {
+    requireNonNull(publicKey, "publicKey must not be null");
+
     long aggregatedKeyFlags = 0;
 
     final Iterator<PGPSignature> directKeySignatures = publicKey.getSignatures();
@@ -267,7 +280,6 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     }
     return aggregatedKeyFlags;
   }
-
 }
 
 

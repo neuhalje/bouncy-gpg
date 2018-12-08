@@ -1,5 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +22,6 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc488
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSecretKey;
@@ -72,14 +73,61 @@ public final class BuildEncryptionOutputStreamAPI {
   @SuppressWarnings("PMD.AccessorClassGeneration")
   public WithKeySelectionStrategy withConfig(final KeyringConfig encryptionConfig)
       throws IOException, PGPException {
-    Preconditions.checkNotNull(encryptionConfig, "encryptionConfig must not be null");
-    Preconditions.checkNotNull(encryptionConfig.getKeyFingerPrintCalculator(),
+    requireNonNull(encryptionConfig, "encryptionConfig must not be null");
+    requireNonNull(encryptionConfig.getKeyFingerPrintCalculator(),
         "encryptionConfig.getKeyFingerPrintCalculator() must not be null");
-    Preconditions.checkNotNull(encryptionConfig.getPublicKeyRings(),
+    requireNonNull(encryptionConfig.getPublicKeyRings(),
         "encryptionConfig.getPublicKeyRings() must not be null");
 
-    BuildEncryptionOutputStreamAPI.this.encryptionConfig = encryptionConfig;
+    this.encryptionConfig = encryptionConfig;
     return new WithKeySelectionStrategy();
+  }
+
+  private KeySelectionStrategy getKeySelectionStrategy() {
+    if (this.keySelectionStrategy == null) {
+      this.keySelectionStrategy = this.keySelectionStrategyBuilder
+          .buildKeySelectionStrategy();
+    }
+    return this.keySelectionStrategy;
+  }
+
+
+  public interface Build {
+
+    OutputStream andWriteTo(OutputStream sinkForEncryptedData)
+        throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException;
+  }
+
+
+  public interface WithAlgorithmSuite {
+
+    To withDefaultAlgorithms();
+
+    To withStrongAlgorithms();
+
+    To withAlgorithms(PGPAlgorithmSuite algorithmSuite);
+
+    @SuppressWarnings("PMD.ShortClassName")
+    interface To {
+
+      SignWith toRecipient(String recipient) throws PGPException;
+
+      SignWith toRecipients(String... recipients) throws PGPException;
+
+      interface SignWith {
+
+        Armor andSignWith(String userId) throws IOException, PGPException;
+
+        Armor andDoNotSign();
+
+        interface Armor {
+
+          Build binaryOutput();
+
+          Build armorAsciiOutput();
+        }
+      }
+    }
   }
 
   /**
@@ -87,13 +135,17 @@ public final class BuildEncryptionOutputStreamAPI {
    */
   public final class WithKeySelectionStrategy extends WithAlgorithmSuiteImpl {
 
+    private static final boolean SELECT_UID_BY_E_MAIL_ONLY_DEFAULT = true;
+
     @Nullable
     private Instant dateOfTimestampVerification;
+
     @Nullable
-    private Boolean selectUidByEMailOnly = null;
-    private static final boolean SELECT_UID_BY_E_MAIL_ONLY_DEFAULT = true;
+    @SuppressWarnings({"PMD.LinguisticNaming"})
+    private Boolean selectUidByEMailOnly;
+
     @Nullable
-    private KeySelectionStrategy keySelectionStrategy = null;
+    private KeySelectionStrategy keySelectionStrategy;
 
     private WithKeySelectionStrategy() {
       super();
@@ -136,17 +188,17 @@ public final class BuildEncryptionOutputStreamAPI {
      *
      * @return next step in build
      */
+    @SuppressWarnings("PMD.LinguisticNaming")
     public WithAlgorithmSuite setReferenceDateForKeyValidityTo(
-        Instant dateOfTimestampVerification) {
+        final Instant dateOfTimestampVerification) {
 
       if (keySelectionStrategy != null) {
         throw new IllegalStateException(
             "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together " +
                 "with 'withKeySelectionStrategy' ");
       }
-      if (dateOfTimestampVerification == null) {
-        throw new IllegalArgumentException("dateOfTimestampVerification must not be null");
-      }
+      requireNonNull(dateOfTimestampVerification, "dateOfTimestampVerification must not be null");
+
       this.dateOfTimestampVerification = dateOfTimestampVerification;
       LOGGER.trace("WithKeySelectionStrategy: setReferenceDateForKeyValidityTo {}",
           dateOfTimestampVerification);
@@ -164,9 +216,8 @@ public final class BuildEncryptionOutputStreamAPI {
      * @return next build step
      */
     public WithAlgorithmSuite withKeySelectionStrategy(final KeySelectionStrategy strategy) {
-      if (strategy == null) {
-        throw new IllegalArgumentException("strategy must not be null");
-      }
+      requireNonNull(strategy, "strategy must not be null");
+
       if (selectUidByEMailOnly != null || dateOfTimestampVerification != null) {
         throw new IllegalStateException(
             "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together" +
@@ -202,48 +253,9 @@ public final class BuildEncryptionOutputStreamAPI {
     }
   }
 
-
-  public interface Build {
-
-    OutputStream andWriteTo(OutputStream sinkForEncryptedData)
-        throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException;
-  }
-
-
-  public interface WithAlgorithmSuite {
-
-    To withDefaultAlgorithms();
-
-    To withStrongAlgorithms();
-
-    To withAlgorithms(PGPAlgorithmSuite algorithmSuite);
-
-    @SuppressWarnings("PMD.ShortClassName")
-    interface To {
-
-      SignWith toRecipient(String recipient) throws PGPException;
-
-      SignWith toRecipients(String... recipients) throws PGPException;
-
-      interface SignWith {
-
-        Armor andSignWith(String userId) throws IOException, PGPException;
-
-        Armor andDoNotSign();
-
-        interface Armor {
-
-          Build binaryOutput();
-
-          Build armorAsciiOutput();
-        }
-      }
-    }
-  }
-
-
   private class WithAlgorithmSuiteImpl implements WithAlgorithmSuite {
 
+    @Override
     public To withDefaultAlgorithms() {
       BuildEncryptionOutputStreamAPI.this.algorithmSuite = DefaultPGPAlgorithmSuites
           .defaultSuiteForGnuPG();
@@ -253,6 +265,7 @@ public final class BuildEncryptionOutputStreamAPI {
       return new ToImpl();
     }
 
+    @Override
     public To withStrongAlgorithms() {
       BuildEncryptionOutputStreamAPI.this.algorithmSuite = DefaultPGPAlgorithmSuites.strongSuite();
       LOGGER
@@ -261,6 +274,7 @@ public final class BuildEncryptionOutputStreamAPI {
       return new ToImpl();
     }
 
+    @Override
     public To withAlgorithms(PGPAlgorithmSuite algorithmSuite) {
       if (algorithmSuite == null) {
         throw new IllegalArgumentException("algorithmSuite must not be null");
@@ -321,6 +335,7 @@ public final class BuildEncryptionOutputStreamAPI {
 
       final class SignWithImpl implements SignWith {
 
+        @Override
         public Armor andSignWith(String userId) throws IOException, PGPException {
 
           if (encryptionConfig.getSecretKeyRings() == null) {
@@ -336,7 +351,7 @@ public final class BuildEncryptionOutputStreamAPI {
                 "No (suitable) public key for signing with '" + userId + "' found");
           }
 
-          PGPSecretKey signingKey = encryptionConfig.getSecretKeyRings()
+          final PGPSecretKey signingKey = encryptionConfig.getSecretKeyRings()
               .getSecretKey(signingKeyPubKey.getKeyID());
           if (signingKey == null) {
             throw new PGPException(
@@ -349,6 +364,7 @@ public final class BuildEncryptionOutputStreamAPI {
           return new ArmorImpl();
         }
 
+        @Override
         @SuppressWarnings("PMD.NullAssignment")
         public Armor andDoNotSign() {
           BuildEncryptionOutputStreamAPI.this.signWith = null;
@@ -359,12 +375,14 @@ public final class BuildEncryptionOutputStreamAPI {
 
         public final class ArmorImpl implements Armor {
 
+          @Override
           public Build binaryOutput() {
             BuildEncryptionOutputStreamAPI.this.armorOutput = false;
             LOGGER.trace("binary output");
             return new Builder();
           }
 
+          @Override
           public Build armorAsciiOutput() {
             BuildEncryptionOutputStreamAPI.this.armorOutput = true;
             LOGGER.trace("ascii armor output");
@@ -374,10 +392,11 @@ public final class BuildEncryptionOutputStreamAPI {
 
           public final class Builder implements Build {
 
+            @Override
             public OutputStream andWriteTo(OutputStream sinkForEncryptedData)
                 throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
               BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData = sinkForEncryptedData;
-              final OutputStream outputStream = PGPEncryptingStream.create(
+              return PGPEncryptingStream.create(
                   BuildEncryptionOutputStreamAPI.this.encryptionConfig,
                   BuildEncryptionOutputStreamAPI.this.algorithmSuite,
                   BuildEncryptionOutputStreamAPI.this.signWith,
@@ -385,20 +404,11 @@ public final class BuildEncryptionOutputStreamAPI {
                   getKeySelectionStrategy(),
                   BuildEncryptionOutputStreamAPI.this.armorOutput,
                   BuildEncryptionOutputStreamAPI.this.recipients);
-              return outputStream;
 
             }
           }
         }
       }
     }
-  }
-
-  private KeySelectionStrategy getKeySelectionStrategy() {
-    if (this.keySelectionStrategy == null) {
-      this.keySelectionStrategy = this.keySelectionStrategyBuilder
-          .buildKeySelectionStrategy();
-    }
-    return this.keySelectionStrategy;
   }
 }

@@ -9,21 +9,6 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 
 public interface KeySelectionStrategy {
 
-  enum PURPOSE {
-    /**
-     * FOR_ENCRYPTION: Select a public key suitable for encryption.  MUST check if private key is
-     * available.
-     */
-    FOR_ENCRYPTION,
-
-    /**
-     * FOR_SIGNING: Select a public key suitable for signing.  MUST check if private key is
-     * available.
-     */
-    FOR_SIGNING,
-  }
-
-
   /**
    * Extract a signing/encryption key from the keyrings.
    *
@@ -57,4 +42,18 @@ public interface KeySelectionStrategy {
    */
   Set<PGPPublicKey> validPublicKeysForVerifyingSignatures(final String uid,
       final KeyringConfig keyring) throws PGPException, IOException;
+
+  enum PURPOSE {
+    /**
+     * FOR_ENCRYPTION: Select a public key suitable for encryption.  MUST check if private key is
+     * available.
+     */
+    FOR_ENCRYPTION,
+
+    /**
+     * FOR_SIGNING: Select a public key suitable for signing.  MUST check if private key is
+     * available.
+     */
+    FOR_SIGNING,
+  }
 }

@@ -1,6 +1,8 @@
 package name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation;
 
 
+import static java.util.Objects.requireNonNull;
+
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import javax.annotation.Nullable;
@@ -31,7 +33,7 @@ public class HKDFSHA256 implements KeyDerivationFunction {
   private final byte[] masterKey;
 
   public HKDFSHA256(byte[] masterKey) {
-    Preconditions.checkNotNull(masterKey, "masterKey must not be null");
+    requireNonNull(masterKey, "masterKey must not be null");
 
     this.masterKey = Arrays.copyOf(masterKey, masterKey.length);
   }
@@ -40,11 +42,11 @@ public class HKDFSHA256 implements KeyDerivationFunction {
   public byte[] deriveKey(@Nullable byte[] salt, byte[] info, int desiredKeyLengthInBits)
       throws GeneralSecurityException {
 
-    Preconditions.checkNotNull(info, "info must not be null");
+    requireNonNull(info, "info must not be null");
     Preconditions.checkArgument(desiredKeyLengthInBits % 8 == 0,
         "desiredKeyLengthInBits must be multiple of 8 but is " + desiredKeyLengthInBits);
 
-    int desiredKeyLengthInBytes = desiredKeyLengthInBits / 8;
+    final int desiredKeyLengthInBytes = desiredKeyLengthInBits / 8;
 
     final DerivationParameters derivationParameters = new HKDFParameters(masterKey, salt, info);
 

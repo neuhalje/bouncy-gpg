@@ -1,10 +1,11 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nullable;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import org.bouncycastle.openpgp.PGPException;
 
@@ -31,9 +32,9 @@ public final class KeyringConfigs {
       final File secretKeyring,
       KeyringConfigCallback callback) {
 
-    Preconditions.checkNotNull(publicKeyring, "publicKeyring must not be null");
-    Preconditions.checkNotNull(secretKeyring, "secretKeyring must not be null");
-    Preconditions.checkNotNull(callback, "callback must not be null");
+    requireNonNull(publicKeyring, "publicKeyring must not be null");
+    requireNonNull(secretKeyring, "secretKeyring must not be null");
+    requireNonNull(callback, "callback must not be null");
 
     return new FileBasedKeyringConfig(callback, publicKeyring, secretKeyring);
   }
@@ -56,7 +57,7 @@ public final class KeyringConfigs {
       @Nullable final InputStream secretKeyring,
       KeyringConfigCallback callback) throws IOException, PGPException {
 
-    Preconditions.checkNotNull(callback, "callback must not be null");
+    requireNonNull(callback, "callback must not be null");
 
     return StreamBasedKeyringConfig.build(callback, publicKeyring, secretKeyring);
   }
@@ -76,9 +77,9 @@ public final class KeyringConfigs {
       final String secretKeyringPath,
       final KeyringConfigCallback callback) {
 
-    Preconditions.checkNotNull(publicKeyringPath, "publicKeyringPath must not be null");
-    Preconditions.checkNotNull(secretKeyringPath, "secretKeyringPath must not be null");
-    Preconditions.checkNotNull(callback, "callback must not be null");
+    requireNonNull(publicKeyringPath, "publicKeyringPath must not be null");
+    requireNonNull(secretKeyringPath, "secretKeyringPath must not be null");
+    requireNonNull(callback, "callback must not be null");
 
     return new ResourceBasedKeyringConfig(callback, classLoader, publicKeyringPath,
         secretKeyringPath);
@@ -96,7 +97,7 @@ public final class KeyringConfigs {
    */
   public static InMemoryKeyring forGpgExportedKeys(final KeyringConfigCallback callback)
       throws IOException, PGPException {
-    Preconditions.checkNotNull(callback, "callback must not be null");
+    requireNonNull(callback, "callback must not be null");
 
     return new InMemoryKeyring(callback);
   }

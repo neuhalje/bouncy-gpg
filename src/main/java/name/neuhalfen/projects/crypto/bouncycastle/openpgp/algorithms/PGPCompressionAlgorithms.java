@@ -30,17 +30,18 @@ public enum PGPCompressionAlgorithms {
 
   private final int algorithmId;
 
+  PGPCompressionAlgorithms(int algorithmId) {
+    this.algorithmId = algorithmId;
+  }
+
   /**
    * Returns the corresponding BouncyCastle  algorithm tag.
    *
    * @return algorithmId
+   *
    * @see CompressionAlgorithmTags
    */
   public int getAlgorithmId() {
     return algorithmId;
-  }
-
-  PGPCompressionAlgorithms(int algorithmId) {
-    this.algorithmId = algorithmId;
   }
 }

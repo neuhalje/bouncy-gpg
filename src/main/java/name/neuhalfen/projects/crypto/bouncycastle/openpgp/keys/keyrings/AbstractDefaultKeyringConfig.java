@@ -1,12 +1,13 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
@@ -24,8 +25,8 @@ abstract class AbstractDefaultKeyringConfig implements KeyringConfig {
   private PGPPublicKeyRingCollection publicKeyRings;
   private PGPSecretKeyRingCollection secretKeyRings;
 
-  AbstractDefaultKeyringConfig(KeyringConfigCallback callback) {
-    Preconditions.checkNotNull(callback, "callback must not be null");
+  AbstractDefaultKeyringConfig(final KeyringConfigCallback callback) {
+    requireNonNull(callback, "callback must not be null");
 
     this.callback = callback;
   }
@@ -34,13 +35,12 @@ abstract class AbstractDefaultKeyringConfig implements KeyringConfig {
   @SuppressWarnings("PMD.ShortVariable")
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("AbstractDefaultKeyringConfig{");
-    sb.append("callback=").append(callback);
-    sb.append(", keyFingerPrintCalculator=").append(keyFingerPrintCalculator);
-    sb.append(", publicKeyRings=").append(publicKeyRings);
-    sb.append(", secretKeyRings=").append(secretKeyRings == null ? "null" : "<present>");
-    sb.append('}');
-    return sb.toString();
+    return new StringBuilder("AbstractDefaultKeyringConfig{")
+        .append("callback=").append(callback)
+        .append(", keyFingerPrintCalculator=").append(keyFingerPrintCalculator)
+        .append(", publicKeyRings=").append(publicKeyRings)
+        .append(", secretKeyRings=").append(secretKeyRings == null ? "null" : "<present>")
+        .append('}').toString();
   }
 
   /**

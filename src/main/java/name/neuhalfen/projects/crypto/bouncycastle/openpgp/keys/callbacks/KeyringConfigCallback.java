@@ -16,6 +16,7 @@ public interface KeyringConfigCallback {
    * &lt;recipient@example.com&gt; sub 2048R/0x54A3DB374F787AB7 2015-09-27
    *
    * @param keyId The password for this key is needed
+   *
    * @return the passphrase OR null (if unknown/no passphrase)
    */
   @SuppressWarnings("PMD.UseVarargs")

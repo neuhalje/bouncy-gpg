@@ -1,10 +1,11 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation;
 
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.security.SignatureException;
 import java.util.Map;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPOnePassSignature;
@@ -16,13 +17,17 @@ final class RequireAnySignatureValidationStrategy implements SignatureValidation
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
       .getLogger(RequireAnySignatureValidationStrategy.class);
 
+  RequireAnySignatureValidationStrategy() {
+    // This constructor is intentionally empty. Nothing special is needed here.
+  }
+
   @Override
   public void validateSignatures(PGPObjectFactory factory,
       Map<Long, PGPOnePassSignature> onePassSignatures) throws
       SignatureException, PGPException, IOException {
 
-    Preconditions.checkNotNull(factory, "factory must not be null");
-    Preconditions.checkNotNull(onePassSignatures, "onePassSignatures must not be null");
+    requireNonNull(factory, "factory must not be null");
+    requireNonNull(onePassSignatures, "onePassSignatures must not be null");
 
     // verify the signature
     final PGPSignatureList signatureList = (PGPSignatureList) factory.nextObject();
@@ -36,8 +41,8 @@ final class RequireAnySignatureValidationStrategy implements SignatureValidation
 
     boolean successfullyVerified = false;
 
-    for (PGPSignature messageSignature : signatureList) {
-      PGPOnePassSignature ops = onePassSignatures.get(messageSignature.getKeyID());
+    for (final PGPSignature messageSignature : signatureList) {
+      final PGPOnePassSignature ops = onePassSignatures.get(messageSignature.getKeyID());
 
       final boolean isHasPubKeyForSignature = ops != null;
       if (isHasPubKeyForSignature) {
@@ -46,6 +51,7 @@ final class RequireAnySignatureValidationStrategy implements SignatureValidation
         LOGGER.debug("{} validated signature with key 0x{}",
             isThisSignatureGood ? "Successfully" : "Failed to",
             Long.toHexString(messageSignature.getKeyID()));
+
         successfullyVerified |= isThisSignatureGood;
       } else {
         LOGGER.debug(

@@ -24,6 +24,7 @@ public final class DefaultPGPAlgorithmSuites {
 
   /**
    * The default GPG suite: SHA-1,  CAST 5, and ZLIB.
+   *
    * @return suite
    */
   public static PGPAlgorithmSuite defaultSuiteForGnuPG() {
@@ -32,6 +33,7 @@ public final class DefaultPGPAlgorithmSuites {
 
   /**
    * A sensible suite with strong algorithms:  SHA-256,  AES-128, and ZLIB.
+   *
    * @return suite
    */
   public static PGPAlgorithmSuite strongSuite() {

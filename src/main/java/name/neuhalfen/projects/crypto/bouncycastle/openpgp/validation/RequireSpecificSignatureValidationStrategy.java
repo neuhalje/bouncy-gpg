@@ -1,13 +1,14 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation;
 
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.security.SignatureException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPOnePassSignature;
@@ -25,16 +26,19 @@ final class RequireSpecificSignatureValidationStrategy implements SignatureValid
    * @param signaturesRequiredForTheseKeys Signatures for all keys are needed
    */
   RequireSpecificSignatureValidationStrategy(Collection<Long> signaturesRequiredForTheseKeys) {
-    Preconditions.checkNotNull(signaturesRequiredForTheseKeys, "signaturesRequiredForTheseKeys must not be null");
+    requireNonNull(signaturesRequiredForTheseKeys,
+        "signaturesRequiredForTheseKeys must not be null");
     this.signaturesRequiredForTheseKeys = new HashSet<>(signaturesRequiredForTheseKeys);
   }
 
   @Override
+  @SuppressWarnings("PMD.CyclomaticComplexity")
   public void validateSignatures(PGPObjectFactory factory,
       Map<Long, PGPOnePassSignature> onePassSignatures) throws
       SignatureException, PGPException, IOException {
-    Preconditions.checkNotNull(factory, "factory must not be null");
-    Preconditions.checkNotNull(onePassSignatures, "onePassSignatures must not be null");
+
+    requireNonNull(factory, "factory must not be null");
+    requireNonNull(onePassSignatures, "onePassSignatures must not be null");
 
     // verify the signature
     final PGPSignatureList signatureList = (PGPSignatureList) factory.nextObject();
@@ -46,20 +50,25 @@ final class RequireSpecificSignatureValidationStrategy implements SignatureValid
       throw new PGPException("No signatures found!");
     }
 
+    // This is a bucket list of needed signatures. If we find a valid signature
+    // we remove it from the bucket list. If all signatures are checked and the bucket list is
+    // empty, we have all signatures we need.  If the list is NOT empty, it contains
+    // all the keys for which we needed a signature but didn't get.
     final Set<Long> signaturesRequiredForTheseKeysCheckList = new HashSet<>(
         signaturesRequiredForTheseKeys);
 
-    for (PGPSignature messageSignature : signatureList) {
+    for (final PGPSignature messageSignature : signatureList) {
       final PGPOnePassSignature ops = onePassSignatures.get(messageSignature.getKeyID());
 
       final boolean isHasPubKeyForSignature = ops != null;
       if (isHasPubKeyForSignature) {
         final boolean isThisSignatureGood = ops.verify(messageSignature); // NOPMD : Demeter
 
-        LOGGER.debug("{} validated signature with key 0x{}",
-            isThisSignatureGood ? "Successfully" : "Failed to",
-            Long.toHexString(messageSignature.getKeyID()));
         if (isThisSignatureGood) {
+          LOGGER.debug(
+              "Successful validated signature with key 0x{} because we have no matching public key",
+              Long.toHexString(messageSignature.getKeyID()));
+          // A valid signature: cross out from bucket list
           signaturesRequiredForTheseKeysCheckList.remove(messageSignature.getKeyID());
         }
       } else {
@@ -75,7 +84,7 @@ final class RequireSpecificSignatureValidationStrategy implements SignatureValid
       LOGGER.debug("Signature verification success");
     } else {
       final StringBuilder missingSignatures = new StringBuilder();
-      for (Long key : signaturesRequiredForTheseKeysCheckList) {
+      for (final Long key : signaturesRequiredForTheseKeysCheckList) {
         if (missingSignatures.length() != 0) {
           missingSignatures.append(", ");
         }

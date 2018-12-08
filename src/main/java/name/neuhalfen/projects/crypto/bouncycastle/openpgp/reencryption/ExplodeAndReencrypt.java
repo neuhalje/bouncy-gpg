@@ -1,5 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.reencryption;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,7 +11,6 @@ import java.security.SignatureException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BuildEncryptionOutputStreamAPI;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
 
@@ -23,21 +24,21 @@ final class ExplodeAndReencrypt {
 
 
   @SuppressWarnings("PMD.DefaultPackage")
-  ExplodeAndReencrypt( ZipEntityStrategy entityHandlingStrategy,
+  ExplodeAndReencrypt(ZipEntityStrategy entityHandlingStrategy,
       BuildEncryptionOutputStreamAPI.Build encryptionFactory) {
-    Preconditions.checkNotNull(entityHandlingStrategy, "entityHandlingStrategy must not be null");
-    Preconditions.checkNotNull(encryptionFactory, "encryptionFactory must not be null");
+    requireNonNull(entityHandlingStrategy, "entityHandlingStrategy must not be null");
+    requireNonNull(encryptionFactory, "encryptionFactory must not be null");
 
     this.entityHandlingStrategy = entityHandlingStrategy;
     this.encryptionFactory = encryptionFactory;
   }
 
 
-  @SuppressWarnings({"PMD.DefaultPackage","PMD.LawOfDemeter"})
+  @SuppressWarnings({"PMD.DefaultPackage", "PMD.LawOfDemeter"})
   void explodeAndReencrypt(final InputStream inputStream)
       throws IOException, SignatureException, NoSuchAlgorithmException, PGPException, NoSuchProviderException {
 
-    Preconditions.checkNotNull(inputStream, "inputStream must not be null");
+    requireNonNull(inputStream, "inputStream must not be null");
 
     boolean zipDataFound = false;
     final ZipInputStream zis = new ZipInputStream(inputStream);
@@ -48,7 +49,8 @@ final class ExplodeAndReencrypt {
     int numFiles = 0; // NOPMD: Need to initialize counter
     while ((entry = zis.getNextEntry()) != null) { // NOPMD
 
-      final String sanitizedFileName = entityHandlingStrategy.rewriteName(entry.getName()); // NOPMD: False positive for 'UR'-anomaly
+      final String sanitizedFileName = entityHandlingStrategy
+          .rewriteName(entry.getName()); // NOPMD: False positive for 'UR'-anomaly
 
       if (!entry.getName().equals(sanitizedFileName)) { // NOPMD: Demeter
         LOGGER.trace("Rewriting '{}' to '{}'", entry.getName(), sanitizedFileName);
@@ -62,16 +64,16 @@ final class ExplodeAndReencrypt {
 
       if (entry.isDirectory()) {
         numDirs++;
-        LOGGER.debug("found directory '{}'", entry.getName());
+        LOGGER.trace("found directory '{}'", entry.getName());
 
         entityHandlingStrategy.handleDirectory(sanitizedFileName);
       } else {
         numFiles++;
 
-        LOGGER.debug("found file '{}'", entry.getName());
+        LOGGER.trace("found file '{}'", entry.getName());
 
         try (
-            final OutputStream outputStream = entityHandlingStrategy
+            OutputStream outputStream = entityHandlingStrategy
                 .createOutputStream(sanitizedFileName)
         ) {
           if (outputStream == null) {

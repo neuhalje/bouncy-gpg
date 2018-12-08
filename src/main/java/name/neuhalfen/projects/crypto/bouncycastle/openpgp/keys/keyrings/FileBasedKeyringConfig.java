@@ -1,11 +1,12 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import javax.annotation.Nonnull;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 
 /**
@@ -21,8 +22,8 @@ final class FileBasedKeyringConfig extends AbstractDefaultKeyringConfig {
   public FileBasedKeyringConfig(@Nonnull KeyringConfigCallback callback,
       @Nonnull File publicKeyring, @Nonnull File secretKeyring) {
     super(callback);
-    Preconditions.checkNotNull(publicKeyring, "publicKeyring must not be null");
-    Preconditions.checkNotNull(secretKeyring, "secretKeyring must not be null");
+    requireNonNull(publicKeyring, "publicKeyring must not be null");
+    requireNonNull(secretKeyring, "secretKeyring must not be null");
 
     this.publicKeyring = publicKeyring;
     this.secretKeyring = secretKeyring;

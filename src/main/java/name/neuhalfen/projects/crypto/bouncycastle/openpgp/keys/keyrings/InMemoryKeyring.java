@@ -2,13 +2,13 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings;
 
 
 import static java.util.Collections.EMPTY_LIST;
+import static java.util.Objects.requireNonNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
@@ -30,7 +30,7 @@ public final class InMemoryKeyring implements KeyringConfig {
 
   @SuppressWarnings("unchecked")
   InMemoryKeyring(final KeyringConfigCallback callback) throws IOException, PGPException {
-    Preconditions.checkNotNull(callback, "callback must not be null");
+    requireNonNull(callback, "callback must not be null");
 
     this.callback = callback;
     //noinspection unchecked
@@ -44,19 +44,19 @@ public final class InMemoryKeyring implements KeyringConfig {
    * KEY BLOCK----- ....".getBytes("US-ASCII")
    *
    * @param encodedPublicKey the key ascii armored or binary
+   *
    * @throws IOException IO is dangerous
    * @throws PGPException E.g. this is nor a valid key
    */
   @SuppressWarnings({"PMD.LawOfDemeter", "PMD.UseVarargs"})
   public void addPublicKey(byte[] encodedPublicKey) throws IOException, PGPException {
-    Preconditions.checkNotNull(encodedPublicKey, "encodedPublicKey must not be null");
-
+    requireNonNull(encodedPublicKey, "encodedPublicKey must not be null");
 
     try (
-        final InputStream raw = new ByteArrayInputStream(encodedPublicKey);
-        final InputStream decoded = org.bouncycastle.openpgp.PGPUtil.getDecoderStream(raw)
+        InputStream raw = new ByteArrayInputStream(encodedPublicKey);
+        InputStream decoded = org.bouncycastle.openpgp.PGPUtil.getDecoderStream(raw)
     ) {
-      PGPPublicKeyRing pgpPub = new PGPPublicKeyRing(decoded, getKeyFingerPrintCalculator());
+      final PGPPublicKeyRing pgpPub = new PGPPublicKeyRing(decoded, getKeyFingerPrintCalculator());
       this.publicKeyRings = PGPPublicKeyRingCollection
           .addPublicKeyRing(this.publicKeyRings, pgpPub);
     }
@@ -70,19 +70,21 @@ public final class InMemoryKeyring implements KeyringConfig {
    * (decryptionSecretKeyPassphraseForSecretKeyId).
    *
    * @param encodedPrivateKey the key ascii armored or binary
+   *
    * @throws IOException IO is dangerous
    * @throws PGPException E.g. this is nor a valid key
    */
   @SuppressWarnings("PMD.LawOfDemeter")
   public void addSecretKey(byte[] encodedPrivateKey) throws IOException, PGPException {
-    Preconditions.checkNotNull(encodedPrivateKey, "encodedPrivateKey must not be null");
+    requireNonNull(encodedPrivateKey, "encodedPrivateKey must not be null");
 
     try (
-        final InputStream raw = new ByteArrayInputStream(encodedPrivateKey);
-        final InputStream decoded = org.bouncycastle.openpgp.PGPUtil
+        InputStream raw = new ByteArrayInputStream(encodedPrivateKey);
+        InputStream decoded = org.bouncycastle.openpgp.PGPUtil
             .getDecoderStream(raw)
     ) {
-      PGPSecretKeyRing pgpPRivate = new PGPSecretKeyRing(decoded, getKeyFingerPrintCalculator());
+      final PGPSecretKeyRing pgpPRivate = new PGPSecretKeyRing(decoded,
+          getKeyFingerPrintCalculator());
       this.secretKeyRings =
           PGPSecretKeyRingCollection
               .addSecretKeyRing(this.secretKeyRings, pgpPRivate);

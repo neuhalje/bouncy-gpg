@@ -1,5 +1,6 @@
 package specs.keys.passwords.example;
 
+import static java.util.Objects.requireNonNull;
 import static specs.helper.InputConverters.ByteArray.fromHexString;
 import static specs.helper.InputConverters.ByteArray.toHexString;
 
@@ -26,7 +27,7 @@ public class ConvertingPasswordsIntoCryptographicKeys {
   public KeyAndMetaData stretchWithFixedParameters(String password, int desiredLenInBits)
       throws GeneralSecurityException {
 
-    Preconditions.checkNotNull(password, "password must not be null");
+    requireNonNull(password, "password must not be null");
 
     password = password.trim();
 
@@ -45,8 +46,8 @@ public class ConvertingPasswordsIntoCryptographicKeys {
   public KeyAndMetaData stretchWithSalt(String password, String saltAsHexString)
       throws GeneralSecurityException {
 
-    Preconditions.checkNotNull(password, "password must not be null");
-    Preconditions.checkNotNull(saltAsHexString, "saltAsHexString must not be null");
+    requireNonNull(password, "password must not be null");
+    requireNonNull(saltAsHexString, "saltAsHexString must not be null");
 
     password = password.trim();
     saltAsHexString = saltAsHexString.trim();
@@ -62,7 +63,7 @@ public class ConvertingPasswordsIntoCryptographicKeys {
   }
 
   public boolean isSaltChangesKey(String password) throws GeneralSecurityException {
-    Preconditions.checkNotNull(password, "password must not be null");
+    requireNonNull(password, "password must not be null");
 
     final KeyStretching streching = new SCryptKeyStretching(
         SCryptKeyStretching.SCryptKeyStretchingParameters.forModeratelyStongInputKeyMaterial());

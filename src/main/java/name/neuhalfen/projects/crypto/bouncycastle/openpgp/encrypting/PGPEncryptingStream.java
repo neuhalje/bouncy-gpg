@@ -1,6 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting;
 
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
@@ -10,11 +12,11 @@ import java.util.Iterator;
 import java.util.Set;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
 import org.bouncycastle.openpgp.PGPCompressedDataGenerator;
@@ -55,9 +57,9 @@ public final class PGPEncryptingStream extends OutputStream {
   private PGPCompressedDataGenerator compressionStreamGenerator;
 
   /*
-   * true --> This stream is _already_ closed
+   * true would mean "This stream is _already_ closed"
    */
-  private boolean isClosed = false;
+  private boolean isClosed = false; // NOPMD: RedundantFieldInitializer
 
   private PGPEncryptingStream(final KeyringConfig config, final PGPAlgorithmSuite algorithmSuite) {
     super();
@@ -93,9 +95,9 @@ public final class PGPEncryptingStream extends OutputStream {
       final Set<PGPPublicKey> encryptTo)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException {
 
-    Preconditions.checkNotNull(config, "callback must not be null");
-    Preconditions.checkNotNull(cipherTextSink, "cipherTextSink must not be null");
-    Preconditions.checkNotNull(encryptTo, "pubEncKeys must not be null");
+    requireNonNull(config, "callback must not be null");
+    requireNonNull(cipherTextSink, "cipherTextSink must not be null");
+    requireNonNull(encryptTo, "pubEncKeys must not be null");
     Preconditions.checkArgument(!encryptTo.isEmpty(), "pubEncKeys must not be empty");
 
     for (final PGPPublicKey pubEncKey : encryptTo) {
@@ -120,12 +122,11 @@ public final class PGPEncryptingStream extends OutputStream {
    *
    * @throws IOException Signals that an I/O exception has occurred.
    * @throws PGPException the pGP exception
-   *
-   *
-   * {@link org.bouncycastle.bcpg.HashAlgorithmTags} {@link
-   * org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
+   * @see org.bouncycastle.bcpg.HashAlgorithmTags
+   * @see org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags
    */
-  @SuppressWarnings("PMD.LawOfDemeter")
+  @SuppressWarnings({"PMD.LawOfDemeter", "PMD.AvoidInstantiatingObjectsInLoops",
+      "PMD.CyclomaticComplexity"})
   private void setup(final OutputStream cipherTextSink,
       @Nullable final String signingUid,
       final Set<PGPPublicKey> pubEncKeys,
@@ -150,11 +151,13 @@ public final class PGPEncryptingStream extends OutputStream {
         new PGPEncryptedDataGenerator(dataEncryptorBuilder);
 
     for (final PGPPublicKey pubEncKey : pubEncKeys) {
-      cPk.addMethod(new BcPublicKeyKeyEncryptionMethodGenerator(pubEncKey));
+      cPk.addMethod(
+          new BcPublicKeyKeyEncryptionMethodGenerator(
+              pubEncKey));
     }
 
     // this wraps the output stream in an encrypting output stream
-    outerEncryptionStream = cPk.open(sink, new byte[1 << 16]);
+    outerEncryptionStream = cPk.open(sink, new byte[4096]);
 
     if (isDoSign) {
       final PGPPublicKey signingPublicKey = keySelectionStrategy

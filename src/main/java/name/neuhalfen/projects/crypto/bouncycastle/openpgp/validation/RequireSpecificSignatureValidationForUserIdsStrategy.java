@@ -1,6 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation;
 
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.security.SignatureException;
 import java.util.HashMap;
@@ -8,7 +10,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPOnePassSignature;
@@ -27,14 +28,14 @@ final class RequireSpecificSignatureValidationForUserIdsStrategy implements
    * @param keysByUid Each uid requires a signature that can be satisfied by any of its keys.
    */
   RequireSpecificSignatureValidationForUserIdsStrategy(Map<String, Set<Long>> keysByUid) {
-    Preconditions.checkNotNull(keysByUid, "keysByUid must not be null");
+    requireNonNull(keysByUid, "keysByUid must not be null");
     this.keysByUid = new HashMap<>(keysByUid);
   }
 
   @Nullable
   @SuppressWarnings({"PMD.LawOfDemeter", "PMD.OnlyOneReturn"})
   private String uidForKeyId(long keyId) {
-    for (String uid : keysByUid.keySet()) {
+    for (final String uid : keysByUid.keySet()) {
       final Set<Long> keyIds = keysByUid.get(uid);
       if (keyIds.contains(keyId)) {
         return uid;
@@ -44,12 +45,13 @@ final class RequireSpecificSignatureValidationForUserIdsStrategy implements
   }
 
   @Override
+  @SuppressWarnings("PMD.CyclomaticComplexity")
   public void validateSignatures(PGPObjectFactory factory,
       Map<Long, PGPOnePassSignature> onePassSignatures) throws
       SignatureException, PGPException, IOException {
 
-    Preconditions.checkNotNull(factory, "factory must not be null");
-    Preconditions.checkNotNull(onePassSignatures, "onePassSignatures must not be null");
+    requireNonNull(factory, "factory must not be null");
+    requireNonNull(onePassSignatures, "onePassSignatures must not be null");
 
     // verify the signature
     final PGPSignatureList signatureList = (PGPSignatureList) factory.nextObject();
@@ -64,7 +66,7 @@ final class RequireSpecificSignatureValidationForUserIdsStrategy implements
     final Set<String> signaturesRequiredForTheseKeysCheckList = new HashSet<>(
         keysByUid.keySet());
 
-    for (PGPSignature messageSignature : signatureList) {
+    for (final PGPSignature messageSignature : signatureList) {
       final PGPOnePassSignature ops = onePassSignatures.get(messageSignature.getKeyID());
 
       final boolean isHasPubKeyForSignature = ops != null;
@@ -80,10 +82,6 @@ final class RequireSpecificSignatureValidationForUserIdsStrategy implements
         if (isThisSignatureGood && uid != null) {
           signaturesRequiredForTheseKeysCheckList.remove(uid);
         }
-      } else {
-        LOGGER.debug(
-            "Could not validated signature with key 0x{} because we have no matching public key",
-            Long.toHexString(messageSignature.getKeyID()));
       }
     }
 
@@ -92,17 +90,26 @@ final class RequireSpecificSignatureValidationForUserIdsStrategy implements
     if (successfullyVerified) {
       LOGGER.debug("Signature verification success");
     } else {
-      final StringBuilder missingSignatures = new StringBuilder();
-      for (String uid : signaturesRequiredForTheseKeysCheckList) {
-        if (missingSignatures.length() != 0) {
-          missingSignatures.append(", ");
-        }
-        missingSignatures.append(uid);
-      }
       throw new SignatureException(
-          "Signature verification failed! The following signatures (from keys) could not be verified: "
-              + missingSignatures.toString());
+          "Signature verification failed! The following signatures (from keys)"
+              + " could not be verified: "
+              + formatMissingSignatures(
+              signaturesRequiredForTheseKeysCheckList));
     }
+  }
+
+  private String formatMissingSignatures(
+      final Set<String> signaturesRequiredForTheseKeysCheckList) {
+
+    final StringBuilder missingSignatures = new StringBuilder();
+
+    for (final String uid : signaturesRequiredForTheseKeysCheckList) {
+      if (missingSignatures.length() != 0) {
+        missingSignatures.append(", ");
+      }
+      missingSignatures.append(uid);
+    }
+    return missingSignatures.toString();
   }
 
   @Override

@@ -18,28 +18,22 @@ public class MasterKeyFromPasswordDerivation {
   public byte[] deriveKey(final String salt, final String masterPassword, int desiredKeyLengthBits)
       throws GeneralSecurityException {
 
-    final byte[] derivedKey = stretching
+    return stretching
         .strengthenKey(byteRepresentationOf(salt), byteRepresentationOf(masterPassword),
             desiredKeyLengthBits);
-
-    return derivedKey;
   }
 
   public byte[] deriveKey(byte[] salt, final String masterPassword, int desiredKeyLengthBits)
       throws GeneralSecurityException {
 
-    final byte[] derivedKey = stretching
+    return stretching
         .strengthenKey(salt, byteRepresentationOf(masterPassword), desiredKeyLengthBits);
-
-    return derivedKey;
   }
 
   public byte[] deriveKey(byte[] salt, final byte[] masterPassword, int desiredKeyLengthBits)
       throws GeneralSecurityException {
 
-    final byte[] derivedKey = stretching.strengthenKey(salt, masterPassword, desiredKeyLengthBits);
-
-    return derivedKey;
+    return stretching.strengthenKey(salt, masterPassword, desiredKeyLengthBits);
   }
 
 

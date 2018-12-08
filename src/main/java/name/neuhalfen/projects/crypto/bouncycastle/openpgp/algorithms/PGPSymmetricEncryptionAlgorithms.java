@@ -70,7 +70,6 @@ public enum PGPSymmetricEncryptionAlgorithms {
    */
   CAMELLIA_128(SymmetricKeyAlgorithmTags.CAMELLIA_128, false),
 
-
   /**
    * Reserved for Camellia with 192-bit key.
    */
@@ -85,10 +84,16 @@ public enum PGPSymmetricEncryptionAlgorithms {
   private final int algorithmId;
   private final boolean insecure;
 
+  PGPSymmetricEncryptionAlgorithms(int algorithmId, boolean insecure) {
+    this.algorithmId = algorithmId;
+    this.insecure = insecure;
+  }
+
   /**
    * Returns the corresponding BouncyCastle  algorithm tag.
    *
    * @return algorithmId
+   *
    * @see SymmetricKeyAlgorithmTags
    */
   public int getAlgorithmId() {
@@ -98,15 +103,12 @@ public enum PGPSymmetricEncryptionAlgorithms {
   /**
    * Is this algorithm KNOWN to be broken or are there any known attacks on it?
    * A value of 'false' does not guarantee, that the algorithm is safe!
-   * @return true: insecure,do not use; false: please double check if the algorithm is appropriate for you.
+   *
+   * @return true: insecure,do not use; false: please double check if the algorithm is appropriate
+   *     for you.
    */
   public boolean isInsecure() {
     return insecure;
-  }
-
-  PGPSymmetricEncryptionAlgorithms(int algorithmId, boolean insecure) {
-    this.algorithmId = algorithmId;
-    this.insecure = insecure;
   }
 
 }

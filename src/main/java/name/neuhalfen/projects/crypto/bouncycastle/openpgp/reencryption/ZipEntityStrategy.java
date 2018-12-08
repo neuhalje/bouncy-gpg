@@ -19,6 +19,7 @@ public interface ZipEntityStrategy {
    * traversals.
    *
    * @param nameFromZip name of the file/directory as seen in the ZIP
+   *
    * @return rewritten name
    */
   String rewriteName(String nameFromZip);
@@ -28,7 +29,8 @@ public interface ZipEntityStrategy {
    * #rewriteName(String)}
    *
    * @param sanitizedDirectoryName Name of the directory as returned by {@link
-   * #rewriteName(String)}
+   *     #rewriteName(String)}
+   *
    * @throws IOException Well, can happen
    */
   void handleDirectory(String sanitizedDirectoryName) throws IOException;
@@ -37,7 +39,9 @@ public interface ZipEntityStrategy {
    * Create an outputstream that will receive the (re-)encrypted  content of one file in the ZIP
    *
    * @param sanitizedFileName Name of the file as returned by {@link #rewriteName(String)}
+   *
    * @return data sink. Null: Ignore the file
+   *
    * @throws IOException Well, can happen
    */
   @Nullable

@@ -1,7 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 
-import name.neuhalfen.projects.crypto.internal.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import org.bouncycastle.util.Arrays;
 
 final class StaticPasswordKeyringConfigCallback implements KeyringConfigCallback {
@@ -11,8 +12,7 @@ final class StaticPasswordKeyringConfigCallback implements KeyringConfigCallback
 
   @SuppressWarnings("PMD.UseVarargs")
   public StaticPasswordKeyringConfigCallback(char[] passphrase) {
-    Preconditions
-        .checkNotNull(passphrase, "passphrase must not be null");
+    requireNonNull(passphrase, "passphrase must not be null");
     this.passphrase = Arrays.clone(passphrase);
   }
 

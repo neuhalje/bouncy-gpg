@@ -1,13 +1,15 @@
 package name.neuhalfen.projects.crypto.symmetric.keygeneration;
 
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Arrays;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.HKDFSHA256;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.KeyDerivationFunction;
 
-@SuppressWarnings({"PMD.AccessorClassGeneration","PMD.ClassNamingConventions"})
+@SuppressWarnings({"PMD.AccessorClassGeneration", "PMD.ClassNamingConventions"})
 public final class DerivedKeyGeneratorFactory {
 
   private DerivedKeyGeneratorFactory() {
@@ -22,7 +24,7 @@ public final class DerivedKeyGeneratorFactory {
     private final byte[] key;
 
     private WithMasterKey(byte[] key) {
-      Preconditions.checkNotNull(key, "key must not be null");
+      requireNonNull(key, "key must not be null");
       Preconditions.checkArgument(key.length > 0, "key must not be empty");
 
       this.key = Arrays.copyOf(key, key.length);
@@ -30,7 +32,7 @@ public final class DerivedKeyGeneratorFactory {
 
 
     public WithSalt andSalt(byte[] salt) {
-      Preconditions.checkNotNull(key, "salt must not be null");
+      requireNonNull(key, "salt must not be null");
       Preconditions.checkArgument(salt.length > 0, "salt must not be empty");
 
       return new WithSalt(salt);
@@ -55,8 +57,8 @@ public final class DerivedKeyGeneratorFactory {
       }
 
       @SuppressWarnings("PMD.AccessorMethodGeneration")
-      public final DerivedKeyGenerator withHKDFsha256() {
-        KeyDerivationFunction kdf = new HKDFSHA256(key);
+      public DerivedKeyGenerator withHKDFsha256() {
+        final KeyDerivationFunction kdf = new HKDFSHA256(key);
         return new DerivedKeyGenerator(kdf, salt);
       }
     }

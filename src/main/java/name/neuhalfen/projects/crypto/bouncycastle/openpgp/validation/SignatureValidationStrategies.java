@@ -1,5 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
@@ -22,8 +23,8 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 @SuppressWarnings({"PMD.ClassNamingConventions"})
 public final class SignatureValidationStrategies {
 
-  // no instances
   private SignatureValidationStrategies() {
+    // no instances
   }
 
   /**
@@ -62,27 +63,21 @@ public final class SignatureValidationStrategies {
       KeySelectionStrategy keySelectionStrategy,
       KeyringConfig config, String... userIds) throws PGPException {
 
-    Preconditions.checkNotNull(keySelectionStrategy, "keySelectionStrategy must not be null");
-    Preconditions.checkNotNull(config, "config must not be null");
-    Preconditions.checkNotNull(userIds, "userIds must not be null");
+    requireNonNull(keySelectionStrategy, "keySelectionStrategy must not be null");
+    requireNonNull(config, "config must not be null");
+    requireNonNull(userIds, "userIds must not be null");
 
     final Map<String, Set<Long>> keyIdsByUid = new HashMap<>();
+    for (final String userId : userIds) {
 
-    for (String userId : userIds) {
-
-      final Set<PGPPublicKey> availableKeys;
-      try {
-        availableKeys = keySelectionStrategy
-            .validPublicKeysForVerifyingSignatures(userId, config);
-      } catch (IOException e) {
-        throw new PGPException("Failed to extract keys", e);
-      }
+      final Set<PGPPublicKey> availableKeys = validPublicKeysForVerifyingSignatures(
+          keySelectionStrategy, config, userId);
 
       if (availableKeys.isEmpty()) {
         throw new PGPException("Could not find public-key for userid '" + userId + "'");
       }
 
-      Set<Long> keysForUid = availableKeys.stream().map(key -> key.getKeyID())
+      final Set<Long> keysForUid = availableKeys.stream().map(PGPPublicKey::getKeyID)
           .collect(Collectors.toSet());
 
       keyIdsByUid.put(userId, keysForUid);
@@ -93,13 +88,13 @@ public final class SignatureValidationStrategies {
 
   /**
    * <p>
-   *   Require signature from all of the passed uids.
+   * Require signature from all of the passed uids.
    * </p><p>
    * This only really works if each uid has EXACTLY one key.
    * </p>
    *
-   * @param config keyring config
    * @param keySelectionStrategy the key selection strategy to use
+   * @param config keyring config
    * @param userIds A list of user IDs (e.g. 'sender@example.com')
    *
    * @return an instance of the requested strategy
@@ -109,24 +104,20 @@ public final class SignatureValidationStrategies {
   @SuppressWarnings({"PMD.LawOfDemeter", "PMD.AvoidLiteralsInIfCondition"})
   @Deprecated
   public static SignatureValidationStrategy requireSignatureFromAllKeys(
-      KeySelectionStrategy keySelectionStrategy,
-      KeyringConfig config, String... userIds) throws PGPException {
+      final KeySelectionStrategy keySelectionStrategy,
+      final KeyringConfig config,
+      final String... userIds) throws PGPException {
 
-    Preconditions.checkNotNull(keySelectionStrategy, "keySelectionStrategy must not be null");
-    Preconditions.checkNotNull(config, "config must not be null");
-    Preconditions.checkNotNull(userIds, "userIds must not be null");
+    requireNonNull(keySelectionStrategy, "keySelectionStrategy must not be null");
+    requireNonNull(config, "config must not be null");
+    requireNonNull(userIds, "userIds must not be null");
 
     final List<Long> keyIds = new ArrayList<>(userIds.length);
 
-    for (String userId : userIds) {
+    for (final String userId : userIds) {
 
-      final Set<PGPPublicKey> availableKeys;
-      try {
-        availableKeys = keySelectionStrategy
-            .validPublicKeysForVerifyingSignatures(userId, config);
-      } catch (IOException e) {
-        throw new PGPException("Failed to extract keys", e);
-      }
+      final Set<PGPPublicKey> availableKeys = validPublicKeysForVerifyingSignatures(
+          keySelectionStrategy, config, userId);
 
       if (availableKeys.isEmpty()) {
         throw new PGPException("Could not find public-key for userid '" + userId + "'");
@@ -137,10 +128,21 @@ public final class SignatureValidationStrategies {
             "Found more than one (" + availableKeys.size() + ") keys for userid '" + userId + "'");
       }
 
-      PGPPublicKey selectPublicKey = availableKeys.iterator().next();
+      final PGPPublicKey selectPublicKey = availableKeys.iterator().next();
       keyIds.add(selectPublicKey.getKeyID());
     }
     return new RequireSpecificSignatureValidationStrategy(keyIds);
+  }
+
+  private static Set<PGPPublicKey> validPublicKeysForVerifyingSignatures(
+      final KeySelectionStrategy keySelectionStrategy,
+      final KeyringConfig config, final String userId) throws PGPException {
+    try {
+      return keySelectionStrategy
+          .validPublicKeysForVerifyingSignatures(userId, config);
+    } catch (IOException e) {
+      throw new PGPException("Failed to extract keys", e);
+    }
   }
 
 
@@ -165,7 +167,7 @@ public final class SignatureValidationStrategies {
    * @return an instance of the requested strategy
    **/
   public static SignatureValidationStrategy requireSignatureFromAllKeys(Long... keyIds) {
-    Preconditions.checkNotNull(keyIds, "keyIds must not be null");
+    requireNonNull(keyIds, "keyIds must not be null");
     return new RequireSpecificSignatureValidationStrategy(Arrays.asList(keyIds));
   }
 

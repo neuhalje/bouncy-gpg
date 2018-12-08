@@ -41,6 +41,7 @@ public final class BouncyGPG {
    * </p><p>
    * Example: https://github.com/neuhalje/bouncy-gpg/tree/master/examples/encrypt
    * </p>
+   *
    * @return The next build step. In the end the decryption stream.
    */
   public static BuildEncryptionOutputStreamAPI encryptToStream() {

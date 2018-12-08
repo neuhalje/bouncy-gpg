@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.symmetric.keygeneration;
 
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -14,10 +15,10 @@ import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.Ke
 public class DerivedKeyGenerator {
 
 
+  private final static int MAXIMUM_CONTEXT_ELEMENT_LENGTH = 0xffff;
   private final KeyDerivationFunction kdFwithMasterKeyMixin;
   @Nullable
   private final byte[] salt;
-  private final static int MAXIMUM_CONTEXT_ELEMENT_LENGTH = 0xffff;
 
 
   /**
@@ -94,7 +95,7 @@ public class DerivedKeyGenerator {
     Preconditions.checkArgument(contextName.length() <= MAXIMUM_CONTEXT_ELEMENT_LENGTH,
         "ContextName must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");
 
-    Preconditions.checkNotNull(idUniqueInContext, "idUniqueInContext must not be null");
+    requireNonNull(idUniqueInContext, "idUniqueInContext must not be null");
     Preconditions
         .checkArgument(!idUniqueInContext.isEmpty(), "idUniqueInContext must not be empty");
 
@@ -102,7 +103,7 @@ public class DerivedKeyGenerator {
         idUniqueInContext.length() <= MAXIMUM_CONTEXT_ELEMENT_LENGTH,
         "idUniqueInContext must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");
 
-    Preconditions.checkNotNull(recordVersion, "recordVersion must not be null");
+    requireNonNull(recordVersion, "recordVersion must not be null");
     Preconditions.checkArgument(!recordVersion.isEmpty(), "recordVersion must not be empty");
     Preconditions.checkArgument(recordVersion.length() <= MAXIMUM_CONTEXT_ELEMENT_LENGTH,
         "recordVersion must be <= " + MAXIMUM_CONTEXT_ELEMENT_LENGTH + " chars");

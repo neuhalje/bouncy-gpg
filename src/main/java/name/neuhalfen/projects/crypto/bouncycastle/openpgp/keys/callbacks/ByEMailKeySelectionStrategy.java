@@ -45,6 +45,7 @@ public class ByEMailKeySelectionStrategy extends Rfc4880KeySelectionStrategy imp
    * @throws IOException IO is dangerous
    */
   @SuppressWarnings({"PMD.LawOfDemeter"})
+  @Override
   protected Set<PGPPublicKeyRing> publicKeyRingsForUid(final PURPOSE purpose, final String uid,
       KeyringConfig keyringConfig)
       throws IOException, PGPException {
@@ -68,8 +69,6 @@ public class ByEMailKeySelectionStrategy extends Rfc4880KeySelectionStrategy imp
 
     return keyringsForUid;
   }
-
-
 }
 
 
