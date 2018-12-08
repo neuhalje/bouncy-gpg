@@ -1,4 +1,4 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal;
+package name.neuhalfen.projects.crypto.internal;
 
 import javax.annotation.Nullable;
 
@@ -13,11 +13,12 @@ public final class Preconditions {
   private Preconditions(){}
 
   /**
-   * Throw a NullPointerException when 'reference' is null.
-   * <p/>
+   * <p>Throw a NullPointerException when 'reference' is null.
+   * </p><p>
    * Call this function in methods to check parameters.
-   * <p/>
-   * checkNotNull returns the reference passed.
+   * </p><p>
+   * checkNotNull returns the reference passed. Useful for assignments.
+   * </p>
    *
    * @param reference value to be tested
    * @param <T>  type of the reference to be tested
@@ -32,11 +33,12 @@ public final class Preconditions {
   }
 
   /**
-   * Throw a NullPointerException when 'reference' is null.
-   * <p/>
+   * <p>Throw a NullPointerException when 'reference' is null.
+   * </p><p>
    * Call this function in methods to check parameters.
-   * <p/>
-   * checkNotNull returns the reference passed.
+   * </p><p>
+   * checkNotNull returns the reference passed. Useful for assignments.
+   * </p>
    *
    * @param reference value to be tested
    * @param message message passed to the exception
@@ -53,9 +55,10 @@ public final class Preconditions {
 
 
   /**
-   * Throw a IllegalArgumentException when 'expression' is false.
-   * <p/>
+   * <p>Throw a IllegalArgumentException when 'expression' is false.
+   * </p><p>
    * Call this function in methods to check parameters.
+   * </p>
    *
    * @param expression expression that must be true, else the exception is raised
    * @param message message passed to the exception
@@ -68,9 +71,10 @@ public final class Preconditions {
   }
 
   /**
-   * Throw a IllegalArgumentException when 'expression' is false.
-   * <p/>
+   * <p>Throw a IllegalArgumentException when 'expression' is false.
+   * </p><p>
    * Call this function in methods to check parameters.
+   * </p>
    *
    * @param expression expression that must be true, else the exception is raised
    * @throws IllegalArgumentException  expression is false

@@ -1,5 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
+import static name.neuhalfen.projects.crypto.internal.DataFormatter.byteArrayToHexString;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,6 +82,6 @@ public class HashingInputStream extends FilterInputStream {
   }
 
   public String toString() {
-    return javax.xml.bind.DatatypeConverter.printHexBinary(calculatedDigest);
+    return byteArrayToHexString(calculatedDigest);
   }
 }

@@ -3,7 +3,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys;
 
 import java.util.Iterator;
 import javax.annotation.Nullable;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;

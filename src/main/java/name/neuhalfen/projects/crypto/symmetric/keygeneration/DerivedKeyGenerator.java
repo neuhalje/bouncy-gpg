@@ -8,7 +8,7 @@ import java.nio.CharBuffer;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import javax.annotation.Nullable;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.KeyDerivationFunction;
 
 public class DerivedKeyGenerator {

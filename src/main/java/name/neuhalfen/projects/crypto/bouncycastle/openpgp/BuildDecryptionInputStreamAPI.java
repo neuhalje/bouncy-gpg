@@ -7,13 +7,13 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting.DecryptionStreamFactory;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.ByEMailKeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 
 /**
@@ -73,13 +73,15 @@ public final class BuildDecryptionInputStreamAPI {
     }
 
     /**
-     * In order to determine key validity a reference point in time for "now" is needed.
+     * <p>In order to determine key validity a reference point in time for "now" is needed.
      * The default value is "Instant.now()". If this needs to be overridden, pass the value
      * here. To effectively disable time based key verification pass Instant.MAX (NOT recommended)
-     * <p/>
+     * </p><p>
      * This is not possible in combination with #withKeySelectionStrategy.
+     * </p>
      *
      * @param dateOfTimestampVerification reference point in time
+     *
      * @return next step in build
      */
     public Validation setReferenceDateForKeyValidityTo(final Instant dateOfTimestampVerification) {
@@ -95,10 +97,11 @@ public final class BuildDecryptionInputStreamAPI {
     }
 
     /**
-     * The default strategy to search for keys is to *just* search for the email address (the part
+     * <p>The default strategy to search for keys is to *just* search for the email address (the
+     * part
      * between &lt; and &gt;).
-     *
-     * Set this flag to search for any part in the user id.
+     * </p>
+     * <p>Set this flag to search for any part in the user id.</p>
      *
      * @return next build step
      */
@@ -116,6 +119,7 @@ public final class BuildDecryptionInputStreamAPI {
      * Rfc4880KeySelectionStrategy is used.
      *
      * @param strategy the actual instance to use
+     *
      * @return next step in builder
      *
      * @see name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy
@@ -163,15 +167,17 @@ public final class BuildDecryptionInputStreamAPI {
   public interface Build {
 
     /**
+     * <p>
      * Build the final decrypted input stream.
-     * <p/>
+     * </p><p>
      * This method will start reading the cipherstream until it finds the encrypted plaintext.
-     * <p/>
+     * </p><p>
      * If the source data is NOT signed, but a signature is REQUIRED, then this function might
      * throw.
-     * <p/>
+     * </p><p>
      * Signatures are verified AFTER decryption (reading the whole(!) plaintext stream). In this
      * case the returned InputStream will validate the signatures.
+     * </p>
      *
      * @param encryptedData An encrypted input stream. <b>Will not be closed</b>.
      *
@@ -188,23 +194,26 @@ public final class BuildDecryptionInputStreamAPI {
   public interface Validation {
 
     /**
-     * Decryption will enforce that the ciphertext has been signed by ALL of the public key ids
+     * <p>Decryption will enforce that the ciphertext has been signed by ALL of the public key ids
      * passed.
-     * <p/>
+     * </p>
+     * <p>
      * Given  the following keyring:
-     * <p/>
+     * </p>
      * <pre>{@code markdown: text
      * $ gpg -k --keyid-format=0xlong
      *
-     * ... pub 2048R/0x3DF16BD7C3F280F3 ... uid [ultimate] ...  <signer@example.com>
-     * ... sub 2048R/0x54A3DB374F787AB7 ... [S] ... }</pre>
-     *
+     * ... pub 2048R/0x3DF16BD7C3F280F3 ... uid [ultimate] ...  &lt;signer@example.com&gt;
+     * ... sub 2048R/0x54A3DB374F787AB7 ... [S] ... }
+     * </pre>
+     * <p>
      * To require a valid signature from {@code signer@example.com} with the following keyring, call
      *
-     * {@code ...andRequireSignatureFromAllKeys(0x54A3DB374F787AB7L)}:
+     * andRequireSignatureFromAllKeys(0x54A3DB374F787AB7L)
+     * </p>
      *
-     * @param publicKeyIds A valid signature from ALL of the passed keys is required. Each key MUST
-     * exist in the public keyring.
+     * @param publicKeyIds A valid signature from ALL of the passed keys is required. Each key
+     *     MUST exist in the public keyring.
      *
      * @return the next build step
      */
@@ -227,8 +236,9 @@ public final class BuildDecryptionInputStreamAPI {
      *
      * {@code ...andRequireSignatureFromAllKeys("signer@example.com")}
      *
-     * @param userIds a valid signature from all of the passed uids is required. The keys MUST exist
-     * in the public keyring.
+     * @param userIds a valid signature from all of the passed uids is required. The keys MUST
+     *     exist
+     *     in the public keyring.
      *
      * @return the next build step
      *

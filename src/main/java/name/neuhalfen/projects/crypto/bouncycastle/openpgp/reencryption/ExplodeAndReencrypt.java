@@ -9,7 +9,7 @@ import java.security.SignatureException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BuildEncryptionOutputStreamAPI;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
 

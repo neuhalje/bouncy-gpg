@@ -2,7 +2,7 @@ package name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching;
 
 import java.io.Serializable;
 import java.util.Objects;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.crypto.generators.SCrypt;
 
 

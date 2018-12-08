@@ -1,8 +1,6 @@
 package specs.helper;
 
-import static specs.helper.InputConverters.ByteArray.toHexString;
-
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.util.encoders.Hex;
 
 public class InputConverters {

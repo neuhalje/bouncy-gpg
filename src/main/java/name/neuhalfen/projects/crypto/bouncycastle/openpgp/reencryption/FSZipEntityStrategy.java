@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 
 /**
  * A file based ZipEntityStrategy that puts the contents of the exploded ZIP under a given root

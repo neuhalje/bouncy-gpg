@@ -2,7 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 
 import java.util.Map;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 
 /**
  * Factory for convenience implementations of KeyringConfigCallback. . {@link

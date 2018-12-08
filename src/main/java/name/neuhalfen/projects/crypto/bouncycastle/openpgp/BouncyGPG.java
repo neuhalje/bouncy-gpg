@@ -34,12 +34,12 @@ public final class BouncyGPG {
   }
 
   /**
-   * Entry point for stream based encryption.  Ultimately a decrypting input stream is placed
+   * <p>Entry point for stream based encryption.  Ultimately a decrypting input stream is placed
    * before
    * a user supplied stream with encrypted data.
-   * <p/>
+   * </p><p>
    * Example: https://github.com/neuhalje/bouncy-gpg/tree/master/examples/encrypt
-   *
+   * </p>
    * @return The next build step. In the end the decryption stream.
    */
   public static BuildEncryptionOutputStreamAPI encryptToStream() {

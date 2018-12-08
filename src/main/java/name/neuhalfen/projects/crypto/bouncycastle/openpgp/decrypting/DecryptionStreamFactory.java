@@ -6,10 +6,11 @@ import java.io.InputStream;
 import java.security.NoSuchProviderException;
 import java.util.Iterator;
 import javax.annotation.Nonnull;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategies;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationStrategy;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPCompressedData;
 import org.bouncycastle.openpgp.PGPEncryptedDataList;
 import org.bouncycastle.openpgp.PGPException;
@@ -27,10 +28,10 @@ import org.bouncycastle.openpgp.operator.bc.BcPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.bc.BcPublicKeyDataDecryptorFactory;
 
 /**
- * Factory that creates a decrypting InputStream that wraps a ciphertext (GPG) steam
+ * <p>Factory that creates a decrypting InputStream that wraps a ciphertext (GPG) steam
  * and decrypts it.
- * <p/>
- * After decryption of the stream the signature is verified in 'close'.
+ * </p>
+ * <p>After decryption of the stream the signature is verified in 'close'.</p>
  */
 @SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter"})
 public final class DecryptionStreamFactory {
@@ -56,9 +57,10 @@ public final class DecryptionStreamFactory {
   }
 
   /**
+   * <p>
    * Factory method for the DecryptionStreamFactory.
-   * <p/>
-   * {@see SignatureValidationStrategies} provides several strategies.
+   * </p>
+   * {@link SignatureValidationStrategies} provides several strategies.
    *
    * @param config keyring config.
    * @param signatureValidationStrategy how signatures are validated.
@@ -108,7 +110,7 @@ public final class DecryptionStreamFactory {
    * Handles PGP objects in decryption process by recursively calling itself.
    *
    * @param factory PGPObjectFactory to access the next objects, might be recreated within this
-   * method
+   *     method
    * @param state Decryption state, e.g. used for signature validation
    *
    * @throws PGPException the pGP exception

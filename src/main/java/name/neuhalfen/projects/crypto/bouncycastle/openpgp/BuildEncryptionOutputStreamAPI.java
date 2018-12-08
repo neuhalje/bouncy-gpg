@@ -12,20 +12,22 @@ import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.PGPEncryptingStream;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.ByEMailKeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc4880KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSecretKey;
 
 
-@SuppressWarnings({"PMD.GodClass","PMD.AtLeastOneConstructor",
-    "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter","Checkstyle.AbbreviationAsWordInName"})
+@SuppressWarnings({"PMD.GodClass", "PMD.AtLeastOneConstructor",
+    "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter", "Checkstyle.AbbreviationAsWordInName"})
 public final class BuildEncryptionOutputStreamAPI {
 
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
@@ -52,23 +54,25 @@ public final class BuildEncryptionOutputStreamAPI {
 
 
   /**
-   * Use the passed keyring config for the crypto operations. The KeyringConfig wraps the
+   * <p>Use the passed keyring config for the crypto operations. The KeyringConfig wraps the
    * public- and private keyrings.
-   * <p/>
+   * </p><p>
    * Generally the best KeyringConfig variant to use is the {@link InMemoryKeyring} which can be
-   * created by calling {@see KeyringConfigs.forGpgExportedKeys}.
+   * created by calling {@link KeyringConfigs#forGpgExportedKeys(KeyringConfigCallback)}. </p>
    *
+   * @param encryptionConfig the keyring config.
+   *
+   * @return the next step in the builder
+   *
+   * @throws IOException bouncy castle uses IO
+   * @throws PGPException errors in the config
    * @see name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs
    * @see name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring
-   * @param encryptionConfig  the keyring config.
-   * @return  the next step in the builder
-   * @throws IOException  bouncy castle uses IO
-   * @throws PGPException errors in the config
    */
   @SuppressWarnings("PMD.AccessorClassGeneration")
   public WithKeySelectionStrategy withConfig(final KeyringConfig encryptionConfig)
       throws IOException, PGPException {
-    Preconditions.checkNotNull(encryptionConfig,"encryptionConfig must not be null");
+    Preconditions.checkNotNull(encryptionConfig, "encryptionConfig must not be null");
     Preconditions.checkNotNull(encryptionConfig.getKeyFingerPrintCalculator(),
         "encryptionConfig.getKeyFingerPrintCalculator() must not be null");
     Preconditions.checkNotNull(encryptionConfig.getPublicKeyRings(),
@@ -87,7 +91,7 @@ public final class BuildEncryptionOutputStreamAPI {
     private Instant dateOfTimestampVerification;
     @Nullable
     private Boolean selectUidByEMailOnly = null;
-    private  static final boolean SELECT_UID_BY_E_MAIL_ONLY_DEFAULT = true;
+    private static final boolean SELECT_UID_BY_E_MAIL_ONLY_DEFAULT = true;
     @Nullable
     private KeySelectionStrategy keySelectionStrategy = null;
 
@@ -97,20 +101,24 @@ public final class BuildEncryptionOutputStreamAPI {
     }
 
     /**
+     * <p>
      * Normally keys are only searched by e-mail (between &lt; and &gt;). Calling
      * selectUidByAnyUidPart() will search everywhere.
-     * <p/>
+     * </p><p>
      * E.g. given the uid 'Juliet Capulet &lt;juliet@example.org&gt;' a search normally would
      * look for the e-mail 'juliet@example.org'. E.g. searching for 'juliet' would be found,
      * searching for 'Capulet' would not be found.
-     * <p/>
+     * </p>
+     * <p>
      * After calling selectUidByAnyUidPart() the key will also be found by searching for 'Capulet'
+     * </p>
+     *
      * @return next step
      */
     public WithKeySelectionStrategy selectUidByAnyUidPart() {
       if (keySelectionStrategy != null) {
         throw new IllegalStateException(
-            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together "+
+            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together " +
                 "with 'withKeySelectionStrategy' ");
       }
       selectUidByEMailOnly = false;
@@ -125,6 +133,7 @@ public final class BuildEncryptionOutputStreamAPI {
      * This is not possible in combination with #withKeySelectionStrategy.
      *
      * @param dateOfTimestampVerification reference point in time
+     *
      * @return next step in build
      */
     public WithAlgorithmSuite setReferenceDateForKeyValidityTo(
@@ -132,7 +141,7 @@ public final class BuildEncryptionOutputStreamAPI {
 
       if (keySelectionStrategy != null) {
         throw new IllegalStateException(
-            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together "+
+            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together " +
                 "with 'withKeySelectionStrategy' ");
       }
       if (dateOfTimestampVerification == null) {
@@ -149,8 +158,10 @@ public final class BuildEncryptionOutputStreamAPI {
      * between &lt; and &gt;).
      *
      * Set this flag to search for any part in the user id.
+     *
      * @param strategy instance to use
-     * @return  next build step
+     *
+     * @return next build step
      */
     public WithAlgorithmSuite withKeySelectionStrategy(final KeySelectionStrategy strategy) {
       if (strategy == null) {
@@ -158,7 +169,7 @@ public final class BuildEncryptionOutputStreamAPI {
       }
       if (selectUidByEMailOnly != null || dateOfTimestampVerification != null) {
         throw new IllegalStateException(
-            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together"+
+            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together" +
                 " with 'withKeySelectionStrategy' ");
       }
       this.keySelectionStrategy = strategy;

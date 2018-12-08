@@ -1,11 +1,12 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
+import static name.neuhalfen.projects.crypto.internal.DataFormatter.byteArrayToHexString;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.jcajce.provider.digest.SHA3.Digest256;
 import org.bouncycastle.jcajce.provider.digest.SHA3.Digest512;
 
@@ -29,13 +30,15 @@ public class HashingOutputStream extends OutputStream {
 
   public static HashingOutputStream sha512_Oracle()
       throws NoSuchAlgorithmException, NoSuchProviderException {
-    final MessageDigest instance = MessageDigest.getInstance("SHA-512","SUN");
+    final MessageDigest instance = MessageDigest.getInstance("SHA-512", "SUN");
     return new HashingOutputStream(instance);
   }
+
   public static HashingOutputStream sha512_BC()
       throws NoSuchAlgorithmException, NoSuchProviderException {
-    return new HashingOutputStream(MessageDigest.getInstance("SHA-512","BC"));
+    return new HashingOutputStream(MessageDigest.getInstance("SHA-512", "BC"));
   }
+
   public static HashingOutputStream sha1() throws NoSuchAlgorithmException {
     return new HashingOutputStream(MessageDigest.getInstance("SHA-1"));
   }
@@ -50,7 +53,6 @@ public class HashingOutputStream extends OutputStream {
     final MessageDigest digest512 = new Digest512();
     return new HashingOutputStream(digest512);
   }
-
 
 
   @Override
@@ -81,6 +83,6 @@ public class HashingOutputStream extends OutputStream {
   }
 
   public String toString() {
-    return javax.xml.bind.DatatypeConverter.printHexBinary(calculatedDigest);
+    return byteArrayToHexString(calculatedDigest);
   }
 }

@@ -4,7 +4,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation;
 import java.io.IOException;
 import java.security.SignatureException;
 import java.util.Map;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPOnePassSignature;

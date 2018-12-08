@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.internal.Preconditions;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
@@ -91,9 +91,11 @@ public final class SignatureValidationStrategies {
 
 
   /**
-   * Require signature from all of the passed uids.
-   * <p/>
+   * <p>
+   *   Require signature from all of the passed uids.
+   * </p><p>
    * This only really works if each uid has EXACTLY one key.
+   * </p>
    *
    * @param config keyring config
    * @param keySelectionStrategy the key selection strategy to use
