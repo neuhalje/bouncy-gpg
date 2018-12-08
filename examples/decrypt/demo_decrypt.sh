@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ASSEMBLY=decrypt-1.0.0
+ASSEMBLY=bouncy-gpg-example-decryption-1.0.0
 LOCATION=./build
 
 [ -f ./build/libs/${ASSEMBLY}.jar ] ||  ./gradlew installDist
@@ -11,7 +11,7 @@ then
 else
 
 #CP=${LOCATION}/libs/${ASSEMBLY}.jar
-for JAR in ${LOCATION}/install/decrypt/lib/*.jar
+for JAR in ${LOCATION}/install/bouncy-gpg-example-decryption/lib/*.jar
 do
    CP=${CP}:${JAR}
 done

@@ -26,6 +26,7 @@ public class MainExplodedSinglethreaded {
   }
 
   public static void main(String[] args) {
+    System.out.println("This program will read an encrypted ZIP file, decrypt it on the fly, and then re-encrypt and write the files from the ZIP into /tmp");
     if (args.length != 7) {
       System.err.format(
           "Usage %s  recipient signWith pubKeyRing secKeyRing secKeyRingPassword sourceFile.zip.gpg destPath\n",

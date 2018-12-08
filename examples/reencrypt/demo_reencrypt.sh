@@ -4,7 +4,7 @@
 # decrypts an encrypted ZIP file and reencrypts each file in the zip
 #
 
-ASSEMBLY=reencrypt-1.0.0
+ASSEMBLY=bouncy-gpg-example-reencryption-1.0.0
 LOCATION=./build
 
 DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.MainExplodedSinglethreaded
@@ -18,7 +18,7 @@ echo Writing results into \"$DEST\"
 [ -f ./build/libs/${ASSEMBLY}.jar ] ||  ./gradlew installDist
 
 CP=${LOCATION}/libs/${ASSEMBLY}.jar
-for JAR in ${LOCATION}/install/reencrypt/lib/*.jar
+for JAR in ${LOCATION}/install/bouncy-gpg-example-reencryption/lib/*.jar
 do
    CP=${CP}:${JAR}
 done

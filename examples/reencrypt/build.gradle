@@ -33,6 +33,6 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.2.1'
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.7'
+wrapper{
+    gradleVersion = '4.10.2'
 }

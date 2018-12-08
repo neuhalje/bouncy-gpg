@@ -1,0 +1,3 @@
+rootProject.name = 'bouncy-gpg-example-decryption'
+enableFeaturePreview('STABLE_PUBLISHING')
+
