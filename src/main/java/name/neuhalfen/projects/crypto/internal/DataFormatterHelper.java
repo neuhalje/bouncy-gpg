@@ -1,9 +1,9 @@
 package name.neuhalfen.projects.crypto.internal;
 
-public final class DataFormatter {
+public final class DataFormatterHelper {
   private final static char[] HEX_GLYPHS = "0123456789ABCDEF".toCharArray();
 
-  private DataFormatter() {
+  private DataFormatterHelper() {
   }
 
 

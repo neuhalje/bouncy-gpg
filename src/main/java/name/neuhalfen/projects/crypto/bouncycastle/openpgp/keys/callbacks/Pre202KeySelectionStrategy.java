@@ -153,7 +153,7 @@ public final class Pre202KeySelectionStrategy implements KeySelectionStrategy {
         final PGPSecretKey secretKey = secretKeyIterator.next();
         int score = calculateSigningKeyScore(secretKey.getPublicKey());
 
-        if (secretKey.isSigningKey() && (score > highestScore)) {
+        if (secretKey.isSigningKey() && score > highestScore) {
           key = secretKey;
           highestScore = score;
         }

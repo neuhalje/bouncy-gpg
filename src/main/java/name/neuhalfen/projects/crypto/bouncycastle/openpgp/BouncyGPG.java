@@ -1,7 +1,8 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
 
-@SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter"})
+@SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter",
+    "PMD.ClassNamingConventions"})
 public final class BouncyGPG {
 
   private BouncyGPG() {

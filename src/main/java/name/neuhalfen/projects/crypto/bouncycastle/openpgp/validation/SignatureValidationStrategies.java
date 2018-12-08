@@ -19,6 +19,7 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 /**
  * Defines strategies for signature checking.
  */
+@SuppressWarnings({"PMD.ClassNamingConventions"})
 public final class SignatureValidationStrategies {
 
   // no instances

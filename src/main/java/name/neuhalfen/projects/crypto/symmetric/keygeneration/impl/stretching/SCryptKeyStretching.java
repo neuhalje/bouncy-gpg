@@ -32,7 +32,9 @@ public class SCryptKeyStretching implements KeyStretching {
 
   public final static class SCryptKeyStretchingParameters implements Serializable {
 
-    private final int N, r, p;
+    private final int N;
+    private final int r;
+    private final int p;
 
     public SCryptKeyStretchingParameters(int N, int r, int p) {
       this.N = N;

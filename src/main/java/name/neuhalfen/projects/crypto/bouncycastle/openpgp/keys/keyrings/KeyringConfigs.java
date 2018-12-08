@@ -11,6 +11,7 @@ import org.bouncycastle.openpgp.PGPException;
 /**
  * Factory for keyring configs.
  */
+@SuppressWarnings({"PMD.ClassNamingConventions"})
 public final class KeyringConfigs {
 
   // no instances

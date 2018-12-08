@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
-import static name.neuhalfen.projects.crypto.internal.DataFormatter.byteArrayToHexString;
+import static name.neuhalfen.projects.crypto.internal.DataFormatterHelper.byteArrayToHexString;
 
 import java.io.FilterInputStream;
 import java.io.IOException;

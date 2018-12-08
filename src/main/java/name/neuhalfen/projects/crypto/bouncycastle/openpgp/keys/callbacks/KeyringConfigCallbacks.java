@@ -8,6 +8,7 @@ import name.neuhalfen.projects.crypto.internal.Preconditions;
  * Factory for convenience implementations of KeyringConfigCallback. . {@link
  * KeyringConfigCallback}
  */
+@SuppressWarnings({"PMD.ClassNamingConventions"})
 public final class KeyringConfigCallbacks {
 
   // no construction

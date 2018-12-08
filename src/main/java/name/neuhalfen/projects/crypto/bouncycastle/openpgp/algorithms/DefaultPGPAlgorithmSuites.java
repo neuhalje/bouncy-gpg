@@ -1,6 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
-
+@SuppressWarnings({"PMD.ClassNamingConventions"})
 public final class DefaultPGPAlgorithmSuites {
 
   /**

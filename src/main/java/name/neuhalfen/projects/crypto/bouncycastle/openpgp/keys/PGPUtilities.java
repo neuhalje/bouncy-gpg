@@ -20,6 +20,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 /**
  * FIXME: Cleanup code, throw out duplicates etc
  */
+@SuppressWarnings({"PMD.ClassNamingConventions"})
 public final class PGPUtilities {
 
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory

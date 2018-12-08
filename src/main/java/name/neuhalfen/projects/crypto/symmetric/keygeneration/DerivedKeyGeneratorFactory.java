@@ -7,7 +7,7 @@ import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.HKDFSHA256;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.derivation.KeyDerivationFunction;
 
-@SuppressWarnings({"PMD.AccessorClassGeneration"})
+@SuppressWarnings({"PMD.AccessorClassGeneration","PMD.ClassNamingConventions"})
 public final class DerivedKeyGeneratorFactory {
 
   private DerivedKeyGeneratorFactory() {

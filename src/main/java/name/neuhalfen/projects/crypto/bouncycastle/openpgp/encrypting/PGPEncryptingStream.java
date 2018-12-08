@@ -132,7 +132,7 @@ public final class PGPEncryptingStream extends OutputStream {
       final KeySelectionStrategy keySelectionStrategy,
       final boolean armor) throws
       IOException, PGPException {
-    isDoSign = (signingUid != null);
+    isDoSign = signingUid != null;
 
     final OutputStream sink;
     if (armor) {
