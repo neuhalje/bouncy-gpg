@@ -201,7 +201,7 @@ public final class BuildDecryptionInputStreamAPI {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Validation setReferenceDateForKeyValidityTo(final Instant dateOfTimestampVerification) {
-      Preconditions.checkArgument(keySelectionStrategy == null,
+      Preconditions.checkState(keySelectionStrategy == null,
           "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot "
               + "be used together with 'withKeySelectionStrategy' ");
 
@@ -222,7 +222,7 @@ public final class BuildDecryptionInputStreamAPI {
      * @return next build step
      */
     public Validation selectUidByAnyUidPart() {
-      Preconditions.checkArgument(keySelectionStrategy == null,
+      Preconditions.checkState(keySelectionStrategy == null,
           "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot "
               + "be used together with 'withKeySelectionStrategy' ");
 
@@ -244,11 +244,11 @@ public final class BuildDecryptionInputStreamAPI {
 
       requireNonNull(strategy, "strategy must not be null");
 
-      if (selectUidByEMailOnly != null || dateOfTimestampVerification != null) {
-        throw new IllegalStateException(
-            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together"
-                + " with 'withKeySelectionStrategy' ");
-      }
+      Preconditions.checkState(
+          selectUidByEMailOnly == null && dateOfTimestampVerification == null,
+          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together"
+              + " with 'withKeySelectionStrategy' ");
+
       this.keySelectionStrategy = strategy;
       return this;
     }

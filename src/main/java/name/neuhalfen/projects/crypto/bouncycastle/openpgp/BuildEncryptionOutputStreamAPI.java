@@ -22,6 +22,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Rfc488
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
+import name.neuhalfen.projects.crypto.internal.Preconditions;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSecretKey;
@@ -168,11 +169,10 @@ public final class BuildEncryptionOutputStreamAPI {
      * @return next step
      */
     public WithKeySelectionStrategy selectUidByAnyUidPart() {
-      if (keySelectionStrategy != null) {
-        throw new IllegalStateException(
-            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together " +
-                "with 'withKeySelectionStrategy' ");
-      }
+      Preconditions.checkState(keySelectionStrategy == null,
+          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be" +
+              " used together with 'withKeySelectionStrategy' ");
+
       selectUidByEMailOnly = false;
       return this;
     }
@@ -192,12 +192,12 @@ public final class BuildEncryptionOutputStreamAPI {
     public WithAlgorithmSuite setReferenceDateForKeyValidityTo(
         final Instant dateOfTimestampVerification) {
 
-      if (keySelectionStrategy != null) {
-        throw new IllegalStateException(
-            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together " +
-                "with 'withKeySelectionStrategy' ");
-      }
-      requireNonNull(dateOfTimestampVerification, "dateOfTimestampVerification must not be null");
+      Preconditions.checkState(keySelectionStrategy == null,
+          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be" +
+              " used together with 'withKeySelectionStrategy' ");
+
+      requireNonNull(dateOfTimestampVerification,
+          "dateOfTimestampVerification must not be null");
 
       this.dateOfTimestampVerification = dateOfTimestampVerification;
       LOGGER.trace("WithKeySelectionStrategy: setReferenceDateForKeyValidityTo {}",
@@ -218,11 +218,11 @@ public final class BuildEncryptionOutputStreamAPI {
     public WithAlgorithmSuite withKeySelectionStrategy(final KeySelectionStrategy strategy) {
       requireNonNull(strategy, "strategy must not be null");
 
-      if (selectUidByEMailOnly != null || dateOfTimestampVerification != null) {
-        throw new IllegalStateException(
-            "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together" +
-                " with 'withKeySelectionStrategy' ");
-      }
+      Preconditions.checkState(
+          selectUidByEMailOnly == null && dateOfTimestampVerification == null,
+          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be used together"
+              + " with 'withKeySelectionStrategy' ");
+
       this.keySelectionStrategy = strategy;
       LOGGER.trace("WithKeySelectionStrategy: override strategy to {}",
           strategy.getClass().toGenericString());
@@ -275,10 +275,9 @@ public final class BuildEncryptionOutputStreamAPI {
     }
 
     @Override
-    public To withAlgorithms(PGPAlgorithmSuite algorithmSuite) {
-      if (algorithmSuite == null) {
-        throw new IllegalArgumentException("algorithmSuite must not be null");
-      }
+    public To withAlgorithms(final PGPAlgorithmSuite algorithmSuite) {
+      requireNonNull(algorithmSuite, "algorithmSuite must not be null");
+
       BuildEncryptionOutputStreamAPI.this.algorithmSuite = algorithmSuite;
       LOGGER
           .trace("use algorithms {}",
@@ -291,9 +290,9 @@ public final class BuildEncryptionOutputStreamAPI {
     final class ToImpl implements To {
 
       private PGPPublicKey extractValidKey(final String recipient) throws PGPException {
-        if (recipient == null || recipient.isEmpty()) {
-          throw new IllegalArgumentException("recipient must be a string");
-        }
+        requireNonNull(recipient, "recipient must not be null");
+        Preconditions.checkArgument(!recipient.isEmpty(), "recipient must not be empty");
+
         try {
           final PGPPublicKey recipientEncryptionKey = getKeySelectionStrategy()
               .selectPublicKey(PURPOSE.FOR_ENCRYPTION, recipient, encryptionConfig);
@@ -338,10 +337,8 @@ public final class BuildEncryptionOutputStreamAPI {
         @Override
         public Armor andSignWith(String userId) throws IOException, PGPException {
 
-          if (encryptionConfig.getSecretKeyRings() == null) {
-            throw new IllegalArgumentException(
-                "encryptionConfig.getSecretKeyRings() must not be null");
-          }
+          Preconditions.checkState(encryptionConfig.getSecretKeyRings() != null,
+              "encryptionConfig.getSecretKeyRings() must not be null");
 
           final PGPPublicKey signingKeyPubKey = getKeySelectionStrategy()
               .selectPublicKey(PURPOSE.FOR_SIGNING, userId, encryptionConfig);
