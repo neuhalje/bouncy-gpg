@@ -9,7 +9,12 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 jdk:
+  - openjdk8
   - oraclejdk8
+  - openjdk10
+  - oraclejdk10
+  - openjdk11
+  - oraclejdk11
 
 script:
   - # sudo apt-get update
