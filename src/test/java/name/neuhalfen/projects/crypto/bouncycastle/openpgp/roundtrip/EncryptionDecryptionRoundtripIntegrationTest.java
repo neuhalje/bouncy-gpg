@@ -11,6 +11,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
@@ -62,7 +63,8 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
   @Test
   public void encryptAndSignArmored_thenDecryptAndVerify_yieldsOriginalPlaintext()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
+    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
+        StandardCharsets.US_ASCII);
 
     ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
 
@@ -97,7 +99,8 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
   @Test
   public void encryptAndSignBinary_thenDecryptAndVerify_yieldsOriginalPlaintext()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
+    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
+        StandardCharsets.US_ASCII);
 
     ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
 
@@ -132,7 +135,8 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
   @Test
   public void encryptAndSignBinaryWithSHA256_AES256_thenDecryptAndVerify_yieldsOriginalPlaintext()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
+    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
+        StandardCharsets.US_ASCII);
 
     ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
 
@@ -168,7 +172,8 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
   @Test
   public void encryptAndSignWithDSA_thenDecryptAndVerify_yieldsOriginalPlaintext()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
+    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
+        StandardCharsets.US_ASCII);
 
     ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
 
@@ -203,7 +208,8 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
   @Test
   public void encryptBinary_thenDecrypt_yieldsOriginalPlaintext()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
+    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
+        StandardCharsets.US_ASCII);
 
     ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
 

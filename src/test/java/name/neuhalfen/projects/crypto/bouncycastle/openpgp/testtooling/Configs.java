@@ -3,6 +3,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGPTestDriverTest;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
@@ -87,13 +88,15 @@ public class Configs {
     final InMemoryKeyring keyring = KeyringConfigs.forGpgExportedKeys(
         KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
 
-    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER.getBytes("US-ASCII"));
-    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_2.getBytes("US-ASCII"));
-    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_DSA_SIGN_ONLY.getBytes("US-ASCII"));
-    keyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes("US-ASCII"));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER.getBytes(StandardCharsets.US_ASCII));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_2.getBytes(StandardCharsets.US_ASCII));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_DSA_SIGN_ONLY.getBytes(
+        StandardCharsets.US_ASCII));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes(StandardCharsets.US_ASCII));
 
-    keyring.addSecretKey(ExampleMessages.SECRET_KEY_SENDER.getBytes("US-ASCII"));
-    keyring.addSecretKey(ExampleMessages.SECRET_KEY_SENDER_DSA_SIGN_ONLY.getBytes("US-ASCII"));
+    keyring.addSecretKey(ExampleMessages.SECRET_KEY_SENDER.getBytes(StandardCharsets.US_ASCII));
+    keyring.addSecretKey(ExampleMessages.SECRET_KEY_SENDER_DSA_SIGN_ONLY.getBytes(
+        StandardCharsets.US_ASCII));
 
     return keyring;
   }
@@ -103,12 +106,13 @@ public class Configs {
     final InMemoryKeyring keyring = KeyringConfigs.forGpgExportedKeys(
         KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
 
-    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER.getBytes("US-ASCII"));
-    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_2.getBytes("US-ASCII"));
-    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_DSA_SIGN_ONLY.getBytes("US-ASCII"));
-    keyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes("US-ASCII"));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER.getBytes(StandardCharsets.US_ASCII));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_2.getBytes(StandardCharsets.US_ASCII));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_DSA_SIGN_ONLY.getBytes(
+        StandardCharsets.US_ASCII));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes(StandardCharsets.US_ASCII));
 
-    keyring.addSecretKey(ExampleMessages.SECRET_KEY_RECIPIENT.getBytes("US-ASCII"));
+    keyring.addSecretKey(ExampleMessages.SECRET_KEY_RECIPIENT.getBytes(StandardCharsets.US_ASCII));
 
     return keyring;
   }

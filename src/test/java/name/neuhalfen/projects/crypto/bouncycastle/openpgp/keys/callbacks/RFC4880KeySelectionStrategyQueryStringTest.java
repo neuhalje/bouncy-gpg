@@ -1,7 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeysTestHelper.assertIsCorrectPublicKey;
-import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.security.Security;

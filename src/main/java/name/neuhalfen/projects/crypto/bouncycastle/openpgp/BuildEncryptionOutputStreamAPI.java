@@ -193,8 +193,8 @@ public final class BuildEncryptionOutputStreamAPI {
         final Instant dateOfTimestampVerification) {
 
       Preconditions.checkState(keySelectionStrategy == null,
-          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be" +
-              " used together with 'withKeySelectionStrategy' ");
+          "selectUidByAnyUidPart/setReferenceDateForKeyValidityTo cannot be"
+              + " used together with 'withKeySelectionStrategy' ");
 
       requireNonNull(dateOfTimestampVerification,
           "dateOfTimestampVerification must not be null");

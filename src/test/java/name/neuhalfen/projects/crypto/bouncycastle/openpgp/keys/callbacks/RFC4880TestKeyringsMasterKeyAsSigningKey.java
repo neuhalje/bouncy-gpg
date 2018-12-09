@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
@@ -113,14 +114,14 @@ ssb* rsa2048/0x8FC7643A745538BF
 
   public static KeyringConfig publicKeyOnlyKeyringConfig() throws IOException, PGPException {
     final InMemoryKeyring keyring = newKeyring();
-    keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
+    keyring.addPublicKey(PUBLIC_KEY.getBytes(StandardCharsets.US_ASCII));
     return keyring;
   }
 
   public static KeyringConfig publicAndPrivateKeyKeyringConfig() throws IOException, PGPException {
     final InMemoryKeyring keyring = newKeyring();
-    keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
-    keyring.addSecretKey(PRIVATE_KEY.getBytes("US-ASCII"));
+    keyring.addPublicKey(PUBLIC_KEY.getBytes(StandardCharsets.US_ASCII));
+    keyring.addSecretKey(PRIVATE_KEY.getBytes(StandardCharsets.US_ASCII));
     return keyring;
   }
 

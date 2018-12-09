@@ -62,6 +62,7 @@ public class DerivedKeyGeneratorIntegrationTest {
     System.arraycopy(keyAndIV, key.length, iv, 0, iv.length);
 
     assertThat(Hex.toHexString(iv), equalTo("f448a884f7b605e6da01d540966e292e"));
-    assertThat(Hex.toHexString(key), equalTo("551cb7df244e577b5b556634117c38953af706a49e4d9bb09cbdb01bbfc9d8ff"));
+    assertThat(Hex.toHexString(key),
+        equalTo("551cb7df244e577b5b556634117c38953af706a49e4d9bb09cbdb01bbfc9d8ff"));
   }
 }

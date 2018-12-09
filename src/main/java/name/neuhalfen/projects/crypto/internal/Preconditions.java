@@ -48,7 +48,6 @@ public final class Preconditions {
   }
 
 
-
   /**
    * <p>Throw a IllegalStateException when 'expression' is false.
    * </p><p>

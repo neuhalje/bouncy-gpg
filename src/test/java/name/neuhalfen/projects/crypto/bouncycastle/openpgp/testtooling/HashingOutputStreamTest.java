@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
@@ -62,7 +63,7 @@ public class HashingOutputStreamTest {
     HashingOutputStream sut = HashingOutputStream.sha256();
     sut.write(
         "Those people who think they know everything are a great annoyance to those of us who do. Isaac Asimov"
-            .getBytes("UTF-8"));
+            .getBytes(StandardCharsets.UTF_8));
     sut.close();
     assertThat(sut.toString(),
         is(equalTo("B06EE8C91425C5298AAC4B36897FE7260AC0581C5F407AA4BF52BC028391B169")));
@@ -74,7 +75,7 @@ public class HashingOutputStreamTest {
       throws NoSuchAlgorithmException, IOException {
     HashingOutputStream sut = HashingOutputStream.sha256();
     byte[] bytes = "Those people who think they know everything are a great annoyance to those of us who do. Isaac Asimov"
-        .getBytes("UTF-8");
+        .getBytes(StandardCharsets.UTF_8);
 
     for (byte b : bytes) {
       sut.write(b);
@@ -90,7 +91,7 @@ public class HashingOutputStreamTest {
       throws NoSuchAlgorithmException, IOException {
     HashingOutputStream sut = HashingOutputStream.sha256();
     sut.write("I love deadlines. I like the whooshing sound they make as they fly by. Douglas Adams"
-        .getBytes("UTF-8"));
+        .getBytes(StandardCharsets.UTF_8));
     sut.close();
     assertThat(sut.toString(),
         is(equalTo("5A341E2D70CB67831E837AC0474E140627913C17113163E47F1207EA5C72F86F")));
@@ -102,7 +103,7 @@ public class HashingOutputStreamTest {
     HashingOutputStream sut = HashingOutputStream.sha256();
     sut.write(
         "Those people who think they know everything are a great annoyance to those of us who do. Isaac Asimov"
-            .getBytes("UTF-8"));
+            .getBytes(StandardCharsets.UTF_8));
     sut.close();
     sut.close();
     assertThat(sut.toString(),

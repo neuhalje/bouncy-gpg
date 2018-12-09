@@ -35,7 +35,6 @@ public class BuildEncryptionOutputStreamAPITest {
   }
 
 
-
   @Test
   public void encryptConfigure_ConfigPassed_notNull() throws Exception {
     assertNotNull(BouncyGPG.encryptToStream().withConfig(mockKeyringConfig()));
@@ -77,21 +76,24 @@ public class BuildEncryptionOutputStreamAPITest {
   }
 
 
-
   @Test(expected = IllegalStateException.class)
   public void withKeySelectionStrategy_isExclusiveWithSelectUidByAnyUidPart() throws Exception {
-    BouncyGPG.encryptToStream().withConfig(mockKeyringConfig()).selectUidByAnyUidPart().withKeySelectionStrategy(mockKeySelectionStrategy());
+    BouncyGPG.encryptToStream().withConfig(mockKeyringConfig()).selectUidByAnyUidPart()
+        .withKeySelectionStrategy(mockKeySelectionStrategy());
   }
 
 
   @Test()
-  public void keySelectionStrategy_SelectUidByAnyUidPart_compatible_with_setReferenceDateForKeyValidityTo() throws Exception {
-    BouncyGPG.encryptToStream().withConfig(mockKeyringConfig()).selectUidByAnyUidPart().setReferenceDateForKeyValidityTo(Instant.MAX).withDefaultAlgorithms();
+  public void keySelectionStrategy_SelectUidByAnyUidPart_compatible_with_setReferenceDateForKeyValidityTo()
+      throws Exception {
+    BouncyGPG.encryptToStream().withConfig(mockKeyringConfig()).selectUidByAnyUidPart()
+        .setReferenceDateForKeyValidityTo(Instant.MAX).withDefaultAlgorithms();
   }
 
-  private KeySelectionStrategy mockKeySelectionStrategy(){
+  private KeySelectionStrategy mockKeySelectionStrategy() {
     return mock(KeySelectionStrategy.class);
   }
+
   private KeyringConfig mockKeyringConfig() throws IOException, PGPException {
     final KeyringConfig mockKeyringConfig = mock(KeyringConfig.class);
     when(mockKeyringConfig.getKeyFingerPrintCalculator())

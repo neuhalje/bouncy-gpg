@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
@@ -53,7 +54,7 @@ public class Issue16Test {
     final String signer = "signer@example.com";
 
     encryptToStdout(config,
-       recipient,
+        recipient,
         signer,
         Instant.now());
   }
@@ -85,7 +86,8 @@ public class Issue16Test {
       final String signingUid,
       final Instant dateOfTimestampVerification)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
+    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
+        StandardCharsets.US_ASCII);
 
     byte[] bytes;
     try (
@@ -108,7 +110,7 @@ public class Issue16Test {
       bytes = byteOutput.toByteArray();
     }
 
-    final String ciphertext = new String(bytes, "US-ASCII");
+    final String ciphertext = new String(bytes, StandardCharsets.US_ASCII);
     System.out.println(
         "Key expiration check for " + dateOfTimestampVerification.toString() + ", encrypted to '"
             + recipientUid + "', and signed by '" + signingUid
@@ -156,7 +158,8 @@ public class Issue16Test {
       final String signingUid, final Instant dateOfTimestampVerification,
       long expectedSignatureKey)
       throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
-    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
+    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
+        StandardCharsets.US_ASCII);
 
     byte[] bytes;
     try (
@@ -198,7 +201,7 @@ public class Issue16Test {
       Streams.pipeAll(plaintextStream, bufferedOut);
     }
 
-    assertEquals(ExampleMessages.IMPORTANT_QUOTE_TEXT, output.toString("US-ASCII"));
+    assertEquals(ExampleMessages.IMPORTANT_QUOTE_TEXT, output.toString(StandardCharsets.US_ASCII));
   }
 
 

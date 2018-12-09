@@ -91,7 +91,8 @@ public class KeyringConfigsTest {
   // non parametrised
   @Test
   public void loadingEmptyKeyRing_doesNotThrow() throws IOException, PGPException {
-    KeyringConfig cfg = KeyringConfigs.forGpgExportedKeys(KeyringConfigCallbacks.withUnprotectedKeys());
+    KeyringConfig cfg = KeyringConfigs
+        .forGpgExportedKeys(KeyringConfigCallbacks.withUnprotectedKeys());
 
     assertThat(cfg.getPublicKeyRings(), is(notNullValue()));
     assertThat(cfg.getSecretKeyRings(), is(notNullValue()));

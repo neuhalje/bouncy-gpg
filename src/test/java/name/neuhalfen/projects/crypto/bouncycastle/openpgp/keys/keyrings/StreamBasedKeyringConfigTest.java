@@ -46,11 +46,13 @@ public class StreamBasedKeyringConfigTest {
   }
 
   private InputStream pubKeyInputStream() {
-    return EncryptWithOpenPGPTestDriverTest.class.getClassLoader().getResourceAsStream("recipient.gpg.d/pubring.gpg");
+    return EncryptWithOpenPGPTestDriverTest.class.getClassLoader()
+        .getResourceAsStream("recipient.gpg.d/pubring.gpg");
   }
 
   private InputStream secretKeyInputStream() {
-    return EncryptWithOpenPGPTestDriverTest.class.getClassLoader().getResourceAsStream("recipient.gpg.d/secring.gpg");
+    return EncryptWithOpenPGPTestDriverTest.class.getClassLoader()
+        .getResourceAsStream("recipient.gpg.d/secring.gpg");
   }
 
   @Test
@@ -59,7 +61,8 @@ public class StreamBasedKeyringConfigTest {
         KEYRING_CONFIG_CALLBACK, pubKeyInputStream(), null);
 
     assertNotNull("PublicKeyRings should be created", build.getPublicKeyRings());
-    assertThat("PublicKeyRings should not be empty", build.getPublicKeyRings().size(), Matchers.greaterThan(0));
+    assertThat("PublicKeyRings should not be empty", build.getPublicKeyRings().size(),
+        Matchers.greaterThan(0));
   }
 
 
@@ -69,6 +72,7 @@ public class StreamBasedKeyringConfigTest {
         KEYRING_CONFIG_CALLBACK, null, secretKeyInputStream());
 
     assertNotNull("SecretKeyRings should be created", build.getSecretKeyRings());
-    assertThat("SecretKeyRings should not be empty", build.getSecretKeyRings().size(), Matchers.greaterThan(0));
+    assertThat("SecretKeyRings should not be empty", build.getSecretKeyRings().size(),
+        Matchers.greaterThan(0));
   }
 }

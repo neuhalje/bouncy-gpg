@@ -11,7 +11,6 @@ import java.util.Set;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Pre202KeySelectionStrategy;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
@@ -78,19 +77,21 @@ final class EncryptWithOpenPGPTestDriver {
    * @param out the out
    * @param pubEncKeys the pub enc keys
    * @param armor if OutputStream should be "armored", that means base64 encoded
+   *
    * @throws IOException Signals that an I/O exception has occurred.
    * @throws NoSuchAlgorithmException the no such algorithm exception
    * @throws NoSuchProviderException the no such provider exception
    * @throws PGPException the pGP exception
    * @throws SignatureException the signature exception {@link org.bouncycastle.bcpg.HashAlgorithmTags}
-   * {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
+   *     {@link org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags}
    */
   void encryptAndSign(final InputStream in, OutputStream out, final Set<PGPPublicKey> pubEncKeys,
       final boolean armor) throws IOException,
       NoSuchAlgorithmException, NoSuchProviderException, PGPException, SignatureException {
 
     try (final OutputStream encryptionStream = PGPEncryptingStream
-        .create(config, algorithmSuite, signatureUid, out, keySelectionStrategy,  armor, pubEncKeys)) {
+        .create(config, algorithmSuite, signatureUid, out, keySelectionStrategy, armor,
+            pubEncKeys)) {
       Streams.pipeAll(in, encryptionStream);
       encryptionStream.flush();
     }

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
@@ -44,7 +45,8 @@ public class PGPEncryptingStreamTest {
   @Test
   public void closing_is_idempotent()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes("US-ASCII");
+    final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
+        StandardCharsets.US_ASCII);
 
     try (
         final ByteArrayInputStream is = new ByteArrayInputStream(expectedPlaintext);

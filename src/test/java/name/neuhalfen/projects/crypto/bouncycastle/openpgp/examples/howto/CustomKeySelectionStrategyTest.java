@@ -114,7 +114,7 @@ public class CustomKeySelectionStrategyTest {
 
     final Iterator<? extends PGPKeyRing> keyRingIterator = keyRings.iterator();
     final PGPKeyRing firstKeyRing = keyRingIterator.next();
-    assertFalse("Not stable with more than one keyring",keyRingIterator.hasNext());
+    assertFalse("Not stable with more than one keyring", keyRingIterator.hasNext());
 
     final PGPPublicKey firstKeyInFirstKeyring = firstKeyRing.getPublicKey();
 

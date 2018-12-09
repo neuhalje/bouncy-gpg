@@ -3,7 +3,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 final class UnprotectedKeysKeyringConfigCallback implements KeyringConfigCallback {
 
-  UnprotectedKeysKeyringConfigCallback(){
+  UnprotectedKeysKeyringConfigCallback() {
     // Nothing to do
   }
 

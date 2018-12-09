@@ -25,7 +25,7 @@ public class KeysTestHelper {
 
     final Iterator<String> userIDs = key.getUserIDs();
     while (userIDs.hasNext()) {
-      b.append("'").append( userIDs.next()).append("', ");
+      b.append("'").append(userIDs.next()).append("', ");
     }
     b.append("]}");
     return b.toString();

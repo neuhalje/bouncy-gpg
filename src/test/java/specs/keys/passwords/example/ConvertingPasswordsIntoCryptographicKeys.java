@@ -7,7 +7,6 @@ import static specs.helper.InputConverters.ByteArray.toHexString;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import name.neuhalfen.projects.crypto.internal.Preconditions;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching.KeyStretching;
 import name.neuhalfen.projects.crypto.symmetric.keygeneration.impl.stretching.SCryptKeyStretching;
 import org.concordion.api.extension.Extensions;
