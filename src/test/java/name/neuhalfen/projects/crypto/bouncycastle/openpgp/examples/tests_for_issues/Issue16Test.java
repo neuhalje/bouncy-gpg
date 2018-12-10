@@ -87,7 +87,7 @@ public class Issue16Test {
       final Instant dateOfTimestampVerification)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
     final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
-        StandardCharsets.US_ASCII);
+        "US-ASCII");
 
     byte[] bytes;
     try (
@@ -110,7 +110,7 @@ public class Issue16Test {
       bytes = byteOutput.toByteArray();
     }
 
-    final String ciphertext = new String(bytes, StandardCharsets.US_ASCII);
+    final String ciphertext = new String(bytes, "US-ASCII");
     System.out.println(
         "Key expiration check for " + dateOfTimestampVerification.toString() + ", encrypted to '"
             + recipientUid + "', and signed by '" + signingUid
@@ -159,7 +159,7 @@ public class Issue16Test {
       long expectedSignatureKey)
       throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
     final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
-        StandardCharsets.US_ASCII);
+        "US-ASCII");
 
     byte[] bytes;
     try (
@@ -201,7 +201,7 @@ public class Issue16Test {
       Streams.pipeAll(plaintextStream, bufferedOut);
     }
 
-    assertEquals(ExampleMessages.IMPORTANT_QUOTE_TEXT, output.toString(StandardCharsets.US_ASCII));
+    assertEquals(ExampleMessages.IMPORTANT_QUOTE_TEXT, output.toString("US-ASCII"));
   }
 
 

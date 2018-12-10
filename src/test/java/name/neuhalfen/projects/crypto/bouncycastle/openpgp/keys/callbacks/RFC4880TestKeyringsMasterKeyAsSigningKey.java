@@ -114,14 +114,14 @@ ssb* rsa2048/0x8FC7643A745538BF
 
   public static KeyringConfig publicKeyOnlyKeyringConfig() throws IOException, PGPException {
     final InMemoryKeyring keyring = newKeyring();
-    keyring.addPublicKey(PUBLIC_KEY.getBytes(StandardCharsets.US_ASCII));
+    keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
     return keyring;
   }
 
   public static KeyringConfig publicAndPrivateKeyKeyringConfig() throws IOException, PGPException {
     final InMemoryKeyring keyring = newKeyring();
-    keyring.addPublicKey(PUBLIC_KEY.getBytes(StandardCharsets.US_ASCII));
-    keyring.addSecretKey(PRIVATE_KEY.getBytes(StandardCharsets.US_ASCII));
+    keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
+    keyring.addSecretKey(PRIVATE_KEY.getBytes("US-ASCII"));
     return keyring;
   }
 

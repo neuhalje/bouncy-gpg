@@ -63,7 +63,7 @@ public class DecryptionStreamFactoryTest {
     res.close();
     plainTextInputStream.close();
 
-    String decrypted = res.toString(StandardCharsets.US_ASCII);
+    String decrypted = res.toString("US-ASCII");
     return decrypted;
   }
 
@@ -77,7 +77,7 @@ public class DecryptionStreamFactoryTest {
 
     InputStream in = spy(
         new ByteArrayInputStream(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes(
-            StandardCharsets.US_ASCII)));
+            "US-ASCII")));
 
     final InputStream decryptAndVerify = sut.wrapWithDecryptAndVerify(in);
     decryptAndVerify.close();
@@ -92,7 +92,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_NOT_COMPRESSED.getBytes(
-        StandardCharsets.US_ASCII),
+        "US-ASCII"),
         config, SignatureValidationStrategies.ignoreSignatures());
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
   }
@@ -104,7 +104,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes(
-        StandardCharsets.US_ASCII), config,
+        "US-ASCII"), config,
         SignatureValidationStrategies.requireAnySignature());
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
   }
@@ -116,7 +116,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     String decryptedQuote = decrypt(
-        IMPORTANT_QUOTE_SIGNED_UNKNOWN_KEY_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+        IMPORTANT_QUOTE_SIGNED_UNKNOWN_KEY_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.ignoreSignatures());
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
   }
@@ -128,7 +128,7 @@ public class DecryptionStreamFactoryTest {
 
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-    decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+    decrypt(IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.requireAnySignature());
   }
 
@@ -138,7 +138,7 @@ public class DecryptionStreamFactoryTest {
 
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-    decrypt(IMPORTANT_QUOTE_SIGNED_UNKNOWN_KEY_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+    decrypt(IMPORTANT_QUOTE_SIGNED_UNKNOWN_KEY_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.requireAnySignature());
   }
 
@@ -148,7 +148,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     final String decryptedQuote = decrypt(
-        IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+        IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.ignoreSignatures());
 
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -162,7 +162,7 @@ public class DecryptionStreamFactoryTest {
     final DecryptionStreamFactory sut = DecryptionStreamFactory
         .create(config, SignatureValidationStrategies.requireAnySignature());
 
-    byte[] buf = IMPORTANT_QUOTE_SIGNED_NOT_COMPRESSED.getBytes(StandardCharsets.US_ASCII);
+    byte[] buf = IMPORTANT_QUOTE_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII");
 
     // tamper
     buf[666]++;
@@ -178,7 +178,7 @@ public class DecryptionStreamFactoryTest {
       throws IOException, SignatureException, NoSuchAlgorithmException {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-    decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+    decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies
             .requireSignatureFromAllKeys(ExampleMessages.PUBKEY_ID_RECIPIENT));
   }
@@ -188,7 +188,7 @@ public class DecryptionStreamFactoryTest {
       throws IOException, SignatureException, NoSuchAlgorithmException {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-    decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+    decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies
             .requireSignatureFromAllKeys(ExampleMessages.PUBKEY_ID_RECIPIENT));
   }
@@ -199,7 +199,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes(
-        StandardCharsets.US_ASCII),
+        "US-ASCII"),
         config,
         SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.KEY_ID_SENDER));
 
@@ -211,7 +211,7 @@ public class DecryptionStreamFactoryTest {
       throws IOException, SignatureException, NoSuchAlgorithmException {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-    decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+    decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.KEY_ID_SENDER,
             ExampleMessages.EY_ID_ANOTHER_SENDER));
   }
@@ -222,7 +222,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     final String decryptedQuote = decrypt(
-        IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes(StandardCharsets.US_ASCII), config,
+        IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.KEY_ID_SENDER,
             ExampleMessages.KEY_ID_SENDER_2));
 
@@ -236,7 +236,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     final String decryptedQuote = decrypt(
-        IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+        IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.KEY_ID_SENDER));
 
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -247,7 +247,7 @@ public class DecryptionStreamFactoryTest {
       throws IOException, SignatureException {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
-    decrypt(IMPORTANT_QUOTE_NOT_ENCRYPTED_TO_ME.getBytes(StandardCharsets.US_ASCII), config,
+    decrypt(IMPORTANT_QUOTE_NOT_ENCRYPTED_TO_ME.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.ignoreSignatures());
   }
 
@@ -257,7 +257,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     final String decryptedQuote = decrypt(
-        IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+        IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.requireAnySignature());
 
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -269,7 +269,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     final String decryptedQuote = decrypt(
-        IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+        IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.KEY_ID_SENDER));
 
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -281,7 +281,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     final String decryptedQuote = decrypt(
-        IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+        IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.ignoreSignatures());
 
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -293,7 +293,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes(
-        StandardCharsets.US_ASCII),
+        "US-ASCII"),
         config, SignatureValidationStrategies.ignoreSignatures());
 
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -305,7 +305,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     final String decryptedQuote = decrypt(IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes(
-        StandardCharsets.US_ASCII),
+        "US-ASCII"),
         config, SignatureValidationStrategies.requireAnySignature());
 
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -317,7 +317,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     final String decryptedQuote = decrypt(
-        IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+        IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.requireAnySignature());
 
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
@@ -329,7 +329,7 @@ public class DecryptionStreamFactoryTest {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
     final String decryptedQuote = decrypt(
-        IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+        IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.requireAnySignature());
 
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));

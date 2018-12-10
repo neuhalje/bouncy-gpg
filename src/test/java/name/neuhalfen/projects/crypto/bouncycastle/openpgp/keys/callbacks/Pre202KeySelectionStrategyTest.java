@@ -143,7 +143,7 @@ public class Pre202KeySelectionStrategyTest {
     KeySelectionStrategy sut = new Pre202KeySelectionStrategy();
 
     final String decryptedQuote = decrypt(
-        IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes(StandardCharsets.US_ASCII), config,
+        IMPORTANT_QUOTE_SIGNED_MULTIPLE_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies
             .requireSignatureFromAllKeys(sut, config, "sender@example.com"));
 
@@ -157,7 +157,7 @@ public class Pre202KeySelectionStrategyTest {
     KeySelectionStrategy sut = new Pre202KeySelectionStrategy();
 
     final String decryptedQuote = decrypt(
-        IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes(StandardCharsets.US_ASCII), config,
+        IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY.getBytes("US-ASCII"), config,
         SignatureValidationStrategies
             .requireSignatureFromAllKeys(sut, config, "sender@example.com",
                 "sender2@example.com"));
@@ -195,7 +195,7 @@ public class Pre202KeySelectionStrategyTest {
     res.close();
     plainTextInputStream.close();
 
-    String decrypted = res.toString(StandardCharsets.US_ASCII);
+    String decrypted = res.toString("US-ASCII");
     return decrypted;
   }
 

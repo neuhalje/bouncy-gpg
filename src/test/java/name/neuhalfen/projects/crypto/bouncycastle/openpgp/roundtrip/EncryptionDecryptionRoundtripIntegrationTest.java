@@ -64,7 +64,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
   public void encryptAndSignArmored_thenDecryptAndVerify_yieldsOriginalPlaintext()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
     final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
-        StandardCharsets.US_ASCII);
+        "US-ASCII");
 
     ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
 
@@ -100,7 +100,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
   public void encryptAndSignBinary_thenDecryptAndVerify_yieldsOriginalPlaintext()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
     final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
-        StandardCharsets.US_ASCII);
+        "US-ASCII");
 
     ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
 
@@ -136,7 +136,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
   public void encryptAndSignBinaryWithSHA256_AES256_thenDecryptAndVerify_yieldsOriginalPlaintext()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
     final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
-        StandardCharsets.US_ASCII);
+        "US-ASCII");
 
     ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
 
@@ -173,7 +173,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
   public void encryptAndSignWithDSA_thenDecryptAndVerify_yieldsOriginalPlaintext()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
     final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
-        StandardCharsets.US_ASCII);
+        "US-ASCII");
 
     ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
 
@@ -209,7 +209,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
   public void encryptBinary_thenDecrypt_yieldsOriginalPlaintext()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
     final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
-        StandardCharsets.US_ASCII);
+        "US-ASCII");
 
     ByteArrayOutputStream cipherText = new ByteArrayOutputStream();
 

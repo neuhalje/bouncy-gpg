@@ -79,7 +79,7 @@ public class BuildDecryptionInputStreamAPITest {
   @Test()
   public void decryptAndValidateSignature_withGoodSettings_works() throws Exception {
     try (InputStream ciphertext = new ByteArrayInputStream(
-        ExampleMessages.IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes(StandardCharsets.US_ASCII))) {
+        ExampleMessages.IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"))) {
       final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
           .withConfig(Configs.keyringConfigFromResourceForRecipient())
           .andRequireSignatureFromAllKeys("sender@example.com")
@@ -98,7 +98,7 @@ public class BuildDecryptionInputStreamAPITest {
 
     try (InputStream ciphertext = new ByteArrayInputStream(
         ExampleMessages.IMPORTANT_QUOTE_SIGNED_BY_SIGN_ONLY_DSA_KEY.getBytes(
-            StandardCharsets.US_ASCII))) {
+            "US-ASCII"))) {
       final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
           .withConfig(Configs.keyringConfigFromResourceForRecipient())
           .andRequireSignatureFromAllKeys("sender.signonly@example.com")
@@ -116,7 +116,7 @@ public class BuildDecryptionInputStreamAPITest {
       throws Exception {
 
     try (InputStream ciphertext = new ByteArrayInputStream(
-        ExampleMessages.IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes(StandardCharsets.US_ASCII))) {
+        ExampleMessages.IMPORTANT_QUOTE_SIGNED_COMPRESSED.getBytes("US-ASCII"))) {
       final String uidThatDidNotSignMessage = "sender.signonly@example.com";
       final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
           .withConfig(Configs.keyringConfigFromResourceForRecipient())
@@ -135,7 +135,7 @@ public class BuildDecryptionInputStreamAPITest {
 
     try (InputStream ciphertext = new ByteArrayInputStream(
         ExampleMessages.IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes(
-            StandardCharsets.US_ASCII))) {
+            "US-ASCII"))) {
       final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
           .withConfig(Configs.keyringConfigFromResourceForRecipient())
           .andIgnoreSignatures()
@@ -153,7 +153,7 @@ public class BuildDecryptionInputStreamAPITest {
 
     try (InputStream ciphertext = new ByteArrayInputStream(
         ExampleMessages.IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes(
-            StandardCharsets.US_ASCII))) {
+            "US-ASCII"))) {
       final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
           .withConfig(Configs.keyringConfigFromResourceForRecipient())
           .andRequireSignatureFromAllKeys("sender@example.com")

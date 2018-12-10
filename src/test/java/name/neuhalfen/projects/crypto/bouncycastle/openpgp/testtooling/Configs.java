@@ -88,15 +88,15 @@ public class Configs {
     final InMemoryKeyring keyring = KeyringConfigs.forGpgExportedKeys(
         KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
 
-    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER.getBytes(StandardCharsets.US_ASCII));
-    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_2.getBytes(StandardCharsets.US_ASCII));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER.getBytes("US-ASCII"));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_2.getBytes("US-ASCII"));
     keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_DSA_SIGN_ONLY.getBytes(
-        StandardCharsets.US_ASCII));
-    keyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes(StandardCharsets.US_ASCII));
+        "US-ASCII"));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes("US-ASCII"));
 
-    keyring.addSecretKey(ExampleMessages.SECRET_KEY_SENDER.getBytes(StandardCharsets.US_ASCII));
+    keyring.addSecretKey(ExampleMessages.SECRET_KEY_SENDER.getBytes("US-ASCII"));
     keyring.addSecretKey(ExampleMessages.SECRET_KEY_SENDER_DSA_SIGN_ONLY.getBytes(
-        StandardCharsets.US_ASCII));
+        "US-ASCII"));
 
     return keyring;
   }
@@ -106,13 +106,13 @@ public class Configs {
     final InMemoryKeyring keyring = KeyringConfigs.forGpgExportedKeys(
         KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
 
-    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER.getBytes(StandardCharsets.US_ASCII));
-    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_2.getBytes(StandardCharsets.US_ASCII));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER.getBytes("US-ASCII"));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_2.getBytes("US-ASCII"));
     keyring.addPublicKey(ExampleMessages.PUBKEY_SENDER_DSA_SIGN_ONLY.getBytes(
-        StandardCharsets.US_ASCII));
-    keyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes(StandardCharsets.US_ASCII));
+        "US-ASCII"));
+    keyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes("US-ASCII"));
 
-    keyring.addSecretKey(ExampleMessages.SECRET_KEY_RECIPIENT.getBytes(StandardCharsets.US_ASCII));
+    keyring.addSecretKey(ExampleMessages.SECRET_KEY_RECIPIENT.getBytes("US-ASCII"));
 
     return keyring;
   }

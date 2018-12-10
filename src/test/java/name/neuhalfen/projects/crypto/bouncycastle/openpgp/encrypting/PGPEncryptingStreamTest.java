@@ -46,7 +46,7 @@ public class PGPEncryptingStreamTest {
   public void closing_is_idempotent()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
     final byte[] expectedPlaintext = ExampleMessages.IMPORTANT_QUOTE_TEXT.getBytes(
-        StandardCharsets.US_ASCII);
+        "US-ASCII");
 
     try (
         final ByteArrayInputStream is = new ByteArrayInputStream(expectedPlaintext);

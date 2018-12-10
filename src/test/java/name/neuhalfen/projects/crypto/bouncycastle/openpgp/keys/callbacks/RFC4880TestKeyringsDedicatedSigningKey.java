@@ -359,7 +359,7 @@ ssb  rsa2048/0x83063C3DA3814052
 
     try {
       final InMemoryKeyring keyring = newKeyring();
-      keyring.addPublicKey(PUBLIC_KEY.getBytes(StandardCharsets.US_ASCII));
+      keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
       return keyring;
     } catch (Exception e) {
       throw new AssertionError("Failed to initialise test keyring", e);
@@ -370,8 +370,8 @@ ssb  rsa2048/0x83063C3DA3814052
   public static KeyringConfig publicAndPrivateKeyKeyringConfig() {
     try {
       final InMemoryKeyring keyring = newKeyring();
-      keyring.addPublicKey(PUBLIC_KEY.getBytes(StandardCharsets.US_ASCII));
-      keyring.addSecretKey(PRIVATE_KEY.getBytes(StandardCharsets.US_ASCII));
+      keyring.addPublicKey(PUBLIC_KEY.getBytes("US-ASCII"));
+      keyring.addSecretKey(PRIVATE_KEY.getBytes("US-ASCII"));
       return keyring;
     } catch (Exception e) {
       throw new AssertionError("Failed to initialise test keyring", e);
