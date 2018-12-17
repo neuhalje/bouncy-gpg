@@ -33,6 +33,7 @@ import org.junit.Test;
  *
  * In the end would be awesome have an option to KeySelectionStrategy such as:
  *
+ * <pre><code>
  * byte[] myOwnPrivateKey = DB.getMyPrivateKey();
  * byte[] customerPublicKey = DB.getCustomerPrivateKey();
  *
@@ -42,8 +43,9 @@ import org.junit.Test;
  * .andSignWith(myOwnPrivateKey)
  * .armorAsciiOutput()
  * .andWriteTo(buffer);
+ *</code></pre>
  *
- * https://github.com/neuhalje/bouncy-gpg/issues/26
+ * <a href="https://github.com/neuhalje/bouncy-gpg/issues/26">https://github.com/neuhalje/bouncy-gpg/issues/26</a>
  */
 public class CustomKeySelectionStrategyTest {
 

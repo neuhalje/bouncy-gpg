@@ -102,17 +102,78 @@ public final class BuildEncryptionOutputStreamAPI {
 
   public interface WithAlgorithmSuite {
 
+    /**
+     * <p>The (older) default suite for gpg.:
+     * <dl>
+     * <dt>hash</dt><dd>SHA-1</dd>
+     * <dt>chipher</dt><dd>CAST 5</dd>
+     * <dt>compression</dt><dd>ZLIB</dd>
+     * </ul>
+     * </p><p>
+     * <b>Only recommended if {@link #withStrongAlgorithms()} cannot be used.</b>
+     * </p>
+     *
+     * @return next step
+     */
     To withDefaultAlgorithms();
 
+    /**
+     * <p>Use a strong suite of algorithms that is understood by gpg.</p>
+     * <p>It is a sensible suite with strong algorithms:
+     * <dl>
+     * <dt>hash</dt><dd>SHA-256</dd>
+     * <dt>chipher</dt><dd>AES-128</dd>
+     * <dt>compression</dt><dd>ZLIB</dd>
+     * </ul>
+     * </p>
+     * <p>This is <b>recommended</b> over {@link #withDefaultAlgorithms()}.</p>
+     *
+     * @return next step
+     */
     To withStrongAlgorithms();
 
+    /**
+     * Use a custom algorithm set.
+     *
+     * @return next step
+     *
+     * @see DefaultPGPAlgorithmSuites
+     */
     To withAlgorithms(PGPAlgorithmSuite algorithmSuite);
 
     @SuppressWarnings("PMD.ShortClassName")
     interface To {
 
+      /**
+       * <p>Encrypt to the following recipient.</p>
+       * <p>The meaning of {@see recipient} changes with how the {@link KeySelectionStrategy} is
+       * configured. Specifically the call to {@link WithKeySelectionStrategy#selectUidByAnyUidPart}
+       * will change the way key selection is done.
+       * </p>
+       *
+       * @param recipient The single recipients UID (e.g. email address)
+       *
+       * @return the next step
+       *
+       * @see KeySelectionStrategy
+       * @see WithKeySelectionStrategy
+       */
       SignWith toRecipient(String recipient) throws PGPException;
 
+      /**
+       * <p>Encrypt to the following recipients (multiple).</p>
+       * <p>The meaning of {@see recipients} changes with how the {@link KeySelectionStrategy} is
+       * configured. Specifically the call to {@link WithKeySelectionStrategy#selectUidByAnyUidPart}
+       * will change the way key selection is done.
+       * </p>
+       *
+       * @param recipients The recipients UIDs (e.g. email address)
+       *
+       * @return the next step
+       *
+       * @see KeySelectionStrategy
+       * @see WithKeySelectionStrategy
+       */
       SignWith toRecipients(String... recipients) throws PGPException;
 
       interface SignWith {

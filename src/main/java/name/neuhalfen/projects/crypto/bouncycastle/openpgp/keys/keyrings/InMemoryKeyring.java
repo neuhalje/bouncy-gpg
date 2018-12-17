@@ -39,11 +39,21 @@ public final class InMemoryKeyring implements KeyringConfig {
   }
 
   /**
-   * Add a new public keyring to the public keyrings. . Can read the result of "gpg --export" and
-   * "gpg --export -a keyid" . E.g.  "gpg --export -a keyid": addPublicKey("-----BEGIN PGP PUBLIC
-   * KEY BLOCK----- ....".getBytes("US-ASCII")
+   * <p>Add a new public keyring to the public keyrings. . Can read the result of {@code gpg
+   * --export} and
+   * {@code gpg --export -a keyid}.</p>
    *
-   * @param encodedPublicKey the key ascii armored or binary
+   * <p>
+   * E.g. for "{@code gpg --export -a keyid}":
+   *
+   * <pre><code>
+   * addPublicKey(
+   * "-----BEGIN PGP PUBLIC KEY BLOCK----- ...."
+   * .getBytes("US-ASCII");
+   * </code></pre>
+   * </p>
+   *
+   * @param encodedPublicKey the public key
    *
    * @throws IOException IO is dangerous
    * @throws PGPException E.g. this is nor a valid key
@@ -64,12 +74,23 @@ public final class InMemoryKeyring implements KeyringConfig {
 
 
   /**
-   * Add a new secret keyring to the public keyrings. . Can read the result of "gpg --export" and
-   * "gpg --export -a keyid" . E.g. "gpg --export-secret-key -a keyid": addSecretKey("-----BEGIN PGP
-   * PRIVATE KEY BLOCK----- ....".getBytes("US-ASCII") <p> The password is queried via the callback
+   * <p>Add a new secret keyring to the public keyrings.</p>
+   * <p>
+   * Can read the result of "{@code gpg --export}" and
+   * 2{@code gpg --export -a keyid}".</p>
+   *
+   * <p>E.g. "{@code gpg --export-secret-key -a keyid}":
+   * <pre><code>
+   * addSecretKey("-----BEGIN PGP PRIVATE KEY BLOCK----- ...."
+   * .getBytes("US-ASCII")
+   * </code></pre>
+   * </p>
+   * <p> The password is queried via the callback
    * (decryptionSecretKeyPassphraseForSecretKeyId).
    *
-   * @param encodedPrivateKey the key ascii armored or binary
+   * </p>
+   *
+   * @param encodedPrivateKey the key, either ascii armored or binary
    *
    * @throws IOException IO is dangerous
    * @throws PGPException E.g. this is nor a valid key
