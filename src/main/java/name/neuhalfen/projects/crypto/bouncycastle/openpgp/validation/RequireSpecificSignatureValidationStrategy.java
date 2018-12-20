@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation;
 
 
 import static java.util.Objects.requireNonNull;
+import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignatureValidationHelper.knownKeysWithGoodSignatures;
 
 import java.io.IOException;
 import java.security.SignatureException;
@@ -9,10 +10,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.validation.SignaturesMissingException.SetSemantics;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPOnePassSignature;
-import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureList;
 
 final class RequireSpecificSignatureValidationStrategy implements SignatureValidationStrategy {
@@ -41,14 +42,10 @@ final class RequireSpecificSignatureValidationStrategy implements SignatureValid
     requireNonNull(onePassSignatures, "onePassSignatures must not be null");
 
     // verify the signature
-    final PGPSignatureList signatureList = (PGPSignatureList) factory.nextObject();
+    final PGPSignatureList signatureList = extractPgpSignatures(factory);
 
-    if (signatureList == null || signatureList.isEmpty()) {
-      // This statement is not reached in normal flow
-      // because decryption errs first when it does not find
-      // the one pass signature before the data object.
-      throw new PGPException("No signatures found!");
-    }
+    final Set<Long> keysWithGoodSignatures = knownKeysWithGoodSignatures(onePassSignatures,
+        signatureList);
 
     // This is a bucket list of needed signatures. If we find a valid signature
     // we remove it from the bucket list. If all signatures are checked and the bucket list is
@@ -56,45 +53,38 @@ final class RequireSpecificSignatureValidationStrategy implements SignatureValid
     // all the keys for which we needed a signature but didn't get.
     final Set<Long> signaturesRequiredForTheseKeysCheckList = new HashSet<>(
         signaturesRequiredForTheseKeys);
-
-    for (final PGPSignature messageSignature : signatureList) {
-      final PGPOnePassSignature ops = onePassSignatures.get(messageSignature.getKeyID());
-
-      final boolean isHasPubKeyForSignature = ops != null;
-      if (isHasPubKeyForSignature) {
-        final boolean isThisSignatureGood = ops.verify(messageSignature); // NOPMD : Demeter
-
-        if (isThisSignatureGood) {
-          LOGGER.debug(
-              "Successful validated signature with key 0x{} because we have no matching public key",
-              Long.toHexString(messageSignature.getKeyID()));
-          // A valid signature: cross out from bucket list
-          signaturesRequiredForTheseKeysCheckList.remove(messageSignature.getKeyID());
-        }
-      } else {
-        LOGGER.debug(
-            "Could not validated signature with key 0x{} because we have no matching public key",
-            Long.toHexString(messageSignature.getKeyID()));
-      }
-    }
+    signaturesRequiredForTheseKeysCheckList.removeAll(keysWithGoodSignatures);
 
     final boolean successfullyVerified = signaturesRequiredForTheseKeysCheckList.isEmpty();
 
     if (successfullyVerified) {
       LOGGER.debug("Signature verification success");
     } else {
-      final StringBuilder missingSignatures = new StringBuilder();
-      for (final Long key : signaturesRequiredForTheseKeysCheckList) {
-        if (missingSignatures.length() != 0) {
-          missingSignatures.append(", ");
-        }
-        missingSignatures.append("0x");
-        missingSignatures.append(Long.toHexString(key));
-      }
-      throw new SignatureException(
-          "Signature verification failed! The following signatures (from keys) could not be verified: "
-              + missingSignatures.toString());
+      throw createMissingSignaturesException(signaturesRequiredForTheseKeysCheckList);
     }
+  }
+
+  private PGPSignatureList extractPgpSignatures(final PGPObjectFactory factory)
+      throws IOException, SignaturesMissingException {
+    final PGPSignatureList signatureList = (PGPSignatureList) factory.nextObject();
+
+    if (signatureList == null || signatureList.isEmpty()) {
+      // This statement is not reached in normal flow
+      // because decryption errs first when it does not find
+      // the one pass signature before the data object.
+      throw createMissingSignaturesException(signaturesRequiredForTheseKeys);
+    }
+    return signatureList;
+  }
+
+
+  private SignaturesMissingException createMissingSignaturesException(Set<Long> missingForKeyIds) {
+    return new SignaturesMissingException(
+        "Signature verification failed because all of the following signatures "
+            + "(by keyId) are missing.",
+        SignaturesMissingException.MissingSignature.fromKeyIds( //NOPMD: Demeter
+            missingForKeyIds),
+        SetSemantics.ALL_SIGNATURES_MISSING);
   }
 
   @Override

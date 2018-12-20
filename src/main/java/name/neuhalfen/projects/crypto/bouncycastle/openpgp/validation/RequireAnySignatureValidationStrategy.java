@@ -63,7 +63,8 @@ final class RequireAnySignatureValidationStrategy implements SignatureValidation
     if (successfullyVerified) {
       LOGGER.debug("Signature verification success");
     } else {
-      throw new SignatureException("Signature verification failed!");
+      throw new SignaturesMissingException(
+          "Signature verification failed because at least one verifiable signature is needed");
     }
   }
 
