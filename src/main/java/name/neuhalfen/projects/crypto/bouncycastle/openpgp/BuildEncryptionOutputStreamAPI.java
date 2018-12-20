@@ -103,29 +103,27 @@ public final class BuildEncryptionOutputStreamAPI {
   public interface WithAlgorithmSuite {
 
     /**
-     * <p>The (older) default suite for gpg.:
+     * The (older) default suite for gpg.:
      * <dl>
      * <dt>hash</dt><dd>SHA-1</dd>
      * <dt>chipher</dt><dd>CAST 5</dd>
      * <dt>compression</dt><dd>ZLIB</dd>
-     * </ul>
-     * </p><p>
-     * <b>Only recommended if {@link #withStrongAlgorithms()} cannot be used.</b>
-     * </p>
+     * </dl>
+     *
+     * <p><b>Only recommended if {@link #withStrongAlgorithms()} cannot be used.</b></p>
      *
      * @return next step
      */
     To withDefaultAlgorithms();
 
     /**
-     * <p>Use a strong suite of algorithms that is understood by gpg.</p>
-     * <p>It is a sensible suite with strong algorithms:
+     * Use a strong suite of algorithms that is understood by gpg.
+     * It is a sensible suite with strong algorithms:
      * <dl>
      * <dt>hash</dt><dd>SHA-256</dd>
      * <dt>chipher</dt><dd>AES-128</dd>
      * <dt>compression</dt><dd>ZLIB</dd>
-     * </ul>
-     * </p>
+     * </dl>
      * <p>This is <b>recommended</b> over {@link #withDefaultAlgorithms()}.</p>
      *
      * @return next step
@@ -134,6 +132,8 @@ public final class BuildEncryptionOutputStreamAPI {
 
     /**
      * Use a custom algorithm set.
+     *
+     * @param algorithmSuite algorithm suite to use
      *
      * @return next step
      *
@@ -146,7 +146,7 @@ public final class BuildEncryptionOutputStreamAPI {
 
       /**
        * <p>Encrypt to the following recipient.</p>
-       * <p>The meaning of {@see recipient} changes with how the {@link KeySelectionStrategy} is
+       * <p>The meaning of 'recipient' changes with how the {@link KeySelectionStrategy} is
        * configured. Specifically the call to {@link WithKeySelectionStrategy#selectUidByAnyUidPart}
        * will change the way key selection is done.
        * </p>
@@ -157,12 +157,13 @@ public final class BuildEncryptionOutputStreamAPI {
        *
        * @see KeySelectionStrategy
        * @see WithKeySelectionStrategy
+       * @throws PGPException e.g. recipient could not be found
        */
       SignWith toRecipient(String recipient) throws PGPException;
 
       /**
        * <p>Encrypt to the following recipients (multiple).</p>
-       * <p>The meaning of {@see recipients} changes with how the {@link KeySelectionStrategy} is
+       * <p>The meaning of 'recipients' changes with how the {@link KeySelectionStrategy} is
        * configured. Specifically the call to {@link WithKeySelectionStrategy#selectUidByAnyUidPart}
        * will change the way key selection is done.
        * </p>
@@ -173,19 +174,42 @@ public final class BuildEncryptionOutputStreamAPI {
        *
        * @see KeySelectionStrategy
        * @see WithKeySelectionStrategy
+       * @throws  PGPException e.g. recipients could not be found
        */
       SignWith toRecipients(String... recipients) throws PGPException;
 
       interface SignWith {
 
+        /**
+         * Sign the message with the following user id. The key used will be sought by the
+         * key selection strategy.
+         *
+         * @param userId sign with this userid
+         * @return next step
+         * @throws IOException  IO is dangerous
+         * @throws PGPException  Something with GPG went wrong (e.g. key not found)
+         */
         Armor andSignWith(String userId) throws IOException, PGPException;
 
+        /**
+         * Do not sign the message.
+         * @return next step
+         */
         Armor andDoNotSign();
 
         interface Armor {
 
+          /**
+           * Write as binary output.
+           *
+           * @return next step
+           */
           Build binaryOutput();
 
+          /**
+           * Ascii armor the output, e.g. for usage in text protocols.
+           * @return next step
+           */
           Build armorAsciiOutput();
         }
       }
