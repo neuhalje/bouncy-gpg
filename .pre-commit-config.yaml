@@ -1,0 +1,12 @@
+exclude: '^$'
+fail_fast: true
+repos:
+-   repo: https://github.com/neuhalje/pre-commit-gradle.git
+    rev: v0.0.1
+    hooks:
+    -   id: gradle-check
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.0.0
+    hooks:
+    -   id: trailing-whitespace
+        exclude_types: ['java', 'groovy' ]
