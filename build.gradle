@@ -2,6 +2,9 @@ buildscript {
     repositories {
         jcenter()
     }
+    dependencies {
+        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.1.0'
+    }
 }
 
 plugins {
@@ -133,3 +136,6 @@ apply from: 'website.gradle'
 wrapper{
     gradleVersion = '4.10.2'
 }
+
+// Generate OSGI bundle metadata
+apply plugin: 'biz.aQute.bnd.builder'
