@@ -2,7 +2,7 @@ Maven Example
 ================
 
 - `settings.xml` activates JCenter (if not already enabled -- see https://maven.apache.org/settings.html)
- 
+
 
 Running
 ==========

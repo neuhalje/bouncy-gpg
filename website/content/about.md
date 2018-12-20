@@ -4,8 +4,8 @@ date = "2017-10-10"
 menu = "main"
 +++
 
-Cryptography is a powerful tool to implement some very tricky business requirements. 
-Requirement that include the words _confidentiality_,  _integrity_, or _availability_ are very likely to have efficient and effective solutions that leverage cryptography. 
+Cryptography is a powerful tool to implement some very tricky business requirements.
+Requirement that include the words _confidentiality_,  _integrity_, or _availability_ are very likely to have efficient and effective solutions that leverage cryptography.
 
 These requirements have many sources, and cryptography is not always the obvious answer. Here are some use cases that show how cryptography can help to solve problems seemingly unrelated to cryptography:
 

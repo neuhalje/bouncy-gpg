@@ -53,7 +53,7 @@ Creating a key by using a secure random number generator:
 graph LR;
     SRNG[fa:fa-cog Secure Random Number Generator] -->  K(fa:fa-key Key)
     K -.-> AES[fa:fa-cog AES]
-    
+
     classDef dotted_border stroke-width:2,stroke-dasharray:2,4;
     class AES dotted_border
 {{< /mermaid >}}
@@ -66,7 +66,7 @@ graph LR;
     IKM --> KDF[fa:fa-cog Key Derivation Function]
     KDF --> K(fa:fa-key Key)
     K -.-> AES[fa:fa-cog AES]
-    
+
     classDef dotted_border stroke-width:2,stroke-dasharray:2,4;
     class SourceProcess,AES dotted_border
 {{< /mermaid >}}
@@ -78,7 +78,7 @@ The words _password_ and _cryptographic key_ are often used interchangeably, alt
 
 A _password_ is a sequence of characters of often arbitrary length. A _cryptographic key_ is a binary object that has an algorithm specific structure to it.
 
-Passwords can be transformed into keys by applying a [password based key derivation functions](passwords/). 
+Passwords can be transformed into keys by applying a [password based key derivation functions](passwords/).
 Providing a _salt_ value is highly recommended as it prevents pre-computation, and more importantly different salts generate different keys for the same password.
 
 {{<mermaid align="left">}}
@@ -107,10 +107,10 @@ graph LR;
     MK(fa:fa-key  Masterkey) --> KDF[fa:fa-cog Key Derivation Function]
     KeyID(Key identifier) --> KDF
     S(Salt) -. optional .-> KDF
-    
+
     KDF --> nonce(fa:fa-key Nonce)
     KDF --> SK(fa:fa-key Subkey)
-    
+
     SK -.-> AES[fa:fa-cog AES]
     nonce -.-> AES
 

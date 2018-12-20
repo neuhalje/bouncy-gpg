@@ -67,7 +67,7 @@ The encrypted message is then decrypted and the signature is verified. (This is 
     ) {
       Streams.pipeAll(is, outputStream);
     // It is very important that outputStream is closed before the result stream is read.
-    // The reason is that GPG writes the signature at the end of the stream. 
+    // The reason is that GPG writes the signature at the end of the stream.
     // This is triggered by closing the stream.
     // In this example outputStream is closed via the try-with-resources mechanism of Java
     }
@@ -134,7 +134,7 @@ Uses the testing keys to decrypt a file. Useful for performance measurements and
 
 Encrypt and sign a file.
 
-* `encrypt.sh  SOURCEFILE DESTFILE` 
+* `encrypt.sh  SOURCEFILE DESTFILE`
 
 Uses the testing keys to encrypt a file. Useful for performance measurements and `gpg` interoperability.
 
@@ -189,14 +189,14 @@ Add bouncy castle as a dependency and then install the provider before in your a
 // build.gradle
 // in build.gradle add a dependency to bouncy castle and bouncy-gpg
 
-//... 
+//...
 
 repositories {
     mavenCentral()
     jcenter()
 }
 
-//... 
+//...
 
 //  ...
 dependencies {
@@ -230,7 +230,7 @@ and this dependency snippet:
         <version>2.1.1</version>
     </dependency>
 ```
-   
+  
 ### Install Provider
 
 ```java
@@ -270,19 +270,19 @@ FAQ
 
    <dt>How can I contribute?</dt>
    <dd>Pullrequests are welcome! Please state in your PR that you put your code under the LICENSE.</dd>
-   
+
    <dt>I am getting 'org.bouncycastle.openpgp.PGPException: checksum mismatch ..' exceptions</dt>
    <dd>The passphrase to your private key is very likely wrong (or you did not pass a passphrase).</dd>
-   
+
    <dt>I am getting 'java.security.InvalidKeyException: Illegal key size' / 'java.lang.SecurityException: Unsupported keysize or algorithm parameters'</dt>
    <dd>The unrestricted policy files for the JVM are <a href="http://www.bouncycastle.org/wiki/display/JA1/Frequently+Asked+Questions">probably not installed</a>.</dd>
-   
+
    <dt>I am getting 'java.io.EOFException: premature end of stream in PartialInputStream' while decrypting / Sender can't validate signature</dt>
    <dd>This often happens when encrypting to a 'ByteArrayOutputStream' and the <a href="https://stackoverflow.com/questions/48870074/bouncy-castle-pgp-premature-end-of-stream-in-partialinputstream/49544870#49544870">encryption stream is not propely closed</a>. The reason is that GPG writes the signature at the end of the stream. This is triggered by closing the stream.</dd>
 
    <dt>Where is 'secring.pgp'?</dt>
    <dd>'secring.gpg' has been <a href="https://gnupg.org/faq/whats-new-in-2.1.html#nosecring">removed in gpg 2.1</a>. Use the other methods to read private keys.</dd>
-   
+
    <dt>Should I <i>use</i> secring.pgp?</dt>
    <dd>No, you should implement your own key handling strategy. See <a href="#using_sec_pubring">On using (sec|pub)ring.gpg</a> below.
 </dl>
@@ -298,10 +298,10 @@ FAQ
 
 Most applications should manage their keys in an application specific database. Though this might seem more complex than just using the existing keyring files it has a some nice advantages:
 
-* No dependency on the `gpg` executable 
+* No dependency on the `gpg` executable
 * Keys can be managed remotely (e.g. via the applications database)
 * Key management is enforced to happen via the application
-* Key management for distributed (_scale out_ / _cloud_) systems is much easier when keys are not managed by the operating system 
+* Key management for distributed (_scale out_ / _cloud_) systems is much easier when keys are not managed by the operating system
 
 ### HOWTO use InMemoryKeyring
 

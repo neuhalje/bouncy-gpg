@@ -41,7 +41,7 @@ The encrypted file is written to `/tmp/encrypted.gpg`.
 final KeyringConfig keyringConfig = KeyringConfigs
    .withKeyRingsFromFiles(
         "pubring.gpg",
-        "secring.gpg", 
+        "secring.gpg",
         KeyringConfigCallbacks.withPassword("s3cr3t"));
 
 try (
@@ -72,7 +72,7 @@ The following snippet decrypts the file created in the snippet above.
 final KeyringConfig keyringConfig = KeyringConfigs
    .withKeyRingsFromFiles(
          "pubring.gpg",
-         "secring.gpg", 
+         "secring.gpg",
          KeyringConfigCallbacks.withPassword("s3cr3t"));
 
 try (
@@ -118,7 +118,7 @@ Uses the testing keys to decrypt a file. Useful for performance measurements and
 
 Encrypt and sign a file.
 
-* `encrypt.sh  SOURCEFILE DESTFILE` 
+* `encrypt.sh  SOURCEFILE DESTFILE`
 
 Uses the testing keys to encrypt a file. Useful for performance measurements and `gpg` interoperability.
 
@@ -172,14 +172,14 @@ Add bouncy castle as a dependency and then install the provider before in your a
 // build.gradle
 // in build.gradle add a dependency to bouncy castle and bouncy-gpg
 
-//... 
+//...
 
 repositories {
     mavenCentral()
     jcenter()
 }
 
-//... 
+//...
 
 //  ...
 dependencies {
@@ -213,7 +213,7 @@ and this dependency snippet:
         <version>2.1.0</version>
     </dependency>
 ```
-   
+  
 ### #2 Install Provider
 
 ```java
@@ -250,10 +250,10 @@ and this dependency snippet:
 
    <dt>How can I contribute?</dt>
    <dd>Pullrequests are welcome! Please state in your PR that you put your code under the LICENSE.</dd>
-   
+
    <dt>I am getting 'org.bouncycastle.openpgp.PGPException: checksum mismatch ..' exceptions</dt>
    <dd>The passphrase to your private key is very likely wrong (or you did not pass a passphrase).</dd>
-   
+
    <dt>I am getting 'java.security.InvalidKeyException: Illegal key size' / 'java.lang.SecurityException: Unsupported keysize or algorithm parameters'</dt>
    <dd>The unrestricted policy files for the JVM are <a href="http://www.bouncycastle.org/wiki/display/JA1/Frequently+Asked+Questions">probably not installed</a>.</dd>
 
@@ -276,7 +276,7 @@ The coverage report (incl. running tests) is generated with `./gradlew check`.
 * Preview: `./gradlew previewWebsite`
 * Publish: `./gradlew publishWebsite`
 
-All [Concordion](https//concordion.org) [specifications](src/test/resources/specs) are executed and the result is copied into `website/content/specification`. 
+All [Concordion](https//concordion.org) [specifications](src/test/resources/specs) are executed and the result is copied into `website/content/specification`.
 
 ## CAVE
 

@@ -29,7 +29,7 @@ graph LR;
     class AES,S dotted_border
 {{< /mermaid >}}
 
-To properly derive a key from a passwords a few aspects are important to consider. 
+To properly derive a key from a passwords a few aspects are important to consider.
 
 
 {{% panel theme="success" header="TL;RD: Recommendation" %}}
@@ -39,7 +39,7 @@ To properly derive a key from a passwords a few aspects are important to conside
 * Always use a key derivation function. _Never_ use input key material without a key derivation function.
 * Use long and complex passwords as key source (128 bit key => 22 characters, 256 bit keys => 44 characters!)
 * Use a random salt value that is as long as the key (128 or 256 bits)
-* Configure the key stretching to be as slow (sic!) as possible 
+* Configure the key stretching to be as slow (sic!) as possible
 {{% /panel %}}
 
 Cryptographic key derivation functions should be used to derive a key from a password (or _any_ other source material).

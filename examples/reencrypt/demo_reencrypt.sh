@@ -11,7 +11,7 @@ DRIVER_CLASS=name.neuhalfen.projects.crypto.bouncycastle.openpgp.example.MainExp
 
 DEST=/tmp/gpg-example-$$
 
-[ -d "${DEST}" ] && rm -rf "${DEST}" 
+[ -d "${DEST}" ] && rm -rf "${DEST}"
 mkdir $DEST || exit 1
 echo Writing results into \"$DEST\"
 

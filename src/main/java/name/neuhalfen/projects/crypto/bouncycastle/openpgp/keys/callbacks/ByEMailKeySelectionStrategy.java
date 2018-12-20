@@ -33,7 +33,7 @@ public class ByEMailKeySelectionStrategy extends Rfc4880KeySelectionStrategy imp
    * If the uid does not already include '&lt;...&gt;' then wrap it in "&lt;uid&gt;"
    * to filter for e-mails.  E.g. "peter@example.com" will be converted to
    * "&lt;peter@example.com&gt;" but "Klaus &lt;klaus@example.com&gt;" or
-   * "&lt;klaus@example.com&gt;" will be leaved untouched.
+   * "&lt;klaus@example.com&gt;" will be left untouched.
    *
    * @param uid the userid as passed by upstream.
    * @param keyringConfig the keyring config
