@@ -227,7 +227,7 @@ and this dependency snippet:
     <dependency>
         <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
         <artifactId>bouncy-gpg</artifactId>
-        <version>2.1.1</version>
+        <version>2.1.2</version>
     </dependency>
 ```
   
