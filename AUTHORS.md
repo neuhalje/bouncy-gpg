@@ -5,4 +5,4 @@ The following authors have made non-trivial contributions to bouncy-gpg:
 ## Honorable mentions
 
 * Paul Schaub (@vanitasvitae)  -- reviews, feedback, bugs reports
-
+* @badfish69 (OSGI support)

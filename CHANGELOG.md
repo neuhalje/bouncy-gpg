@@ -2,6 +2,19 @@
 
 * _tbd_
 
+
+## V 2.1.2 OSGI bundle and minor improvements
+
+* Enh: Merge [OSGI support by basdfish69](https://github.com/neuhalje/bouncy-gpg/pull/29)
+* Enh: Add support for Java 11
+* Enh: SignaturesMissingException carries list of missing signatures
+* Doc: Minor documentation improvements
+* Tst: Improve test coverage
+* Dep: Update test & minor dependencies
+* Ref: Refactor argument checking into helper methods
+
+
+
 ## V 2.1.1 Bugfix release
 
 * Fix: Add support to search for the whole UID instead of e-mail only
