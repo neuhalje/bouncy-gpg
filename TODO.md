@@ -22,6 +22,8 @@ Version 2.1
 - [x] Code quality reports (Sonar e.g.)
 - [ ] Extend documentation of key derivation
 - [x] add .github files
+- [ ] Add decryptor.getResult() for decryption result
+
 
 Version 3.0
 --------------

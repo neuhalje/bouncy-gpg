@@ -1,7 +1,20 @@
 ## V 2.x.x (NEXT)
 
-* _tbd_
+## (next: V 2.1.3)
 
+* Enh: Add key generation (courtesy Paul Schaub)
+* Enh: Add algorithm suite for OpenPGP for XMPP (courtesy Paul Schaub)
+* Enh: Add 'BouncyGPG.registerProvider()'
+
+### API Changes (breaking)
+
+* none
+
+### API Changes (non breaking)
+
+* new: `BouncyGPG.registerProvider()`
+* new: key generation via `BouncyGPG.createKeyPair()`
+* new: algorithm suite for OpenPGP for XMPP (XEP-0373)
 
 ## V 2.1.2 OSGI bundle and minor improvements
 
