@@ -1,6 +1,9 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
 
+import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 @SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter",
     "PMD.ClassNamingConventions"})
 public final class BouncyGPG {
@@ -49,9 +52,24 @@ public final class BouncyGPG {
   }
 
   /**
-  * Entry point into key generation.
-  */
+   * Entry point into key generation.
+   */
   public static BuildPGPKeyGeneratorAPI createKeyPair() {
     return new BuildPGPKeyGeneratorAPI();
+  }
+
+  /**
+   * <p>Register the BouncyCastle provider as first provider. If another instance of the
+   * BouncyCastle provider is already registered it is removed.
+   * </p>
+   * <p>The BouncyCastle provider needs to be registered for BouncyGPG to work./p>
+   * <p>
+   * This procedure also makes it possible to use BC on older Android devices that ship their own BC
+   * implementation.
+   * </p>
+   */
+  public synchronized static void registerProvider() {
+    Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+    Security.insertProviderAt(new BouncyCastleProvider(), 0);
   }
 }

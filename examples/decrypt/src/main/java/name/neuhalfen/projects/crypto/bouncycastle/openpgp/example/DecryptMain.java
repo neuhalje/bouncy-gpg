@@ -20,12 +20,6 @@ public class DecryptMain {
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
       .getLogger(DecryptMain.class);
 
-  static void installBCProvider() {
-    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-      Security.addProvider(new BouncyCastleProvider());
-    }
-  }
-
   public static void main(String[] args) {
     if (args.length != 5) {
       System.err.format("Usage %s pubKeyRing secKeyRing secKeyRingPassword sourceFile destFile\n",
@@ -39,7 +33,7 @@ public class DecryptMain {
       final Path sourceFile = Paths.get(args[3]);
       final Path destFile = Paths.get(args[4]);
       try {
-        installBCProvider();
+        BouncyGPG.registerProvider();
         long startTime = System.currentTimeMillis();
 
         final int BUFFSIZE = 8 * 1024;

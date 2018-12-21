@@ -24,9 +24,7 @@ public class BuildDecryptionInputStreamAPITest {
 
   @Before
   public void installBCProvider() {
-    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-      Security.addProvider(new BouncyCastleProvider());
-    }
+    BouncyGPG.registerProvider();
   }
 
   @Test(expected = NullPointerException.class)

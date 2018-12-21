@@ -19,12 +19,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class MainExplodedSinglethreaded {
 
-  static void installBCProvider() {
-    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-      Security.addProvider(new BouncyCastleProvider());
-    }
-  }
-
   public static void main(String[] args) {
     System.out.println("This program will read an encrypted ZIP file, decrypt it on the fly, and then re-encrypt and write the files from the ZIP into /tmp");
     if (args.length != 7) {
@@ -42,7 +36,7 @@ public class MainExplodedSinglethreaded {
       final File destRootDir = new File(args[6]);
 
       try {
-        installBCProvider();
+        BouncyGPG.registerProvider();
 
         final KeyringConfig keyringConfig = KeyringConfigs.withKeyRingsFromFiles(pubKeyRing,
             secKeyRing, KeyringConfigCallbacks.withPassword(secKeyRingPassword));

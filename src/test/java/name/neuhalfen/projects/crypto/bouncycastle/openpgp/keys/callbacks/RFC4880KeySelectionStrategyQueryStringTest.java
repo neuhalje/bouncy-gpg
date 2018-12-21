@@ -4,6 +4,7 @@ import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeysTestH
 
 import java.io.IOException;
 import java.security.Security;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -24,9 +25,7 @@ public class RFC4880KeySelectionStrategyQueryStringTest {
 
   @Before
   public void before() {
-    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-      Security.addProvider(new BouncyCastleProvider());
-    }
+    BouncyGPG.registerProvider();
   }
 
 

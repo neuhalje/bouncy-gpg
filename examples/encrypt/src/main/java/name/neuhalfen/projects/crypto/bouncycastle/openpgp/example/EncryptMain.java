@@ -20,11 +20,7 @@ public class EncryptMain {
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
       .getLogger(EncryptMain.class);
 
-  static void installBCProvider() {
-    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-      Security.addProvider(new BouncyCastleProvider());
-    }
-  }
+
 
   public static void main(String[] args) {
     if (args.length != 7) {
@@ -41,7 +37,7 @@ public class EncryptMain {
       final Path sourceFile = Paths.get(args[5]);
       final Path destFile = Paths.get(args[6]);
       try {
-        installBCProvider();
+        BouncyGPG.registerProvider();
         long startTime = System.currentTimeMillis();
 
         final int BUFFSIZE = 8 * 1024;
