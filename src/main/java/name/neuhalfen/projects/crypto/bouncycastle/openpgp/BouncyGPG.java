@@ -52,13 +52,6 @@ public final class BouncyGPG {
   }
 
   /**
-   * Entry point into key generation.
-   */
-  public static BuildPGPKeyGeneratorAPI createKeyPair() {
-    return new BuildPGPKeyGeneratorAPI();
-  }
-
-  /**
    * <p>Register the BouncyCastle provider as first provider. If another instance of the
    * BouncyCastle provider is already registered it is removed.
    * </p>
