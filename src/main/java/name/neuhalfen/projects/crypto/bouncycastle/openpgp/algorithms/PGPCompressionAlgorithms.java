@@ -1,5 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
+import java.util.Set;
+import name.neuhalfen.projects.crypto.internal.SetUtils;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
 
 /**
@@ -43,5 +45,19 @@ public enum PGPCompressionAlgorithms {
    */
   public int getAlgorithmId() {
     return algorithmId;
+  }
+
+  private final static Set<PGPCompressionAlgorithms> RECOMMENDED_ALGORITHMS = SetUtils
+      .unmodifiableSet(BZIP2, ZLIB, ZIP, UNCOMPRESSED);
+
+  private final static int[] RECOMMENDED_ALGORITHM_IDS =
+      RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
+
+  public static Set<PGPCompressionAlgorithms> recommendedAlgorithms() {
+    return RECOMMENDED_ALGORITHMS;
+  }
+
+  public static int[] recommendedAlgorithmIds() {
+    return RECOMMENDED_ALGORITHM_IDS;
   }
 }

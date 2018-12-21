@@ -1,5 +1,9 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
 
 
@@ -87,5 +91,24 @@ public enum PGPHashAlgorithms {
    */
   public boolean isInsecure() {
     return insecure;
+  }
+
+
+  private final static Set<PGPHashAlgorithms> RECOMMENDED_ALGORITHMS = Collections
+      .unmodifiableSet(
+          Arrays.stream(
+              PGPHashAlgorithms.values()).filter(alg -> !alg.insecure)
+              .collect(Collectors.toSet()));
+
+
+  private final static int[] RECOMMENDED_ALGORITHM_IDS =
+      RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
+
+  public static Set<PGPHashAlgorithms> recommendedAlgorithms() {
+    return RECOMMENDED_ALGORITHMS;
+  }
+
+  public static int[] recommendedAlgorithmIds() {
+    return RECOMMENDED_ALGORITHM_IDS;
   }
 }

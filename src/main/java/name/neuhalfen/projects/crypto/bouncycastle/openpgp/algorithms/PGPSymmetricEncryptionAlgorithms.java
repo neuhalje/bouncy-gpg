@@ -1,5 +1,9 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 
 /**
@@ -89,6 +93,7 @@ public enum PGPSymmetricEncryptionAlgorithms {
     this.insecure = insecure;
   }
 
+
   /**
    * Returns the corresponding BouncyCastle  algorithm tag.
    *
@@ -111,4 +116,22 @@ public enum PGPSymmetricEncryptionAlgorithms {
     return insecure;
   }
 
+
+  private final static Set<PGPSymmetricEncryptionAlgorithms> RECOMMENDED_ALGORITHMS = Collections
+      .unmodifiableSet(
+          Arrays.stream(
+              PGPSymmetricEncryptionAlgorithms.values())
+              .filter(alg -> !alg.insecure)
+              .collect(Collectors.toSet()));
+
+  private final static int[] RECOMMENDED_ALGORITHM_IDS =
+      RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
+
+  public static Set<PGPSymmetricEncryptionAlgorithms> recommendedAlgorithms() {
+    return RECOMMENDED_ALGORITHMS;
+  }
+
+  public static int[] recommendedAlgorithmIds() {
+    return RECOMMENDED_ALGORITHM_IDS;
+  }
 }

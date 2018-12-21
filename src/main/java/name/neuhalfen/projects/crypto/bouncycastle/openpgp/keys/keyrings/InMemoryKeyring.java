@@ -67,14 +67,14 @@ public final class InMemoryKeyring implements KeyringConfig {
         InputStream decoded = org.bouncycastle.openpgp.PGPUtil.getDecoderStream(raw)
     ) {
       final PGPPublicKeyRing pgpPub = new PGPPublicKeyRing(decoded, getKeyFingerPrintCalculator());
-      this.publicKeyRings = PGPPublicKeyRingCollection
-          .addPublicKeyRing(this.publicKeyRings, pgpPub);
+
+      addPublicKeyRing(pgpPub);
     }
   }
 
 
   /**
-   * <p>Add a new secret keyring to the public keyrings.</p>
+   * <p>Add a new secret keyring to the secret keyrings.</p>
    * <p>
    * Can read the result of "{@code gpg --export}" and
    * 2{@code gpg --export -a keyid}".</p>
@@ -106,11 +106,40 @@ public final class InMemoryKeyring implements KeyringConfig {
     ) {
       final PGPSecretKeyRing pgpPRivate = new PGPSecretKeyRing(decoded,
           getKeyFingerPrintCalculator());
-      this.secretKeyRings =
-          PGPSecretKeyRingCollection
-              .addSecretKeyRing(this.secretKeyRings, pgpPRivate);
+      addSecretKeyRing(pgpPRivate);
     }
   }
+
+
+  /**
+   * <p>Add a new secret keyring to the secret keyrings.</p>
+   *
+   * @param keyring the keyring
+   */
+  @SuppressWarnings("PMD.LawOfDemeter")
+  public void addSecretKeyRing(PGPSecretKeyRing keyring) {
+    requireNonNull(keyring, "keyring must not be null");
+
+    this.secretKeyRings =
+        PGPSecretKeyRingCollection
+            .addSecretKeyRing(this.secretKeyRings, keyring);
+  }
+
+
+  /**
+   * <p>Add a new secret keyring to the secret keyrings.</p>
+   *
+   * @param keyring the keyring
+   */
+  @SuppressWarnings("PMD.LawOfDemeter")
+  public void addPublicKeyRing(PGPPublicKeyRing keyring) {
+    requireNonNull(keyring, "keyring must not be null");
+
+    this.publicKeyRings =
+        PGPPublicKeyRingCollection
+            .addPublicKeyRing(this.publicKeyRings, keyring);
+  }
+
 
   @Nonnull
   @Override

@@ -32,7 +32,17 @@ public final class PGPAlgorithmSuite {
     return symmetricEncryptionAlgorithmCode;
   }
 
+  /**
+   *
+   * @deprecated use getCompressionAlgorithmCode
+   * @return
+   */
+  @Deprecated()
   public PGPCompressionAlgorithms getCompressionEncryptionAlgorithmCode() {
+    return getCompressionAlgorithmCode();
+  }
+
+  public PGPCompressionAlgorithms getCompressionAlgorithmCode() {
     return compressionEncryptionAlgorithmCode;
   }
 
