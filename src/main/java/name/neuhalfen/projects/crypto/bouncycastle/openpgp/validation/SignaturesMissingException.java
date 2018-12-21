@@ -67,6 +67,11 @@ public class SignaturesMissingException extends SignatureException {
     @Nullable
     private final Long keyId;
 
+    public MissingSignature(@Nullable final String uid, @Nullable final Long keyId) {
+      this.uid = uid;
+      this.keyId = keyId;
+    }
+
     /**
      * Create a MissingSignature instance with only the keyId set
      *
@@ -93,7 +98,6 @@ public class SignaturesMissingException extends SignatureException {
           .map(SignaturesMissingException.MissingSignature::fromKeyId).collect(
               Collectors.toSet());
     }
-
 
     /**
      * Create a MissingSignature instance with only the uid set
@@ -130,11 +134,6 @@ public class SignaturesMissingException extends SignatureException {
     @Nullable
     public Long getKeyId() {
       return keyId;
-    }
-
-    public MissingSignature(@Nullable final String uid, @Nullable final Long keyId) {
-      this.uid = uid;
-      this.keyId = keyId;
     }
 
     @Override

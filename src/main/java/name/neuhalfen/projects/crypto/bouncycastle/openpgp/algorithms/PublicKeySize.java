@@ -2,15 +2,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms;
 
 public class PublicKeySize {
 
-  public interface KeySize {
-
-    /**
-     * Key size in bits
-     * @return size in bits
-     */
-    int getSize();
-  }
-
   /**
    * Key sizes for RSA
    */
@@ -54,5 +45,15 @@ public class PublicKeySize {
     public int getSize() {
       return size;
     }
+  }
+
+  public interface KeySize {
+
+    /**
+     * Key size in bits
+     *
+     * @return size in bits
+     */
+    int getSize();
   }
 }

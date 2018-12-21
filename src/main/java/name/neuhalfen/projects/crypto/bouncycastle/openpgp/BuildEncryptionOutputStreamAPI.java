@@ -170,9 +170,9 @@ public final class BuildEncryptionOutputStreamAPI {
        *
        * @return the next step
        *
+       * @throws PGPException e.g. recipient could not be found
        * @see KeySelectionStrategy
        * @see WithKeySelectionStrategy
-       * @throws PGPException e.g. recipient could not be found
        */
       SignWith toRecipient(String recipient) throws PGPException;
 
@@ -187,9 +187,9 @@ public final class BuildEncryptionOutputStreamAPI {
        *
        * @return the next step
        *
+       * @throws PGPException e.g. recipients could not be found
        * @see KeySelectionStrategy
        * @see WithKeySelectionStrategy
-       * @throws  PGPException e.g. recipients could not be found
        */
       SignWith toRecipients(String... recipients) throws PGPException;
 
@@ -200,14 +200,17 @@ public final class BuildEncryptionOutputStreamAPI {
          * key selection strategy.
          *
          * @param userId sign with this userid
+         *
          * @return next step
-         * @throws IOException  IO is dangerous
-         * @throws PGPException  Something with GPG went wrong (e.g. key not found)
+         *
+         * @throws IOException IO is dangerous
+         * @throws PGPException Something with GPG went wrong (e.g. key not found)
          */
         Armor andSignWith(String userId) throws IOException, PGPException;
 
         /**
          * Do not sign the message.
+         *
          * @return next step
          */
         Armor andDoNotSign();
@@ -223,6 +226,7 @@ public final class BuildEncryptionOutputStreamAPI {
 
           /**
            * Ascii armor the output, e.g. for usage in text protocols.
+           *
            * @return next step
            */
           Build armorAsciiOutput();
