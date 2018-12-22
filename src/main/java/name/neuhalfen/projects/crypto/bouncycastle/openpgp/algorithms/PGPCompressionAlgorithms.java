@@ -45,7 +45,7 @@ public enum PGPCompressionAlgorithms {
   }
 
   public static int[] recommendedAlgorithmIds() {
-    return RECOMMENDED_ALGORITHM_IDS;
+    return RECOMMENDED_ALGORITHM_IDS.clone();
   }
 
   /**

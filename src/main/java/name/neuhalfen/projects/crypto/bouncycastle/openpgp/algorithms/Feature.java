@@ -50,7 +50,7 @@ public enum Feature {
     this.featureId = featureId;
   }
 
-  public static Feature fromId(byte id) {
+  public static Feature fromId(byte id) { // NOPMD: ShortVariable
     return MAP.get(id);
   }
 

@@ -25,10 +25,11 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.
 import org.bouncycastle.bcpg.sig.Features;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketGenerator;
 
+@SuppressWarnings({"PMD.LawOfDemeter"})
 public class KeySpecBuilder implements KeySpecBuilderInterface {
 
-  private KeyType type;
-  private PGPSignatureSubpacketGenerator hashedSubPackets = new PGPSignatureSubpacketGenerator();
+  private final KeyType type;
+  private final PGPSignatureSubpacketGenerator hashedSubPackets = new PGPSignatureSubpacketGenerator();
 
   KeySpecBuilder(KeyType type) {
     this.type = requireNonNull(type);
@@ -59,7 +60,7 @@ public class KeySpecBuilder implements KeySpecBuilderInterface {
     return new KeySpec(type, null, true);
   }
 
-  class WithDetailedConfigurationImpl implements WithDetailedConfiguration {
+  private class WithDetailedConfigurationImpl implements WithDetailedConfiguration {
 
     @Deprecated
     @Override
@@ -86,7 +87,7 @@ public class KeySpecBuilder implements KeySpecBuilderInterface {
     }
   }
 
-  class WithPreferredSymmetricAlgorithmsImpl implements WithPreferredSymmetricAlgorithms {
+  private class WithPreferredSymmetricAlgorithmsImpl implements WithPreferredSymmetricAlgorithms {
 
     @Override
     public WithPreferredHashAlgorithms withPreferredSymmetricAlgorithms(
@@ -118,7 +119,7 @@ public class KeySpecBuilder implements KeySpecBuilderInterface {
     }
   }
 
-  class WithPreferredHashAlgorithmsImpl implements WithPreferredHashAlgorithms {
+  private class WithPreferredHashAlgorithmsImpl implements WithPreferredHashAlgorithms {
 
     @Override
     public WithPreferredCompressionAlgorithms withPreferredHashAlgorithms(
@@ -139,7 +140,8 @@ public class KeySpecBuilder implements KeySpecBuilderInterface {
     }
   }
 
-  class WithPreferredCompressionAlgorithmsImpl implements WithPreferredCompressionAlgorithms {
+  private class WithPreferredCompressionAlgorithmsImpl implements
+      WithPreferredCompressionAlgorithms {
 
     @Override
     public WithFeatures withPreferredCompressionAlgorithms(
@@ -160,7 +162,7 @@ public class KeySpecBuilder implements KeySpecBuilderInterface {
     }
   }
 
-  class WithFeaturesImpl implements WithFeatures {
+  private class WithFeaturesImpl implements WithFeatures {
 
     @Override
     public WithFeatures withFeature(Feature feature) {

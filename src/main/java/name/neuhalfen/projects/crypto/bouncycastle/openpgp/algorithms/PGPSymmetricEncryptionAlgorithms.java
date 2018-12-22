@@ -106,7 +106,7 @@ public enum PGPSymmetricEncryptionAlgorithms {
   }
 
   public static int[] recommendedAlgorithmIds() {
-    return RECOMMENDED_ALGORITHM_IDS;
+    return RECOMMENDED_ALGORITHM_IDS.clone();
   }
 
   /**

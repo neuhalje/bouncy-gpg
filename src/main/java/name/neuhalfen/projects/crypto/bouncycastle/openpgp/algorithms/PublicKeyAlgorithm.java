@@ -41,7 +41,7 @@ public enum PublicKeyAlgorithm {
   private static final Map<Integer, PublicKeyAlgorithm> MAP = new HashMap<>();
 
   static {
-    for (PublicKeyAlgorithm p : PublicKeyAlgorithm.values()) {
+    for (final PublicKeyAlgorithm p : PublicKeyAlgorithm.values()) {
       MAP.put(p.algorithmId, p);
     }
   }
@@ -52,7 +52,7 @@ public enum PublicKeyAlgorithm {
     this.algorithmId = algorithmId;
   }
 
-  public static PublicKeyAlgorithm fromId(int id) {
+  public static PublicKeyAlgorithm fromId(int id) { // NOPMD: ShortVariable
     return MAP.get(id);
   }
 
