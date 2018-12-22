@@ -3,6 +3,9 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.matcher;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Set;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeyFlag;
+import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSecretKey;
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.hamcrest.Description;
@@ -39,25 +42,36 @@ public class SecretKeyringKeyRoleMatcher extends TypeSafeMatcher<PGPSecretKeyRin
     final EnumSet<KeyRole> found = EnumSet.noneOf(KeyRole.class);
     final Iterator<PGPSecretKey> secretKeys = ring.getSecretKeys();
     while (secretKeys.hasNext()) {
-      found.addAll(parseKey(secretKeys.next()));
+      final PGPSecretKey secretKey = secretKeys.next();
+      found.addAll(parseKey(secretKey));
+
     }
     return found;
   }
 
   EnumSet<KeyRole> parseKey(final PGPSecretKey item) {
     final EnumSet<KeyRole> found = EnumSet.noneOf(KeyRole.class);
+    final PGPPublicKey publicKey = item.getPublicKey();
+    final Set<KeyFlag> keyFlags = KeyFlag.extractPublicKeyFlags(publicKey);
 
     if (item.isMasterKey()) {
       found.add(KeyRole.MASTER);
     }
 
     if (item.isSigningKey()) {
-      found.add(KeyRole.SIGNING);
+      if (keyFlags.contains(KeyFlag.SIGN_DATA)) {
+        found.add(KeyRole.SIGNING);
+      }
     }
 
     if (item.getPublicKey().isEncryptionKey()) {
-      found.add(KeyRole.ENCRYPTION);
+      final boolean hasEncryptionFlags =
+          keyFlags.contains(KeyFlag.ENCRYPT_STORAGE) || keyFlags.contains(KeyFlag.ENCRYPT_COMMS);
+      if (hasEncryptionFlags) {
+        found.add(KeyRole.ENCRYPTION);
+      }
     }
+
     return found;
   }
 
