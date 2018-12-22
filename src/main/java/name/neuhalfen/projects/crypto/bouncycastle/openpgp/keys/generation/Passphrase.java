@@ -15,89 +15,90 @@
  */
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
+import javax.annotation.Nullable;
 
 public class Passphrase {
 
-    private final Object lock = new Object();
+  private final Object lock = new Object();
 
-    private final char[] chars;
-    private boolean valid = true;
+  private final char[] chars;
+  private boolean valid = true;
 
-    /**
-     * Passphrase for keys etc.
-     *
-     * @param chars may be null for empty passwords.
-     */
-    public Passphrase(@Nullable char[] chars) {
-        this.chars = chars;
+  /**
+   * Passphrase for keys etc.
+   *
+   * @param chars may be null for empty passwords.
+   */
+  public Passphrase(@Nullable char[] chars) {
+    this.chars = chars;
+  }
+
+  /**
+   * Represents a {@link Passphrase} instance that represents no password.
+   *
+   * @return empty passphrase
+   */
+  public static Passphrase emptyPassphrase() {
+    return new Passphrase(null);
+  }
+
+  /**
+   * Overwrite the char array with spaces and mark the {@link Passphrase} as invalidated.
+   */
+  public void clear() {
+    synchronized (lock) {
+      if (chars != null) {
+        Arrays.fill(chars, ' ');
+      }
+      valid = false;
     }
+  }
 
-    /**
-     * Overwrite the char array with spaces and mark the {@link Passphrase} as invalidated.
-     */
-    public void clear() {
-        synchronized (lock) {
-            if (chars != null) {
-                Arrays.fill(chars, ' ');
-            }
-            valid = false;
-        }
+  /**
+   * Call {@link #clear()} to make sure the memory is overwritten.
+   *
+   * @throws Throwable bad things might happen in {@link Object#finalize()}.
+   */
+  @Override
+  protected void finalize() throws Throwable {
+    clear();
+    super.finalize();
+  }
+
+  /**
+   * Return a copy of the underlying char array.
+   * A return value of {@code null} represents no password.
+   *
+   * @return passphrase chars.
+   *
+   * @throws IllegalStateException in case the password has been cleared at this point.
+   */
+  public @Nullable
+  char[] getChars() {
+    synchronized (lock) {
+      if (!valid) {
+        throw new IllegalStateException("Passphrase has been cleared.");
+      }
+
+      if (chars == null) {
+        return null;
+      }
+
+      char[] copy = new char[chars.length];
+      System.arraycopy(chars, 0, copy, 0, chars.length);
+      return copy;
     }
+  }
 
-    /**
-     * Call {@link #clear()} to make sure the memory is overwritten.
-     *
-     * @throws Throwable bad things might happen in {@link Object#finalize()}.
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        clear();
-        super.finalize();
+  /**
+   * Return true if the passphrase has not yet been cleared.
+   *
+   * @return valid
+   */
+  public boolean isValid() {
+    synchronized (lock) {
+      return valid;
     }
-
-    /**
-     * Return a copy of the underlying char array.
-     * A return value of {@code null} represents no password.
-     *
-     * @return passphrase chars.
-     *
-     * @throws IllegalStateException in case the password has been cleared at this point.
-     */
-    public @Nullable char[] getChars() {
-        synchronized (lock) {
-            if (!valid) {
-                throw new IllegalStateException("Passphrase has been cleared.");
-            }
-
-            if (chars == null) {
-                return null;
-            }
-
-            char[] copy = new char[chars.length];
-            System.arraycopy(chars, 0, copy, 0, chars.length);
-            return copy;
-        }
-    }
-
-    /**
-     * Return true if the passphrase has not yet been cleared.
-     *
-     * @return valid
-     */
-    public boolean isValid() {
-        synchronized (lock) {
-            return valid;
-        }
-    }
-
-    /**
-     * Represents a {@link Passphrase} instance that represents no password.
-     *
-     * @return empty passphrase
-     */
-    public static Passphrase emptyPassphrase() {
-        return new Passphrase(null);
-    }
+  }
 }

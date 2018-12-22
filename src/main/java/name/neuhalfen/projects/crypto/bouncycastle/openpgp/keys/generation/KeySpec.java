@@ -36,6 +36,11 @@ public class KeySpec {
     this.inheritedSubPackets = inheritedSubPackets;
   }
 
+  public static KeySpecBuilder getBuilder(KeyType type) {
+    requireNonNull(type, "type must not be null");
+
+    return new KeySpecBuilder(type);
+  }
 
   KeyType getKeyType() {
     return keyType;
@@ -48,11 +53,5 @@ public class KeySpec {
 
   boolean isInheritedSubPackets() {
     return inheritedSubPackets;
-  }
-
-  public static KeySpecBuilder getBuilder(KeyType type) {
-    requireNonNull(type, "type must not be null");
-
-    return new KeySpecBuilder(type);
   }
 }

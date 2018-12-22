@@ -39,75 +39,82 @@ import org.bouncycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider;
 
 public class KeyRingSubKeyFixUtil {
 
-    private static final Logger LOGGER = Logger.getLogger(KeyRingSubKeyFixUtil.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(KeyRingSubKeyFixUtil.class.getName());
 
-    private KeyRingSubKeyFixUtil(){/* Util Class */}
-    /**
-     * This method makes sure, that sub keys do consist of sub key packets.
-     * Bouncycastle versions up to and including 1.60 created {@link PGPSecretKeyRing}s which sub keys consisted of
-     * normal public key packets, which would result in lost keys when converting PGPSecretKeyRings to PGPPublicKeyRings.
-     *
-     * This method throws a {@link RuntimeException} of a {@link NoSuchFieldException} or {@link IllegalAccessException}.
-     *
-     * @see <a href="https://github.com/bcgit/bc-java/issues/381">Bouncycastle Java bug report #381</a>
-     *
-     * @param secretKeys possibly faulty PGPSecretKeyRing
-     * @param decryptor decryptor in case the keys are encrypted (can be null)
-     * @param encryptor encryptor to re-encrypt the keys in case they are encrypted (can be null)
-     *
-     * @return fixed PGPSecretKeyRing
-     *
-     * @throws PGPException in case we cannot dismantle or reassemble the key.
-     */
-    public static PGPSecretKeyRing repairSubkeyPackets(PGPSecretKeyRing secretKeys,
-                                                       @Nullable PBESecretKeyDecryptor decryptor,
-                                                       @Nullable PBESecretKeyEncryptor encryptor)
-            throws PGPException {
-        requireNonNull(secretKeys, "secretKeys cannot be null");
+  private KeyRingSubKeyFixUtil() {/* Util Class */}
 
-        PGPDigestCalculator calculator = new BcPGPDigestCalculatorProvider().get(HashAlgorithmTags.SHA1);
+  /**
+   * This method makes sure, that sub keys do consist of sub key packets.
+   * Bouncycastle versions up to and including 1.60 created {@link PGPSecretKeyRing}s which sub keys
+   * consisted of
+   * normal public key packets, which would result in lost keys when converting PGPSecretKeyRings to
+   * PGPPublicKeyRings.
+   *
+   * This method throws a {@link RuntimeException} of a {@link NoSuchFieldException} or {@link
+   * IllegalAccessException}.
+   *
+   * @param secretKeys possibly faulty PGPSecretKeyRing
+   * @param decryptor decryptor in case the keys are encrypted (can be null)
+   * @param encryptor encryptor to re-encrypt the keys in case they are encrypted (can be null)
+   *
+   * @return fixed PGPSecretKeyRing
+   *
+   * @throws PGPException in case we cannot dismantle or reassemble the key.
+   * @see <a href="https://github.com/bcgit/bc-java/issues/381">Bouncycastle Java bug report #381</a>
+   */
+  public static PGPSecretKeyRing repairSubkeyPackets(PGPSecretKeyRing secretKeys,
+      @Nullable PBESecretKeyDecryptor decryptor,
+      @Nullable PBESecretKeyEncryptor encryptor)
+      throws PGPException {
+    requireNonNull(secretKeys, "secretKeys cannot be null");
 
-        List<PGPSecretKey> _secretKeys = new ArrayList<>();
-        Iterator<PGPSecretKey> secretKeyIterator = secretKeys.iterator();
-        try {
+    PGPDigestCalculator calculator = new BcPGPDigestCalculatorProvider()
+        .get(HashAlgorithmTags.SHA1);
 
-            while (secretKeyIterator.hasNext()) {
-                PGPSecretKey secSubKey = secretKeyIterator.next();
+    List<PGPSecretKey> _secretKeys = new ArrayList<>();
+    Iterator<PGPSecretKey> secretKeyIterator = secretKeys.iterator();
+    try {
 
-                if (secSubKey.isMasterKey()) {
-                    LOGGER.log(Level.INFO, Long.toHexString(secSubKey.getKeyID()) + " is master key. Skip.");
-                    _secretKeys.add(secSubKey);
-                    continue;
-                }
+      while (secretKeyIterator.hasNext()) {
+        PGPSecretKey secSubKey = secretKeyIterator.next();
 
-                PGPPublicKey pubSubKey = secSubKey.getPublicKey();
-
-                // check for public key packet type
-
-                Field publicPk = pubSubKey.getClass().getDeclaredField("publicPk");
-                publicPk.setAccessible(true);
-                PublicKeyPacket keyPacket = (PublicKeyPacket) publicPk.get(pubSubKey);
-
-                if (keyPacket instanceof PublicSubkeyPacket) {
-                    // Sub key is already sub key
-                    _secretKeys.add(secSubKey);
-                    continue;
-                }
-
-                // Sub key is normal key -> fix
-                LOGGER.log(Level.INFO, "Subkey " + Long.toHexString(secSubKey.getKeyID()) + " does not have a subkey key packet. Convert it...");
-                keyPacket = new PublicSubkeyPacket(pubSubKey.getAlgorithm(), pubSubKey.getCreationTime(), keyPacket.getKey());
-                publicPk.set(pubSubKey, keyPacket);
-
-                PGPPrivateKey privateKey = secSubKey.extractPrivateKey(decryptor);
-
-                PGPSecretKey secretKey = new PGPSecretKey(privateKey, pubSubKey, calculator, false, encryptor);
-                _secretKeys.add(secretKey);
-            }
-
-            return new PGPSecretKeyRing(_secretKeys);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("Cannot apply fix due to an error while using reflections.", e);
+        if (secSubKey.isMasterKey()) {
+          LOGGER.log(Level.INFO, Long.toHexString(secSubKey.getKeyID()) + " is master key. Skip.");
+          _secretKeys.add(secSubKey);
+          continue;
         }
+
+        PGPPublicKey pubSubKey = secSubKey.getPublicKey();
+
+        // check for public key packet type
+
+        Field publicPk = pubSubKey.getClass().getDeclaredField("publicPk");
+        publicPk.setAccessible(true);
+        PublicKeyPacket keyPacket = (PublicKeyPacket) publicPk.get(pubSubKey);
+
+        if (keyPacket instanceof PublicSubkeyPacket) {
+          // Sub key is already sub key
+          _secretKeys.add(secSubKey);
+          continue;
+        }
+
+        // Sub key is normal key -> fix
+        LOGGER.log(Level.INFO, "Subkey " + Long.toHexString(secSubKey.getKeyID())
+            + " does not have a subkey key packet. Convert it...");
+        keyPacket = new PublicSubkeyPacket(pubSubKey.getAlgorithm(), pubSubKey.getCreationTime(),
+            keyPacket.getKey());
+        publicPk.set(pubSubKey, keyPacket);
+
+        PGPPrivateKey privateKey = secSubKey.extractPrivateKey(decryptor);
+
+        PGPSecretKey secretKey = new PGPSecretKey(privateKey, pubSubKey, calculator, false,
+            encryptor);
+        _secretKeys.add(secretKey);
+      }
+
+      return new PGPSecretKeyRing(_secretKeys);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      throw new RuntimeException("Cannot apply fix due to an error while using reflections.", e);
     }
+  }
 }

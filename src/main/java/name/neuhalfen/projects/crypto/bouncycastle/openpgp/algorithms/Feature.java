@@ -46,12 +46,12 @@ public enum Feature {
 
   private final byte featureId;
 
-  public static Feature fromId(byte id) {
-    return MAP.get(id);
-  }
-
   Feature(byte featureId) {
     this.featureId = featureId;
+  }
+
+  public static Feature fromId(byte id) {
+    return MAP.get(id);
   }
 
   public byte getFeatureId() {

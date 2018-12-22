@@ -41,10 +41,6 @@ public enum KeyFlag {
     this.flag = flag;
   }
 
-  public int getFlag() {
-    return flag;
-  }
-
   public static Set<KeyFlag> fromInteger(int bitmask) {
     final Set<KeyFlag> flags = new HashSet<>();
     int identifiedFlags = 0;
@@ -62,5 +58,9 @@ public enum KeyFlag {
           "Could not identify the following KeyFlags: 0b" + Long.toBinaryString(unknownFlags));
     }
     return flags;
+  }
+
+  public int getFlag() {
+    return flag;
   }
 }

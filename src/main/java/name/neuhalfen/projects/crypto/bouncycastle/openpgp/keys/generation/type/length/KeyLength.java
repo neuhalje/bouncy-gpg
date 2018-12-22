@@ -17,9 +17,8 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type
 
 public interface KeyLength {
 
-    /**
-     *
-     * @return key length in bits
-     */
-    int getLength();
+  /**
+   * @return key length in bits
+   */
+  int getLength();
 }

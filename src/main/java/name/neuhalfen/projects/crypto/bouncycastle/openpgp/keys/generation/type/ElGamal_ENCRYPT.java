@@ -15,8 +15,6 @@
  */
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type;
 
-import static java.util.Objects.requireNonNull;
-
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PublicKeyAlgorithm;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length.ElGamalLength;
 

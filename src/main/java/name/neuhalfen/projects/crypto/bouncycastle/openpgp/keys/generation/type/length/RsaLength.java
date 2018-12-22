@@ -16,23 +16,23 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length;
 
 public enum RsaLength implements KeyLength {
-    @Deprecated
-    RSA_1024_BIT(1024),
-    @Deprecated
-    RSA_2048_BIT(2048),
-    RSA_3072_BIT(3072),
-    RSA_4096_BIT(4096),
-    RSA_8192_BIT(8192),
-    ;
+  @Deprecated
+  RSA_1024_BIT(1024),
+  @Deprecated
+  RSA_2048_BIT(2048),
+  RSA_3072_BIT(3072),
+  RSA_4096_BIT(4096),
+  RSA_8192_BIT(8192),
+  ;
 
-    private final int length;
+  private final int length;
 
-    RsaLength(int length) {
-        this.length = length;
-    }
+  RsaLength(int length) {
+    this.length = length;
+  }
 
-    @Override
-    public int getLength() {
-        return length;
-    }
+  @Override
+  public int getLength() {
+    return length;
+  }
 }

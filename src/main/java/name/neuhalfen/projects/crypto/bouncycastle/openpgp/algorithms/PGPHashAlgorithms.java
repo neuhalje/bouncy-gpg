@@ -58,8 +58,14 @@ public enum PGPHashAlgorithms {
    */
   HAVAL_5_160(HashAlgorithmTags.HAVAL_5_160, true);
 
+  private final static Set<PGPHashAlgorithms> RECOMMENDED_ALGORITHMS = Collections
+      .unmodifiableSet(
+          Arrays.stream(
+              PGPHashAlgorithms.values()).filter(alg -> !alg.insecure)
+              .collect(Collectors.toSet()));
+  private final static int[] RECOMMENDED_ALGORITHM_IDS =
+      RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
   private final int algorithmId;
-
   private final boolean insecure;
 
   PGPHashAlgorithms(int algorithmId) {
@@ -69,6 +75,14 @@ public enum PGPHashAlgorithms {
   PGPHashAlgorithms(int algorithmId, boolean insecure) {
     this.algorithmId = algorithmId;
     this.insecure = insecure;
+  }
+
+  public static Set<PGPHashAlgorithms> recommendedAlgorithms() {
+    return RECOMMENDED_ALGORITHMS;
+  }
+
+  public static int[] recommendedAlgorithmIds() {
+    return RECOMMENDED_ALGORITHM_IDS;
   }
 
   /**
@@ -91,24 +105,5 @@ public enum PGPHashAlgorithms {
    */
   public boolean isInsecure() {
     return insecure;
-  }
-
-
-  private final static Set<PGPHashAlgorithms> RECOMMENDED_ALGORITHMS = Collections
-      .unmodifiableSet(
-          Arrays.stream(
-              PGPHashAlgorithms.values()).filter(alg -> !alg.insecure)
-              .collect(Collectors.toSet()));
-
-
-  private final static int[] RECOMMENDED_ALGORITHM_IDS =
-      RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
-
-  public static Set<PGPHashAlgorithms> recommendedAlgorithms() {
-    return RECOMMENDED_ALGORITHMS;
-  }
-
-  public static int[] recommendedAlgorithmIds() {
-    return RECOMMENDED_ALGORITHM_IDS;
   }
 }

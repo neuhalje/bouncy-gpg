@@ -18,18 +18,17 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type
 
 import static java.util.Objects.requireNonNull;
 
-import javax.annotation.Nonnull;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PublicKeyAlgorithm;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.curve.EllipticCurve;
 
 public class ECDSA extends ECDH {
 
-  ECDSA( EllipticCurve curve) {
+  ECDSA(EllipticCurve curve) {
     super(curve);
   }
 
-  public static ECDSA fromCurve( EllipticCurve curve) {
-    requireNonNull(curve,"curve cannot be null");
+  public static ECDSA fromCurve(EllipticCurve curve) {
+    requireNonNull(curve, "curve cannot be null");
     return new ECDSA(curve);
   }
 

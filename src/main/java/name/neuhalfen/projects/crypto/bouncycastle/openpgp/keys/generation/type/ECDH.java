@@ -18,7 +18,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type
 import static java.util.Objects.requireNonNull;
 
 import java.security.spec.AlgorithmParameterSpec;
-import javax.annotation.Nonnull;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PublicKeyAlgorithm;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.curve.EllipticCurve;
 import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec;
@@ -28,12 +27,12 @@ public class ECDH implements KeyType {
   private final EllipticCurve curve;
 
   ECDH(EllipticCurve curve) {
-    requireNonNull(curve,"curve cannot be null");
+    requireNonNull(curve, "curve cannot be null");
     this.curve = curve;
   }
 
-  public static ECDH fromCurve( EllipticCurve curve) {
-    requireNonNull(curve,"curve cannot be null");
+  public static ECDH fromCurve(EllipticCurve curve) {
+    requireNonNull(curve, "curve cannot be null");
     return new ECDH(curve);
   }
 

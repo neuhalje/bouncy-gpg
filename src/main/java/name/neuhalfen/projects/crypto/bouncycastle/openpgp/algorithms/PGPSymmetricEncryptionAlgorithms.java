@@ -85,6 +85,14 @@ public enum PGPSymmetricEncryptionAlgorithms {
   CAMELLIA_256(SymmetricKeyAlgorithmTags.CAMELLIA_256, false);
 
 
+  private final static Set<PGPSymmetricEncryptionAlgorithms> RECOMMENDED_ALGORITHMS = Collections
+      .unmodifiableSet(
+          Arrays.stream(
+              PGPSymmetricEncryptionAlgorithms.values())
+              .filter(alg -> !alg.insecure)
+              .collect(Collectors.toSet()));
+  private final static int[] RECOMMENDED_ALGORITHM_IDS =
+      RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
   private final int algorithmId;
   private final boolean insecure;
 
@@ -93,6 +101,13 @@ public enum PGPSymmetricEncryptionAlgorithms {
     this.insecure = insecure;
   }
 
+  public static Set<PGPSymmetricEncryptionAlgorithms> recommendedAlgorithms() {
+    return RECOMMENDED_ALGORITHMS;
+  }
+
+  public static int[] recommendedAlgorithmIds() {
+    return RECOMMENDED_ALGORITHM_IDS;
+  }
 
   /**
    * Returns the corresponding BouncyCastle  algorithm tag.
@@ -114,24 +129,5 @@ public enum PGPSymmetricEncryptionAlgorithms {
    */
   public boolean isInsecure() {
     return insecure;
-  }
-
-
-  private final static Set<PGPSymmetricEncryptionAlgorithms> RECOMMENDED_ALGORITHMS = Collections
-      .unmodifiableSet(
-          Arrays.stream(
-              PGPSymmetricEncryptionAlgorithms.values())
-              .filter(alg -> !alg.insecure)
-              .collect(Collectors.toSet()));
-
-  private final static int[] RECOMMENDED_ALGORITHM_IDS =
-      RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
-
-  public static Set<PGPSymmetricEncryptionAlgorithms> recommendedAlgorithms() {
-    return RECOMMENDED_ALGORITHMS;
-  }
-
-  public static int[] recommendedAlgorithmIds() {
-    return RECOMMENDED_ALGORITHM_IDS;
   }
 }

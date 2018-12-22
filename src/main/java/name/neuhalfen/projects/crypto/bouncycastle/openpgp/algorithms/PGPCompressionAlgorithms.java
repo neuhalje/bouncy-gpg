@@ -30,10 +30,22 @@ public enum PGPCompressionAlgorithms {
    */
   BZIP2(CompressionAlgorithmTags.BZIP2);
 
+  private final static Set<PGPCompressionAlgorithms> RECOMMENDED_ALGORITHMS = SetUtils
+      .unmodifiableSet(BZIP2, ZLIB, ZIP, UNCOMPRESSED);
+  private final static int[] RECOMMENDED_ALGORITHM_IDS =
+      RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
   private final int algorithmId;
 
   PGPCompressionAlgorithms(int algorithmId) {
     this.algorithmId = algorithmId;
+  }
+
+  public static Set<PGPCompressionAlgorithms> recommendedAlgorithms() {
+    return RECOMMENDED_ALGORITHMS;
+  }
+
+  public static int[] recommendedAlgorithmIds() {
+    return RECOMMENDED_ALGORITHM_IDS;
   }
 
   /**
@@ -45,19 +57,5 @@ public enum PGPCompressionAlgorithms {
    */
   public int getAlgorithmId() {
     return algorithmId;
-  }
-
-  private final static Set<PGPCompressionAlgorithms> RECOMMENDED_ALGORITHMS = SetUtils
-      .unmodifiableSet(BZIP2, ZLIB, ZIP, UNCOMPRESSED);
-
-  private final static int[] RECOMMENDED_ALGORITHM_IDS =
-      RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
-
-  public static Set<PGPCompressionAlgorithms> recommendedAlgorithms() {
-    return RECOMMENDED_ALGORITHMS;
-  }
-
-  public static int[] recommendedAlgorithmIds() {
-    return RECOMMENDED_ALGORITHM_IDS;
   }
 }

@@ -17,20 +17,20 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type
 
 public enum DiffieHellmanLength implements KeyLength {
 
-    DH_1024_BIT(1024),
-    DH_2048_BIT(2048),
-    DH_3072_BIT(3072),
-    ;
+  DH_1024_BIT(1024),
+  DH_2048_BIT(2048),
+  DH_3072_BIT(3072),
+  ;
 
-    private final int length;
+  private final int length;
 
-    DiffieHellmanLength(int length) {
-        this.length = length;
-    }
+  DiffieHellmanLength(int length) {
+    this.length = length;
+  }
 
-    @Override
-    public int getLength() {
-        return length;
-    }
+  @Override
+  public int getLength() {
+    return length;
+  }
 
 }

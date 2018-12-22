@@ -15,13 +15,12 @@
  */
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type;
 
-import javax.annotation.Nonnull;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PublicKeyAlgorithm;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length.RsaLength;
 
 public class RSA_SIGN extends RSA_GENERAL {
 
-  RSA_SIGN( RsaLength length) {
+  RSA_SIGN(RsaLength length) {
     super(length);
   }
 
