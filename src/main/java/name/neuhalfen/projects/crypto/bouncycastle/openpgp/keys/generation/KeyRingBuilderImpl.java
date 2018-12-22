@@ -59,7 +59,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPDigestCalculatorProviderBu
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyPair;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyEncryptorBuilder;
 
-public class KeyRingBuilderImpl implements KeyRingBuilder {
+public class KeyRingBuilderImpl implements KeyRingBuilder,SimpleKeyRingBuilder {
 
   private final Charset UTF8 = Charset.forName("UTF-8");
 
@@ -67,16 +67,7 @@ public class KeyRingBuilderImpl implements KeyRingBuilder {
   private String userId;
   private Passphrase passphrase;
 
-  /**
-   * Creates a simple RSA KeyPair of length {@code length} with user-id {@code userId}.
-   * The KeyPair consists of a single RSA master key which is used for signing, encryption and
-   * certification.
-   *
-   * @param userId user id.
-   * @param length length in bits.
-   *
-   * @return {@link PGPSecretKeyRing} containing the KeyPair.
-   */
+   @Override
   public KeyringConfig simpleRsaKeyRing(String userId, RsaLength length)
       throws PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException {
     requireNonNull(userId, "userId must not be null");
@@ -91,15 +82,7 @@ public class KeyRingBuilderImpl implements KeyRingBuilder {
         .build();
   }
 
-  /**
-   * Creates a key ring consisting of an ECDSA master key and an ECDH sub-key.
-   * The ECDSA master key is used for signing messages and certifying the sub key.
-   * The ECDH sub-key is used for encryption of messages.
-   *
-   * @param userId user-id
-   *
-   * @return {@link PGPSecretKeyRing} containing the key pairs.
-   */
+  @Override
   public KeyringConfig simpleEcKeyRing(String userId)
       throws PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException {
     requireNonNull(userId, "userId must not be null");
@@ -169,7 +152,7 @@ public class KeyRingBuilderImpl implements KeyRingBuilder {
       return new BuildImpl();
     }
 
-    class BuildImpl implements Build {
+    private class BuildImpl implements Build {
 
       @Override
       public KeyringConfig build()
@@ -247,19 +230,18 @@ public class KeyRingBuilderImpl implements KeyRingBuilder {
       private PGPKeyPair generateKeyPair(KeySpec spec)
           throws NoSuchProviderException, NoSuchAlgorithmException, PGPException,
           InvalidAlgorithmParameterException {
-        KeyType type = spec.getKeyType();
-        KeyPairGenerator certKeyGenerator = KeyPairGenerator.getInstance(
+
+        final KeyType type = spec.getKeyType();
+        final KeyPairGenerator certKeyGenerator = KeyPairGenerator.getInstance(
             type.getName(), BouncyCastleProvider.PROVIDER_NAME);
         certKeyGenerator.initialize(type.getAlgorithmSpec());
 
         // Create raw Key Pair
-        KeyPair keyPair = certKeyGenerator.generateKeyPair();
+        final KeyPair keyPair = certKeyGenerator.generateKeyPair();
 
         // Form PGP key pair
-        PGPKeyPair pgpKeyPair = new JcaPGPKeyPair(type.getAlgorithm().getAlgorithmId(),
+        return new JcaPGPKeyPair(type.getAlgorithm().getAlgorithmId(),
             keyPair, new Date());
-
-        return pgpKeyPair;
       }
     }
   }

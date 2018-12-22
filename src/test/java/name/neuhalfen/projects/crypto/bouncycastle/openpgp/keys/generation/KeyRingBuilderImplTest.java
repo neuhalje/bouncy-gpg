@@ -2,7 +2,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation;
 
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.matcher.KeyMatcher.secretKeyRingForUid;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.matcher.KeyMatcher.secretKeyRingHasRoles;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.iterableWithSize;
 import static org.junit.Assert.assertNotNull;
@@ -39,15 +38,11 @@ public class KeyRingBuilderImplTest {
 
     // Verify that 'simpleEcKeyRing' creates good keys (correct uid, keytype, ..)
 
-    KeyRingBuilderImpl sut = new KeyRingBuilderImpl();
+    SimpleKeyRingBuilder sut = new KeyRingBuilderImpl();
 
     final KeyringConfig keyRing = sut.simpleEcKeyRing(UID_JULIET);
 
     validateSimpleKeyRing(keyRing);
-
-    //  keyRing.getPublicKeyRings().getKeyRings().next().getPublicKey().is
-  //  assertThat("No passphrase is set",
-  //      keyRing.getSecretKeyRings().getKeyRings().next().getSecretKey().);
   }
 
 
@@ -57,15 +52,12 @@ public class KeyRingBuilderImplTest {
 
     // Verify that 'simpleEcKeyRing' creates good keys (correct uid, keytype, ..)
 
-    KeyRingBuilderImpl sut = new KeyRingBuilderImpl();
+    SimpleKeyRingBuilder sut = new KeyRingBuilderImpl();
 
     final KeyringConfig keyRing = sut.simpleRsaKeyRing(UID_JULIET, RsaLength.RSA_1024_BIT);
 
     validateSimpleKeyRing(keyRing);
 
-    //  keyRing.getPublicKeyRings().getKeyRings().next().getPublicKey().is
-    //  assertThat("No passphrase is set",
-    //      keyRing.getSecretKeyRings().getKeyRings().next().getSecretKey().);
   }
 
   private void validateSimpleKeyRing(final KeyringConfig keyRing) throws IOException, PGPException {
@@ -86,13 +78,22 @@ public class KeyRingBuilderImplTest {
         secretKeyRings,
 
         contains(
-            allOf(
-                secretKeyRingForUid(EMAIL_JULIET),
-                secretKeyRingHasRoles(KeyRole.MASTER, KeyRole.ENCRYPTION, KeyRole.SIGNING)
-            )));
+            secretKeyRingForUid(EMAIL_JULIET)
+            ));
 
+    assertThat("Juliets secret key should have all roles",
+        secretKeyRings,
+
+        contains(
+            secretKeyRingHasRoles(KeyRole.MASTER, KeyRole.ENCRYPTION, KeyRole.SIGNING)
+        ));
     assertThat("Only one secret key should be created",
         secretKeyRings, iterableWithSize(1)
     );
+
+    //  keyRing.getPublicKeyRings().getKeyRings().next().getPublicKey().is
+    //  assertThat("No passphrase is set",
+    //      keyRing.getSecretKeyRings().getKeyRings().next().getSecretKey().);
+
   }
 }
