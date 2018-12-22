@@ -2,6 +2,8 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
 
 import java.security.Security;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeyRingBuilder;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeyRingBuilderImpl;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 @SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.AccessorMethodGeneration", "PMD.LawOfDemeter",
@@ -49,6 +51,15 @@ public final class BouncyGPG {
    */
   public static BuildEncryptionOutputStreamAPI encryptToStream() {
     return new BuildEncryptionOutputStreamAPI();
+  }
+
+  /**
+   * Generate a new OpenPGP key ring.
+   *
+   * @return builder
+   */
+  public static KeyRingBuilder createKeyring() {
+    return new KeyRingBuilderImpl();
   }
 
   /**

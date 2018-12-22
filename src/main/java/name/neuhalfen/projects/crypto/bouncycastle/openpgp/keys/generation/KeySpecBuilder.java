@@ -15,6 +15,8 @@
  */
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation;
 
+import static java.util.Objects.requireNonNull;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.Feature;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPCompressionAlgorithms;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPHashAlgorithms;
@@ -29,7 +31,7 @@ public class KeySpecBuilder implements KeySpecBuilderInterface {
   private PGPSignatureSubpacketGenerator hashedSubPackets = new PGPSignatureSubpacketGenerator();
 
   KeySpecBuilder(KeyType type) {
-    this.type = type;
+    this.type = requireNonNull(type);
   }
 
   @Override

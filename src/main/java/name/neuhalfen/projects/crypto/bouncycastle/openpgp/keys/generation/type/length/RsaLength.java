@@ -17,11 +17,11 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type
 
 public enum RsaLength implements KeyLength {
     @Deprecated
-    RSA_1024_BITS(1024),
+    RSA_1024_BIT(1024),
     @Deprecated
     RSA_2048_BIT(2048),
     RSA_3072_BIT(3072),
-    RSA__4096_BIT(4096),
+    RSA_4096_BIT(4096),
     RSA_8192_BIT(8192),
     ;
 

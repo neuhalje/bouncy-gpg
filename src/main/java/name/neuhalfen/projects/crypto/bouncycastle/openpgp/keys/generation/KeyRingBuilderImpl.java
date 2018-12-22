@@ -229,8 +229,16 @@ public class KeyRingBuilderImpl implements KeyRingBuilder {
         // TODO: Remove once BC 1.61 is released
         secretKeys = KeyRingSubKeyFixUtil.repairSubkeyPackets(secretKeys, null, null);
 
-        final InMemoryKeyring keyring = KeyringConfigs
-            .forGpgExportedKeys(KeyringConfigCallbacks.withPassword(passphrase.getChars()));
+        final InMemoryKeyring keyring;
+        if (passphrase == null) {
+          keyring = KeyringConfigs
+              .forGpgExportedKeys(KeyringConfigCallbacks.withUnprotectedKeys());
+        } else {
+          keyring = KeyringConfigs
+              .forGpgExportedKeys(KeyringConfigCallbacks.withPassword(passphrase.getChars()));
+
+        }
+
         keyring.addSecretKeyRing(secretKeys);
         keyring.addPublicKeyRing(publicKeys);
         return keyring;
