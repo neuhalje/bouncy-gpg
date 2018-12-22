@@ -15,9 +15,16 @@
  */
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import org.bouncycastle.bcpg.sig.KeyFlags;
+import org.bouncycastle.openpgp.PGPPublicKey;
+import org.bouncycastle.openpgp.PGPSignature;
+import org.bouncycastle.openpgp.PGPSignatureSubpacketVector;
 
 /**
  * Wraps bouncy castles org.bouncycastle.bcpg.sig.KeyFlags into an enum.
@@ -42,7 +49,7 @@ public enum KeyFlag {
   }
 
   public static Set<KeyFlag> fromInteger(int bitmask) {
-    final Set<KeyFlag> flags = new HashSet<>();
+    final Set<KeyFlag> flags = EnumSet.noneOf(KeyFlag.class);
     int identifiedFlags = 0;
 
     for (final KeyFlag f : KeyFlag.values()) {
@@ -62,5 +69,24 @@ public enum KeyFlag {
 
   public int getFlag() {
     return flag;
+  }
+
+
+  @SuppressWarnings({"PMD.LawOfDemeter"})
+  public static Set<KeyFlag> extractPublicKeyFlags(PGPPublicKey publicKey) {
+    requireNonNull(publicKey, "publicKey must not be null");
+
+    int aggregatedKeyFlags = 0;
+
+    final Iterator<PGPSignature> directKeySignatures = publicKey.getSignatures();
+
+    while (directKeySignatures.hasNext()) {
+      final PGPSignature signature = directKeySignatures.next();
+      final PGPSignatureSubpacketVector hashedSubPackets = signature.getHashedSubPackets();
+
+      final int keyFlags = hashedSubPackets.getKeyFlags();
+      aggregatedKeyFlags |= keyFlags;
+    }
+    return fromInteger(aggregatedKeyFlags);
   }
 }

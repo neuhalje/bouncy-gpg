@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 
 import static java.util.Objects.requireNonNull;
+import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeyFlag.extractPublicKeyFlags;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -11,14 +12,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeyFlag;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPKeyFlags;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
-import org.bouncycastle.openpgp.PGPSignature;
-import org.bouncycastle.openpgp.PGPSignatureSubpacketVector;
 
 /**
  * This implements the key selection strategy for BouncyGPG .
@@ -225,20 +225,18 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   protected boolean isEncryptionKey(PGPPublicKey publicKey) {
     requireNonNull(publicKey, "publicKey must not be null");
 
-    final long keyFlags = extractPublicKeyFlags(publicKey);
+    final Set<KeyFlag> keyFlags = extractPublicKeyFlags(publicKey);
 
-    final boolean canEncryptCommunication =
-        (keyFlags & PGPKeyFlags.CAN_ENCRYPT_COMMS) == PGPKeyFlags.CAN_ENCRYPT_COMMS;
+    final boolean canEncryptCommunication = keyFlags.contains(KeyFlag.ENCRYPT_COMMS);
 
-    final boolean canEncryptStorage =
-        (keyFlags & PGPKeyFlags.CAN_ENCRYPT_STORAGE) == PGPKeyFlags.CAN_ENCRYPT_STORAGE;
+    final boolean canEncryptStorage =keyFlags.contains(KeyFlag.ENCRYPT_STORAGE);
 
     return canEncryptCommunication || canEncryptStorage;
   }
 
   protected boolean isVerificationKey(PGPPublicKey pubKey) {
     final boolean isVerficationKey =
-        (extractPublicKeyFlags(pubKey) & PGPKeyFlags.CAN_SIGN) == PGPKeyFlags.CAN_SIGN;
+        extractPublicKeyFlags(pubKey).contains(KeyFlag.SIGN_DATA);
 
     if (!isVerficationKey) {
       LOGGER.trace("Skipping pubkey {} (no signing key)",
@@ -263,23 +261,7 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     return !isRevoked(publicKey);
   }
 
-  @SuppressWarnings({"PMD.LawOfDemeter"})
-  protected long extractPublicKeyFlags(PGPPublicKey publicKey) {
-    requireNonNull(publicKey, "publicKey must not be null");
 
-    long aggregatedKeyFlags = 0;
-
-    final Iterator<PGPSignature> directKeySignatures = publicKey.getSignatures();
-
-    while (directKeySignatures.hasNext()) {
-      final PGPSignature signature = directKeySignatures.next();
-      final PGPSignatureSubpacketVector hashedSubPackets = signature.getHashedSubPackets();
-
-      final int keyFlags = hashedSubPackets.getKeyFlags();
-      aggregatedKeyFlags |= keyFlags;
-    }
-    return aggregatedKeyFlags;
-  }
 }
 
 
