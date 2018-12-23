@@ -19,35 +19,35 @@ import static java.util.Objects.requireNonNull;
 
 import java.security.spec.AlgorithmParameterSpec;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PublicKeyAlgorithm;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length.ElGamalLength;
-import org.bouncycastle.jce.spec.ElGamalParameterSpec;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.curve.EllipticCurve;
+import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec;
 
-public class ElGamal_GENERAL implements KeyType {
+public class ECDHKeyType implements KeyType {
 
-  private final ElGamalLength length;
+  private final EllipticCurve curve;
 
-  ElGamal_GENERAL(ElGamalLength length) {
-    requireNonNull(length, "length cannot be null");
-    this.length = length;
+  ECDHKeyType(EllipticCurve curve) {
+    requireNonNull(curve, "curve cannot be null");
+    this.curve = curve;
   }
 
-  public static ElGamal_GENERAL withLength(ElGamalLength length) {
-    requireNonNull(length, "length cannot be null");
-    return new ElGamal_GENERAL(length);
+  public static ECDHKeyType fromCurve(EllipticCurve curve) {
+    requireNonNull(curve, "curve cannot be null");
+    return new ECDHKeyType(curve);
   }
 
   @Override
   public String getName() {
-    return "ElGamal";
+    return "ECDH";
   }
 
   @Override
   public PublicKeyAlgorithm getAlgorithm() {
-    return PublicKeyAlgorithm.ELGAMAL_GENERAL;
+    return PublicKeyAlgorithm.ECDH;
   }
 
   @Override
   public AlgorithmParameterSpec getAlgorithmSpec() {
-    return new ElGamalParameterSpec(length.getP(), length.getG());
+    return new ECNamedCurveGenParameterSpec(curve.getName());
   }
 }

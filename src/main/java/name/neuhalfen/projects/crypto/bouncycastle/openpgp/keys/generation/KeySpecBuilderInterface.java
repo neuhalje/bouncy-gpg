@@ -15,10 +15,12 @@
  */
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation;
 
+import java.util.Collection;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.Feature;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPCompressionAlgorithms;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPHashAlgorithms;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPSymmetricEncryptionAlgorithms;
+import org.bouncycastle.bcpg.sig.Features;
 
 public interface KeySpecBuilderInterface {
 
@@ -32,6 +34,21 @@ public interface KeySpecBuilderInterface {
 
     WithPreferredSymmetricAlgorithms withDetailedConfiguration();
 
+    /**
+     * Sets sensible default algorithms for this key.
+     *
+     * <ul>
+     * <li>preferred algorithms via recommendedAlgorithmIds()</li>
+     * <li>enables the FEATURE_MODIFICATION_DETECTION feature</li>
+     * </ul>
+     *
+     * @return keyspec
+     *
+     * @see PGPCompressionAlgorithms#recommendedAlgorithmIds()
+     * @see PGPSymmetricEncryptionAlgorithms#recommendedAlgorithmIds()
+     * @see PGPHashAlgorithms#recommendedAlgorithmIds()
+     * @see Features#FEATURE_MODIFICATION_DETECTION
+     */
     KeySpec withDefaultAlgorithms();
   }
 
@@ -39,6 +56,9 @@ public interface KeySpecBuilderInterface {
 
     WithPreferredHashAlgorithms withPreferredSymmetricAlgorithms(
         PGPSymmetricEncryptionAlgorithms... algorithms);
+
+    WithPreferredHashAlgorithms withPreferredSymmetricAlgorithms(
+        Collection<PGPSymmetricEncryptionAlgorithms> algorithms);
 
     WithPreferredHashAlgorithms withDefaultSymmetricAlgorithms();
 
@@ -51,6 +71,9 @@ public interface KeySpecBuilderInterface {
     WithPreferredCompressionAlgorithms withPreferredHashAlgorithms(
         PGPHashAlgorithms... algorithms);
 
+    WithPreferredCompressionAlgorithms withPreferredHashAlgorithms(
+        Collection<PGPHashAlgorithms> algorithms);
+
     WithPreferredCompressionAlgorithms withDefaultHashAlgorithms();
 
   }
@@ -58,6 +81,9 @@ public interface KeySpecBuilderInterface {
   interface WithPreferredCompressionAlgorithms {
 
     WithFeatures withPreferredCompressionAlgorithms(PGPCompressionAlgorithms... algorithms);
+
+    WithFeatures withPreferredCompressionAlgorithms(
+        Collection<PGPCompressionAlgorithms> algorithms);
 
     WithFeatures withDefaultCompressionAlgorithms();
 

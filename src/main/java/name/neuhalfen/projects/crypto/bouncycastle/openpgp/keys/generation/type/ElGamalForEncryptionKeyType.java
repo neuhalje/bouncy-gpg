@@ -18,9 +18,9 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PublicKeyAlgorithm;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length.ElGamalLength;
 
-public class ElGamal_ENCRYPT extends ElGamal_GENERAL {
+public class ElGamalForEncryptionKeyType extends ElGamalKeyType {
 
-  ElGamal_ENCRYPT(ElGamalLength length) {
+  ElGamalForEncryptionKeyType(ElGamalLength length) {
     super(length);
   }
 

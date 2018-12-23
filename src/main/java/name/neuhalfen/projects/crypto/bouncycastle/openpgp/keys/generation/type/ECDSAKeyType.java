@@ -15,39 +15,31 @@
  */
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type;
 
+
 import static java.util.Objects.requireNonNull;
 
-import java.security.spec.AlgorithmParameterSpec;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PublicKeyAlgorithm;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.curve.EllipticCurve;
-import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec;
 
-public class ECDH implements KeyType {
+@SuppressWarnings("PMD.ShortClassName")
+public class ECDSAKeyType extends ECDHKeyType {
 
-  private final EllipticCurve curve;
-
-  ECDH(EllipticCurve curve) {
-    requireNonNull(curve, "curve cannot be null");
-    this.curve = curve;
+  ECDSAKeyType(EllipticCurve curve) {
+    super(curve);
   }
 
-  public static ECDH fromCurve(EllipticCurve curve) {
+  public static ECDSAKeyType fromCurve(EllipticCurve curve) {
     requireNonNull(curve, "curve cannot be null");
-    return new ECDH(curve);
+    return new ECDSAKeyType(curve);
   }
 
   @Override
   public String getName() {
-    return "ECDH";
+    return "ECDSA";
   }
 
   @Override
   public PublicKeyAlgorithm getAlgorithm() {
-    return PublicKeyAlgorithm.ECDH;
-  }
-
-  @Override
-  public AlgorithmParameterSpec getAlgorithmSpec() {
-    return new ECNamedCurveGenParameterSpec(curve.getName());
+    return PublicKeyAlgorithm.ECDSA;
   }
 }

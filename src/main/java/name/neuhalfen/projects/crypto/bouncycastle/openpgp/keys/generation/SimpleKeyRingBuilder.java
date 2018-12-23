@@ -43,15 +43,15 @@ public interface SimpleKeyRingBuilder {
 
 
   /**
-   * Creates a key ring consisting of an ECDSA master key and an ECDH sub-key.
-   * The ECDSA master key is used for signing messages and certifying the sub key.
-   * The ECDH sub-key is used for encryption of messages.
+   * Creates a key ring consisting of an ECDSAKeyType master key and an ECDHKeyType sub-key.
+   * The ECDSAKeyType master key is used for signing messages and certifying the sub key.
+   * The ECDHKeyType sub-key is used for encryption of messages.
    *
    * @param userId user-id
    *
    * @return {@link PGPSecretKeyRing} containing the key pairs.
    */
-  KeyringConfig simpleEcKeyRing(String userId)
+  KeyringConfig simpleEccKeyRing(String userId)
       throws PGPException, NoSuchAlgorithmException, NoSuchProviderException,
       InvalidAlgorithmParameterException, IOException;
 }

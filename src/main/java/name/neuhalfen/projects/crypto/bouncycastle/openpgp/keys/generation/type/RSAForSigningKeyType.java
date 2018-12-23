@@ -18,14 +18,14 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PublicKeyAlgorithm;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length.RsaLength;
 
-public class RSA_ENCRYPT extends RSA_GENERAL {
+public class RSAForSigningKeyType extends RSAKeyType {
 
-  RSA_ENCRYPT(RsaLength length) {
+  RSAForSigningKeyType(RsaLength length) {
     super(length);
   }
 
   @Override
   public PublicKeyAlgorithm getAlgorithm() {
-    return PublicKeyAlgorithm.RSA_ENCRYPT;
+    return PublicKeyAlgorithm.RSA_SIGN;
   }
 }

@@ -15,6 +15,8 @@
  */
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Arrays;
 import javax.annotation.Nullable;
 
@@ -41,6 +43,11 @@ public class Passphrase {
    */
   public static Passphrase emptyPassphrase() {
     return new Passphrase(null);
+  }
+
+  public static Passphrase fromString(final String passphrase){
+    requireNonNull(passphrase);
+    return new Passphrase(passphrase.toCharArray());
   }
 
   /**

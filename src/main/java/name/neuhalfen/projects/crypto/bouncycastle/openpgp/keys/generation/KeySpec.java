@@ -36,19 +36,19 @@ public class KeySpec {
     this.inheritedSubPackets = inheritedSubPackets;
   }
 
-  public static KeySpecBuilder getBuilder(KeyType type) {
+  public static KeySpecBuilderImpl getBuilder(KeyType type) {
     requireNonNull(type, "type must not be null");
 
-    return new KeySpecBuilder(type);
+    return new KeySpecBuilderImpl(type);
   }
 
-  KeyType getKeyType() {
+  public KeyType getKeyType() {
     return keyType;
   }
 
   @Nullable
-  PGPSignatureSubpacketVector getSubpackets() {
-    return subpacketGenerator != null ? subpacketGenerator.generate() : null;
+  public PGPSignatureSubpacketVector getSubpackets() {
+    return subpacketGenerator == null ?  null :subpacketGenerator.generate() ;
   }
 
   boolean isInheritedSubPackets() {

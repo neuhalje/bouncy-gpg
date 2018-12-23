@@ -32,10 +32,10 @@ import java.util.List;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPHashAlgorithms;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.internal.KeyRingSubKeyFixUtil;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.ECDH;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.ECDSA;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.ECDHKeyType;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.ECDSAKeyType;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.KeyType;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.RSA_GENERAL;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.RSAKeyType;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.curve.EllipticCurve;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length.RsaLength;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
@@ -51,12 +51,14 @@ import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketVector;
+import org.bouncycastle.openpgp.operator.PBESecretKeyDecryptor;
 import org.bouncycastle.openpgp.operator.PBESecretKeyEncryptor;
 import org.bouncycastle.openpgp.operator.PGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.PGPDigestCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPDigestCalculatorProviderBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyPair;
+import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyEncryptorBuilder;
 
 @SuppressWarnings({"PMD.LawOfDemeter"})
@@ -75,7 +77,7 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
     requireNonNull(length, "length must not be null");
 
     return withMasterKey(
-        KeySpec.getBuilder(RSA_GENERAL.withLength(length))
+        KeySpec.getBuilder(RSAKeyType.withLength(length))
             .withDefaultKeyFlags()
             .withDefaultAlgorithms())
         .withPrimaryUserId(userId)
@@ -84,16 +86,16 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
   }
 
   @Override
-  public KeyringConfig simpleEcKeyRing(String userId)
+  public KeyringConfig simpleEccKeyRing(String userId)
       throws PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException {
     requireNonNull(userId, "userId must not be null");
 
     return withSubKey(
-        KeySpec.getBuilder(ECDH.fromCurve(EllipticCurve.CURVE_P256))
+        KeySpec.getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_P256))
             .withKeyFlags(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
             .withDefaultAlgorithms())
         .withMasterKey(
-            KeySpec.getBuilder(ECDSA.fromCurve(EllipticCurve.CURVE_P256))
+            KeySpec.getBuilder(ECDSAKeyType.fromCurve(EllipticCurve.CURVE_P256))
                 .withKeyFlags(KeyFlag.AUTHENTICATION, KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
                 .withDefaultAlgorithms())
         .withPrimaryUserId(userId)
@@ -166,8 +168,9 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
             .get(PGPHashAlgorithms.SHA1.getAlgorithmId());
 
         // Encryptor for encrypting secret keys
-        final PBESecretKeyEncryptor encryptor;
         final boolean withPassphrase = passphrase != null;
+
+        final PBESecretKeyEncryptor encryptor;
         if (withPassphrase) {
           // AES-256 encrypted
           encryptor = new JcePBESecretKeyEncryptorBuilder(PGPEncryptedData.AES_256, calculator)
@@ -178,9 +181,6 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
           encryptor = null;
         }
 
-        if (passphrase != null) {
-          passphrase.clear();
-        }
 
         // First key is the Master Key
         final KeySpec certKeySpec = keySpecs.get(0);
@@ -216,7 +216,21 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
         PGPSecretKeyRing secretKeys = ringGenerator.generateSecretKeyRing();
 
         // TODO: Remove once BC 1.61 is released
-        secretKeys = KeyRingSubKeyFixUtil.repairSubkeyPackets(secretKeys, null, null);
+
+        final PBESecretKeyDecryptor decryptor;
+        if (withPassphrase) {
+          // AES-256 encrypted
+          decryptor = new JcePBESecretKeyDecryptorBuilder(
+              new JcaPGPDigestCalculatorProviderBuilder()
+                  .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                  .build()).build(passphrase.getChars());
+
+        } else {
+          // unencrypted key pair
+          decryptor = null;
+        }
+
+        secretKeys = KeyRingSubKeyFixUtil.repairSubkeyPackets(secretKeys, decryptor, encryptor);
 
         final InMemoryKeyring keyring;
         if (passphrase == null) {
@@ -230,6 +244,11 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
 
         keyring.addSecretKeyRing(secretKeys);
         keyring.addPublicKeyRing(publicKeys);
+
+        if (passphrase != null) {
+          passphrase.clear();
+        }
+
         return keyring;
       }
 

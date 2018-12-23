@@ -39,6 +39,7 @@ import org.bouncycastle.openpgp.operator.PBESecretKeyEncryptor;
 import org.bouncycastle.openpgp.operator.PGPDigestCalculator;
 import org.bouncycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider;
 
+@SuppressWarnings("PMD.LawOfDemeter")
 public final class KeyRingSubKeyFixUtil {
 
   private static final Logger LOGGER = Logger.getLogger(KeyRingSubKeyFixUtil.class.getName());
@@ -70,51 +71,56 @@ public final class KeyRingSubKeyFixUtil {
       throws PGPException {
     requireNonNull(secretKeys, "secretKeys cannot be null");
 
-    PGPDigestCalculator calculator = new BcPGPDigestCalculatorProvider()
+    final PGPDigestCalculator calculator = new BcPGPDigestCalculatorProvider()
         .get(HashAlgorithmTags.SHA1);
 
-    List<PGPSecretKey> _secretKeys = new ArrayList<>();
-    Iterator<PGPSecretKey> secretKeyIterator = secretKeys.iterator();
+    final List<PGPSecretKey> fixedSecretKeys = new ArrayList<>();
+    final Iterator<PGPSecretKey> secretKeyIterator = secretKeys.iterator();
     try {
 
       while (secretKeyIterator.hasNext()) {
-        PGPSecretKey secSubKey = secretKeyIterator.next();
+        final PGPSecretKey secSubKey = secretKeyIterator.next();
 
-        if (secSubKey.isMasterKey()) {
-          LOGGER.log(Level.INFO, Long.toHexString(secSubKey.getKeyID()) + " is master key. Skip.");
-          _secretKeys.add(secSubKey);
+        if (secSubKey.isMasterKey()) { // NOPMD: Demeter
+          fixedSecretKeys.add(secSubKey);
           continue;
         }
 
-        PGPPublicKey pubSubKey = secSubKey.getPublicKey();
+        final PGPPublicKey pubSubKey = secSubKey.getPublicKey();
 
         // check for public key packet type
 
-        Field publicPk = pubSubKey.getClass().getDeclaredField("publicPk");
+        final Field publicPk = pubSubKey.getClass().getDeclaredField("publicPk");
         publicPk.setAccessible(true);
         PublicKeyPacket keyPacket = (PublicKeyPacket) publicPk.get(pubSubKey);
 
         if (keyPacket instanceof PublicSubkeyPacket) {
           // Sub key is already sub key
-          _secretKeys.add(secSubKey);
+          fixedSecretKeys.add(secSubKey);
           continue;
         }
 
         // Sub key is normal key -> fix
         LOGGER.log(Level.INFO, "Subkey " + Long.toHexString(secSubKey.getKeyID())
-            + " does not have a subkey key packet. Convert it...");
-        keyPacket = new PublicSubkeyPacket(pubSubKey.getAlgorithm(), pubSubKey.getCreationTime(),
+            + " does not have a subkey key packet. Converting it...");
+        keyPacket = new PublicSubkeyPacket( // NOPMD: AvoidInstantiatingObjectsInLoops
+            pubSubKey.getAlgorithm(),
+            pubSubKey.getCreationTime(),
             keyPacket.getKey());
         publicPk.set(pubSubKey, keyPacket);
 
-        PGPPrivateKey privateKey = secSubKey.extractPrivateKey(decryptor);
+        final PGPPrivateKey privateKey = secSubKey.extractPrivateKey(decryptor);
 
-        PGPSecretKey secretKey = new PGPSecretKey(privateKey, pubSubKey, calculator, false,
+        final PGPSecretKey secretKey = new PGPSecretKey(  // NOPMD: AvoidInstantiatingObjectsInLoops
+            privateKey,
+            pubSubKey,
+            calculator,
+            false,
             encryptor);
-        _secretKeys.add(secretKey);
+        fixedSecretKeys.add(secretKey);
       }
 
-      return new PGPSecretKeyRing(_secretKeys);
+      return new PGPSecretKeyRing(fixedSecretKeys);
     } catch (NoSuchFieldException | IllegalAccessException e) {
       throw new RuntimeException("Cannot apply fix due to an error while using reflections.", e);
     }
@@ -144,11 +150,11 @@ public final class KeyRingSubKeyFixUtil {
 
     final Set<PGPSecretKey> violatingPackets = new HashSet<>();
 
-    Iterator<PGPSecretKey> secretKeyIterator = secretKeys.iterator();
+    final Iterator<PGPSecretKey> secretKeyIterator = secretKeys.iterator();
     try {
 
       while (secretKeyIterator.hasNext()) {
-        PGPSecretKey secSubKey = secretKeyIterator.next();
+        final PGPSecretKey secSubKey = secretKeyIterator.next();
 
         if (secSubKey.isMasterKey()) {
           continue;
@@ -164,13 +170,15 @@ public final class KeyRingSubKeyFixUtil {
           continue;
         }
 
-        // Sub key is normal key
+        // Sub key is a normal key, not a  PublicSubkeyPacket
         violatingPackets.add(secSubKey);
       }
 
       return violatingPackets;
     } catch (NoSuchFieldException | IllegalAccessException e) {
-      throw new RuntimeException("Cannot apply fix due to an error while using reflections.", e);
+      throw // NOPMD: AvoidThrowingRawExceptionTypes (its ugly code anyway)
+          new RuntimeException("Cannot apply fix due to an error while using reflections.",
+              e);
     }
   }
 

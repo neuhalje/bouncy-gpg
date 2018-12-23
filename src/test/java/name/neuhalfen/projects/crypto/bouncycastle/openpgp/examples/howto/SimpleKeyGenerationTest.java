@@ -1,5 +1,6 @@
-package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation;
+package name.neuhalfen.projects.crypto.bouncycastle.openpgp.examples.howto;
 
+import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.examples.howto.TestEnAndDecryptionUtil.assertEncryptSignDecryptVerifyOk;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.matcher.KeyMatcher.hasKeyLength;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.matcher.KeyMatcher.keyAlgorithmAnyOf;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.matcher.KeyMatcher.secretKeyIsEncrypted;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PublicKeyAlgorithm;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length.RsaLength;
@@ -32,7 +34,10 @@ import org.bouncycastle.util.Iterable;
 import org.junit.Before;
 import org.junit.Test;
 
-public class KeyRingBuilderImplTest {
+/**
+ * These tests show how to create keys via the simplified API.
+ */
+public class SimpleKeyGenerationTest {
 
   @Before
   public void installBCProvider() {
@@ -42,19 +47,22 @@ public class KeyRingBuilderImplTest {
   private final static String UID_JULIET = "Juliet Capulet <juliet@example.com>";
   private final static String EMAIL_JULIET = "<juliet@example.com>";
 
+  /**
+   * Creates a simple ECC KeyPair with 256 bit ECC bit keys and with a user-id for Juliet Capulet.
+   *
+   * The key ring consists of an ECDSAKeyType master key and an ECDHKeyType sub-key.
+   * The ECDSAKeyType master key is used for signing messages and certifying the sub key.
+   * The ECDHKeyType sub-key is used for encryption of messages.
+   **/
   @Test
-  public void simpleEcKeyRing_createsGoodKeys()
-      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+  public void createSimple_ECC_Keyring()
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, SignatureException {
 
-    // Verify that 'simpleEccKeyRing' creates good keys (correct uid, keytype, ..)
+    final KeyringConfig eccKeyRing = BouncyGPG.createSimpleKeyring().simpleEccKeyRing(UID_JULIET);
 
-    SimpleKeyRingBuilder sut = new KeyRingBuilderImpl();
+    validateSimpleKeyRing(eccKeyRing);
 
-    final KeyringConfig keyRingConfig = sut.simpleEccKeyRing(UID_JULIET);
-
-    validateSimpleKeyRing(keyRingConfig);
-
-    final Iterable<PGPSecretKeyRing> secretKeyRings = keyRingConfig.getSecretKeyRings();
+    final Iterable<PGPSecretKeyRing> secretKeyRings = eccKeyRing.getSecretKeyRings();
     secretKeyRings.forEach(keyRing ->
         assertThat("We want ECC keys",
             keyRing,
@@ -70,20 +78,22 @@ public class KeyRingBuilderImplTest {
   }
 
 
+  /**
+   * Creates a simple RSA KeyPair with 3072 bit keys and with a user-id for Juliet Capulet.
+   *
+   * The KeyPair consists of a single RSA master key which is used for signing, encryption and
+   * certification.
+   **/
   @Test
-  public void simpleRsaKeyRing_createsGoodKeys()
-      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+  public void createSimple_RSA_Keyring()
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, SignatureException {
 
-    // Verify that 'simpleEccKeyRing' creates good keys (correct uid, keytype, ..)
+    final KeyringConfig rsaKeyRing = BouncyGPG.createSimpleKeyring()
+        .simpleRsaKeyRing(UID_JULIET, RsaLength.RSA_3072_BIT);
 
-    SimpleKeyRingBuilder sut = new KeyRingBuilderImpl();
+    validateSimpleKeyRing(rsaKeyRing);
 
-    // short keys for execution speed
-    final KeyringConfig keyRingConfig = sut.simpleRsaKeyRing(UID_JULIET, RsaLength.RSA_1024_BIT);
-
-    validateSimpleKeyRing(keyRingConfig);
-
-    final Iterable<PGPSecretKeyRing> secretKeyRings = keyRingConfig.getSecretKeyRings();
+    final Iterable<PGPSecretKeyRing> secretKeyRings = rsaKeyRing.getSecretKeyRings();
     secretKeyRings.forEach(keyRing ->
         assertThat("We want RSA keys of correct length",
             keyRing,
@@ -92,7 +102,7 @@ public class KeyRingBuilderImplTest {
                     keyAlgorithmAnyOf(
                         PublicKeyAlgorithm.RSA_GENERAL // ... consists of a single RSA master key
                     ),
-                    hasKeyLength(RsaLength.RSA_1024_BIT)
+                    hasKeyLength(RsaLength.RSA_3072_BIT)
                 )
             )));
   }
@@ -101,7 +111,8 @@ public class KeyRingBuilderImplTest {
    * simpleRsaKeyRing/simpleEccKeyRing should create unprotected keyrings that
    * allow encryption, and signature.
    */
-  private void validateSimpleKeyRing(final KeyringConfig keyRing) throws IOException, PGPException {
+  private void validateSimpleKeyRing(final KeyringConfig keyRing)
+      throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
     assertNotNull("A keyring should be created", keyRing);
 
     final PGPPublicKeyRingCollection pubKeyRings = keyRing.getPublicKeyRings();
@@ -138,5 +149,7 @@ public class KeyRingBuilderImplTest {
     // see https://github.com/bcgit/bc-java/issues/381
     assertThat("Keys should be exportable", secretKeyRings,
         everyItem(secretKeyringHasCorrectSubkeyPackets()));
+
+    assertEncryptSignDecryptVerifyOk(keyRing, UID_JULIET);
   }
 }

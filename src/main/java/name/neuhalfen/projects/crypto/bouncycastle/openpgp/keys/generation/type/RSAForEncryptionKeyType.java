@@ -15,41 +15,17 @@
  */
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type;
 
-import static java.util.Objects.requireNonNull;
-
-import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.RSAKeyGenParameterSpec;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PublicKeyAlgorithm;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length.RsaLength;
 
-public class RSA_GENERAL implements KeyType {
+public class RSAForEncryptionKeyType extends RSAKeyType {
 
-  private final RsaLength length;
-
-  RSA_GENERAL(RsaLength length) {
-    requireNonNull(length, "length cannot be null");
-
-    this.length = length;
-  }
-
-  public static RSA_GENERAL withLength(RsaLength length) {
-    requireNonNull(length, "length cannot be null");
-
-    return new RSA_GENERAL(length);
-  }
-
-  @Override
-  public String getName() {
-    return "RSA";
+  RSAForEncryptionKeyType(RsaLength length) {
+    super(length);
   }
 
   @Override
   public PublicKeyAlgorithm getAlgorithm() {
-    return PublicKeyAlgorithm.RSA_GENERAL;
-  }
-
-  @Override
-  public AlgorithmParameterSpec getAlgorithmSpec() {
-    return new RSAKeyGenParameterSpec(length.getLength(), RSAKeyGenParameterSpec.F4);
+    return PublicKeyAlgorithm.RSA_ENCRYPT;
   }
 }
