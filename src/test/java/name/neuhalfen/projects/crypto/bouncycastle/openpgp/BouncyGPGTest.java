@@ -17,4 +17,8 @@ public class BouncyGPGTest {
     assertNotNull(BouncyGPG.encryptToStream());
   }
 
+  @Test
+  public void createKeyring_notNull() throws Exception {
+    assertNotNull(BouncyGPG.createKeyring());
+  }
 }

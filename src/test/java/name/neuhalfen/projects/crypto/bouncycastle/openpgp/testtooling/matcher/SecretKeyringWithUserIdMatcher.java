@@ -3,7 +3,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.matcher;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 import javax.annotation.RegEx;
-import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
@@ -14,6 +13,14 @@ public class SecretKeyringWithUserIdMatcher extends TypeSafeMatcher<PGPSecretKey
 
   private SecretKeyringWithUserIdMatcher(final Pattern userId) {
     this.userId = userId;
+  }
+
+  static SecretKeyringWithUserIdMatcher uid(final String uid) {
+    return new SecretKeyringWithUserIdMatcher(Pattern.compile(".*" + Pattern.quote(uid) + ".*"));
+  }
+
+  static SecretKeyringWithUserIdMatcher regexp(@RegEx final String uidRegexp) {
+    return new SecretKeyringWithUserIdMatcher(Pattern.compile(uidRegexp));
   }
 
   @Override
@@ -35,14 +42,6 @@ public class SecretKeyringWithUserIdMatcher extends TypeSafeMatcher<PGPSecretKey
   @Override
   public void describeTo(final Description description) {
     description.appendText("Matches regexp " + userId.toString());
-  }
-
-  static SecretKeyringWithUserIdMatcher uid(final String uid) {
-    return new SecretKeyringWithUserIdMatcher(Pattern.compile(".*" + Pattern.quote(uid) + ".*"));
-  }
-
-  static SecretKeyringWithUserIdMatcher regexp(@RegEx final String uidRegexp) {
-    return new SecretKeyringWithUserIdMatcher(Pattern.compile(uidRegexp));
   }
 }
 

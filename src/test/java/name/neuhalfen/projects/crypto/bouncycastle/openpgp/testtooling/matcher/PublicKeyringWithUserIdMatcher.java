@@ -15,6 +15,14 @@ public class PublicKeyringWithUserIdMatcher extends TypeSafeMatcher<PGPPublicKey
     this.userId = userId;
   }
 
+  static PublicKeyringWithUserIdMatcher uid(final String uid) {
+    return new PublicKeyringWithUserIdMatcher(Pattern.compile(".*" + Pattern.quote(uid) + ".*"));
+  }
+
+  static PublicKeyringWithUserIdMatcher regexp(@RegEx final String uidRegexp) {
+    return new PublicKeyringWithUserIdMatcher(Pattern.compile(uidRegexp));
+  }
+
   @Override
   protected boolean matchesSafely(final PGPPublicKeyRing item) {
     try {
@@ -34,14 +42,6 @@ public class PublicKeyringWithUserIdMatcher extends TypeSafeMatcher<PGPPublicKey
   @Override
   public void describeTo(final Description description) {
     description.appendText("Matches regexp " + userId.toString());
-  }
-
-  static PublicKeyringWithUserIdMatcher uid(final String uid) {
-    return new PublicKeyringWithUserIdMatcher(Pattern.compile(".*" + Pattern.quote(uid) + ".*"));
-  }
-
-  static PublicKeyringWithUserIdMatcher regexp(@RegEx final String uidRegexp) {
-    return new PublicKeyringWithUserIdMatcher(Pattern.compile(uidRegexp));
   }
 }
 

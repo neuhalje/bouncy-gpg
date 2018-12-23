@@ -13,10 +13,6 @@ import org.hamcrest.TypeSafeMatcher;
 
 public class SecretKeyringKeyRoleMatcher extends TypeSafeMatcher<PGPSecretKeyRing> {
 
-  public enum KeyRole {
-    SIGNING, MASTER, ENCRYPTION
-  }
-
   private final EnumSet<KeyRole> required;
 
   private SecretKeyringKeyRoleMatcher(
@@ -36,6 +32,12 @@ public class SecretKeyringKeyRoleMatcher extends TypeSafeMatcher<PGPSecretKeyRin
       }
     }
     return builder.toString();
+  }
+
+  static SecretKeyringKeyRoleMatcher hasRoles(final KeyRole[] flags) {
+    final EnumSet<KeyRole> required = EnumSet.noneOf(KeyRole.class);
+    Collections.addAll(required, flags);
+    return new SecretKeyringKeyRoleMatcher(required);
   }
 
   EnumSet<KeyRole> parseKeyRing(final PGPSecretKeyRing ring) {
@@ -101,10 +103,8 @@ public class SecretKeyringKeyRoleMatcher extends TypeSafeMatcher<PGPSecretKeyRin
     description.appendText("has flags ").appendText(toString(required));
   }
 
-  static SecretKeyringKeyRoleMatcher hasRoles(final KeyRole[] flags) {
-    final EnumSet<KeyRole> required = EnumSet.noneOf(KeyRole.class);
-    Collections.addAll(required, flags);
-    return new SecretKeyringKeyRoleMatcher(required);
+  public enum KeyRole {
+    SIGNING, MASTER, ENCRYPTION
   }
 }
 
