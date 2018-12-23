@@ -69,4 +69,11 @@ public final class KeyMatcher {
 
     return KeyLengthMatcher.hasKeyLength(keyLengthValues);
   }
+
+  /**
+   * tests that this issue is fixed in the keyring: https://github.com/bcgit/bc-java/issues/381
+   */
+  public static Matcher<PGPSecretKeyRing> secretKeyringHasCorrectSubkeyPackets() {
+    return SecretKeyringHasCorrectSubkeyPacketsMatcher.secretKeyringHasCorrectSubkeyPackets();
+  }
 }

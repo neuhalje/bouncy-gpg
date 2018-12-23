@@ -5,6 +5,7 @@ import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ma
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.matcher.KeyMatcher.secretKeyIsEncrypted;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.matcher.KeyMatcher.secretKeyRingForUid;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.matcher.KeyMatcher.secretKeyRingHasRoles;
+import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.matcher.KeyMatcher.secretKeyringHasCorrectSubkeyPackets;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.everyItem;
@@ -134,5 +135,8 @@ public class KeyRingBuilderImplTest {
     assertThat("No passphrase should be set",
         secretKeyRings, everyItem(not(secretKeyIsEncrypted())));
 
+    // see https://github.com/bcgit/bc-java/issues/381
+    assertThat("Keys should be exportable", secretKeyRings,
+        everyItem(secretKeyringHasCorrectSubkeyPackets()));
   }
 }
