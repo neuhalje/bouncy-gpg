@@ -26,7 +26,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.
 import org.bouncycastle.bcpg.sig.Features;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketGenerator;
 
-@SuppressWarnings({"PMD.LawOfDemeter"})
+@SuppressWarnings({"PMD.LawOfDemeter","PMD.ShortVariable"})
 class KeySpecBuilderImpl implements KeySpecBuilderInterface {
 
   private final KeyType type;

@@ -24,7 +24,7 @@ import java.math.BigInteger;
  *     RFC-3526: More Modular Exponential (MODP) Diffie-Hellman groups for Internet Key Exchange
  *     (IKE)</a>
  */
-@SuppressWarnings({"PMD.ShortVariable"})
+@SuppressWarnings({"PMD.ShortVariable", "PMD.FieldNamingConventions"})
 public enum ElGamalLength implements KeyLength {
 // FIXME: here? http://www.bouncycastle.org/wiki/display/JA1/Elliptic+Curve+Key+Pair+Generation+and+Key+Factories
 //

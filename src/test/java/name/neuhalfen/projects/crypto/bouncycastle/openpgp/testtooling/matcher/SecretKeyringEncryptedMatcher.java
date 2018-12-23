@@ -51,7 +51,8 @@ public class SecretKeyringEncryptedMatcher extends TypeSafeMatcher<PGPSecretKeyR
   @Override
   protected void describeMismatchSafely(final PGPSecretKeyRing item,
       final Description mismatchDescription) {
-    mismatchDescription.appendText("is encrypted");
+    mismatchDescription.appendValue("0x" + Long.toHexString(item.getSecretKey().getKeyID()))
+        .appendText(" is not encrypted");
   }
 
   @Override

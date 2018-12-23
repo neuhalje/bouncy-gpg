@@ -29,6 +29,7 @@ import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPHashAlgorithms;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.internal.KeyRingSubKeyFixUtil;
@@ -61,7 +62,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyPair;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyEncryptorBuilder;
 
-@SuppressWarnings({"PMD.LawOfDemeter"})
+@SuppressWarnings({"PMD.LawOfDemeter","PMD.ExcessiveImports"})
 public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder {
 
   private final static Charset UTF_8 = Charset.forName("UTF-8");
@@ -150,7 +151,7 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
 
     @Override
     public Build withoutPassphrase() {
-      KeyRingBuilderImpl.this.passphrase = null;
+      KeyRingBuilderImpl.this.passphrase = Passphrase.emptyPassphrase();
       return new BuildImpl();
     }
 
@@ -168,9 +169,9 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
             .get(PGPHashAlgorithms.SHA1.getAlgorithmId());
 
         // Encryptor for encrypting secret keys
-        final boolean withPassphrase = passphrase != null;
+        final boolean withPassphrase = !passphrase.isEmpty();
 
-        final PBESecretKeyEncryptor encryptor;
+        @Nullable final PBESecretKeyEncryptor encryptor;
         if (withPassphrase) {
           // AES-256 encrypted
           encryptor = new JcePBESecretKeyEncryptorBuilder(PGPEncryptedData.AES_256, calculator)
@@ -180,7 +181,6 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
           // unencrypted key pair
           encryptor = null;
         }
-
 
         // First key is the Master Key
         final KeySpec certKeySpec = keySpecs.get(0);
@@ -233,21 +233,17 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
         secretKeys = KeyRingSubKeyFixUtil.repairSubkeyPackets(secretKeys, decryptor, encryptor);
 
         final InMemoryKeyring keyring;
-        if (passphrase == null) {
+        if (passphrase.isEmpty()) {
           keyring = KeyringConfigs
               .forGpgExportedKeys(KeyringConfigCallbacks.withUnprotectedKeys());
         } else {
           keyring = KeyringConfigs
               .forGpgExportedKeys(KeyringConfigCallbacks.withPassword(passphrase.getChars()));
-
         }
 
         keyring.addSecretKeyRing(secretKeys);
         keyring.addPublicKeyRing(publicKeys);
-
-        if (passphrase != null) {
-          passphrase.clear();
-        }
+        passphrase.clear();
 
         return keyring;
       }

@@ -51,7 +51,7 @@ public class KeySpec {
     return subpacketGenerator == null ?  null :subpacketGenerator.generate() ;
   }
 
-  boolean isInheritedSubPackets() {
+  public boolean isInheritedSubPackets() {
     return inheritedSubPackets;
   }
 }

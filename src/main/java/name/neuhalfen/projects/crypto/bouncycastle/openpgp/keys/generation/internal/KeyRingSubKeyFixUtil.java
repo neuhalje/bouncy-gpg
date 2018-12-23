@@ -100,9 +100,11 @@ public final class KeyRingSubKeyFixUtil {
           continue;
         }
 
-        // Sub key is normal key -> fix
-        LOGGER.log(Level.INFO, "Subkey " + Long.toHexString(secSubKey.getKeyID())
-            + " does not have a subkey key packet. Converting it...");
+        if (LOGGER.isLoggable(Level.INFO)) {
+          // Sub key is normal key -> fix
+          LOGGER.log(Level.INFO, "Subkey " + Long.toHexString(secSubKey.getKeyID())
+              + " does not have a subkey key packet. Converting it...");
+        }
         keyPacket = new PublicSubkeyPacket( // NOPMD: AvoidInstantiatingObjectsInLoops
             pubSubKey.getAlgorithm(),
             pubSubKey.getCreationTime(),
@@ -122,7 +124,8 @@ public final class KeyRingSubKeyFixUtil {
 
       return new PGPSecretKeyRing(fixedSecretKeys);
     } catch (NoSuchFieldException | IllegalAccessException e) {
-      throw new RuntimeException("Cannot apply fix due to an error while using reflections.", e);
+      throw new UnsupportedOperationException(
+          "Cannot apply fix due to an error while using reflections.", e);
     }
   }
 
@@ -176,8 +179,9 @@ public final class KeyRingSubKeyFixUtil {
 
       return violatingPackets;
     } catch (NoSuchFieldException | IllegalAccessException e) {
-      throw // NOPMD: AvoidThrowingRawExceptionTypes (its ugly code anyway)
-          new RuntimeException("Cannot apply fix due to an error while using reflections.",
+      throw
+          new UnsupportedOperationException(
+              "Cannot apply fix due to an error while using reflections.",
               e);
     }
   }

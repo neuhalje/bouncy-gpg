@@ -24,16 +24,25 @@ public class Passphrase {
 
   private final Object lock = new Object();
 
+  @Nullable
   private final char[] chars;
   private boolean valid = true;
+  private final boolean empty;
 
   /**
    * Passphrase for keys etc.
    *
    * @param chars may be null for empty passwords.
    */
+  @SuppressWarnings("PMD.UseVarargs")
   public Passphrase(@Nullable char[] chars) {
-    this.chars = chars;
+    if (chars == null) {
+      empty = true;
+      this.chars = null; //NOPMD
+    } else {
+      this.chars = Arrays.copyOf(chars, chars.length);
+      empty = chars.length <= 0;
+    }
   }
 
   /**
@@ -45,7 +54,7 @@ public class Passphrase {
     return new Passphrase(null);
   }
 
-  public static Passphrase fromString(final String passphrase){
+  public static Passphrase fromString(final String passphrase) {
     requireNonNull(passphrase);
     return new Passphrase(passphrase.toCharArray());
   }
@@ -88,13 +97,18 @@ public class Passphrase {
         throw new IllegalStateException("Passphrase has been cleared.");
       }
 
-      if (chars == null) {
-        return null;
-      }
+      return chars == null ? null : Arrays.copyOf(chars, chars.length);
+    }
+  }
 
-      char[] copy = new char[chars.length];
-      System.arraycopy(chars, 0, copy, 0, chars.length);
-      return copy;
+  /**
+   * Return true if the passphrase is not empty.
+   *
+   * @return empty
+   */
+  public boolean isEmpty() {
+    synchronized (lock) {
+      return empty;
     }
   }
 

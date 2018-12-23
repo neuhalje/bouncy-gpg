@@ -4,7 +4,8 @@ import static java.util.Objects.requireNonNull;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.KeyType;
 
-public class KeySpecBuilder {
+@SuppressWarnings("PMD.ClassNamingConventions")
+public final class KeySpecBuilder {
 
   private KeySpecBuilder() {/* utility only */}
 
