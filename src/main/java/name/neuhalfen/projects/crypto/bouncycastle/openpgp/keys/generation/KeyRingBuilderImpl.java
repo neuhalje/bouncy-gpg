@@ -166,11 +166,17 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
             .get(PGPHashAlgorithms.SHA1.getAlgorithmId());
 
         // Encryptor for encrypting secret keys
-        PBESecretKeyEncryptor encryptor = passphrase == null ?
-            null : // unencrypted key pair, otherwise AES-256 encrypted
-            new JcePBESecretKeyEncryptorBuilder(PGPEncryptedData.AES_256, calculator)
-                .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                .build(passphrase != null ? passphrase.getChars() : null);
+        final PBESecretKeyEncryptor encryptor;
+        final boolean withPassphrase = passphrase != null;
+        if (withPassphrase) {
+          // AES-256 encrypted
+          encryptor = new JcePBESecretKeyEncryptorBuilder(PGPEncryptedData.AES_256, calculator)
+              .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+              .build(passphrase.getChars());
+        } else {
+          // unencrypted key pair
+          encryptor = null;
+        }
 
         if (passphrase != null) {
           passphrase.clear();
