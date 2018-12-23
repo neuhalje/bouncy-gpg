@@ -14,7 +14,6 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.Security;
 import java.security.SignatureException;
 import java.time.Instant;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
@@ -28,7 +27,6 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemor
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
 import org.junit.Before;

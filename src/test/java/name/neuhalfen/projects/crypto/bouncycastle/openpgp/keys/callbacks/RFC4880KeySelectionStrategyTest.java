@@ -9,7 +9,6 @@ import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.security.Security;
 import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,7 +17,6 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySel
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.junit.Before;

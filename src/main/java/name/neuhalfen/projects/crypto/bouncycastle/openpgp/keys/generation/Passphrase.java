@@ -26,8 +26,8 @@ public class Passphrase {
 
   @Nullable
   private final char[] chars;
-  private boolean valid = true;
   private final boolean empty;
+  private boolean valid = true;
 
   /**
    * Passphrase for keys etc.

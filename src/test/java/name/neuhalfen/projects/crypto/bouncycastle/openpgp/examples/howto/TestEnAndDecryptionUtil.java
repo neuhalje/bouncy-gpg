@@ -26,7 +26,8 @@ class TestEnAndDecryptionUtil {
     assertEncryptSignDecryptVerifyOk(keyringConfigFrom, uid, uid, keyringConfigFrom);
   }
 
-  public static void assertEncryptSignDecryptVerifyOk(KeyringConfig keyringConfigFrom, String encryptTo,
+  public static void assertEncryptSignDecryptVerifyOk(KeyringConfig keyringConfigFrom,
+      String encryptTo,
       String signWith, KeyringConfig keyringConfigTo)
       throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
 

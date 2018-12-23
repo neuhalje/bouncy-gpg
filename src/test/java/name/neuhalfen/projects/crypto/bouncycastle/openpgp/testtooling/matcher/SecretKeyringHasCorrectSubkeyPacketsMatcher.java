@@ -32,24 +32,6 @@ public class SecretKeyringHasCorrectSubkeyPacketsMatcher extends TypeSafeMatcher
     return new SecretKeyringHasCorrectSubkeyPacketsMatcher();
   }
 
-  @Override
-  protected boolean matchesSafely(final PGPSecretKeyRing item) {
-    try {
-
-      return KeyRingSubKeyFixUtil.violatingSubkeyPackets(item).isEmpty();
-    } catch (Exception e) {
-      return false;
-    }
-  }
-
-  @Override
-  protected void describeMismatchSafely(final PGPSecretKeyRing item,
-      final Description mismatchDescription) {
-    mismatchDescription.appendText(
-        "has it not set for the following IDs: ");
-    mismatchDescription.appendText(violations(item));
-  }
-
   private static String violations(PGPSecretKeyRing item) {
     try {
       final Set<PGPSecretKey> violatingSubkeyPackets = KeyRingSubKeyFixUtil
@@ -74,13 +56,31 @@ public class SecretKeyringHasCorrectSubkeyPacketsMatcher extends TypeSafeMatcher
     return "0x" + Long.toHexString(key.getKeyID());
   }
 
+  static Matcher<PGPSecretKeyRing> secretKeyringHasCorrectSubkeyPackets() {
+    return new SecretKeyringHasCorrectSubkeyPacketsMatcher();
+  }
+
+  @Override
+  protected boolean matchesSafely(final PGPSecretKeyRing item) {
+    try {
+
+      return KeyRingSubKeyFixUtil.violatingSubkeyPackets(item).isEmpty();
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  @Override
+  protected void describeMismatchSafely(final PGPSecretKeyRing item,
+      final Description mismatchDescription) {
+    mismatchDescription.appendText(
+        "has it not set for the following IDs: ");
+    mismatchDescription.appendText(violations(item));
+  }
+
   @Override
   public void describeTo(final Description description) {
     description.appendText("should carry the PUBLIC_SUBKEY packet tag for all its subkeys");
-  }
-
-  static Matcher<PGPSecretKeyRing> secretKeyringHasCorrectSubkeyPackets() {
-    return new SecretKeyringHasCorrectSubkeyPacketsMatcher();
   }
 }
 

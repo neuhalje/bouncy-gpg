@@ -62,7 +62,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyPair;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyEncryptorBuilder;
 
-@SuppressWarnings({"PMD.LawOfDemeter","PMD.ExcessiveImports"})
+@SuppressWarnings({"PMD.LawOfDemeter", "PMD.ExcessiveImports"})
 public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder {
 
   private final static Charset UTF_8 = Charset.forName("UTF-8");

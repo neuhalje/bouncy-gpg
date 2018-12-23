@@ -48,7 +48,7 @@ public class KeySpec {
 
   @Nullable
   public PGPSignatureSubpacketVector getSubpackets() {
-    return subpacketGenerator == null ?  null :subpacketGenerator.generate() ;
+    return subpacketGenerator == null ? null : subpacketGenerator.generate();
   }
 
   public boolean isInheritedSubPackets() {

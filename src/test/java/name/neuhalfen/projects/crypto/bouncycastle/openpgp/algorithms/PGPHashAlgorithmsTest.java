@@ -25,7 +25,7 @@ public class PGPHashAlgorithmsTest {
         PGPHashAlgorithms.SHA_512, PGPHashAlgorithms.SHA_384,
         PGPHashAlgorithms.SHA_256, PGPHashAlgorithms.SHA_224,
         PGPHashAlgorithms.RIPEMD160, PGPHashAlgorithms.TIGER_192
-        ));
+    ));
   }
 
   @Test

@@ -34,13 +34,13 @@ import org.junit.Test;
 
 public class KeyRingBuilderImplTest {
 
+  private final static String UID_JULIET = "Juliet Capulet <juliet@example.com>";
+  private final static String EMAIL_JULIET = "<juliet@example.com>";
+
   @Before
   public void installBCProvider() {
     BouncyGPG.registerProvider();
   }
-
-  private final static String UID_JULIET = "Juliet Capulet <juliet@example.com>";
-  private final static String EMAIL_JULIET = "<juliet@example.com>";
 
   @Test
   public void simpleEcKeyRing_createsGoodKeys()

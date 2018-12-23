@@ -91,11 +91,6 @@ public enum KeyFlag {
     return flags;
   }
 
-  public int getFlag() {
-    return flag;
-  }
-
-
   @SuppressWarnings({"PMD.LawOfDemeter"})
   public static Set<KeyFlag> extractPublicKeyFlags(PGPPublicKey publicKey) {
     requireNonNull(publicKey, "publicKey must not be null");
@@ -112,5 +107,9 @@ public enum KeyFlag {
       aggregatedKeyFlags |= keyFlags;
     }
     return fromInteger(aggregatedKeyFlags);
+  }
+
+  public int getFlag() {
+    return flag;
   }
 }

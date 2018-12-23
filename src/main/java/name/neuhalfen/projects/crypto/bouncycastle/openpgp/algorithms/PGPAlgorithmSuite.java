@@ -39,8 +39,9 @@ public final class PGPAlgorithmSuite {
   }
 
   /**
-   * @deprecated use getCompressionAlgorithmCode
    * @return the compression algorithm to be used
+   *
+   * @deprecated use getCompressionAlgorithmCode
    */
   @Deprecated()
   public PGPCompressionAlgorithms getCompressionEncryptionAlgorithmCode() {

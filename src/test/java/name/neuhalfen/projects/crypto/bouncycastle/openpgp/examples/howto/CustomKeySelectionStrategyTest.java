@@ -43,7 +43,7 @@ import org.junit.Test;
  * .andSignWith(myOwnPrivateKey)
  * .armorAsciiOutput()
  * .andWriteTo(buffer);
- *</code></pre>
+ * </code></pre>
  *
  * <a href="https://github.com/neuhalje/bouncy-gpg/issues/26">https://github.com/neuhalje/bouncy-gpg/issues/26</a>
  */

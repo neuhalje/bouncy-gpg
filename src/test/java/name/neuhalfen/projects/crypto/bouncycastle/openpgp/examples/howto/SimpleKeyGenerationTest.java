@@ -39,13 +39,13 @@ import org.junit.Test;
  */
 public class SimpleKeyGenerationTest {
 
+  private final static String UID_JULIET = "Juliet Capulet <juliet@example.com>";
+  private final static String EMAIL_JULIET = "<juliet@example.com>";
+
   @Before
   public void installBCProvider() {
     BouncyGPG.registerProvider();
   }
-
-  private final static String UID_JULIET = "Juliet Capulet <juliet@example.com>";
-  private final static String EMAIL_JULIET = "<juliet@example.com>";
 
   /**
    * Creates a simple ECC KeyPair with 256 bit ECC bit keys and with a user-id for Juliet Capulet.

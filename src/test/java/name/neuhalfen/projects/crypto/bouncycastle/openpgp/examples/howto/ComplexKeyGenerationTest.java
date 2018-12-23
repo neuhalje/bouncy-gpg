@@ -141,7 +141,6 @@ public class ComplexKeyGenerationTest {
     assertThat("Keys should be exportable", secretKeyRings,
         everyItem(secretKeyringHasCorrectSubkeyPackets()));
 
-
     assertEncryptSignDecryptVerifyOk(complexKeyRing, UID_JULIET);
   }
 

@@ -3,11 +3,9 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.KeysTestHelper.assertIsCorrectPublicKey;
 
 import java.io.IOException;
-import java.security.Security;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy.PURPOSE;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.junit.Before;
 import org.junit.Test;
