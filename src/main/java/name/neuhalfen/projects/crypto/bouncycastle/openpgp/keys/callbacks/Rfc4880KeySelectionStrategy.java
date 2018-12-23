@@ -15,7 +15,6 @@ import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeyFlag;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import org.bouncycastle.openpgp.PGPException;
-import org.bouncycastle.openpgp.PGPKeyFlags;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
@@ -227,16 +226,17 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
 
     final Set<KeyFlag> keyFlags = extractPublicKeyFlags(publicKey);
 
-    final boolean canEncryptCommunication = keyFlags.contains(KeyFlag.ENCRYPT_COMMS);
-
-    final boolean canEncryptStorage =keyFlags.contains(KeyFlag.ENCRYPT_STORAGE);
+    final boolean canEncryptCommunication = keyFlags // NOPMD:LawOfDemeter
+        .contains(KeyFlag.ENCRYPT_COMMS);
+    final boolean canEncryptStorage = keyFlags // NOPMD:LawOfDemeter
+        .contains(KeyFlag.ENCRYPT_STORAGE);
 
     return canEncryptCommunication || canEncryptStorage;
   }
 
   protected boolean isVerificationKey(PGPPublicKey pubKey) {
     final boolean isVerficationKey =
-        extractPublicKeyFlags(pubKey).contains(KeyFlag.SIGN_DATA);
+        extractPublicKeyFlags(pubKey).contains(KeyFlag.SIGN_DATA); // NOPMD:LawOfDemeter
 
     if (!isVerficationKey) {
       LOGGER.trace("Skipping pubkey {} (no signing key)",

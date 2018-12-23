@@ -18,7 +18,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation;
 import static java.util.Objects.requireNonNull;
 
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import org.bouncycastle.bcpg.sig.KeyFlags;
@@ -27,7 +26,32 @@ import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketVector;
 
 /**
- * Wraps bouncy castles org.bouncycastle.bcpg.sig.KeyFlags into an enum.
+ * <p>Wraps bouncy castles org.bouncycastle.bcpg.sig.KeyFlags into an enum. Provides helper to
+ * extract
+ * key flags from keys.</p>
+ *
+ * <p>
+ * To quote from <a href="https://tools.ietf.org/html/rfc4880#section-5.2.3.21">
+ * rfc4880 section 5.2.3.21</a>: </p>
+ * <blockquote>
+ * The flags in this packet may appear in self-signatures or in
+ * certification signatures.  They mean different things depending on
+ * who is making the statement -- for example, a certification signature
+ * that has the "sign data" flag is stating that the certification is
+ * for that use.  On the other hand, the "communications encryption"
+ * flag in a self-signature is stating a preference that a given key be
+ * used for communications.  Note however, that it is a thorny issue to
+ * determine what is "communications" and what is "storage".  This
+ * decision is left wholly up to the implementation; the authors of this
+ * document do not claim any special wisdom on the issue and realize
+ * that accepted opinion may change.
+ *
+ * The "split key" (0x10) and "group key" (0x80) flags are placed on a
+ * self-signature only; they are meaningless on a certification
+ * signature.  They SHOULD be placed only on a direct-key signature
+ * (type 0x1F) or a subkey signature (type 0x18), one that refers to the
+ * key the flag applies to.
+ * </blockquote>
  *
  * @see KeyFlags
  */

@@ -24,16 +24,23 @@ public final class PGPAlgorithmSuite {
     this.compressionEncryptionAlgorithmCode = compressionEncryptionAlgorithmCode;
   }
 
+  /**
+   * @return the hashing algorithm to be used
+   */
   public PGPHashAlgorithms getHashAlgorithmCode() {
     return hashAlgorithmCode;
   }
 
+  /**
+   * @return the symmetrical encryption algorithm to be used
+   */
   public PGPSymmetricEncryptionAlgorithms getSymmetricEncryptionAlgorithmCode() {
     return symmetricEncryptionAlgorithmCode;
   }
 
   /**
    * @deprecated use getCompressionAlgorithmCode
+   * @return the compression algorithm to be used
    */
   @Deprecated()
   public PGPCompressionAlgorithms getCompressionEncryptionAlgorithmCode() {

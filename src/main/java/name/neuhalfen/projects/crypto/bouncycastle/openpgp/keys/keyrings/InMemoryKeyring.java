@@ -45,13 +45,12 @@ public final class InMemoryKeyring implements KeyringConfig {
    *
    * <p>
    * E.g. for "{@code gpg --export -a keyid}":
-   *
+   * </p>
    * <pre><code>
    * addPublicKey(
    * "-----BEGIN PGP PUBLIC KEY BLOCK----- ...."
    * .getBytes("US-ASCII");
    * </code></pre>
-   * </p>
    *
    * @param encodedPublicKey the public key
    *
@@ -79,12 +78,12 @@ public final class InMemoryKeyring implements KeyringConfig {
    * Can read the result of "{@code gpg --export}" and
    * 2{@code gpg --export -a keyid}".</p>
    *
-   * <p>E.g. "{@code gpg --export-secret-key -a keyid}":
+   * <p>E.g. "{@code gpg --export-secret-key -a keyid}":</p>
    * <pre><code>
    * addSecretKey("-----BEGIN PGP PRIVATE KEY BLOCK----- ...."
    * .getBytes("US-ASCII")
    * </code></pre>
-   * </p>
+   *
    * <p> The password is queried via the callback
    * (decryptionSecretKeyPassphraseForSecretKeyId).
    *

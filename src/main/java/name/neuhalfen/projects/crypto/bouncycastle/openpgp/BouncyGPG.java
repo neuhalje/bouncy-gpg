@@ -66,7 +66,7 @@ public final class BouncyGPG {
    * <p>Register the BouncyCastle provider as first provider. If another instance of the
    * BouncyCastle provider is already registered it is removed.
    * </p>
-   * <p>The BouncyCastle provider needs to be registered for BouncyGPG to work./p>
+   * <p>The BouncyCastle provider needs to be registered for BouncyGPG to work.</p>
    * <p>
    * This procedure also makes it possible to use BC on older Android devices that ship their own BC
    * implementation.

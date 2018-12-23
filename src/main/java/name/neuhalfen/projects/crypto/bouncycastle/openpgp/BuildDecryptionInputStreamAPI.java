@@ -101,10 +101,10 @@ public final class BuildDecryptionInputStreamAPI {
      * <p>
      * Given  the following keyring:
      * </p>
-     * <pre>{@code markdown: text
+     * <pre>{@code
      * $ gpg -k --keyid-format=0xlong
      *
-     * ... pub 2048R/0x3DF16BD7C3F280F3 ... uid [ultimate] ...  &lt;signer@example.com&gt;
+     * ... pub 2048R/0x3DF16BD7C3F280F3 ... uid [ultimate] ...  <signer@example.com>
      * ... sub 2048R/0x54A3DB374F787AB7 ... [S] ... }
      * </pre>
      * <p>
@@ -127,7 +127,7 @@ public final class BuildDecryptionInputStreamAPI {
      *
      * Given  the following keyring:
      *
-     * <pre>{@code markdown: text
+     * <pre>{@code
      * $ gpg -k --keyid-format=0xlong
      *
      * ... pub 2048R/0x3DF16BD7C3F280F3 ... uid [ultimate] ...  <signer@example.com>
