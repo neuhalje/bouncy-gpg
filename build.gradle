@@ -25,7 +25,7 @@ plugins {
 }
 
 javadoc {
-    include 'name/neuhalfen/projects/crypto/bouncycastle/openpgp//*'
+    include 'name/neuhalfen/projects/crypto/bouncycastle/openpgp/**'
     options.addBooleanOption('html5', true)
 }
 
