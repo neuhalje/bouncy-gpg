@@ -59,15 +59,16 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPDigestCalculatorProviderBu
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyPair;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyEncryptorBuilder;
 
-public class KeyRingBuilderImpl implements KeyRingBuilder,SimpleKeyRingBuilder {
+@SuppressWarnings({"PMD.LawOfDemeter"})
+public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder {
 
-  private final Charset UTF8 = Charset.forName("UTF-8");
+  private final static Charset UTF_8 = Charset.forName("UTF-8");
 
-  private List<KeySpec> keySpecs = new ArrayList<>();
+  private final List<KeySpec> keySpecs = new ArrayList<>();
   private String userId;
   private Passphrase passphrase;
 
-   @Override
+  @Override
   public KeyringConfig simpleRsaKeyRing(String userId, RsaLength length)
       throws PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException {
     requireNonNull(userId, "userId must not be null");
@@ -103,8 +104,7 @@ public class KeyRingBuilderImpl implements KeyRingBuilder,SimpleKeyRingBuilder {
   @Override
   public KeyRingBuilder withSubKey(KeySpec type) {
     requireNonNull(type, "type must not be null");
-
-    KeyRingBuilderImpl.this.keySpecs.add(type);
+    keySpecs.add(type);
     return this;
   }
 
@@ -114,7 +114,7 @@ public class KeyRingBuilderImpl implements KeyRingBuilder,SimpleKeyRingBuilder {
     checkArgument((spec.getSubpackets().getKeyFlags() & KeyFlags.CERTIFY_OTHER) != 0,
         "Certification Key MUST have KeyFlag CERTIFY_OTHER)");
 
-    KeyRingBuilderImpl.this.keySpecs.add(0, spec);
+    keySpecs.add(0, spec);
     return new WithPrimaryUserIdImpl();
   }
 
@@ -133,7 +133,7 @@ public class KeyRingBuilderImpl implements KeyRingBuilder,SimpleKeyRingBuilder {
       requireNonNull(userId, "userId must not be null");
       checkArgument(userId.length > 0, "userId mus have length >0");
 
-      return withPrimaryUserId(new String(userId, UTF8));
+      return withPrimaryUserId(new String(userId, UTF_8));
     }
   }
 
@@ -160,7 +160,7 @@ public class KeyRingBuilderImpl implements KeyRingBuilder,SimpleKeyRingBuilder {
           InvalidAlgorithmParameterException, IOException {
 
         // Hash Calculator
-        PGPDigestCalculator calculator = new JcaPGPDigestCalculatorProviderBuilder()
+        final PGPDigestCalculator calculator = new JcaPGPDigestCalculatorProviderBuilder()
             .setProvider(BouncyCastleProvider.PROVIDER_NAME)
             .build()
             .get(PGPHashAlgorithms.SHA1.getAlgorithmId());
@@ -177,28 +177,28 @@ public class KeyRingBuilderImpl implements KeyRingBuilder,SimpleKeyRingBuilder {
         }
 
         // First key is the Master Key
-        KeySpec certKeySpec = keySpecs.get(0);
+        final KeySpec certKeySpec = keySpecs.get(0);
         // Remove master key, so that we later only add sub keys.
         keySpecs.remove(0);
 
         // Generate Master Key
-        PGPKeyPair certKey = generateKeyPair(certKeySpec);
+        final PGPKeyPair certKey = generateKeyPair(certKeySpec);
 
         // Signer for creating self-signature
-        PGPContentSignerBuilder signer = new JcaPGPContentSignerBuilder(
+        final PGPContentSignerBuilder signer = new JcaPGPContentSignerBuilder(
             certKey.getPublicKey().getAlgorithm(), PGPHashAlgorithms.SHA_512.getAlgorithmId())
             .setProvider(BouncyCastleProvider.PROVIDER_NAME);
 
-        PGPSignatureSubpacketVector hashedSubPackets = certKeySpec.getSubpackets();
+        final PGPSignatureSubpacketVector hashedSubPackets = certKeySpec.getSubpackets();
 
         // Generator which the user can get the key pair from
-        PGPKeyRingGenerator ringGenerator = new PGPKeyRingGenerator(
+        final PGPKeyRingGenerator ringGenerator = new PGPKeyRingGenerator(
             PGPSignature.POSITIVE_CERTIFICATION, certKey,
             userId, calculator,
             hashedSubPackets, null, signer, encryptor);
 
-        for (KeySpec subKeySpec : keySpecs) {
-          PGPKeyPair subKey = generateKeyPair(subKeySpec);
+        for (final KeySpec subKeySpec : keySpecs) {
+          final PGPKeyPair subKey = generateKeyPair(subKeySpec);
           if (subKeySpec.isInheritedSubPackets()) {
             ringGenerator.addSubKey(subKey);
           } else {
@@ -206,7 +206,7 @@ public class KeyRingBuilderImpl implements KeyRingBuilder,SimpleKeyRingBuilder {
           }
         }
 
-        PGPPublicKeyRing publicKeys = ringGenerator.generatePublicKeyRing();
+        final PGPPublicKeyRing publicKeys = ringGenerator.generatePublicKeyRing();
         PGPSecretKeyRing secretKeys = ringGenerator.generateSecretKeyRing();
 
         // TODO: Remove once BC 1.61 is released
