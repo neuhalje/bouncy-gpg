@@ -68,7 +68,7 @@ bintray {
     user = bintray_Username
     key = bintray_Password
 
-    dryRun = false //bintray_dryRun//[Default: false] Whether to run this as dry-run, without deploying
+    dryRun = true //bintray_dryRun//[Default: false] Whether to run this as dry-run, without deploying
     publish = false //bintray_publish//[Default: false] Whether version should be auto published after an upload
     override = false //[Default: false] Whether to override version artifacts already published
 
@@ -90,7 +90,7 @@ bintray {
             vcsTag = "release/v" + property('version')
 
             gpg {
-                sign = true
+                sign = false
             }
             mavenCentralSync {
                 sync = false

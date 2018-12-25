@@ -1,8 +1,8 @@
 
-signing.keyId=YourKeyId
-signing.password=YourPublicKeyPassword
-signing.secretKeyRingFile=PathToYourKeyRingFile
+signing.gnupg.keyName=E2ACB71EBF7D175097F8F65ABB7391F9E92BDF2A
+signing.gnupg.useLegacyGpg=false
 
-bintray_dryRun=true
-bintray_Username=your-jcenter-id
-bintray_Password=your-jcenter-password
+bintray_dryRun=false
+bintray_publish=true
+bintray_Username=neuhalje
+bintray_Password=secret
