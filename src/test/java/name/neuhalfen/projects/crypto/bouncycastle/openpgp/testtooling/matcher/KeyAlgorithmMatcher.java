@@ -67,15 +67,16 @@ public class KeyAlgorithmMatcher extends TypeSafeMatcher<PGPSecretKey> {
   @Override
   protected void describeMismatchSafely(final PGPSecretKey item,
       final Description mismatchDescription) {
-    mismatchDescription.appendText(" should be one of ")
-        .appendText(toString(allowedAlgorithms))
-        .appendText(" but is ")
-        .appendText(toString(item.getPublicKey().getAlgorithm()));
+
+    mismatchDescription.appendText(" is ")
+        .appendValue(toString(item.getPublicKey().getAlgorithm()));
   }
 
   @Override
   public void describeTo(final Description description) {
-    description.appendText("is encrypted");
+    description.appendText(" should be one of ")
+        .appendText(toString(allowedAlgorithms));
+
   }
 }
 

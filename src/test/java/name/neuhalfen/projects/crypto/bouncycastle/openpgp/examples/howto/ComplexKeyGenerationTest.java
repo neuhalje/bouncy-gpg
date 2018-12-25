@@ -63,7 +63,7 @@ public class ComplexKeyGenerationTest {
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, SignatureException {
 
     final KeySpec signingSubey = KeySpecBuilder
-        .newSpec(ECDSAKeyType.fromCurve(EllipticCurve.CURVE_P256))
+        .newSpec(ECDSAKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
         .withKeyFlags(KeyFlag.SIGN_DATA)
         .withDefaultAlgorithms();
 
@@ -78,7 +78,7 @@ public class ComplexKeyGenerationTest {
         .withDefaultAlgorithms();
 
     final KeySpec masterKey = KeySpecBuilder.newSpec(
-        ECDSAKeyType.fromCurve(EllipticCurve.CURVE_P256)
+        ECDSAKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256)
     )
         .withKeyFlags(KeyFlag.CERTIFY_OTHER)
         .withDetailedConfiguration()

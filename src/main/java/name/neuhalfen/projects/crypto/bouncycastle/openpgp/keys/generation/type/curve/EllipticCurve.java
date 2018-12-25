@@ -15,8 +15,14 @@
  */
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.curve;
 
+/**
+ * See https://safecurves.cr.yp.to/
+ * Sehttps://bouncycastle.org/wiki/pages/viewpage.action?pageId=362269
+ */
 public enum EllipticCurve {
-  CURVE_P256("P-256"),
+  CURVE_NIST_P256("P-256"),
+  CURVE_NIST_P384("P-384"),
+  CURVE_NIST_P521("P-521"),
   ;
 
   private final String name;

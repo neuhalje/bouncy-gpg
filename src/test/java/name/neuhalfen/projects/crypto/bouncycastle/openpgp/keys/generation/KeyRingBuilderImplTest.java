@@ -69,7 +69,6 @@ public class KeyRingBuilderImplTest {
             )));
   }
 
-
   @Test
   public void simpleRsaKeyRing_createsGoodKeys()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {

@@ -92,11 +92,11 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
     requireNonNull(userId, "userId must not be null");
 
     return withSubKey(
-        KeySpec.getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_P256))
+        KeySpec.getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
             .withKeyFlags(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
             .withDefaultAlgorithms())
         .withMasterKey(
-            KeySpec.getBuilder(ECDSAKeyType.fromCurve(EllipticCurve.CURVE_P256))
+            KeySpec.getBuilder(ECDSAKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
                 .withKeyFlags(KeyFlag.AUTHENTICATION, KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
                 .withDefaultAlgorithms())
         .withPrimaryUserId(userId)
