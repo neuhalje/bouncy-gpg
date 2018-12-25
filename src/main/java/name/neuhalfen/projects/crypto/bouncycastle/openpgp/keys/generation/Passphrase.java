@@ -20,6 +20,9 @@ import static java.util.Objects.requireNonNull;
 import java.util.Arrays;
 import javax.annotation.Nullable;
 
+/**
+ * Passphrase used during key generation.
+ */
 public class Passphrase {
 
   private final Object lock = new Object();
@@ -57,6 +60,12 @@ public class Passphrase {
   public static Passphrase fromString(final String passphrase) {
     requireNonNull(passphrase);
     return new Passphrase(passphrase.toCharArray());
+  }
+
+  @SuppressWarnings("PMD.UseVarargs")
+  public static Passphrase fromChars(final char[] passphrase) {
+    requireNonNull(passphrase);
+    return new Passphrase(passphrase);
   }
 
   /**

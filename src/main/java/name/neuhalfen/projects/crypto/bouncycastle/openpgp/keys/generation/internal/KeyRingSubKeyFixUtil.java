@@ -145,7 +145,6 @@ public final class KeyRingSubKeyFixUtil {
    *
    * @return set of all subkey packets that do NOT have PUBLIC_SUBKEY set
    *
-   * @throws PGPException in case we cannot dismantle or reassemble the key.
    * @see <a href="https://github.com/bcgit/bc-java/issues/381">Bouncycastle Java bug report #381</a>
    */
   public static Set<PGPSecretKey> violatingSubkeyPackets(PGPSecretKeyRing secretKeys) {
