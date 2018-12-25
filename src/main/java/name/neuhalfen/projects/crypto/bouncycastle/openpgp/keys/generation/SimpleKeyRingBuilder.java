@@ -36,6 +36,12 @@ public interface SimpleKeyRingBuilder {
    * @param length length in bits.
    *
    * @return {@link PGPSecretKeyRing} containing the KeyPair.
+   *
+   * @throws PGPException unspecified error in PGP (not expected)
+   * @throws NoSuchAlgorithmException did you call BouncyGPG#registerProvider?
+   * @throws NoSuchProviderException did you call BouncyGPG#registerProvider?
+   * @throws InvalidAlgorithmParameterException did you call BouncyGPG#registerProvider?
+   * @throws IOException IO is dangerous!
    */
   KeyringConfig simpleRsaKeyRing(String userId, RsaLength length)
       throws PGPException, NoSuchAlgorithmException, NoSuchProviderException,
@@ -50,6 +56,12 @@ public interface SimpleKeyRingBuilder {
    * @param userId user-id
    *
    * @return {@link PGPSecretKeyRing} containing the key pairs.
+   *
+   * @throws PGPException unspecified error in PGP (not expected)
+   * @throws NoSuchAlgorithmException did you call BouncyGPG#registerProvider?
+   * @throws NoSuchProviderException did you call BouncyGPG#registerProvider?
+   * @throws InvalidAlgorithmParameterException did you call BouncyGPG#registerProvider?
+   * @throws IOException IO is dangerous!
    */
   KeyringConfig simpleEccKeyRing(String userId)
       throws PGPException, NoSuchAlgorithmException, NoSuchProviderException,
