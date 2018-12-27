@@ -5,6 +5,7 @@ import static java.util.Arrays.asList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
@@ -12,11 +13,11 @@ import org.bouncycastle.util.io.Streams;
 
 public class DecryptCommand implements Command {
 
-  private final byte[] plaintext;
+  private final byte[] ciphertext;
   private final String passphrase;
 
-  public DecryptCommand(final byte[] plaintext, final String passphrase) {
-    this.plaintext = plaintext;
+  public DecryptCommand(final byte[] ciphertext, final String passphrase) {
+    this.ciphertext = ciphertext;
     this.passphrase = passphrase;
   }
 
@@ -46,20 +47,33 @@ public class DecryptCommand implements Command {
     public String toString() {
       return new StringJoiner(", ", DecryptCommandResult.class.getSimpleName() + "[", "]")
           .add("exitCode=" + exitCode)
-          .add("plaintext=" + Arrays.toString(plaintext))
+          .add("ciphertext=" + Arrays.toString(plaintext))
           .add("errorMessage='" + errorMessage + "'")
           .toString();
     }
   }
 
   @Override
+  public String toString() {
+    return new StringJoiner(", ", DecryptCommand.class.getSimpleName() + "[", "]")
+        .add("passphrase='" + passphrase + "'")
+        .add("ciphertext=" + Arrays.toString(ciphertext))
+        .toString();
+  }
+
+  @Override
   public List<String> getArgs() {
-    return asList("--decrypt", "--batch", "--passphrase", passphrase);
+    List<String> args = new ArrayList<>(asList("--decrypt", "--batch", "--quiet"));
+    if (passphrase != null) {
+      args.add("--passphrase");
+      args.add(passphrase);
+    }
+    return args;
   }
 
   public void io(OutputStream outputStream, InputStream inputStream, InputStream errorStream)
       throws IOException {
-    outputStream.write(plaintext);
+    outputStream.write(ciphertext);
     outputStream.close();
   }
 

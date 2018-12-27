@@ -49,12 +49,13 @@ public class GPGExec {
     // gpg-agent.conf
     PrintWriter agentCfg = new PrintWriter(new File(homeDirFile, "gpg-agent.conf"), "UTF-8");
 
-    agentCfg.println("batch");
-    agentCfg.println("disable-scdaemon");
+    //agentCfg.println("batch");
+    //agentCfg.println("disable-scdaemon");
     agentCfg.println("no-grab");
 
-    agentCfg.print("extra-socket ");
-    agentCfg.println(new File(homeDirFile, "S.gpg-agent.extra").getAbsolutePath());
+    // this breaks agent communication
+    // agentCfg.print("extra-socket ");
+    // agentCfg.println(new File(homeDirFile, "S.gpg-agent.extra").getAbsolutePath());
 
     agentCfg.close();
 
@@ -116,6 +117,10 @@ public class GPGExec {
     command.add(gpgExecutable());
     command.add("--homedir");
     command.add(homeDir.toAbsolutePath().toString());
+
+    // command.add("--debug");
+    // command.add("8");
+
     command.addAll(cmd.getArgs());
 
     ProcessBuilder pb =
@@ -124,6 +129,7 @@ public class GPGExec {
     env.put("GNUPGHOME", homeDir.toAbsolutePath().toString());
 
     pb.redirectErrorStream(true);
+
     Process p = pb.start();
 
     cmd.io(p.getOutputStream(), p.getInputStream(), p.getErrorStream());
