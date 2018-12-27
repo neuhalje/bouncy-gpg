@@ -1,5 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration;
 
+import static org.junit.Assume.assumeTrue;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,6 +25,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.Encry
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.GPGExec;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.ImportCommand;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.Result;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.VersionCommand.VersionCommandResult;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.util.io.Streams;
@@ -50,6 +53,13 @@ public class GPGCanEncryptToBouncyGPGKeys {
   @Parameter
   public KeyRingGenerator keyRingGenerator;
 
+  @FunctionalInterface
+  private interface KeyRingGenerator {
+
+    KeyringConfig generateKeyringWithBouncyGPG(VersionCommandResult gpgVersion)
+        throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException;
+  }
+
   @Parameterized.Parameters
   public static Collection<KeyRingGenerator[]> keyRingGenerators() {
     return Arrays.asList(new KeyRingGenerator[][]{
@@ -60,18 +70,21 @@ public class GPGCanEncryptToBouncyGPGKeys {
     );
   }
 
-  static KeyringConfig generateSimpleRSAKeyring()
+  static KeyringConfig generateSimpleRSAKeyring(VersionCommandResult gpgVersion)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
     return BouncyGPG.createSimpleKeyring().simpleRsaKeyRing(UID_JULIET, RsaLength.RSA_3072_BIT);
   }
 
-  static KeyringConfig generateSimpleECCKeyring()
+  static KeyringConfig generateSimpleECCKeyring(VersionCommandResult gpgVersion)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+    assumeTrue("Require at least GPG 2.1 for ECC", gpgVersion.isAtLeast(2, 1));
+
     return BouncyGPG.createSimpleKeyring().simpleEccKeyRing(UID_JULIET);
   }
 
-  static KeyringConfig generateComplexKeyring()
+  static KeyringConfig generateComplexKeyring(VersionCommandResult gpgVersion)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+    assumeTrue("Require at least GPG 2.1 for ECC", gpgVersion.isAtLeast(2, 1));
 
     final KeyringConfig keyringConfig = BouncyGPG.createKeyring().withSubKey(
         KeySpec.getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P521))
@@ -100,9 +113,9 @@ public class GPGCanEncryptToBouncyGPGKeys {
     // copy the public key to GPG,
     // encrypt a message in GPG,
     // and finally decrypt the message in BouncyGPG
-    final KeyringConfig keyring = keyRingGenerator.generateKeyringWithBouncyGPG();
-
     final GPGExec gpg = GPGExec.newInstance();
+
+    final KeyringConfig keyring = keyRingGenerator.generateKeyringWithBouncyGPG(gpg.version());
 
     importPublicKeyInGPG(gpg, keyring.getPublicKeyRings());
 
@@ -157,10 +170,4 @@ public class GPGCanEncryptToBouncyGPGKeys {
     Assert.assertEquals(0, importCommandResult.exitCode());
   }
 
-  @FunctionalInterface
-  private interface KeyRingGenerator {
-
-    KeyringConfig generateKeyringWithBouncyGPG()
-        throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException;
-  }
 }

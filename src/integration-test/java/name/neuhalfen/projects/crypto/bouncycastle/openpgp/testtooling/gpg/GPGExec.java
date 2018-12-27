@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg;
 
 import static java.util.Arrays.asList;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.VersionCommand.VersionCommandResult.UNKNOWN;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -214,5 +215,9 @@ public class GPGExec {
     }
 
     return p;
+  }
+
+  public VersionCommandResult version() throws IOException, InterruptedException {
+    return runCommand(Commands.version());
   }
 }
