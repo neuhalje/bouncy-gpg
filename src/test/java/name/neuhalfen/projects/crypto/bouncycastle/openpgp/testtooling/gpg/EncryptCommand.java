@@ -23,11 +23,15 @@ public class EncryptCommand implements Command {
   public final static class EncryptCommandResult implements Result<EncryptCommand> {
 
     private final int exitCode;
-    private final byte[] output;
+    private final byte[] ciphertext;
 
-    private EncryptCommandResult(final int exitCode, final byte[] output) {
+    private EncryptCommandResult(final int exitCode, final byte[] ciphertext) {
       this.exitCode = exitCode;
-      this.output = output;
+      this.ciphertext = ciphertext;
+    }
+
+    public byte[] getCiphertext() {
+      return ciphertext;
     }
 
     @Override
@@ -39,14 +43,14 @@ public class EncryptCommand implements Command {
     public String toString() {
       return new StringJoiner(", ", EncryptCommandResult.class.getSimpleName() + "[", "]")
           .add("exitCode=" + exitCode)
-          .add("output=" + Arrays.toString(output))
+          .add("ciphertext=" + Arrays.toString(ciphertext))
           .toString();
     }
   }
 
   @Override
   public List<String> getArgs() {
-    return asList("--encrypt", "--batch","--armor", "--recipient", recipient);
+    return asList("--encrypt", "--batch", "--armor", "--quiet", "--recipient", recipient);
   }
 
   public void io(OutputStream outputStream, InputStream inputStream, InputStream errorStream)
@@ -61,7 +65,7 @@ public class EncryptCommand implements Command {
     byte[] output;
     try {
       final byte[] bytes = Streams.readAll(stdout);
-      output = Arrays.copyOf(bytes,bytes.length);
+      output = Arrays.copyOf(bytes, bytes.length);
     } catch (IOException e) {
       output = null;
     }
