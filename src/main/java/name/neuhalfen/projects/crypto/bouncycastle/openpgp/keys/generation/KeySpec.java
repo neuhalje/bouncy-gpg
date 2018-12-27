@@ -36,7 +36,7 @@ public class KeySpec {
     this.inheritedSubPackets = inheritedSubPackets;
   }
 
-  public static KeySpecBuilderImpl getBuilder(KeyType type) {
+  public static KeySpecBuilderInterface getBuilder(KeyType type) {
     requireNonNull(type, "type must not be null");
 
     return new KeySpecBuilderImpl(type);
