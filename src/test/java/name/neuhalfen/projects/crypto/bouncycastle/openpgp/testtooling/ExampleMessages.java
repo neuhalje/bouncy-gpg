@@ -124,6 +124,8 @@ public class ExampleMessages {
    * 2048 bit RSA key 'sender@example.com' - Trusted by recipient. - Private key held by sender.
    */
   public final static long KEY_ID_SENDER = 0x86DAC13816FE6FE2L;
+  public final static long SECRET_KEY_ID_SENDER = 0xAFF0658D23FB56E6l;
+
   public final static String USER_ID_SENDER = "sender@example.com";
   public final static String FULL_USER_ID_SENDER = "Sven Sender (Pasword: sender) <sender@example.com>";
   public final static String PUBKEY_SENDER =
