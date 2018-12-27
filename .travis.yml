@@ -18,7 +18,7 @@ jdk:
 script:
   - sudo apt-get update
   - # sudo apt-get install git && echo installed git so that hugo can inject commit data into the website
-  - sudo apt-get install gpg && gpg --version
+  - sudo apt-get install gnupg2 && gpg --version
   - # git --version
   - # sudo apt-get install snapd
   - # sudo snap install hugo
