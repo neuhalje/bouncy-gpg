@@ -21,38 +21,6 @@ public class DecryptCommand implements Command {
     this.passphrase = passphrase;
   }
 
-  public final static class DecryptCommandResult implements Result<DecryptCommand> {
-
-    private final int exitCode;
-    private final byte[] plaintext;
-    private final String errorMessage;
-
-    private DecryptCommandResult(final int exitCode, final byte[] plaintext,
-        final String errorMessage) {
-      this.exitCode = exitCode;
-      this.plaintext = plaintext;
-      this.errorMessage = errorMessage;
-    }
-
-    public byte[] getPlaintext() {
-      return plaintext;
-    }
-
-    @Override
-    public int exitCode() {
-      return exitCode;
-    }
-
-    @Override
-    public String toString() {
-      return new StringJoiner(", ", DecryptCommandResult.class.getSimpleName() + "[", "]")
-          .add("exitCode=" + exitCode)
-          .add("ciphertext=" + Arrays.toString(plaintext))
-          .add("errorMessage='" + errorMessage + "'")
-          .toString();
-    }
-  }
-
   @Override
   public String toString() {
     return new StringJoiner(", ", DecryptCommand.class.getSimpleName() + "[", "]")
@@ -97,5 +65,37 @@ public class DecryptCommand implements Command {
       errorMessage = e.getMessage();
     }
     return new DecryptCommandResult(exitCode, output, errorMessage);
+  }
+
+  public final static class DecryptCommandResult implements Result<DecryptCommand> {
+
+    private final int exitCode;
+    private final byte[] plaintext;
+    private final String errorMessage;
+
+    private DecryptCommandResult(final int exitCode, final byte[] plaintext,
+        final String errorMessage) {
+      this.exitCode = exitCode;
+      this.plaintext = plaintext;
+      this.errorMessage = errorMessage;
+    }
+
+    public byte[] getPlaintext() {
+      return plaintext;
+    }
+
+    @Override
+    public int exitCode() {
+      return exitCode;
+    }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", DecryptCommandResult.class.getSimpleName() + "[", "]")
+          .add("exitCode=" + exitCode)
+          .add("ciphertext=" + Arrays.toString(plaintext))
+          .add("errorMessage='" + errorMessage + "'")
+          .toString();
+    }
   }
 }

@@ -11,6 +11,9 @@ class UnparsedLine extends KeyLine {
     this.unparsedLine = unparsedLine;
   }
 
+  static KeyLine unparsedLine(final Queue<String> remainingLines) {
+    return new UnparsedLine(remainingLines.poll());
+  }
 
   public String getUnparsedLine() {
     return unparsedLine;
@@ -21,10 +24,5 @@ class UnparsedLine extends KeyLine {
     return new StringJoiner(", ", getClass().getSimpleName() + "[", "]")
         .add("unparsedLine='" + unparsedLine + "'")
         .toString();
-  }
-
-
-  static KeyLine unparsedLine(final Queue<String> remainingLines) {
-    return new UnparsedLine(remainingLines.poll());
   }
 }

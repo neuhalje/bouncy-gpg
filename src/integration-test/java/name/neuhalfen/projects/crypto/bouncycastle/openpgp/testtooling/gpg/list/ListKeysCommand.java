@@ -29,7 +29,8 @@ public class ListKeysCommand implements Command {
   }
 
 
-  public static Map<Long, SecretKey> secretKeys(GPGExec gpg) throws IOException, InterruptedException {
+  public static Map<Long, SecretKey> secretKeys(GPGExec gpg)
+      throws IOException, InterruptedException {
     final ListKeysCommandResult keys = gpg.runCommand(Commands.listSecretKeys());
     return ListKeysParser.toSecretKeys(keys.getKeyList());
 
@@ -42,7 +43,7 @@ public class ListKeysCommand implements Command {
 
   @Override
   public List<String> getArgs() {
-    return asList(listSecretKeys ? "--list-secret-keys":"--list-keys", "--with-colons");
+    return asList(listSecretKeys ? "--list-secret-keys" : "--list-keys", "--with-colons");
   }
 
   @Override

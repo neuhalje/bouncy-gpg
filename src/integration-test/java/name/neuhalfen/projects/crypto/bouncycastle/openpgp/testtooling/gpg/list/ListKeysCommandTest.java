@@ -1,14 +1,12 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.list;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
 import java.util.Map;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.Commands;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.GPGExec;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.list.ListKeysCommand.ListKeysCommandResult;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ListKeysCommandTest {
@@ -18,7 +16,7 @@ public class ListKeysCommandTest {
     final GPGExec gpg = new GPGExec();
     final ListKeysCommandResult keys = gpg.runCommand(Commands.listKeys());
 
-    assertThat(keys.exitCode(), Matchers.equalTo(0));
+    Assert.assertThat(keys.exitCode(), Matchers.equalTo(0));
     for (KeyLine s : keys.getKeyList()) {
       System.out.println("key :" + s);
     }
@@ -31,7 +29,7 @@ public class ListKeysCommandTest {
 
     final Map<Long, PubKey> pubKeyMap = ListKeysParser.toMasterKeys(keys.getKeyList());
 
-    assertThat(pubKeyMap.isEmpty(), is(true));
+    Assert.assertThat(pubKeyMap.isEmpty(), Matchers.is(true));
   }
 
   @Test
@@ -41,6 +39,6 @@ public class ListKeysCommandTest {
 
     final Map<Long, PubKey> pubKeyMap = ListKeysParser.toMasterKeys(keys.getKeyList());
 
-    assertThat(pubKeyMap.isEmpty(), is(true));
+    Assert.assertThat(pubKeyMap.isEmpty(), Matchers.is(true));
   }
 }

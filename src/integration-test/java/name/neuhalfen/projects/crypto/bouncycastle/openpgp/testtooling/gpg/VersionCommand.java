@@ -17,6 +17,33 @@ public class VersionCommand implements Command {
   private Pattern VERSION_STRING = Pattern
       .compile("^gpg.* (?<major>[\\d]+).(?<minor>[\\d]+).(?<revision>[\\d]+)$");
 
+  @Override
+  public List<String> getArgs() {
+    return asList("--version");
+  }
+
+  @Override
+  public VersionCommandResult parse(InputStream stdout, int exitCode) {
+
+    try (
+        Scanner sc = new Scanner(stdout);
+
+    ) {
+      while (sc.hasNext()) {
+
+        final String line = sc.nextLine();
+        final Matcher matcher = VERSION_STRING.matcher(line);
+        if (matcher.matches()) {
+          final int major = Integer.parseInt(matcher.group("major"));
+          final int minor = Integer.parseInt(matcher.group("minor"));
+          final int revision = Integer.parseInt(matcher.group("revision"));
+
+          return new VersionCommandResult(exitCode, line, major, minor, revision);
+        }
+      }
+    }
+    return VersionCommandResult.UNKNOWN;
+  }
 
   public final static class VersionCommandResult implements Result<VersionCommand> {
 
@@ -28,6 +55,17 @@ public class VersionCommand implements Command {
     private final int major;
     private final int minor;
     private final int revision;
+
+    private VersionCommandResult(final int exitCode, final String versionString, final int major,
+        final int minor,
+        final int revision) {
+      this.exitCode = exitCode;
+
+      this.versionString = requireNonNull(versionString);
+      this.major = major;
+      this.minor = minor;
+      this.revision = revision;
+    }
 
     public String getVersionString() {
       return versionString;
@@ -51,18 +89,6 @@ public class VersionCommand implements Command {
 
     public boolean isAtLeast(int major, int minor) {
       return (this.major > major) || (this.major == major && this.minor >= minor);
-    }
-
-
-    private VersionCommandResult(final int exitCode, final String versionString, final int major,
-        final int minor,
-        final int revision) {
-      this.exitCode = exitCode;
-
-      this.versionString = requireNonNull(versionString);
-      this.major = major;
-      this.minor = minor;
-      this.revision = revision;
     }
 
     @Override
@@ -101,33 +127,5 @@ public class VersionCommand implements Command {
           .add("revision=" + revision)
           .toString();
     }
-  }
-
-  @Override
-  public List<String> getArgs() {
-    return asList("--version");
-  }
-
-  @Override
-  public VersionCommandResult parse(InputStream stdout, int exitCode) {
-
-    try (
-        Scanner sc = new Scanner(stdout);
-
-    ) {
-      while (sc.hasNext()) {
-
-        final String line = sc.nextLine();
-        final Matcher matcher = VERSION_STRING.matcher(line);
-        if (matcher.matches()) {
-          final int major = Integer.parseInt(matcher.group("major"));
-          final int minor = Integer.parseInt(matcher.group("minor"));
-          final int revision = Integer.parseInt(matcher.group("revision"));
-
-          return new VersionCommandResult(exitCode, line, major, minor, revision);
-        }
-      }
-    }
-    return VersionCommandResult.UNKNOWN;
   }
 }

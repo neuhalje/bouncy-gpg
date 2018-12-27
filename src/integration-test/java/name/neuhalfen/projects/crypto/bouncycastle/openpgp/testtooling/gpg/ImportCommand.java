@@ -25,30 +25,6 @@ public class ImportCommand implements Command {
     this.passphrase = null;
   }
 
-  public final static class ImportCommandResult implements Result<ImportCommand> {
-
-    private final int exitCode;
-    private final String output;
-
-    private ImportCommandResult(final int exitCode, final String output) {
-      this.exitCode = exitCode;
-      this.output = output;
-    }
-
-    @Override
-    public int exitCode() {
-      return exitCode;
-    }
-
-    @Override
-    public String toString() {
-      return new StringJoiner(", ", ImportCommandResult.class.getSimpleName() + "[", "]")
-          .add("exitCode=" + exitCode)
-          .add("output='" + output + "'")
-          .toString();
-    }
-  }
-
   @Override
   public List<String> getArgs() {
 
@@ -82,5 +58,29 @@ public class ImportCommand implements Command {
       output = e.getMessage();
     }
     return new ImportCommandResult(exitCode, output);
+  }
+
+  public final static class ImportCommandResult implements Result<ImportCommand> {
+
+    private final int exitCode;
+    private final String output;
+
+    private ImportCommandResult(final int exitCode, final String output) {
+      this.exitCode = exitCode;
+      this.output = output;
+    }
+
+    @Override
+    public int exitCode() {
+      return exitCode;
+    }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", ImportCommandResult.class.getSimpleName() + "[", "]")
+          .add("exitCode=" + exitCode)
+          .add("output='" + output + "'")
+          .toString();
+    }
   }
 }

@@ -31,8 +31,8 @@ javadoc {
 
 checkstyle {
     toolVersion = "8.1"
-    showViolations  = false
-    sourceSets = [ project.sourceSets.main ]
+    showViolations = false
+    sourceSets = [project.sourceSets.main]
     // maxWarnings = 0
 }
 
@@ -61,7 +61,7 @@ jacocoTestReport {
 pmd {
     toolVersion = "6.10.0"
     ruleSetFiles = files("config/pmd/ruleset.xml")
-    sourceSets = [ project.sourceSets.main ]
+    sourceSets = [project.sourceSets.main]
     ignoreFailures = false
 }
 
@@ -91,6 +91,35 @@ repositories {
     jcenter()
 }
 
+sourceSets {
+    integrationTest {
+        compileClasspath += sourceSets.main.output \
+                      + sourceSets.test.output \
+                      + configurations.testRuntime
+
+        runtimeClasspath += output + compileClasspath
+
+        java.srcDir file('src/integration-test/java')
+        resources.srcDir file('src/integration-test/resources')
+    }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+task integrationTest(type: Test) {
+    description = 'Runs the integration tests.'
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+    mustRunAfter test
+}
+check.dependsOn integrationTest
+
+
 dependencies {
     compile 'org.bouncycastle:bcprov-jdk15on:1.60'
     compile 'org.bouncycastle:bcpg-jdk15on:1.60'
@@ -104,11 +133,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'org.mockito:mockito-core:2.23.4'
-
-    testCompile "org.concordion:concordion:2.2.0"
     testCompile 'org.concordion:concordion-api-documentation-extension:0.0.4'
 }
-
 
 
 test {
@@ -120,9 +146,10 @@ test {
     // force tests to run even if code hasn't changed
     outputs.upToDateWhen { false }
     jacoco {
-         enabled = true
+        enabled = true
     }
 }
+
 
 // bintray deployment
 // configured in gradle.properties
@@ -133,7 +160,7 @@ if (hasProperty('bintray_Username')) {
 
 apply from: 'website.gradle'
 
-wrapper{
+wrapper {
     gradleVersion = '4.10.2'
 }
 

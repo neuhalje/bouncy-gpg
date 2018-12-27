@@ -12,13 +12,6 @@ final class Uid extends KeyLine {
     this.uid = uid;
   }
 
-  @Override
-  public String toString() {
-    return new StringJoiner(", ", Uid.class.getSimpleName() + "[", "]")
-        .add("uid='" + uid + "'")
-        .toString();
-  }
-
   static KeyLine parseUid(final Queue<String> remainingLines) {
     final String uidLine = remainingLines.poll();
     final String[] attributes = uidLine.split("[:]");
@@ -29,5 +22,12 @@ final class Uid extends KeyLine {
     final String uid = attributes[UID_NAME];
 
     return new Uid(uid);
+  }
+
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", Uid.class.getSimpleName() + "[", "]")
+        .add("uid='" + uid + "'")
+        .toString();
   }
 }

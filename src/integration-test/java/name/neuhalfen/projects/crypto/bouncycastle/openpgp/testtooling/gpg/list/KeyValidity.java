@@ -54,7 +54,7 @@ public enum KeyValidity {
     if (fieldValue.length() == 1) {
       return KeyValidity.forField(fieldValue.charAt(0));
     } else {
-      return  KeyValidity.UNDEFINED_BY_STANDARD;
+      return KeyValidity.UNDEFINED_BY_STANDARD;
     }
   }
 }

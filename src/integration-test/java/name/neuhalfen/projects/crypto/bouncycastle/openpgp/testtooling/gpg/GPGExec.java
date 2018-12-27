@@ -27,6 +27,13 @@ public class GPGExec {
 
   private final Path homeDir;
 
+  public GPGExec() throws IOException, InterruptedException {
+    homeDir = createTempGpgHomeDir();
+    // give gpg the chance to init the working copy
+    // without this write tasks, e.g "import" fail.
+    runCommand(Commands.listKeys());
+  }
+
   private String gpgExecutable() throws IOException {
     return "gpg";
   }
@@ -69,13 +76,6 @@ public class GPGExec {
     gpgCfg.close();
 
     return homeDir;
-  }
-
-  public GPGExec() throws IOException, InterruptedException {
-    homeDir = createTempGpgHomeDir();
-    // give gpg the chance to init the working copy
-    // without this write tasks, e.g "import" fail.
-    runCommand(Commands.listKeys());
   }
 
   public <T extends Command, R extends Result<T>> R runCommand(T cmd)

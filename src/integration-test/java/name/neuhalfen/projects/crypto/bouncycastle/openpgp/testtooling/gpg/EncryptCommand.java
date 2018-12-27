@@ -20,6 +20,30 @@ public class EncryptCommand implements Command {
     this.recipient = recipient;
   }
 
+  @Override
+  public List<String> getArgs() {
+    return asList("--encrypt", "--batch", "--armor", "--quiet", "--recipient", recipient);
+  }
+
+  public void io(OutputStream outputStream, InputStream inputStream, InputStream errorStream)
+      throws IOException {
+    outputStream.write(plaintext);
+    outputStream.close();
+  }
+
+  @Override
+  public EncryptCommandResult parse(InputStream stdout, int exitCode) {
+    //  nothing to do
+    byte[] output;
+    try {
+      final byte[] bytes = Streams.readAll(stdout);
+      output = Arrays.copyOf(bytes, bytes.length);
+    } catch (IOException e) {
+      output = null;
+    }
+    return new EncryptCommandResult(exitCode, output);
+  }
+
   public final static class EncryptCommandResult implements Result<EncryptCommand> {
 
     private final int exitCode;
@@ -46,29 +70,5 @@ public class EncryptCommand implements Command {
           .add("ciphertext=" + Arrays.toString(ciphertext))
           .toString();
     }
-  }
-
-  @Override
-  public List<String> getArgs() {
-    return asList("--encrypt", "--batch", "--armor", "--quiet", "--recipient", recipient);
-  }
-
-  public void io(OutputStream outputStream, InputStream inputStream, InputStream errorStream)
-      throws IOException {
-    outputStream.write(plaintext);
-    outputStream.close();
-  }
-
-  @Override
-  public EncryptCommandResult parse(InputStream stdout, int exitCode) {
-    //  nothing to do
-    byte[] output;
-    try {
-      final byte[] bytes = Streams.readAll(stdout);
-      output = Arrays.copyOf(bytes, bytes.length);
-    } catch (IOException e) {
-      output = null;
-    }
-    return new EncryptCommandResult(exitCode, output);
   }
 }

@@ -1,18 +1,22 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg;
 
+import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.list.ListKeysCommand.masterKeys;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.list.ListKeysCommand.secretKeys;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeTrue;
+import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.list.ListKeysCommand.subKeys;
 
 import java.io.IOException;
-import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.DecryptCommand.DecryptCommandResult;
+import java.util.Map;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.ImportCommand.ImportCommandResult;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.list.PubKey;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.list.SecretKey;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 
-public class DecryptCommandTest {
-
+// TODO: all example keys
+public class ImportCommandTest {
 
   private final static String SECRET_KEY = "-----BEGIN PGP PRIVATE KEY BLOCK-----\n"
       + "\n"
@@ -109,50 +113,68 @@ public class DecryptCommandTest {
   private final static long MASTER_PUBLIC_KEY_ID = 0x344F984045B6F332l;
   private final static long SUBKEY_PUBLIC_KEY_ID = 0x7D6A5F380F99AA9Fl;
 
-  private final String CIPHERTEXT = "-----BEGIN PGP MESSAGE-----\n"
-      + "\n"
-      + "hQEMA31qXzgPmaqfAQf+PcS0OuPVOra5dM5Szr3R/c6XuAzrf5EoA2/HL9PU/axV\n"
-      + "7iXBkaSZt9ZINgkM4lB/HQ6IiNwROf23hIJAS5KTWUDo1zhkt9U6qTYi0QONT1p6\n"
-      + "hBATR+iTygH+JENjQR4OMYOAIOkfpouZcEHhSLxun2wBL864/WTTJmWnv+sxdXt7\n"
-      + "uKI9ruz1hudh2IMEkapyHJa3MWu/ZNmvHcN+HW40aPsK1lYppT1iJUdSwl6cA/kG\n"
-      + "nHmAe4pYfOa/keqq03yVArFydrIjYtFph2AGrsglnN2pm6OGfk0v5Lj+BKt9WeUR\n"
-      + "PyK24IN0YSleWx65N+FvWXJWf+oxMN70fKahq+ZOdtJAAdOXH4s21YaUuAboBXSx\n"
-      + "nnE2ixJKukS5miib8S4c/bZO9+AL4rOwrAoxOx/7EuzpEGkARxD7V9vYHKhdIYXB\n"
-      + "rA==\n"
-      + "=qiVK\n"
-      + "-----END PGP MESSAGE-----";
 
-  private final String PLAINTEXT = "test\n";
+  @Test
+  public void addKeys_doesNotThrow() throws IOException, InterruptedException {
+    final GPGExec gpg = new GPGExec();
+    final ImportCommandResult result = gpg
+        .runCommand(Commands.importKey(SECRET_KEY.getBytes(), PASSPHRASE));
 
-  // import the secret key
-  void prepareSecretKeys(final GPGExec gpg) throws IOException, InterruptedException {
-    assumeTrue(secretKeys(gpg).isEmpty());
-
-    assertThat(gpg
-        .runCommand(Commands.importKey(PUBLIC_KEY.getBytes())).exitCode(), Matchers.equalTo(0));
-
-    assertThat(gpg
-            .runCommand(Commands.importKey(SECRET_KEY.getBytes(), PASSPHRASE)).exitCode(),
-        Matchers.equalTo(0));
-
-    assumeTrue(!secretKeys(gpg).isEmpty());
+    Assert.assertThat("Should be a clean exit code", result.exitCode(), Matchers.equalTo(0));
+    System.out.println(result.toString());
   }
 
   @Test
-  public void decrpypt() throws IOException, InterruptedException {
+  public void addKeys_addsSecretKey() throws IOException, InterruptedException {
     final GPGExec gpg = new GPGExec();
-    prepareSecretKeys(gpg);
 
-    final DecryptCommandResult result = gpg
-        .runCommand(Commands.decrypt(CIPHERTEXT.getBytes(), PASSPHRASE));
-    System.out.println(result.toString());
+    final Map<Long, PubKey> masterKeysPre = masterKeys(gpg);
 
-    assertEquals("Clean exit code expected", 0, result.exitCode());
-    final byte[] plaintext = result.getPlaintext();
-    final String plaintextText =  new String(plaintext);
-    System.out.println(plaintextText);
-    assertArrayEquals("The correct plaintext should be decrypted", PLAINTEXT.getBytes(), plaintext);
+    Assume.assumeTrue(masterKeysPre.isEmpty());
+
+    final ImportCommandResult importCommandResult = gpg
+        .runCommand(Commands.importKey(SECRET_KEY.getBytes(), PASSPHRASE));
+
+    System.out.println(importCommandResult.toString());
+    Assert.assertThat(importCommandResult.exitCode(), Matchers.equalTo(0));
+
+    final Map<Long, PubKey> masterKeysPost = masterKeys(gpg);
+    Assert.assertThat(masterKeysPost.isEmpty(), Matchers.is(false));
+
+    // with public keys
+    final Map<Long, PubKey> subKeyPost = subKeys(gpg);
+
+    Assert.assertThat(subKeyPost.keySet(), Matchers.contains(SUBKEY_PUBLIC_KEY_ID));
+
+    // with secret keys
+    final Map<Long, SecretKey> secretKeys = secretKeys(gpg);
+    Assert.assertThat(secretKeys.keySet(), Matchers.contains(MASTER_PUBLIC_KEY_ID));
   }
 
+
+  @Test
+  public void addKeys_addsPublicKey() throws IOException, InterruptedException {
+    final GPGExec gpg = new GPGExec();
+
+    final Map<Long, PubKey> masterKeysPre = masterKeys(gpg);
+
+    Assume.assumeTrue(masterKeysPre.isEmpty());
+
+    final ImportCommandResult importCommandResult = gpg
+        .runCommand(Commands.importKey(ExampleMessages.PUBKEY_SENDER.getBytes()));
+
+    System.out.println(importCommandResult.toString());
+    Assert.assertThat(importCommandResult.exitCode(), Matchers.equalTo(0));
+
+    final Map<Long, PubKey> masterKeysPost = masterKeys(gpg);
+    Assert.assertThat(masterKeysPost.isEmpty(), Matchers.is(false));
+
+    final Map<Long, PubKey> subKeyPost = subKeys(gpg);
+
+    Assert.assertThat(subKeyPost.keySet(), Matchers.contains(ExampleMessages.KEY_ID_SENDER));
+
+    // no secret keys
+    Assert.assertTrue(secretKeys(gpg).isEmpty());
+  }
 
 }
