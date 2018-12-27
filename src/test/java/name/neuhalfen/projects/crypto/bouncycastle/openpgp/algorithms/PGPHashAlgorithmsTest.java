@@ -24,7 +24,7 @@ public class PGPHashAlgorithmsTest {
     assertThat(PGPHashAlgorithms.recommendedAlgorithms(), containsInAnyOrder(
         PGPHashAlgorithms.SHA_512, PGPHashAlgorithms.SHA_384,
         PGPHashAlgorithms.SHA_256, PGPHashAlgorithms.SHA_224,
-        PGPHashAlgorithms.RIPEMD160, PGPHashAlgorithms.TIGER_192
+        PGPHashAlgorithms.RIPEMD160
     ));
   }
 
