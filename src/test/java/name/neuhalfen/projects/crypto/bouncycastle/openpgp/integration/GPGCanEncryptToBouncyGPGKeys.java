@@ -13,7 +13,14 @@ import java.io.InputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.Arrays;
+import java.util.Collection;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeyFlag;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeySpec;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.ECDHKeyType;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.RSAKeyType;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.curve.EllipticCurve;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length.RsaLength;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.Commands;
@@ -26,11 +33,15 @@ import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.util.io.Streams;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
 
 /**
- *
+ * Test that gpg can encrypt to BouncyGPG generated keys.
  */
-public class KeyGenerationTest {
+@RunWith(Parameterized.class)
+public class GPGCanEncryptToBouncyGPGKeys {
 
 
   private final static String UID_JULIET = "Juliet Capulet <juliet@example.com>";
@@ -41,9 +52,29 @@ public class KeyGenerationTest {
       + "That I might touch that cheek! (Romeo)";
 
   @Before
-  public void setup(){
+  public void setup() {
     BouncyGPG.registerProvider();
   }
+
+  @FunctionalInterface
+  private interface KeyRingGenerator {
+
+    KeyringConfig generateKeyringWithBouncyGPG()
+        throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException;
+  }
+
+  @Parameterized.Parameters
+  public static Collection<KeyRingGenerator[]> keyRingGenerators() {
+    return Arrays.asList(new KeyRingGenerator[][]{
+            {GPGCanEncryptToBouncyGPGKeys::generateSimpleRSAKeyring},
+            {GPGCanEncryptToBouncyGPGKeys::generateSimpleECCKeyring},
+            {GPGCanEncryptToBouncyGPGKeys::generateComplexKeyring}
+        }
+    );
+  }
+
+  @Parameter
+  public KeyRingGenerator keyRingGenerator;
 
   @Test
   public void gpgCanEncryptToGeneratedKeyPair()
@@ -53,7 +84,7 @@ public class KeyGenerationTest {
     // copy the public key to GPG,
     // encrypt a message in GPG,
     // and finally decrypt the message in BouncyGPG
-    final KeyringConfig keyring = generateNewKeyRingWithBouncyGPG();
+    final KeyringConfig keyring = keyRingGenerator.generateKeyringWithBouncyGPG();
 
     final GPGExec gpg = new GPGExec();
 
@@ -110,9 +141,30 @@ public class KeyGenerationTest {
     assertEquals(0, importCommandResult.exitCode());
   }
 
-  private KeyringConfig generateNewKeyRingWithBouncyGPG()
+  static KeyringConfig generateSimpleRSAKeyring()
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
     return BouncyGPG.createSimpleKeyring().simpleRsaKeyRing(UID_JULIET, RsaLength.RSA_3072_BIT);
   }
 
+  static KeyringConfig generateSimpleECCKeyring()
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+    return BouncyGPG.createSimpleKeyring().simpleEccKeyRing(UID_JULIET);
+  }
+
+  static KeyringConfig generateComplexKeyring()
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+
+    final KeyringConfig keyringConfig = BouncyGPG.createKeyring().withSubKey(
+        KeySpec.getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P521))
+            .withKeyFlags(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
+            .withDefaultAlgorithms())
+        .withMasterKey(
+            KeySpec.getBuilder(RSAKeyType.withLength(RsaLength.RSA_2048_BIT))
+                .withKeyFlags(KeyFlag.AUTHENTICATION, KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
+                .withDefaultAlgorithms())
+        .withPrimaryUserId(UID_JULIET)
+        .withoutPassphrase()
+        .build();
+    return keyringConfig;
+  }
 }
