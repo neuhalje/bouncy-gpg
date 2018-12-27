@@ -13,7 +13,7 @@ public class ListKeysCommandTest {
 
   @Test
   public void listKeys_doesNotThrow() throws IOException, InterruptedException {
-    final GPGExec gpg = new GPGExec();
+    final GPGExec gpg = GPGExec.newInstance();
     final ListKeysCommandResult keys = gpg.runCommand(Commands.listKeys());
 
     Assert.assertThat(keys.exitCode(), Matchers.equalTo(0));
@@ -24,7 +24,7 @@ public class ListKeysCommandTest {
 
   @Test
   public void emptyKeyRing_listKeys_noPubKeys() throws IOException, InterruptedException {
-    final GPGExec gpg = new GPGExec();
+    final GPGExec gpg = GPGExec.newInstance();
     final ListKeysCommandResult keys = gpg.runCommand(Commands.listKeys());
 
     final Map<Long, PubKey> pubKeyMap = ListKeysParser.toMasterKeys(keys.getKeyList());
@@ -34,7 +34,7 @@ public class ListKeysCommandTest {
 
   @Test
   public void emptyKeyRing_listKeys_noSecretKeys() throws IOException, InterruptedException {
-    final GPGExec gpg = new GPGExec();
+    final GPGExec gpg = GPGExec.newInstance();
     final ListKeysCommandResult keys = gpg.runCommand(Commands.listSecretKeys());
 
     final Map<Long, PubKey> pubKeyMap = ListKeysParser.toMasterKeys(keys.getKeyList());

@@ -116,7 +116,7 @@ public class ImportCommandTest {
 
   @Test
   public void addKeys_doesNotThrow() throws IOException, InterruptedException {
-    final GPGExec gpg = new GPGExec();
+    final GPGExec gpg = GPGExec.newInstance();
     final ImportCommandResult result = gpg
         .runCommand(Commands.importKey(SECRET_KEY.getBytes(), PASSPHRASE));
 
@@ -126,7 +126,7 @@ public class ImportCommandTest {
 
   @Test
   public void addKeys_addsSecretKey() throws IOException, InterruptedException {
-    final GPGExec gpg = new GPGExec();
+    final GPGExec gpg = GPGExec.newInstance();
 
     final Map<Long, PubKey> masterKeysPre = masterKeys(gpg);
 
@@ -154,7 +154,7 @@ public class ImportCommandTest {
 
   @Test
   public void addKeys_addsPublicKey() throws IOException, InterruptedException {
-    final GPGExec gpg = new GPGExec();
+    final GPGExec gpg = GPGExec.newInstance();
 
     final Map<Long, PubKey> masterKeysPre = masterKeys(gpg);
 

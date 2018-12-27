@@ -29,8 +29,7 @@ public class ImportCommand implements Command {
   public List<String> getArgs() {
 
     final List<String> args = new ArrayList<>(asList("--import",
-        "--batch",
-        "--import-options", "keep-ownertrust"));
+        "--batch"));
 
     if (passphrase != null) {
       args.add("--passphrase");

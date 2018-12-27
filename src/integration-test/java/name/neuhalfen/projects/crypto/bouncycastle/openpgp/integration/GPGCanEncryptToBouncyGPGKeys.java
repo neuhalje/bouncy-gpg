@@ -102,7 +102,7 @@ public class GPGCanEncryptToBouncyGPGKeys {
     // and finally decrypt the message in BouncyGPG
     final KeyringConfig keyring = keyRingGenerator.generateKeyringWithBouncyGPG();
 
-    final GPGExec gpg = new GPGExec();
+    final GPGExec gpg = GPGExec.newInstance();
 
     importPublicKeyInGPG(gpg, keyring.getPublicKeyRings());
 

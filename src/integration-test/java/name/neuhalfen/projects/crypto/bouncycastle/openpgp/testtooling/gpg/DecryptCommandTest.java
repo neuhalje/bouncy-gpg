@@ -138,7 +138,7 @@ public class DecryptCommandTest {
 
   @Test
   public void decrpypt() throws IOException, InterruptedException {
-    final GPGExec gpg = new GPGExec();
+    final GPGExec gpg = GPGExec.newInstance();
     prepareSecretKeys(gpg);
 
     final DecryptCommandResult result = gpg

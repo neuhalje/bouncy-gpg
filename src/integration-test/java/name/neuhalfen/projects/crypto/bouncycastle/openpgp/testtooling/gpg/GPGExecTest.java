@@ -9,11 +9,11 @@ public class GPGExecTest {
 
   @Test
   public void assert_gpgVersion_2() throws IOException, InterruptedException {
-    final GPGExec gpg = new GPGExec();
+    final GPGExec gpg = GPGExec.newInstance();
     final VersionCommandResult version = gpg.runCommand(Commands.version());
 
     System.out.println(version.toString());
-    Assert.assertTrue("We have version 2.1 at least (is " + version.toString() + ")"
-        , version.isAtLeast(2, 1));
+    Assert.assertTrue("We have version 2.0 at least (is " + version.toString() + ")"
+        , version.isAtLeast(2, 0));
   }
 }

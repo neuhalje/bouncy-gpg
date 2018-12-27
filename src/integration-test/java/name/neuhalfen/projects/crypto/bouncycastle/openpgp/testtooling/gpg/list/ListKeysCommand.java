@@ -9,12 +9,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.StringJoiner;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.Command;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.Commands;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.GPGExec;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.Result;
 
 public class ListKeysCommand implements Command {
+
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", ListKeysCommand.class.getSimpleName() + "[", "]")
+        .add("listSecretKeys=" + listSecretKeys)
+        .toString();
+  }
 
   private final boolean listSecretKeys;
 
@@ -70,6 +78,13 @@ public class ListKeysCommand implements Command {
 
   public final static class ListKeysCommandResult implements Result<ListKeysCommand> {
 
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", ListKeysCommandResult.class.getSimpleName() + "[", "]")
+          .add("exitCode=" + exitCode)
+          .add("keyList=" + keyList)
+          .toString();
+    }
 
     private final List<KeyLine> keyList;
     private final int exitCode;

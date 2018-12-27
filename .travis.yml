@@ -24,7 +24,7 @@ script:
   - # sudo snap install hugo
   - # export PATH
   - # /snap/bin/hugo version
-  - ./gradlew -PHUGO_EXEC="/snap/bin/hugo" --stacktrace check jacocoTestReport # generateWebsite
+  - ./gradlew -PHUGO_EXEC="/snap/bin/hugo" --info --stacktrace check jacocoTestReport # generateWebsite
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
