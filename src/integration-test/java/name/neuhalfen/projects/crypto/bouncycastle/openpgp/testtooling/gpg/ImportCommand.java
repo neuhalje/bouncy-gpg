@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 import org.bouncycastle.util.io.Streams;
@@ -14,6 +15,14 @@ public class ImportCommand implements Command {
 
   private final byte[] keyData;
   private final String passphrase;
+
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", ImportCommand.class.getSimpleName() + "[", "]")
+        .add("keyData=" + Arrays.toString(keyData))
+        .add("passphrase='" + passphrase + "'")
+        .toString();
+  }
 
   public ImportCommand(final byte[] keyData, final String passphrase) {
     this.keyData = keyData;

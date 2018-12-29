@@ -15,4 +15,6 @@ public interface Command<T extends Command> {
       throws IOException {
   }
 
+  default String displayName() {return getClass().getSimpleName();}
+
 }

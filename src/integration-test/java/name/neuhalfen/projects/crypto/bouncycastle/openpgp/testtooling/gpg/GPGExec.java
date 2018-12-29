@@ -2,13 +2,18 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg;
 
 import static java.util.Arrays.asList;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.VersionCommand.VersionCommandResult.UNKNOWN;
+import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.VersionCommand.VersionCommandResult;
 import org.bouncycastle.util.io.Streams;
+import org.bouncycastle.util.io.TeeInputStream;
+import org.bouncycastle.util.io.TeeOutputStream;
 import org.junit.Assert;
 
 /**
@@ -40,6 +47,8 @@ public class GPGExec {
   @Nullable
   private static VersionCommandResult GPG_VERSION = UNKNOWN;
 
+  private int currentCommandNum = 0;
+
   /**
    * Create a gpg instance in a fresh (clean)  homedir.
    *
@@ -55,7 +64,7 @@ public class GPGExec {
       if (GPG2_EXECUTABLE == null) {
         locateGpg2();
         Assert.assertNotNull("Cannot find GPG 2 executable", GPG2_EXECUTABLE);
-        Assert.assertTrue(GPG_VERSION.isAtLeast(2));
+        assertTrue(GPG_VERSION.isAtLeast(2));
       }
       return new GPGExec(GPG2_EXECUTABLE);
     }
@@ -94,9 +103,6 @@ public class GPGExec {
   private GPGExec(String gpg2Executable) throws IOException, InterruptedException {
     this.gpg2Executable = gpg2Executable;
     homeDir = createTempGpgHomeDir();
-    // give gpg the chance to init the working copy
-    // without this write tasks, e.g "import" fail.
-    runCommand(Commands.listKeys());
   }
 
   private String gpgExecutable() {
@@ -146,50 +152,43 @@ public class GPGExec {
       throws IOException, InterruptedException {
 
     synchronized (getClass()) {
+      currentCommandNum++;
+
+      IOSniffer sniffer;
       Process p;
       int exitCode;
-      // honestly this does not really work well (or at all on my macbook). the error seems to be
-      // located in the filesystem.
-      int ipcTriesLeft = 1;
-      boolean retry = false;
+      sniffer = gpg(cmd);
+      p = sniffer.getP();
 
-      do {
-        p = gpg(cmd);
-        exitCode = p.exitValue();
-        log(p.getErrorStream());
+      exitCode = p.exitValue();
+      log(sniffer.getErrorStream());
 
-        final boolean wasIPCerror = exitCode == 2;
-
-        if (wasIPCerror) {
-          retry = ipcTriesLeft-- > 0;
-          LOGGER.warn("Command failed:" + cmd.toString());
-
-          if (retry) {
-            LOGGER.info("Retry!");
-            Thread.sleep(100);
-          }
-        }
-      } while (retry);
-
-      final Result result = cmd.parse(p.getInputStream(), exitCode);
+      final Result result = cmd.parse(sniffer.getInputStream(), exitCode);
 
       if (result.exitCode() != 0) {
         LOGGER.warn("Command failed: " + result.toString());
       }
+
+      Path commandLogDir = homeDir.resolve(String.format("cmd_%03d_log-%s", currentCommandNum, cmd.displayName()));
+      assertTrue(commandLogDir.toFile().mkdir());
+
+      Files.write(commandLogDir.resolve("command.txt"), cmd.toString().getBytes());
+      Files.write(commandLogDir.resolve("result.txt"), result.toString().getBytes());
+      Files.write(commandLogDir.resolve("process.txt"), p.toString().getBytes());
+      sniffer.exportAndClose(commandLogDir);
 
       return (R) result;
     }
   }
 
   private void log(final InputStream stream) throws IOException {
-    final byte[] stderr = Streams.readAll(stream);
-    if (stderr != null && stderr.length > 0) {
-      LOGGER.info(new String(stderr));
+    final byte[] text = Streams.readAll(stream);
+    if (text != null && text.length > 0) {
+      LOGGER.info(new String(text));
     }
   }
 
-
-  private Process gpg(Command cmd) throws IOException, InterruptedException {
+  private IOSniffer gpg(Command cmd) throws IOException, InterruptedException {
 
     List<String> command = new ArrayList<>();
     command.add(gpgExecutable());
@@ -206,28 +205,143 @@ public class GPGExec {
     Map<String, String> env = pb.environment();
     env.put("GNUPGHOME", homeDir.toAbsolutePath().toString());
 
-    pb.redirectErrorStream(false);
+    pb
+        .redirectErrorStream(false)
+        .directory(homeDir.toFile());
 
     Process p = pb.start();
 
-    cmd.io(p.getOutputStream(), p.getInputStream(), p.getErrorStream());
+    IOSniffer sniffer = IOSniffer.wrapIO(p);
+    cmd.io(sniffer.getOutputStream(), sniffer.getInputStream(), sniffer.getErrorStream());
 
     p.waitFor(5, TimeUnit.SECONDS);
 
     if (p.isAlive()) {
       // hmm
-      Streams.pipeAll(p.getInputStream(), System.out);
       LOGGER.warn("Forcibly destroy process!");
-      log(p.getErrorStream());
-      log(p.getInputStream());
-
       p.destroyForcibly();
     }
 
-    return p;
+    return sniffer;
   }
 
   public VersionCommandResult version() {
     return GPG_VERSION;
+  }
+
+  private final static class IOSniffer implements Closeable {
+
+    private final TeeInputStream stdin;
+    private final TeeInputStream stderr;
+    private final TeeOutputStream stdoutWrapper;
+    private final ByteArrayOutputStream stdout;
+
+    public Process getP() {
+      return p;
+    }
+
+    private final Process p;
+
+    public InputStream getInputStream() {
+      return stdin;
+    }
+
+    public InputStream getErrorStream() {
+      return stderr;
+    }
+
+    public OutputStream getOutputStream() {
+      return stdoutWrapper;
+    }
+
+    private IOSniffer(final Process p, final TeeInputStream stdin,
+        final ByteArrayOutputStream stdout, TeeOutputStream stdoutWrapper,
+        final TeeInputStream stderr) {
+      this.stdin = stdin;
+      this.stderr = stderr;
+      this.stdout = stdout;
+      this.stdoutWrapper = stdoutWrapper;
+      this.p = p;
+    }
+
+    static IOSniffer wrapIO(Process p) {
+      final TeeInputStream stdin = new TeeInputStream(p.getInputStream(),
+          new ByteArrayOutputStream());
+      final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+      final TeeOutputStream stdoutWrapper = new TeeOutputStream(p.getOutputStream(),
+          stdout);
+      final TeeInputStream stderr = new TeeInputStream(p.getErrorStream(),
+          new ByteArrayOutputStream());
+
+      return new IOSniffer(p, stdin, stdout, stdoutWrapper, stderr);
+    }
+
+    public byte[] sniffedStdOut() {
+      return stdout.toByteArray();
+    }
+
+
+    public byte[] sniffedStdIn() {
+      return ((ByteArrayOutputStream) stdin.getOutputStream()).toByteArray();
+    }
+
+
+    public byte[] sniffedStdErr() {
+      return ((ByteArrayOutputStream) stderr.getOutputStream()).toByteArray();
+    }
+
+    public void exportAndClose(Path dir) {
+
+      swallowException(
+          () -> {
+            Files.write(dir.resolve("to_gpg_stdin.log"), sniffedStdOut(),
+                StandardOpenOption.CREATE_NEW);
+          });
+      swallowException(
+          () -> {
+
+            swallowException(
+                () -> Streams.drain(stderr)); // force everything to be moved into the buffer
+            Files.write(dir.resolve("gpg_to_stderr.log"), sniffedStdErr(),
+                StandardOpenOption.CREATE_NEW);
+          });
+      swallowException(
+          () -> {
+            //swallowException(
+            //    () -> Streams.drain(stdin)); // force everything to be moved into the buffer
+            Files.write(dir.resolve("gpg_to_stdout.log"), sniffedStdIn(),
+                StandardOpenOption.CREATE_NEW);
+          });
+
+      swallowException(this::close);
+    }
+
+
+    @Override
+    public void close() throws IOException {
+      closeSilently(stdin);
+      closeSilently(stdout);
+      closeSilently(stderr);
+      closeSilently(stdoutWrapper);
+    }
+
+    private static void closeSilently(final Closeable c) {
+      swallowException(c::close);
+    }
+
+    @FunctionalInterface
+    private interface VoidCall {
+
+      void call() throws Exception;
+    }
+
+    private static void swallowException(VoidCall call) {
+      try {
+        call.call();
+      } catch (Exception e) {
+        //swallow
+        LOGGER.debug("Error in 'swallowException' (ignored)", e);
+      }
+    }
   }
 }

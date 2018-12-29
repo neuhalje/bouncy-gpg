@@ -23,11 +23,16 @@ public class VersionCommand implements Command {
   }
 
   @Override
+  public String toString() {
+    return new StringJoiner(", ", VersionCommand.class.getSimpleName() + "[", "]")
+        .toString();
+  }
+
+  @Override
   public VersionCommandResult parse(InputStream stdout, int exitCode) {
 
     try (
-        Scanner sc = new Scanner(stdout);
-
+        Scanner sc = new Scanner(stdout)
     ) {
       while (sc.hasNext()) {
 

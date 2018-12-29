@@ -93,7 +93,7 @@ public class DecryptCommand implements Command {
     public String toString() {
       return new StringJoiner(", ", DecryptCommandResult.class.getSimpleName() + "[", "]")
           .add("exitCode=" + exitCode)
-          .add("ciphertext=" + Arrays.toString(plaintext))
+          .add("plaintext=" + Arrays.toString(plaintext))
           .add("errorMessage='" + errorMessage + "'")
           .toString();
     }
