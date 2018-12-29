@@ -1,5 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration;
 
+import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.GPGCanEncryptToBouncyGPGKeys.TestFixture.testFixture;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.BufferedOutputStream;
@@ -50,25 +51,128 @@ public class GPGCanEncryptToBouncyGPGKeys {
   private final static String PLAINTEXT = "See how she leans her cheek upon her hand.\n"
       + "O, that I were a glove upon that hand\n"
       + "That I might touch that cheek! (Romeo)";
-  @Parameter
-  public KeyRingGenerator keyRingGenerator;
+
+
+  @Parameter(value = 0)
+  public String testName;
+
+  @Parameter(value = 1)
+  public TestFixture fixtureStrategies;
 
   @FunctionalInterface
   private interface KeyRingGenerator {
 
     KeyringConfig generateKeyringWithBouncyGPG(VersionCommandResult gpgVersion)
-        throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException;
+        throws IOException, PGPException, NoSuchAlgorithmException,
+        NoSuchProviderException, InvalidAlgorithmParameterException;
   }
 
-  @Parameterized.Parameters
-  public static Collection<KeyRingGenerator[]> keyRingGenerators() {
-    return Arrays.asList(new KeyRingGenerator[][]{
-            {GPGCanEncryptToBouncyGPGKeys::generateSimpleRSAKeyring},
-            {GPGCanEncryptToBouncyGPGKeys::generateSimpleECCKeyring},
-            {GPGCanEncryptToBouncyGPGKeys::generateComplexKeyring}
+  final static class TestFixture {
+
+    public final KeyRingGenerator keyRingGenerator;
+
+    private TestFixture(
+        final KeyRingGenerator keyRingGenerator) {
+      this.keyRingGenerator = keyRingGenerator;
+    }
+
+    public static TestFixture testFixture(KeyRingGenerator generator) {
+      return new TestFixture(generator);
+    }
+  }
+
+  @Parameterized.Parameters(name = "{index}: {0}")
+  public static Collection<Object[]> keyRingGenerators() {
+    return Arrays.asList(new Object[][]{
+            {
+                "Simple RSA keyring",
+                testFixture(GPGCanEncryptToBouncyGPGKeys::generateSimpleRSAKeyring)},
+            {
+                "Simple ECC keyring",
+                testFixture(GPGCanEncryptToBouncyGPGKeys::generateSimpleECCKeyring)
+            },
+            {
+                "Complex ECC keyring", testFixture(GPGCanEncryptToBouncyGPGKeys::generateComplexKeyring)
+            }
         }
     );
   }
+
+  @Before
+  public void setup() {
+    BouncyGPG.registerProvider();
+  }
+
+  @Test
+  public void gpgCanEncryptToGeneratedKeyPair()
+      throws IOException, InterruptedException, PGPException, NoSuchAlgorithmException,
+      NoSuchProviderException, InvalidAlgorithmParameterException {
+
+    // we generate a keyring for Juliet with BouncyGPG,
+    // copy the public key to GPG,
+    // encrypt a message in GPG,
+    // and finally decrypt the message in BouncyGPG
+    final GPGExec gpg = GPGExec.newInstance();
+
+    final KeyringConfig keyring = fixtureStrategies.keyRingGenerator
+        .generateKeyringWithBouncyGPG(gpg.version());
+
+    importPublicKeyInGPG(gpg, keyring.getPublicKeyRings());
+
+    byte[] chiphertext = encryptMessageInGPG(gpg, PLAINTEXT, EMAIL_JULIET);
+
+    String decryptedPlaintext = decrpytMessageInBouncyGPG(keyring, chiphertext);
+
+    Assert.assertThat(decryptedPlaintext, Matchers.equalTo(PLAINTEXT));
+  }
+
+  private String decrpytMessageInBouncyGPG(final KeyringConfig keyring,
+      final byte[] chiphertext)
+      throws IOException {
+
+    final ByteArrayOutputStream output = new ByteArrayOutputStream();
+    try (
+        final InputStream cipherTextStream = new ByteArrayInputStream(chiphertext);
+
+        final BufferedOutputStream bufferedOut = new BufferedOutputStream(output);
+
+        final InputStream plaintextStream = BouncyGPG
+            .decryptAndVerifyStream()
+            .withConfig(keyring)
+            .andIgnoreSignatures()
+            .fromEncryptedInputStream(cipherTextStream);
+
+    ) {
+      Streams.pipeAll(plaintextStream, bufferedOut);
+    } catch (NoSuchProviderException | IOException e) {
+      Assert.fail(e.getMessage());
+    }
+    output.close();
+    final String decrypted_message = new String(output.toByteArray());
+    return decrypted_message;
+  }
+
+  private byte[] encryptMessageInGPG(final GPGExec gpg,
+      final String plaintext,
+      final String recipient) throws IOException, InterruptedException {
+
+    final EncryptCommandResult encryptCommandResult = gpg
+        .runCommand(Commands.encrypt(plaintext.getBytes(), recipient));
+    Assert.assertEquals(0, encryptCommandResult.exitCode());
+
+    return encryptCommandResult.getCiphertext();
+  }
+
+  private void importPublicKeyInGPG(final GPGExec gpg,
+      final PGPPublicKeyRingCollection publicKeyRings)
+      throws IOException, InterruptedException {
+    final byte[] encoded = publicKeyRings.getEncoded();
+
+    final Result<ImportCommand> importCommandResult = gpg.runCommand(Commands.importKey(encoded));
+
+    Assert.assertEquals(0, importCommandResult.exitCode());
+  }
+
 
   static KeyringConfig generateSimpleRSAKeyring(VersionCommandResult gpgVersion)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
@@ -98,76 +202,6 @@ public class GPGCanEncryptToBouncyGPGKeys {
         .withoutPassphrase()
         .build();
     return keyringConfig;
-  }
-
-  @Before
-  public void setup() {
-    BouncyGPG.registerProvider();
-  }
-
-  @Test
-  public void gpgCanEncryptToGeneratedKeyPair()
-      throws IOException, InterruptedException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-
-    // we generate a keyring for Juliet with BouncyGPG,
-    // copy the public key to GPG,
-    // encrypt a message in GPG,
-    // and finally decrypt the message in BouncyGPG
-    final GPGExec gpg = GPGExec.newInstance();
-
-    final KeyringConfig keyring = keyRingGenerator.generateKeyringWithBouncyGPG(gpg.version());
-
-    importPublicKeyInGPG(gpg, keyring.getPublicKeyRings());
-
-    byte[] chiphertext = encryptMessageInGPG(gpg, PLAINTEXT, EMAIL_JULIET);
-
-    String decryptedPlaintext = decrpytMessageInBouncyGPG(keyring, chiphertext);
-
-    Assert.assertThat(decryptedPlaintext, Matchers.equalTo(PLAINTEXT));
-  }
-
-  private String decrpytMessageInBouncyGPG(final KeyringConfig keyring, final byte[] chiphertext)
-      throws IOException {
-
-    final ByteArrayOutputStream output = new ByteArrayOutputStream();
-    try (
-        final InputStream cipherTextStream = new ByteArrayInputStream(chiphertext);
-
-        final BufferedOutputStream bufferedOut = new BufferedOutputStream(output);
-
-        final InputStream plaintextStream = BouncyGPG
-            .decryptAndVerifyStream()
-            .withConfig(keyring)
-            .andIgnoreSignatures()
-            .fromEncryptedInputStream(cipherTextStream);
-
-    ) {
-      Streams.pipeAll(plaintextStream, bufferedOut);
-    } catch (NoSuchProviderException | IOException e) {
-      Assert.fail(e.getMessage());
-    }
-    output.close();
-    final String decrypted_message = new String(output.toByteArray());
-    return decrypted_message;
-  }
-
-  private byte[] encryptMessageInGPG(final GPGExec gpg, final String plaintext,
-      final String recipient) throws IOException, InterruptedException {
-
-    final EncryptCommandResult encryptCommandResult = gpg
-        .runCommand(Commands.encrypt(plaintext.getBytes(), recipient));
-    Assert.assertEquals(0, encryptCommandResult.exitCode());
-
-    return encryptCommandResult.getCiphertext();
-  }
-
-  private void importPublicKeyInGPG(final GPGExec gpg,
-      final PGPPublicKeyRingCollection publicKeyRings) throws IOException, InterruptedException {
-    final byte[] encoded = publicKeyRings.getEncoded();
-
-    final Result<ImportCommand> importCommandResult = gpg.runCommand(Commands.importKey(encoded));
-
-    Assert.assertEquals(0, importCommandResult.exitCode());
   }
 
 }

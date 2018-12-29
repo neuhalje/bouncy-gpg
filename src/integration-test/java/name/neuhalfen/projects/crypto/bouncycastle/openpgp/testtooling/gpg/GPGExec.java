@@ -2,10 +2,10 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg;
 
 import static java.util.Arrays.asList;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.VersionCommand.VersionCommandResult.UNKNOWN;
-import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,6 +55,7 @@ public class GPGExec {
       if (GPG2_EXECUTABLE == null) {
         locateGpg2();
         Assert.assertNotNull("Cannot find GPG 2 executable", GPG2_EXECUTABLE);
+        Assert.assertTrue(GPG_VERSION.isAtLeast(2));
       }
       return new GPGExec(GPG2_EXECUTABLE);
     }
@@ -80,7 +81,7 @@ public class GPGExec {
         }
 
       } catch (IOException | InterruptedException e) {
-        LOGGER.info("Testing " + candidate + " -> error: " + e.getMessage() + "");
+        LOGGER.debug("Testing " + candidate + " -> error: " + e.getMessage() + "");
       }
 
     }
@@ -124,10 +125,6 @@ public class GPGExec {
     //agentCfg.println("disable-scdaemon");
     agentCfg.println("no-grab");
 
-    // this breaks agent communication
-    // agentCfg.print("extra-socket ");
-    // agentCfg.println(new File(homeDirFile, "S.gpg-agent.extra").getAbsolutePath());
-
     agentCfg.close();
 
     // gpg-agent.conf
@@ -159,11 +156,13 @@ public class GPGExec {
       do {
         p = gpg(cmd);
         exitCode = p.exitValue();
+        log(p.getErrorStream());
+
         final boolean wasIPCerror = exitCode == 2;
 
         if (wasIPCerror) {
           retry = ipcTriesLeft-- > 0;
-          LOGGER.info("Command failed:" + cmd.toString());
+          LOGGER.warn("Command failed:" + cmd.toString());
 
           if (retry) {
             LOGGER.info("Retry!");
@@ -177,7 +176,15 @@ public class GPGExec {
       if (result.exitCode() != 0) {
         LOGGER.warn("Command failed: " + result.toString());
       }
+
       return (R) result;
+    }
+  }
+
+  private void log(final InputStream stream) throws IOException {
+    final byte[] stderr = Streams.readAll(stream);
+    if (stderr != null && stderr.length > 0) {
+      LOGGER.info(new String(stderr));
     }
   }
 
@@ -199,7 +206,7 @@ public class GPGExec {
     Map<String, String> env = pb.environment();
     env.put("GNUPGHOME", homeDir.toAbsolutePath().toString());
 
-    pb.redirectErrorStream(true);
+    pb.redirectErrorStream(false);
 
     Process p = pb.start();
 
@@ -210,14 +217,17 @@ public class GPGExec {
     if (p.isAlive()) {
       // hmm
       Streams.pipeAll(p.getInputStream(), System.out);
-      LOGGER.warn("Forcibly destroy process!!");
+      LOGGER.warn("Forcibly destroy process!");
+      log(p.getErrorStream());
+      log(p.getInputStream());
+
       p.destroyForcibly();
     }
 
     return p;
   }
 
-  public VersionCommandResult version() throws IOException, InterruptedException {
-    return runCommand(Commands.version());
+  public VersionCommandResult version() {
+    return GPG_VERSION;
   }
 }
