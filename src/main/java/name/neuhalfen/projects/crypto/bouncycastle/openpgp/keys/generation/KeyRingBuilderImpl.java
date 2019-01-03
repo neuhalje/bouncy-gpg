@@ -77,9 +77,16 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
     requireNonNull(userId, "userId must not be null");
     requireNonNull(length, "length must not be null");
 
-    return withMasterKey(
+    return withSubKey(
         KeySpec.getBuilder(RSAKeyType.withLength(length))
-            .withDefaultKeyFlags()
+            .withKeyFlags(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
+            .withDefaultAlgorithms())
+        .withSubKey(
+            KeySpec.getBuilder(RSAKeyType.withLength(length))
+                .withKeyFlags(KeyFlag.AUTHENTICATION)
+                .withDefaultAlgorithms())
+        .withMasterKey(KeySpec.getBuilder(RSAKeyType.withLength(length))
+            .withKeyFlags(KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
             .withDefaultAlgorithms())
         .withPrimaryUserId(userId)
         .withoutPassphrase()
@@ -95,9 +102,12 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
         KeySpec.getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
             .withKeyFlags(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
             .withDefaultAlgorithms())
+        .withSubKey(KeySpec.getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
+            .withKeyFlags(KeyFlag.AUTHENTICATION)
+            .withDefaultAlgorithms())
         .withMasterKey(
             KeySpec.getBuilder(ECDSAKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
-                .withKeyFlags(KeyFlag.AUTHENTICATION, KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
+                .withKeyFlags(KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
                 .withDefaultAlgorithms())
         .withPrimaryUserId(userId)
         .withoutPassphrase()
