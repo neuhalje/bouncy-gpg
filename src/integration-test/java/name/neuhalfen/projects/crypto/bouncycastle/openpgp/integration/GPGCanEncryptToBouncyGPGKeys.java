@@ -192,11 +192,11 @@ public class GPGCanEncryptToBouncyGPGKeys {
 
     final KeyringConfig keyringConfig = BouncyGPG.createKeyring().withSubKey(
         KeySpec.getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P521))
-            .withKeyFlags(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
+            .allowKeyToBeUsedTo(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
             .withDefaultAlgorithms())
         .withMasterKey(
             KeySpec.getBuilder(RSAKeyType.withLength(RsaLength.RSA_2048_BIT))
-                .withKeyFlags(KeyFlag.AUTHENTICATION, KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
+                .allowKeyToBeUsedTo(KeyFlag.AUTHENTICATION, KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
                 .withDefaultAlgorithms())
         .withPrimaryUserId(UID_JULIET)
         .withoutPassphrase()

@@ -61,11 +61,11 @@ public class EccKeyRingTest {
 
     final KeyringConfig keyringConfig = BouncyGPG.createKeyring().withSubKey(
         KeySpec.getBuilder(ECDHKeyType.fromCurve(curve))
-            .withKeyFlags(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
+            .allowKeyToBeUsedTo(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
             .withDefaultAlgorithms())
         .withMasterKey(
             KeySpec.getBuilder(ECDSAKeyType.fromCurve(curve))
-                .withKeyFlags(KeyFlag.AUTHENTICATION, KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
+                .allowKeyToBeUsedTo(KeyFlag.AUTHENTICATION, KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
                 .withDefaultAlgorithms())
         .withPrimaryUserId(UID_JULIET)
         .withoutPassphrase()

@@ -64,23 +64,23 @@ public class ComplexKeyGenerationTest {
 
     final KeySpec signingSubey = KeySpecBuilder
         .newSpec(ECDSAKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
-        .withKeyFlags(KeyFlag.SIGN_DATA)
+        .allowKeyToBeUsedTo(KeyFlag.SIGN_DATA)
         .withDefaultAlgorithms();
 
     final KeySpec authenticationSubey = KeySpecBuilder
         .newSpec(RSAForEncryptionKeyType.withLength(RsaLength.RSA_3072_BIT))
-        .withKeyFlags(KeyFlag.AUTHENTICATION)
+        .allowKeyToBeUsedTo(KeyFlag.AUTHENTICATION)
         .withDefaultAlgorithms();
 
     final KeySpec encryptionSubey = KeySpecBuilder
         .newSpec(RSAForEncryptionKeyType.withLength(RsaLength.RSA_2048_BIT))
-        .withKeyFlags(KeyFlag.ENCRYPT_COMMS, KeyFlag.ENCRYPT_STORAGE)
+        .allowKeyToBeUsedTo(KeyFlag.ENCRYPT_COMMS, KeyFlag.ENCRYPT_STORAGE)
         .withDefaultAlgorithms();
 
     final KeySpec masterKey = KeySpecBuilder.newSpec(
         ECDSAKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256)
     )
-        .withKeyFlags(KeyFlag.CERTIFY_OTHER)
+        .allowKeyToBeUsedTo(KeyFlag.CERTIFY_OTHER)
         .withDetailedConfiguration()
         .withPreferredSymmetricAlgorithms(
             PGPSymmetricEncryptionAlgorithms.recommendedAlgorithms()

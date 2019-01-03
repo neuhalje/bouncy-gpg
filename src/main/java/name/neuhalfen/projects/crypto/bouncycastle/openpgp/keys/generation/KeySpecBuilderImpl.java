@@ -37,7 +37,7 @@ class KeySpecBuilderImpl implements KeySpecBuilderInterface {
   }
 
   @Override
-  public WithDetailedConfiguration withKeyFlags(KeyFlag... flags) {
+  public WithDetailedConfiguration allowKeyToBeUsedTo(KeyFlag... flags) {
     int val = 0;
     for (final KeyFlag f : flags) {
       val |= f.getFlag();
@@ -47,8 +47,8 @@ class KeySpecBuilderImpl implements KeySpecBuilderInterface {
   }
 
   @Override
-  public WithDetailedConfiguration withDefaultKeyFlags() {
-    return withKeyFlags(
+  public WithDetailedConfiguration allowKeyToBeUsedForEverything() {
+    return allowKeyToBeUsedTo(
         KeyFlag.CERTIFY_OTHER,
         KeyFlag.SIGN_DATA,
         KeyFlag.ENCRYPT_COMMS,

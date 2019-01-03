@@ -24,10 +24,82 @@ import org.bouncycastle.bcpg.sig.Features;
 
 public interface KeySpecBuilderInterface {
 
-  WithDetailedConfiguration withKeyFlags(KeyFlag... flags);
+  /**
+   * <p>Configure the GPG keyflags for a key to allow <b>all</b> key usages. This is not bad or
+   * dangerous, but often considered bad style because normally different <i>signature</i> and
+   * <i>encryption</i> keys are used and recommended.</p>
+   *
+   * <p>GPG keys and subkeys carry flags that describe their purpose. Most commonly the master key
+   * carries the SIGN_DATA and CERTIFY_OTHER flags and a dedicated encryption key carries the
+   * ENCRYPT_STORAGE and ENCRYPT_COMMS flags.</p>
+   *
+   * <p>
+   * To quote from <a href="https://tools.ietf.org/html/rfc4880#section-5.2.3.21">
+   * rfc4880 section 5.2.3.21</a>: </p>
+   * <blockquote>
+   * The flags in this packet may appear in self-signatures or in
+   * certification signatures.  They mean different things depending on
+   * who is making the statement -- for example, a certification signature
+   * that has the "sign data" flag is stating that the certification is
+   * for that use.  On the other hand, the "communications encryption"
+   * flag in a self-signature is stating a preference that a given key be
+   * used for communications.  Note however, that it is a thorny issue to
+   * determine what is "communications" and what is "storage".  This
+   * decision is left wholly up to the implementation; the authors of this
+   * document do not claim any special wisdom on the issue and realize
+   * that accepted opinion may change.
+   *
+   * The "split key" (0x10) and "group key" (0x80) flags are placed on a
+   * self-signature only; they are meaningless on a certification
+   * signature.  They SHOULD be placed only on a direct-key signature
+   * (type 0x1F) or a subkey signature (type 0x18), one that refers to the
+   * key the flag applies to.
+   * </blockquote>
+   *
+   * @param flags Flags to be enabled for this sub- or master-key
+   *
+   * @return next step
+   */
+  WithDetailedConfiguration allowKeyToBeUsedTo(KeyFlag... flags);
 
-  WithDetailedConfiguration withDefaultKeyFlags();
+  /**
+   * <p>Configure the GPG keyflags for a key.</p>
+   *
+   * <p>GPG keys and subkeys carry flags that describe their purpose. Most commonly the master key
+   * carries the SIGN_DATA and CERTIFY_OTHER flags and a dedicated encryption key carries the
+   * ENCRYPT_STORAGE and ENCRYPT_COMMS flags.</p>
+   *
+   * <p>
+   * To quote from <a href="https://tools.ietf.org/html/rfc4880#section-5.2.3.21">
+   * rfc4880 section 5.2.3.21</a>: </p>
+   * <blockquote>
+   * The flags in this packet may appear in self-signatures or in
+   * certification signatures.  They mean different things depending on
+   * who is making the statement -- for example, a certification signature
+   * that has the "sign data" flag is stating that the certification is
+   * for that use.  On the other hand, the "communications encryption"
+   * flag in a self-signature is stating a preference that a given key be
+   * used for communications.  Note however, that it is a thorny issue to
+   * determine what is "communications" and what is "storage".  This
+   * decision is left wholly up to the implementation; the authors of this
+   * document do not claim any special wisdom on the issue and realize
+   * that accepted opinion may change.
+   *
+   * The "split key" (0x10) and "group key" (0x80) flags are placed on a
+   * self-signature only; they are meaningless on a certification
+   * signature.  They SHOULD be placed only on a direct-key signature
+   * (type 0x1F) or a subkey signature (type 0x18), one that refers to the
+   * key the flag applies to.
+   * </blockquote>
+   *
+   * @return next step
+   */
+  WithDetailedConfiguration allowKeyToBeUsedForEverything();
 
+  /**
+   * Copy all key flags, algorithms, ... from the parent key.
+   * @return key spec.
+   */
   KeySpec withInheritedSubPackets();
 
   interface WithDetailedConfiguration {
@@ -335,8 +407,9 @@ public interface KeySpecBuilderInterface {
 
     /**
      * Add features to the key.
-     * 
-     * @param feature  the feature
+     *
+     * @param feature the feature
+     *
      * @return next step
      */
     WithFeatures withFeature(Feature feature);
