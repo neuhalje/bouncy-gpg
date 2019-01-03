@@ -157,11 +157,11 @@ public class GPGExec {
       IOSniffer sniffer;
       Process p;
       int exitCode;
+      LOGGER.debug(cmd.toString());
       sniffer = gpg(cmd);
       p = sniffer.getP();
 
       exitCode = p.exitValue();
-      log(sniffer.getErrorStream());
 
       final Result result = cmd.parse(sniffer.getInputStream(), exitCode);
 
@@ -169,7 +169,11 @@ public class GPGExec {
         LOGGER.warn("Command failed: " + result.toString());
       }
 
-      Path commandLogDir = homeDir.resolve(String.format("cmd_%03d_log-%s", currentCommandNum, cmd.displayName()));
+      LOGGER.debug(result.toString());
+
+
+      Path commandLogDir = homeDir
+          .resolve(String.format("cmd_%03d_log-%s", currentCommandNum, cmd.displayName()));
       assertTrue(commandLogDir.toFile().mkdir());
 
       Files.write(commandLogDir.resolve("command.txt"), cmd.toString().getBytes());
@@ -188,15 +192,18 @@ public class GPGExec {
     }
   }
 
+  private void log(final byte[] text) {
+    if (text != null && text.length > 0) {
+      LOGGER.info(new String(text));
+    }
+  }
+
   private IOSniffer gpg(Command cmd) throws IOException, InterruptedException {
 
     List<String> command = new ArrayList<>();
     command.add(gpgExecutable());
     command.add("--homedir");
     command.add(homeDir.toAbsolutePath().toString());
-
-    // command.add("--debug");
-    // command.add("8");
 
     command.addAll(cmd.getArgs());
 

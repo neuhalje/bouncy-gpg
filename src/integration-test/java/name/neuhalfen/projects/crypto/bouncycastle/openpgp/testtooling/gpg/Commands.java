@@ -7,6 +7,10 @@ public final class Commands {
   private Commands() {
   }
 
+  public static ListPacketCommand listPackets(final String comment, final byte[] data) {
+    return new ListPacketCommand(comment,data);
+  }
+
   public static ListKeysCommand listKeys() {
     return new ListKeysCommand(false);
   }
