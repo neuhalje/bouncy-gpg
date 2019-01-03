@@ -36,6 +36,10 @@ import org.junit.runners.Parameterized.Parameter;
 
 /**
  * Test that BouncyGPG can encrypt a messages that GPG can decrypt.
+ *
+ * This is a "sawed off shotgun" kind of test: Throw some freshly generated values at GPG to test
+ * interop. If the test fails the logfiles written to the per-test tempdir can be used to analyse
+ * the cause of the failure.
  */
 @RunWith(Parameterized.class)
 public class BouncyGPGCanEncryptToGPG {
