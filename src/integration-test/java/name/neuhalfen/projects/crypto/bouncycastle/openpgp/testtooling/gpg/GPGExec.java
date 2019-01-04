@@ -221,7 +221,7 @@ public class GPGExec {
     IOSniffer sniffer = IOSniffer.wrapIO(p);
     cmd.io(sniffer.getOutputStream(), sniffer.getInputStream(), sniffer.getErrorStream());
 
-    p.waitFor(5, TimeUnit.SECONDS);
+    p.waitFor(15, TimeUnit.SECONDS);
 
     if (p.isAlive()) {
       // hmm
