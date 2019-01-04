@@ -21,6 +21,7 @@ public abstract class BaseCommand implements Command {
   public void io(OutputStream outputStream, InputStream inputStream, InputStream errorStream)
       throws IOException {
     outputStream.write(pipeToGpg);
+    outputStream.flush();
     outputStream.close();
   }
 
@@ -28,7 +29,7 @@ public abstract class BaseCommand implements Command {
   public String toString() {
     return new StringJoiner(", ", getClass().getSimpleName() + "[", "]")
         .add("comment='" + comment + "'")
-        .add("pipeToGpg=" + Arrays.toString(pipeToGpg))
+        .add("pipeToGpg=[len:=" + (pipeToGpg == null ? "empty" : pipeToGpg.length) + "]")
         .toString();
   }
 
@@ -72,7 +73,7 @@ public abstract class BaseCommand implements Command {
       return new StringJoiner(", ", getClass().getSimpleName() + "[", "]")
           .add("exitCode=" + exitCode)
           .add("comment=" + comment)
-          .add("stdOut=" + Arrays.toString(stdOut))
+          .add("stdOut=[len:=" + (stdOut == null ? "empty" : stdOut.length) + "]")
           .toString();
     }
   }

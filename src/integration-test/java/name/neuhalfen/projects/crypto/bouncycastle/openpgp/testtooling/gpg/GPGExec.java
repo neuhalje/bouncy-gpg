@@ -171,7 +171,6 @@ public class GPGExec {
 
       LOGGER.debug(result.toString());
 
-
       Path commandLogDir = homeDir
           .resolve(String.format("cmd_%03d_log-%s", currentCommandNum, cmd.displayName()));
       assertTrue(commandLogDir.toFile().mkdir());
@@ -220,12 +219,13 @@ public class GPGExec {
 
     IOSniffer sniffer = IOSniffer.wrapIO(p);
     cmd.io(sniffer.getOutputStream(), sniffer.getInputStream(), sniffer.getErrorStream());
-
+    sniffer.getOutputStream().flush();
+    sniffer.getOutputStream().close();
     p.waitFor(15, TimeUnit.SECONDS);
 
     if (p.isAlive()) {
       // hmm
-      LOGGER.warn("Forcibly destroy process!");
+      LOGGER.warn("Forcibly destroy process " + String.join(" ", command));
       p.destroyForcibly();
     }
 

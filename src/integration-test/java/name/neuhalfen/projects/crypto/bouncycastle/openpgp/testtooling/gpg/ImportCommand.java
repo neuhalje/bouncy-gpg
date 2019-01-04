@@ -19,7 +19,7 @@ public class ImportCommand implements Command {
   @Override
   public String toString() {
     return new StringJoiner(", ", ImportCommand.class.getSimpleName() + "[", "]")
-        .add("keyData=" + Arrays.toString(keyData))
+        .add("keyData=[len:=" + (keyData == null ? "empty" : keyData.length) + "]")
         .add("passphrase='" + passphrase + "'")
         .toString();
   }
@@ -50,7 +50,6 @@ public class ImportCommand implements Command {
 
   public void io(OutputStream outputStream, InputStream inputStream, InputStream errorStream)
       throws IOException {
-    inputStream.available();
     outputStream.write(keyData);
     outputStream.close();
   }

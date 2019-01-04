@@ -25,7 +25,7 @@ public class DecryptCommand implements Command {
   public String toString() {
     return new StringJoiner(", ", DecryptCommand.class.getSimpleName() + "[", "]")
         .add("passphrase='" + passphrase + "'")
-        .add("ciphertext=" + Arrays.toString(ciphertext))
+        .add("ciphertext=[len:=" + (ciphertext == null ? "empty" : ciphertext.length) + "]")
         .toString();
   }
 

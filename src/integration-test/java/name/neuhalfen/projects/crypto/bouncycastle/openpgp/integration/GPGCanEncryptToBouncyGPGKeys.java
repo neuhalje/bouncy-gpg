@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration;
 
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.BouncyGPGCanEncryptToGPG.TestFixture.testFixture;
+import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.Helper.logPackets;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.KeyRingGenerators.EMAIL_JULIET;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.Commands.listPackets;
 
@@ -106,10 +107,10 @@ public class GPGCanEncryptToBouncyGPGKeys {
         .generateKeyringWithBouncyGPG(gpg.version(), fixtureStrategies.passphrase);
 
     importPublicKeyInGPG(gpg, keyring.getPublicKeyRings());
-    gpg.runCommand(listPackets("Secret keyring", keyring.getSecretKeyRings().getEncoded()));
+    logPackets(gpg,"Secret keyring", keyring.getSecretKeyRings().getEncoded() );
 
     byte[] chiphertext = encryptMessageInGPG(gpg, PLAINTEXT, EMAIL_JULIET);
-    gpg.runCommand(listPackets("Ciphertext", chiphertext));
+    logPackets(gpg,"Ciphertext", chiphertext);
 
     String decryptedPlaintext = decrpytMessageInBouncyGPG(keyring, chiphertext);
 

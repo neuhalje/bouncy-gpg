@@ -21,6 +21,14 @@ public class EncryptCommand implements Command {
   }
 
   @Override
+  public String toString() {
+    return new StringJoiner(", ", EncryptCommand.class.getSimpleName() + "[", "]")
+        .add("recipient='" + recipient + "'")
+        .add("plaintext=[len:=" + (plaintext == null ? "empty" : plaintext.length) + "]")
+        .toString();
+  }
+
+  @Override
   public List<String> getArgs() {
     return asList("--encrypt", "--batch", "--armor", "--quiet", "--recipient", recipient);
   }
