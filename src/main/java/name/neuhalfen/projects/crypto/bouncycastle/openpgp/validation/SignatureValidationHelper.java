@@ -30,7 +30,7 @@ final class SignatureValidationHelper {
 
         if (isThisSignatureGood) {
           LOGGER.debug(
-              "Successful validated signature with key 0x{} because we have no matching public key",
+              "Successful validated signature with key 0x{}",
               Long.toHexString(messageSignature.getKeyID()));
           goodSignatures.add(messageSignature.getKeyID());
         }
