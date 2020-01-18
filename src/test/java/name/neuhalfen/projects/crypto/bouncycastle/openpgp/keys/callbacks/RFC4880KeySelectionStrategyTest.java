@@ -149,6 +149,22 @@ public class RFC4880KeySelectionStrategyTest {
         foundKeyIds.contains(ExampleMessages.KEY_ID_SENDER));
   }
 
+  @Test
+  public void allowsEncryptionWithPubKeyOnly() throws PGPException, IOException {
+    final KeySelectionStrategy sut = buildSut(
+            RFC4880TestKeyringsDedicatedSigningKey.SIGNATURE_KEY_GUARANTEED_EXPIRED_AT);
+
+    final KeyringConfig keyringConfig = Configs.keyringConfigOnlyRecipientPubKey();
+
+    final PGPPublicKey validPubKey = sut
+            .selectPublicKey(PURPOSE.FOR_ENCRYPTION, ExampleMessages.USER_ID_RECIPIENT, keyringConfig);
+
+    assertNotNull("Must never return null", validPubKey);
+
+    assertEquals("The correct key has been found",
+            ExampleMessages.PUBKEY_ID_RECIPIENT, validPubKey.getKeyID() );
+  }
+
   @Test()
   public void noPrivateKeys_noSigningKey_isSelected() throws IOException, PGPException {
     final KeyringConfig keyringConfig = RFC4880TestKeyringsDedicatedSigningKey

@@ -133,10 +133,11 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     final Set<PGPPublicKeyRing> publicKeyrings = this
         .publicKeyRingsForUid(purpose, uid, keyringConfig);
 
-    final PGPSecretKeyRingCollection secretKeyRings = keyringConfig.getSecretKeyRings();
 
     switch (purpose) {
       case FOR_SIGNING:
+        final PGPSecretKeyRingCollection secretKeyRings = keyringConfig.getSecretKeyRings();
+
         return publicKeyrings.stream()
             .flatMap(keyring -> StreamSupport.stream(keyring.spliterator(), false))
             .filter(this::isVerificationKey)

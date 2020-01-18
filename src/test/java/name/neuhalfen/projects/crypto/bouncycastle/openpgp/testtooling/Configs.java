@@ -102,6 +102,14 @@ public class Configs {
   }
 
 
+  public static KeyringConfig keyringConfigOnlyRecipientPubKey() throws IOException, PGPException {
+    final InMemoryKeyring keyring = KeyringConfigs.forGpgExportedKeys(
+            KeyringConfigCallbacks.withUnprotectedKeys());
+
+    keyring.addPublicKey(ExampleMessages.PUBKEY_RECIPIENT.getBytes("US-ASCII"));
+    return keyring;
+  }
+
   public static KeyringConfig keyringConfigInMemoryForRecipient() throws IOException, PGPException {
     final InMemoryKeyring keyring = KeyringConfigs.forGpgExportedKeys(
         KeyringConfigCallbacks.withPasswordsFromMap(ExampleMessages.ALL_KEYRINGS_PASSWORDS));
