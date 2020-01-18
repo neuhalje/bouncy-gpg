@@ -79,11 +79,11 @@ final class ExplodeAndReencrypt {
           if (outputStream == null) {
             LOGGER.trace("Ignore {}", entry.getName());
           } else {
-            final OutputStream encryptedSmallFromZIP = encryptionFactory.andWriteTo(outputStream);
-            Streams.pipeAll(zis, encryptedSmallFromZIP);
-            encryptedSmallFromZIP.flush();
-            encryptedSmallFromZIP.close();
-          }
+            try( OutputStream encryptedSmallFromZIP = encryptionFactory.andWriteTo(outputStream) )
+            {
+              Streams.pipeAll(zis, encryptedSmallFromZIP);
+              encryptedSmallFromZIP.flush();}
+            }
         }
       }
     }
