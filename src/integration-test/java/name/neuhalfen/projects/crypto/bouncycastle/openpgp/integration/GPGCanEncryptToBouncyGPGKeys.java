@@ -29,6 +29,7 @@ import java.util.Collection;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.BouncyGPGCanEncryptToGPG.TestFixture.testFixture;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.Helper.logPackets;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.KeyRingGenerators.EMAIL_JULIET;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * Test that gpg can encrypt to BouncyGPG generated keys.
@@ -51,7 +52,13 @@ public class GPGCanEncryptToBouncyGPGKeys {
     @Parameter(value = 0)
     public String testName;
 
+    /**
+     * skipTest can be used to toggle off certain tests.
+     */
     @Parameter(value = 1)
+    public boolean skipTest;
+
+    @Parameter(value = 2)
     public TestFixture fixtureStrategies;
 
     @Parameterized.Parameters(name = "{index}: {0}")
@@ -59,33 +66,39 @@ public class GPGCanEncryptToBouncyGPGKeys {
         return Arrays.asList(new Object[][]{
                         {
                                 "Simple RSA keyring without passphrase",
+                                false,
                                 testFixture(KeyRingGenerators::generateSimpleRSAKeyring,
                                         NO_PASSPHRASE)
 
                         },
                         {
                                 "Complex RSA keyring with a passphrase",
+                                false,
                                 testFixture(KeyRingGenerators::generateComplexRSAKeyring,
                                         WITH_PASSPHRASE)
 
                         },
                         {
                                 "Simple ECC keyring without passphrase",
+                                true,
                                 testFixture(KeyRingGenerators::generateSimpleECCKeyring,
                                         NO_PASSPHRASE)
                         },
                         {
                                 "Complex RSA with ECC subkey keyring and passphrase",
+                                true,
                                 testFixture(KeyRingGenerators::generateRSAWithECCSubkeyKeyring,
                                         WITH_PASSPHRASE)
                         },
                         {
                                 "Complex ECC with ECC subkey keyring and passphrase",
+                                true,
                                 testFixture(KeyRingGenerators::generateComplexEccKeyring,
                                         WITH_PASSPHRASE)
                         },
                         {
                                 "Complex ECC with ECC subkey keyring and without passphrase",
+                                true,
                                 testFixture(KeyRingGenerators::generateComplexEccKeyring,
                                         NO_PASSPHRASE)
                         },
@@ -102,8 +115,10 @@ public class GPGCanEncryptToBouncyGPGKeys {
     public void gpgCanEncryptToGeneratedKeyPair()
             throws IOException, InterruptedException, PGPException, NoSuchAlgorithmException,
             NoSuchProviderException, InvalidAlgorithmParameterException {
+        assumeTrue(! skipTest);
 
-        // we generate a keyring for Juliet with BouncyGPG,
+
+        // we generate a keyring to Juliet with BouncyGPG,
         // copy the public key to GPG,
         // encrypt a message in GPG,
         // and finally decrypt the message in BouncyGPG
