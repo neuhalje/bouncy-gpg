@@ -155,12 +155,16 @@ public final class DecryptionStreamFactory {
 
         // decrypt the data
 
-        final InputStream plainText = pbe
+        try(
+                InputStream plainText = pbe
             .getDataStream(new BcPublicKeyDataDecryptorFactory(
-                privateKey)); // NOPMD: AvoidInstantiatingObjectsInLoops
-        final PGPObjectFactory nextFactory = new PGPObjectFactory(plainText,
-            new BcKeyFingerprintCalculator());// NOPMD: AvoidInstantiatingObjectsInLoops
-        return nextDecryptedStream(nextFactory, state);  // NOPMD: OnlyOneReturn
+                privateKey)) // NOPMD: AvoidInstantiatingObjectsInLoops
+        )
+        {
+          final PGPObjectFactory nextFactory = new PGPObjectFactory(plainText,
+                  new BcKeyFingerprintCalculator());// NOPMD: AvoidInstantiatingObjectsInLoops
+          return nextDecryptedStream(nextFactory, state);  // NOPMD: OnlyOneReturn
+        }
       } else if (pgpObj instanceof PGPCompressedData) {
         LOGGER.trace("Found instance of PGPCompressedData");
         final PGPObjectFactory nextFactory = new PGPObjectFactory(
