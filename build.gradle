@@ -22,6 +22,7 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id "com.jfrog.bintray" version "1.8.4"
+    id "com.github.ben-manes.versions" version "0.27.0"
 }
 
 javadoc {
