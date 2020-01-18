@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.1.0'
+        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.3.1'
     }
 }
 
@@ -162,7 +162,7 @@ if (hasProperty('bintray_Username')) {
 apply from: 'website.gradle'
 
 wrapper {
-    gradleVersion = '4.10.2'
+    gradleVersion = '6.1'
 }
 
 // Generate OSGI bundle metadata
