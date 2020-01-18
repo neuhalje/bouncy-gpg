@@ -3,7 +3,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.BouncyGPGCanEncryptToGPG.TestFixture.testFixture;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.Helper.logPackets;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.KeyRingGenerators.EMAIL_JULIET;
-import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.Commands.listPackets;
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedOutputStream;
@@ -81,10 +80,25 @@ public class BouncyGPGCanEncryptToGPG {
                     NO_PASSPHRASE)
             },
             {
-                "Complex ECC with RSA subkey keyring and passphrase",
-                testFixture(KeyRingGenerators::generateComplexEccAndRSAKeyring,
+                "Complex RSA with ECC subkey keyring and passphrase",
+                testFixture(KeyRingGenerators::generateRSAWithECCSubkeyKeyring,
                     WITH_PASSPHRASE)
-            }
+            },
+            {
+                "Complex ECC with ECC subkey keyring and passphrase",
+                testFixture(KeyRingGenerators::generateComplexEccKeyring,
+                    WITH_PASSPHRASE)
+            },
+            {
+                "Complex ECC with ECC subkey keyring  without passphrase",
+                testFixture(KeyRingGenerators::generateComplexEccKeyring,
+                    NO_PASSPHRASE)
+            },
+            {
+                "Complex ed25519subkey keyring  without passphrase",
+                testFixture(KeyRingGenerators::generateEd25519EccKeyring,
+                    NO_PASSPHRASE)
+            },
         }
     );
   }
@@ -110,10 +124,10 @@ public class BouncyGPGCanEncryptToGPG {
         .generateKeyringWithBouncyGPG(gpg.version(), fixture.passphrase);
 
     exportPrivateKeyToGPG(gpg, keyring.getSecretKeyRings(), NO_PASSPHRASE);
-    logPackets(gpg,"Secret keyring", keyring.getSecretKeyRings().getEncoded() );
+    logPackets(gpg, "Secret keyring", keyring.getSecretKeyRings().getEncoded());
 
     byte[] chiphertext = encryptMessageInBouncyGPG(keyring, PLAINTEXT, EMAIL_JULIET, EMAIL_JULIET);
-    logPackets(gpg,"Ciphertext", chiphertext);
+    logPackets(gpg, "Ciphertext", chiphertext);
 
     String decryptedPlaintext = decrpytMessageInGPG(gpg, chiphertext, fixture.passphrase);
 

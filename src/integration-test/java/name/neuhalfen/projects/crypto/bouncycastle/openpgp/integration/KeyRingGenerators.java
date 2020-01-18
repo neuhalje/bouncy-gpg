@@ -13,6 +13,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeyRi
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeySpec;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.Passphrase;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.ECDHKeyType;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.ECDSAKeyType;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.RSAKeyType;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.curve.EllipticCurve;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length.RsaLength;
@@ -75,7 +76,75 @@ public final class KeyRingGenerators {
     return BouncyGPG.createSimpleKeyring().simpleEccKeyRing(UID_JULIET);
   }
 
-  static KeyringConfig generateComplexEccAndRSAKeyring(VersionCommandResult gpgVersion,
+  static KeyringConfig generateComplexEccKeyring(VersionCommandResult gpgVersion,
+      String passphrase)
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+    assumeTrue("Require at least GPG 2.1 for ECC", gpgVersion.isAtLeast(2, 1));
+
+    final KeySpec encryptionKey = KeySpec
+        .getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
+        .allowKeyToBeUsedTo(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
+        .withDefaultAlgorithms();
+
+    final KeySpec authenticationKey = KeySpec
+        .getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
+        .allowKeyToBeUsedTo(KeyFlag.AUTHENTICATION)
+        .withDefaultAlgorithms();
+
+    final KeySpec masterKey = KeySpec
+        .getBuilder(ECDSAKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
+        .allowKeyToBeUsedTo(KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
+        .withDefaultAlgorithms();
+
+    final WithPassphrase builder = BouncyGPG.createKeyring()
+        .withSubKey(encryptionKey)
+        .withSubKey(authenticationKey)
+        .withMasterKey(masterKey)
+        .withPrimaryUserId(UID_JULIET);
+
+    if (passphrase == null) {
+      return builder.withoutPassphrase().build();
+    } else {
+      return builder.withPassphrase(Passphrase.fromString(passphrase)).build();
+    }
+  }
+
+
+  static KeyringConfig generateEd25519EccKeyring(VersionCommandResult gpgVersion,
+      String passphrase)
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+    assumeTrue("Require at least GPG 2.1 for ECC", gpgVersion.isAtLeast(2, 1));
+
+    final KeySpec encryptionKey = KeySpec
+        .getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_ed25519))
+        .allowKeyToBeUsedTo(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
+        .withDefaultAlgorithms();
+
+    final KeySpec authenticationKey = KeySpec
+        .getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_ed25519))
+        .allowKeyToBeUsedTo(KeyFlag.AUTHENTICATION)
+        .withDefaultAlgorithms();
+
+    final KeySpec masterKey = KeySpec
+        .getBuilder(ECDSAKeyType.fromCurve(EllipticCurve.CURVE_ed25519))
+        .allowKeyToBeUsedTo(KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
+        .withDefaultAlgorithms();
+
+    final WithPassphrase builder = BouncyGPG.createKeyring()
+        .withSubKey(encryptionKey)
+        .withSubKey(authenticationKey)
+        .withMasterKey(masterKey)
+        .withPrimaryUserId(UID_JULIET);
+
+    if (passphrase == null) {
+      return builder.withoutPassphrase().build();
+    } else {
+      return builder.withPassphrase(Passphrase.fromString(passphrase)).build();
+    }
+  }
+
+
+  static KeyringConfig generateRSAWithECCSubkeyKeyring(VersionCommandResult gpgVersion,
       String passphrase)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
     assumeTrue("Require at least GPG 2.1 for ECC", gpgVersion.isAtLeast(2, 1));
@@ -96,5 +165,4 @@ public final class KeyRingGenerators {
       return builder.withPassphrase(Passphrase.fromString(passphrase)).build();
     }
   }
-
 }

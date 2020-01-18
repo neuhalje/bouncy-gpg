@@ -98,17 +98,24 @@ public class KeyRingBuilderImpl implements KeyRingBuilder, SimpleKeyRingBuilder 
       throws PGPException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException {
     requireNonNull(userId, "userId must not be null");
 
-    return withSubKey(
-        KeySpec.getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
-            .allowKeyToBeUsedTo(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
-            .withDefaultAlgorithms())
-        .withSubKey(KeySpec.getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
-            .allowKeyToBeUsedTo(KeyFlag.AUTHENTICATION)
-            .withDefaultAlgorithms())
-        .withMasterKey(
-            KeySpec.getBuilder(ECDSAKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
-                .allowKeyToBeUsedTo(KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
-                .withDefaultAlgorithms())
+    final KeySpec encryptionKey = KeySpec
+        .getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
+        .allowKeyToBeUsedTo(KeyFlag.ENCRYPT_STORAGE, KeyFlag.ENCRYPT_COMMS)
+        .withDefaultAlgorithms();
+
+    final KeySpec authenticationKey = KeySpec
+        .getBuilder(ECDHKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
+        .allowKeyToBeUsedTo(KeyFlag.AUTHENTICATION)
+        .withDefaultAlgorithms();
+
+    final KeySpec masterKey = KeySpec
+        .getBuilder(ECDSAKeyType.fromCurve(EllipticCurve.CURVE_NIST_P256))
+        .allowKeyToBeUsedTo(KeyFlag.CERTIFY_OTHER, KeyFlag.SIGN_DATA)
+        .withDefaultAlgorithms();
+
+    return withSubKey(encryptionKey)
+        .withSubKey(authenticationKey)
+        .withMasterKey(masterKey)
         .withPrimaryUserId(userId)
         .withoutPassphrase()
         .build();

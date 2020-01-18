@@ -3,7 +3,6 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.BouncyGPGCanEncryptToGPG.TestFixture.testFixture;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.Helper.logPackets;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.integration.KeyRingGenerators.EMAIL_JULIET;
-import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.gpg.Commands.listPackets;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -61,29 +60,43 @@ public class GPGCanEncryptToBouncyGPGKeys {
   @Parameterized.Parameters(name = "{index}: {0}")
   public static Collection<Object[]> keyRingGenerators() {
     return Arrays.asList(new Object[][]{
-            {
-                "Simple RSA keyring without passphrase",
-                testFixture(KeyRingGenerators::generateSimpleRSAKeyring,
-                    NO_PASSPHRASE)
+        {
+            "Simple RSA keyring without passphrase",
+            testFixture(KeyRingGenerators::generateSimpleRSAKeyring,
+                NO_PASSPHRASE)
 
-            },
-            {
-                "Complex RSA keyring with a passphrase",
-                testFixture(KeyRingGenerators::generateComplexRSAKeyring,
-                    WITH_PASSPHRASE)
+        },
+        {
+            "Complex RSA keyring with a passphrase",
+            testFixture(KeyRingGenerators::generateComplexRSAKeyring,
+                WITH_PASSPHRASE)
 
-            },
-            {
-                "Simple ECC keyring without passphrase",
-                testFixture(KeyRingGenerators::generateSimpleECCKeyring,
-                    NO_PASSPHRASE)
-            },
-            {
-                "Complex ECC with RSA subkey keyring and passphrase",
-                testFixture(KeyRingGenerators::generateComplexEccAndRSAKeyring,
-                    WITH_PASSPHRASE)
-            }
-        }
+        },
+        {
+            "Simple ECC keyring without passphrase",
+            testFixture(KeyRingGenerators::generateSimpleECCKeyring,
+                NO_PASSPHRASE)
+        },
+        {
+            "Complex RSA with ECC subkey keyring and passphrase",
+            testFixture(KeyRingGenerators::generateRSAWithECCSubkeyKeyring,
+                WITH_PASSPHRASE)
+        },
+        {
+            "Complex ECC with ECC subkey keyring and passphrase",
+            testFixture(KeyRingGenerators::generateComplexEccKeyring,
+                WITH_PASSPHRASE)
+        },
+        {
+            "Complex ECC with ECC subkey keyring and without passphrase",
+            testFixture(KeyRingGenerators::generateComplexEccKeyring,
+                NO_PASSPHRASE)
+        },
+        {
+            "Complex ed25519subkey keyring  without passphrase",
+            testFixture(KeyRingGenerators::generateEd25519EccKeyring,
+                NO_PASSPHRASE)
+        },}
     );
   }
 
@@ -107,10 +120,10 @@ public class GPGCanEncryptToBouncyGPGKeys {
         .generateKeyringWithBouncyGPG(gpg.version(), fixtureStrategies.passphrase);
 
     importPublicKeyInGPG(gpg, keyring.getPublicKeyRings());
-    logPackets(gpg,"Secret keyring", keyring.getSecretKeyRings().getEncoded() );
+    logPackets(gpg, "Secret keyring", keyring.getSecretKeyRings().getEncoded());
 
     byte[] chiphertext = encryptMessageInGPG(gpg, PLAINTEXT, EMAIL_JULIET);
-    logPackets(gpg,"Ciphertext", chiphertext);
+    logPackets(gpg, "Ciphertext", chiphertext);
 
     String decryptedPlaintext = decrpytMessageInBouncyGPG(keyring, chiphertext);
 
