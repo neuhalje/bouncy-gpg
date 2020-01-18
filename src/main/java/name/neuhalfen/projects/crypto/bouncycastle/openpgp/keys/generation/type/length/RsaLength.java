@@ -15,10 +15,20 @@
  */
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length;
 
+/**
+ * RsaKey length constants. Key lengths < 2048 bit should not be used
+ * for new implementations.
+ *
+ * Source:
+ * NIST Special Publication 800-131A Revision 2 (March 2019)
+ * Transitioning the Use of Cryptographic Algorithms and Key Lengths
+ *
+ * Source:
+ * https://doi.org/10.6028/NIST.SP.800-131Ar2
+ */
 public enum RsaLength implements KeyLength {
   @Deprecated
   RSA_1024_BIT(1024),
-  @Deprecated
   RSA_2048_BIT(2048),
   RSA_3072_BIT(3072),
   RSA_4096_BIT(4096),
