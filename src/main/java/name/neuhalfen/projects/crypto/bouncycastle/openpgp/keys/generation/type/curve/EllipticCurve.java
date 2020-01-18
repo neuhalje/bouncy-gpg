@@ -23,7 +23,6 @@ public enum EllipticCurve {
   CURVE_NIST_P256("P-256"),
   CURVE_NIST_P384("P-384"),
   CURVE_NIST_P521("P-521"),
-  CURVE_ed25519("curve25519")
   ;
 
   private final String name;

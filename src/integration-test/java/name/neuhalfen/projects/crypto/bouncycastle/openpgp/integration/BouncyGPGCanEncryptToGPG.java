@@ -94,11 +94,6 @@ public class BouncyGPGCanEncryptToGPG {
                 testFixture(KeyRingGenerators::generateComplexEccKeyring,
                     NO_PASSPHRASE)
             },
-            {
-                "Complex ed25519subkey keyring  without passphrase",
-                testFixture(KeyRingGenerators::generateEd25519EccKeyring,
-                    NO_PASSPHRASE)
-            },
         }
     );
   }
