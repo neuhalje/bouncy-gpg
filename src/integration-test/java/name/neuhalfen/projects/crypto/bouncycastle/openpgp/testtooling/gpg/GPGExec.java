@@ -44,7 +44,6 @@ public class GPGExec {
 
   @Nullable
   private static String GPG2_EXECUTABLE;
-  @Nullable
   private static VersionCommandResult GPG_VERSION = UNKNOWN;
 
   private int currentCommandNum = 0;
@@ -64,6 +63,7 @@ public class GPGExec {
       if (GPG2_EXECUTABLE == null) {
         locateGpg2();
         Assert.assertNotNull("Cannot find GPG 2 executable", GPG2_EXECUTABLE);
+        Assert.assertNotNull("GPG version not set?", GPG_VERSION);
         assertTrue(GPG_VERSION.isAtLeast(2));
       }
       return new GPGExec(GPG2_EXECUTABLE);
@@ -100,7 +100,7 @@ public class GPGExec {
   }
 
 
-  private GPGExec(String gpg2Executable) throws IOException, InterruptedException {
+  private GPGExec(String gpg2Executable) throws IOException {
     this.gpg2Executable = gpg2Executable;
     homeDir = createTempGpgHomeDir();
   }
@@ -148,10 +148,10 @@ public class GPGExec {
     return homeDir;
   }
 
-  public <T extends Command, R extends Result<T>> R runCommand(T cmd)
+  public final <T extends Command<?>, R extends Result<T>> R runCommand(T cmd)
       throws IOException, InterruptedException {
 
-    synchronized (getClass()) {
+    synchronized (GPGExec.class) {
       currentCommandNum++;
 
       IOSniffer sniffer;
@@ -163,7 +163,7 @@ public class GPGExec {
 
       exitCode = p.exitValue();
 
-      final Result result = cmd.parse(sniffer.getInputStream(), exitCode);
+      R result = (R) cmd.parse(sniffer.getInputStream(), exitCode);
 
       if (result.exitCode() != 0) {
         LOGGER.warn("Command failed: " + result.toString());
@@ -180,10 +180,11 @@ public class GPGExec {
       Files.write(commandLogDir.resolve("process.txt"), p.toString().getBytes());
       sniffer.exportAndClose(commandLogDir);
 
-      return (R) result;
+      return result;
     }
   }
 
+  @SuppressWarnings("unused")
   private void log(final InputStream stream) throws IOException {
     final byte[] text = Streams.readAll(stream);
     if (text != null && text.length > 0) {
@@ -191,13 +192,14 @@ public class GPGExec {
     }
   }
 
+  @SuppressWarnings("unused")
   private void log(final byte[] text) {
     if (text != null && text.length > 0) {
       LOGGER.info(new String(text));
     }
   }
 
-  private IOSniffer gpg(Command cmd) throws IOException, InterruptedException {
+  private IOSniffer gpg(Command<?> cmd) throws IOException, InterruptedException {
 
     List<String> command = new ArrayList<>();
     command.add(gpgExecutable());
@@ -232,7 +234,7 @@ public class GPGExec {
     return sniffer;
   }
 
-  public VersionCommandResult version() {
+  public final VersionCommandResult version() {
     return GPG_VERSION;
   }
 
@@ -300,10 +302,8 @@ public class GPGExec {
     public void exportAndClose(Path dir) {
 
       swallowException(
-          () -> {
-            Files.write(dir.resolve("to_gpg_stdin.log"), sniffedStdOut(),
-                StandardOpenOption.CREATE_NEW);
-          });
+          () -> Files.write(dir.resolve("to_gpg_stdin.log"), sniffedStdOut(),
+              StandardOpenOption.CREATE_NEW));
       swallowException(
           () -> {
 
@@ -325,7 +325,7 @@ public class GPGExec {
 
 
     @Override
-    public void close() throws IOException {
+    public void close() {
       closeSilently(stdin);
       closeSilently(stdout);
       closeSilently(stderr);
