@@ -136,7 +136,7 @@ public final class PGPEncryptingStream extends OutputStream {
       IOException, PGPException {
     isDoSign = signingUid != null;
 
-    final OutputStream sink;
+    final OutputStream sink; // NOPMD: PGPEncryptingStream
     if (armor) {
       this.armoredOutputStream = new ArmoredOutputStream(cipherTextSink);
       sink = this.armoredOutputStream;
