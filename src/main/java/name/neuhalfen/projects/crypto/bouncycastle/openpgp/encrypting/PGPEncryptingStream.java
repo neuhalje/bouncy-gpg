@@ -10,6 +10,7 @@ import java.security.NoSuchProviderException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
@@ -220,13 +221,13 @@ public final class PGPEncryptingStream extends OutputStream {
 
 
   @Override
-  public void write(byte[] buffer) throws IOException {
+  public void write(@Nonnull byte[] buffer) throws IOException {
     write(buffer, 0, buffer.length);
   }
 
 
   @Override
-  public void write(byte[] buffer, int off, int len) throws IOException {
+  public void write(@Nonnull byte[] buffer, int off, int len) throws IOException {
     encryptionDataStream.write(buffer, 0, len);
     if (isDoSign) {
       signatureGenerator.update(buffer, 0, len);

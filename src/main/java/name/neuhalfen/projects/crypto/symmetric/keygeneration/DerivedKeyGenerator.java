@@ -76,10 +76,9 @@ public class DerivedKeyGenerator {
         idUniqueInContext, recordVersion);
     final byte[] derivedKeyIdentifier = byteRepresentationOf(derivedKeyIdentifierStr);
 
-    final byte[] derivedKey = kdFwithMasterKeyMixin
+    return  kdFwithMasterKeyMixin
         .deriveKey(salt, derivedKeyIdentifier, desiredKeyLengthBytes * 8);
 
-    return derivedKey;
   }
 
 

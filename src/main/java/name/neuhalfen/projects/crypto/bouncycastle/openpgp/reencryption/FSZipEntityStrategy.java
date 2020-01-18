@@ -52,7 +52,7 @@ public class FSZipEntityStrategy implements ZipEntityStrategy {
     return Files.newOutputStream(destPath.toPath(), StandardOpenOption.CREATE_NEW);
   }
 
-  @SuppressWarnings("PMD.LawOfDemeter")
+  @SuppressWarnings({"PMD.LawOfDemeter","PMD.UnnecessaryLocalBeforeReturn"})
   @Override
   public String rewriteName(String nameFromZip) {
     requireNonNull(nameFromZip, "nameFromZip must not be null");
