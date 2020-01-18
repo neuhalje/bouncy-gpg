@@ -16,7 +16,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.length;
 
 /**
- * RsaKey length constants. Key lengths < 2048 bit should not be used
+ * RsaKey length constants. Key lengths smaller than 2048 bit should not be used
  * for new implementations.
  *
  * Source:
