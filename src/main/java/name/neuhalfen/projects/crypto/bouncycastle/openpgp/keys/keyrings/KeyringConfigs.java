@@ -25,9 +25,10 @@ public final class KeyringConfigs {
    * @param publicKeyring E.g. src/test/resources/sender.gpg.d/pubring.gpg
    * @param secretKeyring E.g. src/test/resources/sender.gpg.d/secring.gpg
    * @param callback see KeyringConfigCallbacks
-   *
+   * @deprecated Use {@link #forGpgExportedKeys(KeyringConfigCallback)}
    * @return the config
    */
+  @Deprecated
   public static KeyringConfig withKeyRingsFromFiles(final File publicKeyring,
       final File secretKeyring,
       KeyringConfigCallback callback) {
@@ -49,10 +50,12 @@ public final class KeyringConfigs {
    * @param callback see KeyringConfigCallbacks
    *
    * @return the config
+   * @deprecated Use {@link #forGpgExportedKeys(KeyringConfigCallback)}
    *
    * @throws IOException the streams fail to deliver
    * @throws PGPException failed to read the keyrings
    */
+  @Deprecated
   public static KeyringConfig withKeyRingsFromStreams(@Nullable final InputStream publicKeyring,
       @Nullable final InputStream secretKeyring,
       KeyringConfigCallback callback) throws IOException, PGPException {
@@ -70,8 +73,10 @@ public final class KeyringConfigs {
    * @param secretKeyringPath E.g. "recipient.gpg.d/secring.gpg"
    * @param callback see KeyringConfigCallbacks
    *
+   * @deprecated Use {@link #forGpgExportedKeys(KeyringConfigCallback)}
    * @return the config
    */
+  @Deprecated
   public static KeyringConfig withKeyRingsFromResources(final ClassLoader classLoader,
       final String publicKeyringPath,
       final String secretKeyringPath,

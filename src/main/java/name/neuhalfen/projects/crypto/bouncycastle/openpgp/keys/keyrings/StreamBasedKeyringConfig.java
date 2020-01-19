@@ -18,7 +18,9 @@ import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 /**
  * Implements a keyring based on streams. The streams provide the GPG on-disk
  * files.
+ * @deprecated : The keyring configs are highly dependent on GnuPG. Using secret keys no longer works with GnuPG 2.1
  */
+@Deprecated
 final class StreamBasedKeyringConfig implements KeyringConfig {
 
   @Nonnull

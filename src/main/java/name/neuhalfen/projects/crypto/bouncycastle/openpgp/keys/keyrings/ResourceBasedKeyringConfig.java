@@ -12,7 +12,9 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Keyrin
  * Implements a keyring based on resources. . Use-case: Baked in GPG keyring (probably only with
  * public keys) without distributing separate keyring files. . See the unit tests for an example:
  * (in tests)  name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs
+ * @deprecated : The keyring configs are highly dependent on GnuPG. Using secret keys no longer works with GnuPG 2.1
  */
+@Deprecated
 final class ResourceBasedKeyringConfig extends AbstractDefaultKeyringConfig {
 
 

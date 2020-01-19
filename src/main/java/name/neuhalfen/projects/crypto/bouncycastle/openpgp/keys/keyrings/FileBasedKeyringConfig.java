@@ -11,7 +11,9 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Keyrin
 
 /**
  * Load keyrings from files. These files are created and managed via gpg.
+ * @deprecated : The keyring configs are highly dependent on GnuPG. Using secret keys no longer works with GnuPG 2.1
  */
+@Deprecated
 final class FileBasedKeyringConfig extends AbstractDefaultKeyringConfig {
 
   @Nonnull
