@@ -422,6 +422,67 @@ public class ExampleMessages {
           "=zGKV\n" +
           "-----END PGP PRIVATE KEY BLOCK-----";
 
+  // ONLY_MASTER_KEY_PUBKEY: This key has no subkeys, only the RSA master key
+  //
+  // sec  rsa2048/0xA3EE3A40BD8A546B
+  //     created: 2020-01-19  expires: never       usage: SCE
+  //     trust: ultimate      validity: ultimate
+  //[ultimate] (1). Only Masterkey, No Subkeys (This key has no sub keys) <no_subkeys@example.com>
+  public final static long ONLY_MASTER_KEY_ID = 0xA3EE3A40BD8A546BL;
+  public final static String ONLY_MASTER_KEY_UID = "no_subkeys@example.com";
+  public final static String ONLY_MASTER_KEY_PASSPHRASE = "";
+  public final static String ONLY_MASTER_KEY_PUBKEY= "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" +
+          "\n" +
+          "mQENBF4kHiwBCAC0S04cTmMh8lJ4E4yHK1WG5SsWW7ejXs8rsvSvbIhtd3yfajiv\n" +
+          "KVL8Pug+Ny64//rbPe60xUkpC7p9kg773iwhExrmn5IFZSkqJi51iDRTPTaRRgsp\n" +
+          "w2gGygqJNnMbc4/QDomzu5+o32jdxpNlrWcUn90yWdhc6DapujvErE5KF6pqxMQm\n" +
+          "VfWtQ+VlB3EA8KnggIHcwionBaYBd1kBUNCNUTkIFoxvK0YqFgOBRIQ17p2eyZC3\n" +
+          "d4h07e8HyfxYhcaAyON4uzXCED1N4TJ9lSxDN9XkxMhPPZHj6wcM1pW88RjNxZHP\n" +
+          "zT4L5GzbIA3QI0Emuk8w82YK9NX/ufoT6+INABEBAAG0Tk9ubHkgTWFzdGVya2V5\n" +
+          "LCBObyBTdWJrZXlzIChUaGlzIGtleSBoYXMgbm8gc3ViIGtleXMpIDxub19zdWJr\n" +
+          "ZXlzQGV4YW1wbGUuY29tPokBSwQTAQoANRYhBKYry3RWGuzwygbVLKPuOkC9ilRr\n" +
+          "BQJeJB4sAhsPCAsJCAcNDAsKBRUKCQgLAh4BAheAAAoJEKPuOkC9ilRrFRQH/1Uq\n" +
+          "6H1oWszXeZHp3uvYSzUWB7joy6dJu6KSHajtU4XIXMRNChr0ILDMhtt0bQt1Pm5i\n" +
+          "lbjNwv95vhuxK7pymDvRZpr/ijfJEs4gaX7W6qOUdH54sZokkLTgGEV/aD2NeiqK\n" +
+          "syI8GFzhfAygMSA/R6c82uHkb0SQu8Y471f6pIZsk+Zv47wzHTHvgBSDn90QzYok\n" +
+          "d/dhmqwM1jnq8QOXy2j4Lpfso6C8WoObh9Ujp9/jbqw+pK0DjssXepQQWb5MILEl\n" +
+          "l+gCh7fHWyfJMDQmzD7Fnv0FejP3UCjeRPR/l5O83wnnNjhCqLNqmUWsStui5t8x\n" +
+          "Mz9hY/sWCr8tZyelTdk=\n" +
+          "=QqJA\n" +
+          "-----END PGP PUBLIC KEY BLOCK-----\n";
+  public final static String ONLY_MASTER_KEY_PRIVKEY="-----BEGIN PGP PRIVATE KEY BLOCK-----\n" +
+          "\n" +
+          "lQOYBF4kHiwBCAC0S04cTmMh8lJ4E4yHK1WG5SsWW7ejXs8rsvSvbIhtd3yfajiv\n" +
+          "KVL8Pug+Ny64//rbPe60xUkpC7p9kg773iwhExrmn5IFZSkqJi51iDRTPTaRRgsp\n" +
+          "w2gGygqJNnMbc4/QDomzu5+o32jdxpNlrWcUn90yWdhc6DapujvErE5KF6pqxMQm\n" +
+          "VfWtQ+VlB3EA8KnggIHcwionBaYBd1kBUNCNUTkIFoxvK0YqFgOBRIQ17p2eyZC3\n" +
+          "d4h07e8HyfxYhcaAyON4uzXCED1N4TJ9lSxDN9XkxMhPPZHj6wcM1pW88RjNxZHP\n" +
+          "zT4L5GzbIA3QI0Emuk8w82YK9NX/ufoT6+INABEBAAEAB/0aPX+P1Roj0wM3tg3/\n" +
+          "j59cs7aSrs9KYr5062XQsP4mLdF12N2JI32QIuO68l3Fen7F2/ywU1UI4/ZvgjYr\n" +
+          "aDQ0rXV+gqjw9L6KA5FCyou7CwS0c2T6iMB3hH5bZrutZM4Ah60jpeILOlYmjlkz\n" +
+          "ijT00SjoxB9zs4RegtwMuCXo2HbVu7xWo/HwiszGZ+DAkckSod8nAPS6q8uQsHa/\n" +
+          "+yoqUHpYL/l8UKwbdWfqpu/ZJ0TroLmYRrTSWnMYnEQkowWzXHzLruDNaxD2l7A1\n" +
+          "W8xqR+VmjwLLQJ/YDBoLDU6NNTPq8q4VtTg6IAYK18dWfat/vRrWcpeaQ20tmFxa\n" +
+          "z3pNBADF2AR9gL0zlgvUFoiRFcOsDgRjHi7WxgkYQkvyMDk+BlpKW7DNk5Z8Al/+\n" +
+          "apk/cuFi5KfbgYcfp/c6g/SQp2aP4j7QErVF7lktnIS+2te2PEHgiZZCgIXLrmNP\n" +
+          "+iDHp+zVIPNJkFJUl3d9MxKyOsskcXuJo2ZJbqF52AlSbrVGtwQA6Uqnq+shDuiv\n" +
+          "4vfJsqEPA03WtS5G3AI4usB3Sm1OhFfjtPFPxerm7scqgl8smgJjg9kxqYSNNaTO\n" +
+          "HxCBYp0qx+gi0A4CPOafTGl1rURR7pF6UcKE3QuYdZx6MduSxdQk7t5XYp7QMwU3\n" +
+          "MN66aUXkMciZDULUIrKzHm78rGQrOVsD/jwkbIwlOdrK/INSmIZtMT42NPTIWOkA\n" +
+          "XMKl/UTE7LzZmQcXWaeFgowJWwuWuZpNayPCWG2wVEuqtf3X5+innNTsR0LwSoSP\n" +
+          "z7xsQc/Al9yhMo/URMnbMmziTKTPycgGW/SoeVlw0HslnXeWqcMuk9KevDXxshXV\n" +
+          "g/J5nZhOtleASvK0Tk9ubHkgTWFzdGVya2V5LCBObyBTdWJrZXlzIChUaGlzIGtl\n" +
+          "eSBoYXMgbm8gc3ViIGtleXMpIDxub19zdWJrZXlzQGV4YW1wbGUuY29tPokBSwQT\n" +
+          "AQoANRYhBKYry3RWGuzwygbVLKPuOkC9ilRrBQJeJB4sAhsPCAsJCAcNDAsKBRUK\n" +
+          "CQgLAh4BAheAAAoJEKPuOkC9ilRrFRQH/1Uq6H1oWszXeZHp3uvYSzUWB7joy6dJ\n" +
+          "u6KSHajtU4XIXMRNChr0ILDMhtt0bQt1Pm5ilbjNwv95vhuxK7pymDvRZpr/ijfJ\n" +
+          "Es4gaX7W6qOUdH54sZokkLTgGEV/aD2NeiqKsyI8GFzhfAygMSA/R6c82uHkb0SQ\n" +
+          "u8Y471f6pIZsk+Zv47wzHTHvgBSDn90QzYokd/dhmqwM1jnq8QOXy2j4Lpfso6C8\n" +
+          "WoObh9Ujp9/jbqw+pK0DjssXepQQWb5MILEll+gCh7fHWyfJMDQmzD7Fnv0FejP3\n" +
+          "UCjeRPR/l5O83wnnNjhCqLNqmUWsStui5t8xMz9hY/sWCr8tZyelTdk=\n" +
+          "=8wl4\n" +
+          "-----END PGP PRIVATE KEY BLOCK-----\n";
+
   public final static Map<Long, char[]> ALL_KEYRINGS_PASSWORDS = BUILD_ALL_KEYRINGS_PASSWORDS();
   /**
    * Encrypted-To:    recipient@example.com Signed-By:       sender@example.com Compressed: false
@@ -676,6 +737,7 @@ public class ExampleMessages {
 
     m.put(ExampleMessages.PUBKEY_ID_RECIPIENT, "recipient".toCharArray());
 
+    m.put(ExampleMessages.ONLY_MASTER_KEY_ID, null);
     return Collections.unmodifiableMap(m);
   }
 
