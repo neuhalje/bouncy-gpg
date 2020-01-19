@@ -22,6 +22,10 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PublicKeyA
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.type.curve.EllipticCurve;
 import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec;
 
+/**
+ * @deprecated Not really deprecated, but buggy
+ */
+@Deprecated
 public class ECDHKeyType implements KeyType {
 
   private final EllipticCurve curve;
