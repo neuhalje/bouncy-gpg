@@ -54,7 +54,7 @@ The encrypted message is then decrypted and the signature is verified. (This is 
     ByteArrayOutputStream result = new ByteArrayOutputStream();
 
     try (
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(result, 16384 * 1024);
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(result);
 
         final OutputStream outputStream = BouncyGPG
             .encryptToStream()
@@ -290,7 +290,7 @@ FAQ
    <dd>Yes, RSA key generation is supported since 2.2.0. Generating ECC keys is NOT supported yet, although the code is there (<a href="https://github.com/neuhalje/bouncy-gpg/blob/master/src/integration-test/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/integration/KeyRingGenerators.java">gpg integration tests</a> fail)</dd>
 
    <dt>Is compatibility with GnuPG tested?</dt>
-   <dd>Yes, since 2.2.0 `./gradlew integrationTest`  <a href="https://github.com/neuhalje/bouncy-gpg/blob/master/src/integration-test/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/integration/">tests the interoperability with gpg</a>.</dd>
+   <dd>Yes, since 2.2.0 the gradle task integrationTest  <a href="https://github.com/neuhalje/bouncy-gpg/blob/master/src/integration-test/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/integration/">tests the interoperability with gpg</a>.</dd>
 </dl>
 
 
@@ -355,11 +355,69 @@ Here is the short version:
   }
 ```
 
+#### Generating Keys
+
+The most straight forward way is to call  `BouncyGPG::createSimpleKeyring()`:
+
+```java
+    final KeyringConfig rsaKeyRing = BouncyGPG.createSimpleKeyring()
+        .simpleRsaKeyRing(UID_JULIET, RsaLength.RSA_3072_BIT);
+
+```
+Here is a more complex case with dedicated subkeys for signing, encryption, and authentication:
+```java
+        final KeySpec signingSubey = KeySpecBuilder
+                .newSpec(RSAForSigningKeyType.withLength(RsaLength.RSA_2048_BIT))
+                .allowKeyToBeUsedTo(KeyFlag.SIGN_DATA)
+                .withDefaultAlgorithms();
+
+        final KeySpec authenticationSubey = KeySpecBuilder
+                .newSpec(RSAForEncryptionKeyType.withLength(RsaLength.RSA_2048_BIT))
+                .allowKeyToBeUsedTo(KeyFlag.AUTHENTICATION)
+                .withDefaultAlgorithms();
+
+        final KeySpec encryptionSubey = KeySpecBuilder
+                .newSpec(RSAForEncryptionKeyType.withLength(RsaLength.RSA_2048_BIT))
+                .allowKeyToBeUsedTo(KeyFlag.ENCRYPT_COMMS, KeyFlag.ENCRYPT_STORAGE)
+                .withDefaultAlgorithms();
+
+        final KeySpec masterKey = KeySpecBuilder.newSpec(
+                RSAForSigningKeyType.withLength(RsaLength.RSA_3072_BIT)
+        )
+                .allowKeyToBeUsedTo(KeyFlag.CERTIFY_OTHER)
+                .withDetailedConfiguration()
+                .withPreferredSymmetricAlgorithms(
+                        PGPSymmetricEncryptionAlgorithms.recommendedAlgorithms()
+                )
+                .withPreferredHashAlgorithms(
+                        PGPHashAlgorithms.recommendedAlgorithms()
+                )
+                .withPreferredCompressionAlgorithms(
+                        PGPCompressionAlgorithms.recommendedAlgorithms()
+                )
+                .withFeature(Feature.MODIFICATION_DETECTION)
+                .done();
+
+        final KeyringConfig complexKeyRing = BouncyGPG
+                .createKeyring()
+                .withSubKey(signingSubey)
+                .withSubKey(authenticationSubey)
+                .withSubKey(encryptionSubey)
+                .withMasterKey(masterKey)
+                .withPrimaryUserId(uid)
+                .withPassphrase(Passphrase.fromString(passphrase))
+                .build();
+
+        return complexKeyRing;
+```
+
+##### Persisting generated keys
+
+The bouncy castle functions can be used to persist keys. [ExportGeneratedKeysTest.java](src/test/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/examples/howto/ExportGeneratedKeysTest.java) shows how to do that.
 
 #### Using the config
 
 ```java
-
 final InMemoryKeyring keyring = keyringConfigInMemoryForKeys(...);
 
 final InputStream decryptedPlaintextStream = BouncyGPG
