@@ -1,10 +1,16 @@
 ## V 2.x.x (NEXT)
 
-## (next: V 2.1.3)
+## V 2.2.0 Key generation
 
-* Enh: Add key generation (courtesy Paul Schaub)
+* new: Add key generation (initial version by Paul Schaub [@vanitasvitae])
+* Fix: Encryption without having any private key.
+* Enh: Integration tests with GnuPG
+* Enh: Tiger no longer recommended
 * Enh: Add algorithm suite for OpenPGP for XMPP (courtesy Paul Schaub)
 * Enh: Add 'BouncyGPG.registerProvider()'
+* Enh: Merge [Better error messages by user9209](https://github.com/neuhalje/bouncy-gpg/pull/36)
+* Enh: Smaller fixes
+* Enh: Bump BouncyCastle to 1.64
 
 ### API Changes (breaking)
 
@@ -15,6 +21,7 @@
 * new: `BouncyGPG.registerProvider()`
 * new: key generation via `BouncyGPG.createKeyPair()`
 * new: algorithm suite for OpenPGP for XMPP (XEP-0373)
+* dep: StreamBasedKeyringConfig, ResourceBasedKeyringConfig, and StreamBasedKeyringConfig deprecated in favor of InMemoryKeyring
 
 ## V 2.1.2 OSGI bundle and minor improvements
 

@@ -202,8 +202,8 @@ repositories {
 
 //  ...
 dependencies {
-    compile 'org.bouncycastle:bcprov-jdk15on:1.60'
-    compile 'org.bouncycastle:bcpg-jdk15on:1.60'
+    compile 'org.bouncycastle:bcprov-jdk15on:1.64'
+    compile 'org.bouncycastle:bcpg-jdk15on:1.64'
     //  ...
     compile 'name.neuhalfen.projects.crypto.bouncycastle.openpgp:bouncy-gpg:2.+'
    // ...
@@ -229,7 +229,7 @@ and this dependency snippet:
     <dependency>
         <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
         <artifactId>bouncy-gpg</artifactId>
-        <version>2.1.2</version>
+        <version>2.2.0</version>
     </dependency>
 ```
   
@@ -285,6 +285,12 @@ FAQ
 
    <dt>Should I <i>use</i> secring.pgp?</dt>
    <dd>No, you should implement your own key handling strategy. See <a href="#using_sec_pubring">On using (sec|pub)ring.gpg</a> below.
+
+   <dt>Can I generate keys?</dt>
+   <dd>Yes, RSA key generation is supported since 2.2.0. Generating ECC keys is NOT supported yet, although the code is there (<a href="https://github.com/neuhalje/bouncy-gpg/blob/master/src/integration-test/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/integration/KeyRingGenerators.java">gpg integration tests</a> fail)</dd>
+
+   <dt>Is compatibility with GnuPG tested?</dt>
+   <dd>Yes, since 2.2.0 `./gradlew integrationTest`  <a href="https://github.com/neuhalje/bouncy-gpg/blob/master/src/integration-test/java/name/neuhalfen/projects/crypto/bouncycastle/openpgp/integration/">tests the interoperability with gpg</a>.</dd>
 </dl>
 
 

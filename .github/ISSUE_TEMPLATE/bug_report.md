@@ -17,7 +17,7 @@ A clear and concise description of what you expected to happen.
  - Device: [e.g. iPhone6]
  - OS: [e.g. Linux]
  - Java [output of `java -version`]
- - Version [e.g. 2.1.2]
+ - Version [e.g. 2.2.0]
 
 **Additional context**
 Add any other context about the problem here.
