@@ -25,7 +25,7 @@ public class FSZipEntityStrategy implements ZipEntityStrategy {
 
   private final File destRootDir;
 
-  FSZipEntityStrategy(File destRootDir) {
+  public FSZipEntityStrategy(File destRootDir) {
     this.destRootDir = destRootDir;
   }
 
