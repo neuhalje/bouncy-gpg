@@ -307,7 +307,7 @@ public class ExampleMessages {
    * 2048 bit RSA key 'another_sender@example.com' - Unknown to recipient. - Private key held by
    * sender.
    */
-  public final static long EY_ID_ANOTHER_SENDER = 0x7B7DA94F0876E36EL;
+  public final static long KEY_ID_ANOTHER_SENDER = 0x7B7DA94F0876E36EL;
   public final static String PUBKEY_ANOTHER_SENDER =
       "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" +
           "Version: GnuPG v2\n" +
@@ -672,7 +672,7 @@ public class ExampleMessages {
     m.put(ExampleMessages.KEY_ID_SENDER, "sender".toCharArray());
     m.put(ExampleMessages.KEY_ID_SENDER_2, "sender2".toCharArray());
     m.put(ExampleMessages.KEY_ID_SENDER_DSA_SIGN_ONLY, "sign".toCharArray());
-    m.put(ExampleMessages.EY_ID_ANOTHER_SENDER, "another_sender".toCharArray());
+    m.put(ExampleMessages.KEY_ID_ANOTHER_SENDER, "another_sender".toCharArray());
 
     m.put(ExampleMessages.PUBKEY_ID_RECIPIENT, "recipient".toCharArray());
 

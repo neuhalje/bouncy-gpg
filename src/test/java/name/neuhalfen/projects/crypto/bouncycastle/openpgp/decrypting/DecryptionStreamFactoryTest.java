@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
@@ -210,7 +209,7 @@ public class DecryptionStreamFactoryTest {
 
     decrypt(IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.requireSignatureFromAllKeys(ExampleMessages.KEY_ID_SENDER,
-            ExampleMessages.EY_ID_ANOTHER_SENDER));
+            ExampleMessages.KEY_ID_ANOTHER_SENDER));
   }
 
   @Test
