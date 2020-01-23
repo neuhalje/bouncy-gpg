@@ -195,7 +195,7 @@ Add bouncy castle as a dependency and then install the provider before in your a
 
 repositories {
     mavenCentral()
-    jcenter()
+    // jcenter() - optional.
 }
 
 //...
@@ -211,20 +211,6 @@ dependencies {
 ```
 #### Maven
 
-Dropping this in the root level of pom.xml lets you use this lib in a maven project:
-```xml
-<repositories>
-    <repository>
-        <id>bintray</id>
-        <name>bintray</name>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-        <url>https://jcenter.bintray.com</url>
-    </repository>
-</repositories>
-```
-and this dependency snippet:
 ```xml
     <dependency>
         <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>

@@ -27,18 +27,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
-  <!-- OR use the settingx.xml -->
-  <repositories>
-    <repository>
-      <id>bintray</id>
-      <name>bintray</name>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <url>https://jcenter.bintray.com</url>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.bouncycastle</groupId>
