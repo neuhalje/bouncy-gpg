@@ -220,7 +220,7 @@ Dropping this in the root level of pom.xml lets you use this lib in a maven proj
         <snapshots>
             <enabled>false</enabled>
         </snapshots>
-        <url>http://jcenter.bintray.com</url>
+        <url>https://jcenter.bintray.com</url>
     </repository>
 </repositories>
 ```
