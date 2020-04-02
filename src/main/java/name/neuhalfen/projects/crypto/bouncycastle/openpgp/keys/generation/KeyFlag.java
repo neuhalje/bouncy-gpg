@@ -17,6 +17,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -73,6 +74,10 @@ public enum KeyFlag {
   }
 
   public static Set<KeyFlag> fromInteger(int bitmask) {
+    if (bitmask == 0) {
+      return Collections.emptySet();
+    }
+
     final Set<KeyFlag> flags = EnumSet.noneOf(KeyFlag.class);
     int identifiedFlags = 0;
 
@@ -88,7 +93,7 @@ public enum KeyFlag {
       throw new IllegalArgumentException(
           "Could not identify the following KeyFlags: 0b" + Long.toBinaryString(unknownFlags));
     }
-    return flags;
+    return Collections.unmodifiableSet(flags);
   }
 
   @SuppressWarnings({"PMD.LawOfDemeter"})
@@ -102,9 +107,11 @@ public enum KeyFlag {
     while (directKeySignatures.hasNext()) {
       final PGPSignature signature = directKeySignatures.next();
       final PGPSignatureSubpacketVector hashedSubPackets = signature.getHashedSubPackets();
-
-      final int keyFlags = hashedSubPackets.getKeyFlags();
-      aggregatedKeyFlags |= keyFlags;
+      // hashedSubPackets is null for PGP v3 and earlier.
+      if (hashedSubPackets != null) {
+        final int keyFlags = hashedSubPackets.getKeyFlags();
+        aggregatedKeyFlags |= keyFlags;
+      }
     }
     return fromInteger(aggregatedKeyFlags);
   }
