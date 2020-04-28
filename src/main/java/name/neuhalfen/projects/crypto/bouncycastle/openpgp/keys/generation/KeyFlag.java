@@ -94,6 +94,12 @@ public enum KeyFlag {
     return flags;
   }
 
+  /**
+   * Returns the list of key flags (ie whether the key can be used to encrypt, sign, etc) based on the analysis of the
+   * KeyFlags subpacket. Returns an empty Optional object if the key does not contain a KeyFlags subpacket
+   * @param publicKey the key to analyse
+   * @return a list of key flags, or an empty Optional if the key doesn't contain a KeyFlags subpacket
+   */
   @SuppressWarnings({"PMD.LawOfDemeter"})
   public static Optional<Set<KeyFlag>> extractPublicKeyFlags(PGPPublicKey publicKey) {
     requireNonNull(publicKey, "publicKey must not be null");
