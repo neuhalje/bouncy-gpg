@@ -19,7 +19,10 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
+
+import org.bouncycastle.bcpg.SignatureSubpacketTags;
 import org.bouncycastle.bcpg.sig.KeyFlags;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSignature;
@@ -92,10 +95,12 @@ public enum KeyFlag {
   }
 
   @SuppressWarnings({"PMD.LawOfDemeter"})
-  public static Set<KeyFlag> extractPublicKeyFlags(PGPPublicKey publicKey) {
+  public static Optional<Set<KeyFlag>> extractPublicKeyFlags(PGPPublicKey publicKey) {
     requireNonNull(publicKey, "publicKey must not be null");
 
     int aggregatedKeyFlags = 0;
+    boolean hasKeyFlags = false;
+    Optional<Set<KeyFlag>> publicKeyFlags;
 
     final Iterator<PGPSignature> directKeySignatures = publicKey.getSignatures();
 
@@ -103,10 +108,20 @@ public enum KeyFlag {
       final PGPSignature signature = directKeySignatures.next();
       final PGPSignatureSubpacketVector hashedSubPackets = signature.getHashedSubPackets();
 
-      final int keyFlags = hashedSubPackets.getKeyFlags();
-      aggregatedKeyFlags |= keyFlags;
+      if (hashedSubPackets.hasSubpacket(SignatureSubpacketTags.KEY_FLAGS)) {
+        hasKeyFlags = true;
+        final int keyFlags = hashedSubPackets.getKeyFlags();
+        aggregatedKeyFlags |= keyFlags;
+      }
     }
-    return fromInteger(aggregatedKeyFlags);
+
+    if (hasKeyFlags) {
+      publicKeyFlags = Optional.of(fromInteger(aggregatedKeyFlags));
+    } else {
+      publicKeyFlags = Optional.empty();
+    }
+
+    return publicKeyFlags;
   }
 
   public int getFlag() {
