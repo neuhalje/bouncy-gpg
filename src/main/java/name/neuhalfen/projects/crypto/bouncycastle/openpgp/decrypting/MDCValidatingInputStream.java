@@ -14,8 +14,8 @@ final class MDCValidatingInputStream extends FilterInputStream {
       .getLogger(MDCValidatingInputStream.class);
 
   /**
-   * Creates a <code>MDCValidatingInputStreaa</code> by assigning the  argument
-   * <code>inputStream</code> to the field <code>this.inputStream</code> so as to remember it for
+   * Creates a <code>MDCValidatingInputStream</code> by assigning the  argument
+   * <code>inputStream</code> to the field <code>this.inputStream</code> and <code>pbe</code> to <code>this.pbe</code> so as to remember it for
    * later use.
    *
    * @param inputStream the underlying input stream
