@@ -126,10 +126,7 @@ public final class DecryptionStreamFactory {
 
     Object pgpObj;
 
-     // NOPMD: must initialize pbe
-
-    //
-    while ((pgpObj = factory.nextObject()) != null) { //NOPMD
+    while ((pgpObj = factory.nextObject()) != null) {
 
       if (pgpObj instanceof PGPEncryptedDataList) {
         LOGGER.trace("Found instance of PGPEncryptedDataList");
@@ -217,8 +214,6 @@ public final class DecryptionStreamFactory {
         LOGGER.trace("Found instance of PGPLiteralData");
 
         final InputStream literalDataInputStream = ((PGPLiteralData) pgpObj).getInputStream();
-        // Check data integrity using MDC
-
 
         if (signatureValidationStrategy.isRequireSignatureCheck()) {
           if (!state.hasVerifiableSignatures()) {
