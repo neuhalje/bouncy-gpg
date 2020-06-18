@@ -126,7 +126,7 @@ public final class DecryptionStreamFactory {
 
     Object pgpObj;
 
-    while ((pgpObj = factory.nextObject()) != null) {
+    while ((pgpObj = factory.nextObject()) != null) { //NOPMD
 
       if (pgpObj instanceof PGPEncryptedDataList) {
         LOGGER.trace("Found instance of PGPEncryptedDataList");
