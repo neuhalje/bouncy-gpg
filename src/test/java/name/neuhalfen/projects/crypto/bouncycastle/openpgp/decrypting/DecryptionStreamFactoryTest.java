@@ -339,6 +339,8 @@ public class DecryptionStreamFactoryTest {
 
     byte[] buf = IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes("US-ASCII");
 
+    // Tampered MDC bit to cause Verification failure, 
+    // Figured out using trial and error (change in random bits can cause protocol failuree during decryption)
     buf[595]++;
 
     decrypt(
