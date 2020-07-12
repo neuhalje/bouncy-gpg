@@ -5,15 +5,14 @@ import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generatio
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nullable;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeyFlag;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
+import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
@@ -32,6 +31,20 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   private final Instant dateOfTimestampVerification;
   private final boolean ignoreCase;
   private final boolean matchPartial;
+
+  // list of algorithms that can be used for encryption
+  private final List<Integer> encryptionAlgorithms = Arrays.asList(PublicKeyAlgorithmTags.RSA_GENERAL,
+          PublicKeyAlgorithmTags.RSA_ENCRYPT,
+          PublicKeyAlgorithmTags.ECDH,
+          PublicKeyAlgorithmTags.ELGAMAL_ENCRYPT,
+          PublicKeyAlgorithmTags.ELGAMAL_GENERAL);
+
+  // list of algorithms that can be used for signing
+  private final List<Integer> signatureAlgorithms = Arrays.asList(PublicKeyAlgorithmTags.RSA_GENERAL,
+          PublicKeyAlgorithmTags.RSA_SIGN,
+          PublicKeyAlgorithmTags.DSA,
+          PublicKeyAlgorithmTags.ECDSA,
+          PublicKeyAlgorithmTags.EDDSA);
 
   /**
    * Construct an instance with matchPartial and ignoreCase set to true.
@@ -221,39 +234,72 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     return isExpired;
   }
 
-
+  /**
+   * Checks if a public key may be used for encryption. This uses the key KeyFlags subpacket content by default,
+   * falling back to the key algorithm if there isn't any KeyFlags subpacket
+   * @param publicKey public key to examine
+   * @return true if the key can be used for encryption
+   */
   protected boolean isEncryptionKey(PGPPublicKey publicKey) {
     requireNonNull(publicKey, "publicKey must not be null");
+    boolean isEncryptionKey = false;
 
-    final Set<KeyFlag> keyFlags = extractPublicKeyFlags(publicKey);
+    final Optional<Set<KeyFlag>> optionalKeyFlags = extractPublicKeyFlags(publicKey);
 
-    final boolean canEncryptCommunication = keyFlags // NOPMD:LawOfDemeter
-        .contains(KeyFlag.ENCRYPT_COMMS);
-    final boolean canEncryptStorage = keyFlags // NOPMD:LawOfDemeter
-        .contains(KeyFlag.ENCRYPT_STORAGE);
-
-    return canEncryptCommunication || canEncryptStorage;
-  }
-
-  protected boolean isVerificationKey(PGPPublicKey pubKey) {
-    final boolean isVerficationKey =
-        extractPublicKeyFlags(pubKey).contains(KeyFlag.SIGN_DATA); // NOPMD:LawOfDemeter
-
-    if (!isVerficationKey) {
-      LOGGER.trace("Skipping pubkey {} (no signing key)",
-          Long.toHexString(pubKey.getKeyID()));
+    /* If the key contains a KeyFlag subpacket, we extract its flags to determine if the
+    key can be used for encryption
+     */
+    if (optionalKeyFlags.isPresent()) { // NOPMD:LawOfDemeter
+      final Set<KeyFlag> keyFlags = optionalKeyFlags.get();
+      final boolean canEncryptCommunication = keyFlags // NOPMD:LawOfDemeter
+              .contains(KeyFlag.ENCRYPT_COMMS);
+      final boolean canEncryptStorage = keyFlags // NOPMD:LawOfDemeter
+              .contains(KeyFlag.ENCRYPT_STORAGE);
+      isEncryptionKey = canEncryptCommunication || canEncryptStorage;
+    } else {
+      /* If the key doesn't contain any KeyFlag subpacket, check the key algorithm.
+      This is what GPG does (g10/misc.c) and lets us encrypt with keys that don't contain a KeyFlag subpacket
+       */
+      isEncryptionKey = encryptionAlgorithms.contains(publicKey.getAlgorithm());
     }
-    return isVerficationKey;
+
+    return isEncryptionKey;
+  }
+
+  protected boolean isVerificationKey(PGPPublicKey publicKey) {
+    requireNonNull(publicKey, "publicKey must not be null");
+
+    final Optional<Set<KeyFlag>> optionalKeyFlags = extractPublicKeyFlags(publicKey);
+    boolean isVerificationKey;
+
+    /* If the key contains a KeyFlag subpacket, we extract its flags to determine if the
+    key can be used for signing
+     */
+    if (optionalKeyFlags.isPresent()) { // NOPMD:LawOfDemeter
+      isVerificationKey = optionalKeyFlags.get().contains(KeyFlag.SIGN_DATA); // NOPMD:LawOfDemeter
+    } else {
+      /* If the key doesn't contain any KeyFlag subpacket, check the key algorithm.
+      This is what GPG does (g10/misc.c) and lets us signing with keys that don't contain a KeyFlag subpacket
+       */
+      isVerificationKey =signatureAlgorithms.contains(publicKey.getAlgorithm());
+    }
+
+    if (!isVerificationKey) {
+      LOGGER.trace("Skipping pubkey {} (no signing key)",
+              Long.toHexString(publicKey.getKeyID()));
+    }
+
+    return isVerificationKey;
   }
 
 
-  protected boolean isRevoked(PGPPublicKey pubKey) {
-    requireNonNull(pubKey, "pubKey must not be null");
+  protected boolean isRevoked(PGPPublicKey publicKey) {
+    requireNonNull(publicKey, "pubKey must not be null");
 
-    final boolean hasRevocation = pubKey.hasRevocation();
+    final boolean hasRevocation = publicKey.hasRevocation();
     if (hasRevocation) {
       LOGGER.trace("Skipping pubkey {} (revoked)",
-          Long.toHexString(pubKey.getKeyID()));
+          Long.toHexString(publicKey.getKeyID()));
     }
     return hasRevocation;
   }
