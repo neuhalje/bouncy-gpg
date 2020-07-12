@@ -202,8 +202,8 @@ repositories {
 
 //  ...
 dependencies {
-    compile 'org.bouncycastle:bcprov-jdk15on:1.64'
-    compile 'org.bouncycastle:bcpg-jdk15on:1.64'
+    compile 'org.bouncycastle:bcprov-jdk15on:1.65'
+    compile 'org.bouncycastle:bcpg-jdk15on:1.65'
     //  ...
     compile 'name.neuhalfen.projects.crypto.bouncycastle.openpgp:bouncy-gpg:2.+'
    // ...
