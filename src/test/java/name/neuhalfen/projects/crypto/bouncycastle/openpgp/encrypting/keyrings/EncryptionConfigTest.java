@@ -8,10 +8,10 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
-import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.bouncycastle.openpgp.PGPException;
 import org.hamcrest.text.IsEmptyString;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class EncryptionConfigTest {
 
     assertThat(encryptionConfig.getEncryptionPublicKeyId(), is(not(isEmptyOrNullString())));
     assertThat(encryptionConfig.getPgpHashAlgorithmCode(),
-        is(not(equalTo((int) HashAlgorithm.none))));
+        is(not(equalTo((int) 0))));
 
     assertThat(encryptionConfig.getPublicKeyRings(), is(notNullValue()));
     assertThat(encryptionConfig.getSecretKeyRings(), is(notNullValue()));

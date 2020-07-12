@@ -4,6 +4,8 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPHashAlgorithms;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptWithOpenPGPTestDriverTest;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.encrypting.EncryptionConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallback;
@@ -11,7 +13,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.Keyrin
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfigs;
-import org.bouncycastle.crypto.tls.HashAlgorithm;
+import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.openpgp.PGPException;
 
 /**
@@ -32,7 +34,7 @@ public class Configs {
     EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
         "recipient@example.com",
         "recipient@example.com",
-        HashAlgorithm.sha1,
+            PGPHashAlgorithms.SHA1,
         keyringConfig);
 
     return encryptAndSignConfig;
@@ -47,7 +49,7 @@ public class Configs {
     EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
         "sender@example.com",
         "recipient@example.com",
-        HashAlgorithm.sha1,
+            PGPHashAlgorithms.SHA1,
         keyringConfig);
 
     return encryptAndSignConfig;

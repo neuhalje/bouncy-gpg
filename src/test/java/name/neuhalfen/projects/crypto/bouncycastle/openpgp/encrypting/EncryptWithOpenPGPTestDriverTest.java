@@ -16,12 +16,12 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPHashAlgorithms;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeyringConfigCallbacks;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.DevNullOutputStream;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.RandomDataInputStream;
-import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.bouncycastle.openpgp.PGPException;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -130,7 +130,7 @@ public class EncryptWithOpenPGPTestDriverTest {
     EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
         "sender@example.com",
         "sender.signonly@example.com",
-        HashAlgorithm.sha1,
+            PGPHashAlgorithms.SHA1,
         keyringConfig);
     EncryptWithOpenPGPTestDriver sut = new EncryptWithOpenPGPTestDriver(encryptAndSignConfig,
         DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
@@ -171,7 +171,7 @@ public class EncryptWithOpenPGPTestDriverTest {
     EncryptionConfig encryptAndSignConfig = new EncryptionConfig(
         "sender.signonly@example.com",
         "sender@example.com",
-        HashAlgorithm.sha1,
+            PGPHashAlgorithms.SHA1,
         keyringConfig);
     EncryptWithOpenPGPTestDriver sut = new EncryptWithOpenPGPTestDriver(encryptAndSignConfig,
         DefaultPGPAlgorithmSuites.defaultSuiteForGnuPG());
