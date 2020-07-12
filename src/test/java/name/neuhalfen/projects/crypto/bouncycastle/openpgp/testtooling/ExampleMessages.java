@@ -483,6 +483,34 @@ public class ExampleMessages {
           "=8wl4\n" +
           "-----END PGP PRIVATE KEY BLOCK-----\n";
 
+  public final static long ONLY_MASTER_KEY_ID_NO_KEY_FLAGS = 0x9E698FBA9F857349L;
+  public final static String ONLY_MASTER_KEY_UID_NO_KEY_FLAGS = "support@anzgcis.com";
+  public final static String ONLY_MASTER_KEY_PASSPHRASE_NO_KEY_FLAGS = "";
+  public final static String ONLY_MASTER_KEY_PUBKEY_NO_KEY_FLAGS= "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" +
+          "Version: SecureBlackbox 15\n" +
+          "\n" +
+          "xsBNBFtrhAABCACbJgPWFmodLq0cqIwiZG8hnHusSBA1nan8OQk2Dr+l37smSjO7\n" +
+          "TT0N/G8er79lgVyynYXXHH7EfY7tvvWPS5N55NvYiLxRYRPgFgy+cD6TsSn8W0qD\n" +
+          "zwCf5Jw5ZeU4pdRo6hN1Qgl6IcETQWZOsob3BWmg2aLnl+1SyY3zh0jW6z6Wn4En\n" +
+          "tpPj4iELe6o1SNcmC2A2fIVUoMlBHa+Mcumw+kqv4vsA6xJmpDYniBaW/asVaIBl\n" +
+          "4bA0Iux5Osr83pNJOBHpLk9ozyMF0rtqyyvA8l3SiLA2jyeXoBEQ9mEJi+G0/PBI\n" +
+          "mAoMs3FXlu4Dqdh6jk0vHDk261tMq8wqas7nABEBAAHCwGIEHwEIABYFCRLMAwAF\n" +
+          "AltreqYJEJ5pj7qfhXNJAACwjQgAktbLedTzTJmRgdgQsH3uakoFmi7Pc2Q/N9J7\n" +
+          "q8wJhBcxUUILQQck9fmzM4XOgAJmX0Sn+3xnkUvdnSP8EGd5SPezoDo29Udrm99z\n" +
+          "LV//9N5p4febzQwAhQJg3rGz5oDt5VMwTdSxhxPAKvkIV1QAQFqeZn6wO26Voz3h\n" +
+          "wfLt3xX904pomtCeakdRu+akqTBKS28Q6atHauHAAzlr1cfjLcLHdqI1y1zUbAyE\n" +
+          "dmYhpiIM3sr1ZvjaSRQv+vF/l5z88EVE5Ag4U5Mdw8X7R9WCnEk5ojOOveNYIsq2\n" +
+          "rjh9rAvD6aNBK4v+1wx9P1zSv227SojxX+AB103GSYitBSLTUs0oRmlsZWFjdGl2\n" +
+          "ZSBTdXBwb3J0IDxzdXBwb3J0QGFuemdjaXMuY29tPsLAXwQQAQgAEwUCW2wHRgIZ\n" +
+          "AQkQnmmPup+Fc0kAAGN8CACR82NV7nMGOm/crnu7k2dCHCoiTsucerG1tDFyCNYx\n" +
+          "3w0WATvSBS6XRwLfl6IaVbjpauZk+bH6NVgo9tpwKwGn7Wh9takHMsuRPoNiudqf\n" +
+          "S/duYt/ugOhlajfe3EFuGlt62j8pVT5o9bgCZQNEUgkGzwwz+j/saWHsI9fW26Ri\n" +
+          "W/tyJk0IICLf2aEJOi63PsllRQ+CtimvZkRalvcCuS19JNcYZlz3GyM/+z3LiYMi\n" +
+          "b1s+vDO4ZJgka+nTWHL1VrbctH79n23hmV1pK7LXAl8mZlo0wUU+R+01WumSVSQZ\n" +
+          "XGs5vAe6nG216ghBcNNd0UbQMZXwuIQlOtN5CSwoHdp6\n" +
+          "=qWOE\n" +
+          "-----END PGP PUBLIC KEY BLOCK-----\n";
+
   public final static Map<Long, char[]> ALL_KEYRINGS_PASSWORDS = BUILD_ALL_KEYRINGS_PASSWORDS();
   /**
    * Encrypted-To:    recipient@example.com Signed-By:       sender@example.com Compressed: false
@@ -738,6 +766,7 @@ public class ExampleMessages {
     m.put(ExampleMessages.PUBKEY_ID_RECIPIENT, "recipient".toCharArray());
 
     m.put(ExampleMessages.ONLY_MASTER_KEY_ID, null);
+    m.put(ExampleMessages.ONLY_MASTER_KEY_ID_NO_KEY_FLAGS, null);
     return Collections.unmodifiableMap(m);
   }
 
