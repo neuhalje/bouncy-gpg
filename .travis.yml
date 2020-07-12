@@ -11,9 +11,10 @@ cache:
 jdk:
   - openjdk8
   - oraclejdk8
-# - openjdk10
-  - openjdk11
-  - oraclejdk11
+  - openjdk13
+  - oraclejdk13
+  - openjdk14
+  - oraclejdk14
 
 script:
   - sudo apt-get update
