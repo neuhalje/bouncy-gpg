@@ -6,3 +6,4 @@ build/
 out/
 gradle.properties
 *.iml
+bin/

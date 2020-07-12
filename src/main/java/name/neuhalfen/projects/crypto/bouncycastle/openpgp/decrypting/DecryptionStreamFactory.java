@@ -40,6 +40,7 @@ public final class DecryptionStreamFactory {
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
       .getLogger(DecryptionStreamFactory.class);
 
+  private PGPPublicKeyEncryptedData pbe;
 
   @Nonnull
   private final PGPContentVerifierBuilderProvider pgpContentVerifierBuilderProvider =
@@ -116,6 +117,7 @@ public final class DecryptionStreamFactory {
    * @throws PGPException the pGP exception
    * @throws IOException Signals that an I/O exception has occurred.
    */
+
   @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.OnlyOneReturn",
       "PMD.AvoidInstantiatingObjectsInLoops", "PMD.CyclomaticComplexity"})
   private InputStream nextDecryptedStream(PGPObjectFactory factory,
@@ -124,7 +126,6 @@ public final class DecryptionStreamFactory {
 
     Object pgpObj;
 
-    //
     while ((pgpObj = factory.nextObject()) != null) { //NOPMD
 
       if (pgpObj instanceof PGPEncryptedDataList) {
@@ -139,7 +140,7 @@ public final class DecryptionStreamFactory {
         // find the secret key
         //
         PGPPrivateKey privateKey = null;
-        PGPPublicKeyEncryptedData pbe = null; // NOPMD: must initialize pbe
+
         while (privateKey == null && encryptedDataObjects.hasNext()) {
           pbe = (PGPPublicKeyEncryptedData) encryptedDataObjects.next();
           privateKey = PGPUtilities.findSecretKey(config.getSecretKeyRings(), pbe.getKeyID(),
@@ -153,6 +154,8 @@ public final class DecryptionStreamFactory {
                   + " used to encrypt the file, aborting");
         }
 
+
+
         // decrypt the data
 
         try(
@@ -161,6 +164,7 @@ public final class DecryptionStreamFactory {
                 privateKey)) // NOPMD: AvoidInstantiatingObjectsInLoops
         )
         {
+
           final PGPObjectFactory nextFactory = new PGPObjectFactory(plainText,
                   new BcKeyFingerprintCalculator());// NOPMD: AvoidInstantiatingObjectsInLoops
           return nextDecryptedStream(nextFactory, state);  // NOPMD: OnlyOneReturn
@@ -215,12 +219,12 @@ public final class DecryptionStreamFactory {
           if (!state.hasVerifiableSignatures()) {
             throw new PGPException("Signature checking is required but message was not signed!");
           }
-          return new SignatureValidatingInputStream(
+          return new MDCValidatingInputStream(new SignatureValidatingInputStream(
               literalDataInputStream,
-              state, signatureValidationStrategy);  // NOPMD: OnlyOneReturn
+              state, signatureValidationStrategy), pbe);  // NOPMD: OnlyOneReturn
 
         } else {
-          return literalDataInputStream; // NOPMD: OnlyOneReturn
+          return new MDCValidatingInputStream(literalDataInputStream, pbe); // NOPMD: OnlyOneReturn
         }
       } else { // keep on searching...
         if (LOGGER.isTraceEnabled()) {
