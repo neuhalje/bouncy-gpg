@@ -1,6 +1,7 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling;
 
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -485,6 +486,8 @@ public class ExampleMessages {
 
   public final static long ONLY_MASTER_KEY_ID_NO_KEY_FLAGS = 0x9E698FBA9F857349L;
   public final static String ONLY_MASTER_KEY_UID_NO_KEY_FLAGS = "support@anzgcis.com";
+  public final static Instant ONLY_MASTER_KEY_EXPIRY_DATE = Instant.parse("2028-08-06T00:00:00Z");
+
   public final static String ONLY_MASTER_KEY_PASSPHRASE_NO_KEY_FLAGS = "";
   public final static String ONLY_MASTER_KEY_PUBKEY_NO_KEY_FLAGS= "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" +
           "Version: SecureBlackbox 15\n" +

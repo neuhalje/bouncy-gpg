@@ -94,7 +94,7 @@ public class EncryptionScenariosTest {
         final OutputStream outputStream = BouncyGPG
                 .encryptToStream()
                 .withConfig(sendersKeyring)
-                .setReferenceDateForKeyValidityTo(Instant.MAX)
+                .setReferenceDateForKeyValidityTo(ExampleMessages.ONLY_MASTER_KEY_EXPIRY_DATE.minusSeconds(1))
                 .withAlgorithms(DefaultPGPAlgorithmSuites.strongSuite())
                 .toRecipient(ExampleMessages.ONLY_MASTER_KEY_UID_NO_KEY_FLAGS)
                 .andDoNotSign()
