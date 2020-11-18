@@ -87,7 +87,7 @@ sourceCompatibility = 8
 targetCompatibility = 8
 
 group = 'name.neuhalfen.projects.crypto.bouncycastle.openpgp'
-version = '2.2.0'
+version = '2.3.0'
 
 repositories {
     jcenter()
@@ -127,7 +127,6 @@ dependencies {
     compile 'org.bouncycastle:bcpg-jdk15on:1.67'
 
     compile 'org.slf4j:slf4j-api:1.7.30'
-    compile 'ch.qos.logback:logback-classic:1.2.3'
 
     // @Nullable and friends are not needed at runtime
     compile 'com.google.code.findbugs:jsr305:3.0.2'
@@ -136,6 +135,8 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'org.mockito:mockito-core:3.2.4'
     testCompile 'org.concordion:concordion-api-documentation-extension:0.0.4'
+    testCompile 'ch.qos.logback:logback-classic:1.2.3'
+
 }
 
 

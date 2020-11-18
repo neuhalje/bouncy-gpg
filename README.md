@@ -215,10 +215,10 @@ dependencies {
     <dependency>
         <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
         <artifactId>bouncy-gpg</artifactId>
-        <version>2.2.0</version>
-    </dependency>
+        <version>2.3.0</version>
+    </dependency>
 ```
-  
+ 
 ### Install Provider
 
 ```java

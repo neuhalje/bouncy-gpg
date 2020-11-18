@@ -4,10 +4,9 @@ Open TODOs
 Version 3.0
 --------------
 
-Version 2.2
+Version 2.4
 -------------
 
-- [ ] Key generation
 - [ ] Key generation key expiration
 - [ ] Key generation documentation
 - [ ] Add decryptor.getResult() for decryption result
@@ -15,6 +14,15 @@ Version 2.2
 - [ ] Allow to enforce algorithm "minimum level", e.g. for decryption/validation
 - [ ] Unit tests: iterate different DefaultPGPAlgorithmSuites.secureSuiteForGnuPG() (incl. compression & no signature!)
 - [ ] Extend documentation of key derivation
+
+Version 2.3
+-------------
+- [x] Bugfixes
+
+
+Version 2.2
+-------------
+- [x] Key generation
 
 
 Version 2.1

@@ -1,5 +1,18 @@
 ## V 2.x.x (NEXT)
 
+## V 2.3.0 Bugfix Release
+
+This releases fixes a security issue (#50) where encrypted, but not signed archives could be modified. 
+Some background on MDC and why it's important security-wise: https://gpgtools.tenderapp.com/kb/faq/modification-detection-code-mdc-errors
+
+* Fix: Do not expose logback as compile-time dependency (#41)
+* Fix: java.io.EOFException: Unexpected end of ZIP input stream using 2.2.0 version for PGP file (#46)
+* Fix: KeyFlag#extractPublicKeyFlags throws NullPointerException if called on an older public key with no hashed subpackets (#48)
+* Fix: Encrypting with keys that don't have a KeyFlags subpacket (#50)
+* Fix: MDC (integrity checksum) is not verified when decrypting (#45)
+* Enh: Bump Bouncy Castle to 1.67
+
+
 ## V 2.2.0 Key generation
 
 * new: Add key generation (initial version by Paul Schaub [@vanitasvitae])
