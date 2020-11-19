@@ -10,9 +10,12 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 public interface KeySelectionStrategy {
 
   /**
+   * <p>
    * Extract a signing/encryption key from the keyrings.
-   *
+   * </p>
+   * <p>
    * The implementation should try to find the best matching key.
+   * </p>
    *
    * @param purpose Return a singing or encryption key?
    * @param uid The recipient ("FOR_ENCRYPTION") or the sender ("FOR_SIGNING")

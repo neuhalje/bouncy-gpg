@@ -58,12 +58,12 @@ public enum PGPHashAlgorithms {
    */
   HAVAL_5_160(HashAlgorithmTags.HAVAL_5_160, true,true);
 
-  private final static Set<PGPHashAlgorithms> RECOMMENDED_ALGORITHMS = Collections
+  private static final Set<PGPHashAlgorithms> RECOMMENDED_ALGORITHMS = Collections
       .unmodifiableSet(
           Arrays.stream(
-              PGPHashAlgorithms.values()).filter(alg -> !alg.insecure && alg.supportedInGPG )
+              PGPHashAlgorithms.values()).filter(alg -> !alg.insecure && alg.supportedInGPG)
               .collect(Collectors.toSet()));
-  private final static int[] RECOMMENDED_ALGORITHM_IDS =
+  private static final int[] RECOMMENDED_ALGORITHM_IDS =
       RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
   private final int algorithmId;
   private final boolean insecure;

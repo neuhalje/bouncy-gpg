@@ -122,11 +122,13 @@ public final class BuildDecryptionInputStreamAPI {
     Build andRequireSignatureFromAllKeys(Long... publicKeyIds);
 
     /**
+     * <p>
      * Decryption will enforce that the ciphertext has been signed by ALL of the public key ids
      * passed.
-     *
+     * </p>
+     *<p>
      * Given  the following keyring:
-     *
+     *</p>
      * <pre>{@code
      * $ gpg -k --keyid-format=0xlong
      *

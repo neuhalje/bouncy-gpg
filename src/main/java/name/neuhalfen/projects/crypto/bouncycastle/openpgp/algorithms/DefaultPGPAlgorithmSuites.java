@@ -6,14 +6,15 @@ public final class DefaultPGPAlgorithmSuites {
   /**
    * GPG default algorithms.
    */
-  private final static PGPAlgorithmSuite DEFAULT_GPG = new PGPAlgorithmSuite(
+  private static final PGPAlgorithmSuite DEFAULT_GPG = new PGPAlgorithmSuite(
       PGPHashAlgorithms.SHA1,
       PGPSymmetricEncryptionAlgorithms.CAST5,
       PGPCompressionAlgorithms.ZLIB);
+
   /**
    * GPG strong crypto algorithms.
    */
-  private final static PGPAlgorithmSuite STRONG_GPG = new PGPAlgorithmSuite(
+  private static final PGPAlgorithmSuite STRONG_GPG = new PGPAlgorithmSuite(
       PGPHashAlgorithms.SHA_256,
       PGPSymmetricEncryptionAlgorithms.AES_128,
       PGPCompressionAlgorithms.ZLIB);
@@ -21,7 +22,7 @@ public final class DefaultPGPAlgorithmSuites {
   /**
    * Algorithm suite for XEP-0373: OpenPGP for XMPP.
    */
-  private final static PGPAlgorithmSuite DEFAULT_OX = new PGPAlgorithmSuite(
+  private static final PGPAlgorithmSuite DEFAULT_OX = new PGPAlgorithmSuite(
       PGPHashAlgorithms.SHA_256,
       PGPSymmetricEncryptionAlgorithms.AES_128,
       PGPCompressionAlgorithms.UNCOMPRESSED);
@@ -48,6 +49,9 @@ public final class DefaultPGPAlgorithmSuites {
     return STRONG_GPG;
   }
 
+  /**
+  * Algorithm suite for XEP-0373: OpenPGP for XMPP.
+  */
   public static PGPAlgorithmSuite oxSuite() {
     return DEFAULT_OX;
   }

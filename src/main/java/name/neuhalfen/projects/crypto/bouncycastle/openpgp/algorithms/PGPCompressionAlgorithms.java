@@ -30,9 +30,9 @@ public enum PGPCompressionAlgorithms {
    */
   BZIP2(CompressionAlgorithmTags.BZIP2);
 
-  private final static Set<PGPCompressionAlgorithms> RECOMMENDED_ALGORITHMS = SetUtils
+  private static final Set<PGPCompressionAlgorithms> RECOMMENDED_ALGORITHMS = SetUtils
       .unmodifiableSet(BZIP2, ZLIB, ZIP, UNCOMPRESSED);
-  private final static int[] RECOMMENDED_ALGORITHM_IDS =
+  private static final int[] RECOMMENDED_ALGORITHM_IDS =
       RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
   private final int algorithmId;
 

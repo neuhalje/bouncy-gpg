@@ -40,7 +40,7 @@ public enum PGPSymmetricEncryptionAlgorithms {
   BLOWFISH(SymmetricKeyAlgorithmTags.BLOWFISH, true),
 
   /**
-   * SAFER-SK128 (13 rounds) [SAFER] <p> Insecure: 64 bit blocksize.
+   * SAFER-SK128 (13 rounds) [SAFER] [INSECURE]:  64 bit blocksize.
    */
   SAFER(SymmetricKeyAlgorithmTags.SAFER, true),
 
@@ -85,13 +85,13 @@ public enum PGPSymmetricEncryptionAlgorithms {
   CAMELLIA_256(SymmetricKeyAlgorithmTags.CAMELLIA_256, false);
 
 
-  private final static Set<PGPSymmetricEncryptionAlgorithms> RECOMMENDED_ALGORITHMS = Collections
+  private static final Set<PGPSymmetricEncryptionAlgorithms> RECOMMENDED_ALGORITHMS = Collections
       .unmodifiableSet(
           Arrays.stream(
               PGPSymmetricEncryptionAlgorithms.values())
               .filter(alg -> !alg.insecure)
               .collect(Collectors.toSet()));
-  private final static int[] RECOMMENDED_ALGORITHM_IDS =
+  private static final int[] RECOMMENDED_ALGORITHM_IDS =
       RECOMMENDED_ALGORITHMS.stream().mapToInt(algorithm -> algorithm.algorithmId).toArray();
   private final int algorithmId;
   private final boolean insecure;

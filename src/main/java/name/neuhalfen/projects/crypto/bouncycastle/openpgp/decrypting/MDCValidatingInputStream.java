@@ -22,7 +22,7 @@ final class MDCValidatingInputStream extends FilterInputStream {
    * @param pbe the pgp public key encrypted data to verify message integrity
    */
 
-  final private PGPPublicKeyEncryptedData pbe;
+  private final PGPPublicKeyEncryptedData pbe;
 
   MDCValidatingInputStream(InputStream inputStream, PGPPublicKeyEncryptedData pbe) {
     super(inputStream);
@@ -56,7 +56,7 @@ final class MDCValidatingInputStream extends FilterInputStream {
   }
 
   /**
-   * Checks MDC if present
+   * Checks MDC if present.
    *
    * @throws IOException Error while reading input stream or if MDC fails
    */

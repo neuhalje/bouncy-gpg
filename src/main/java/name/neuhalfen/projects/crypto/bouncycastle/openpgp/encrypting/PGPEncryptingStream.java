@@ -115,6 +115,8 @@ public final class PGPEncryptingStream extends OutputStream {
 
 
   /**
+   * Internal method to set up the stream.
+   *
    * @param cipherTextSink Where the ciphertext goes
    * @param signingUid Sign with this uid. null: do not sign
    * @param pubEncKeys the pub enc keys

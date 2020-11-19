@@ -19,8 +19,8 @@ import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 
 /**
- * This implements the key selection strategy for BouncyGPG .
- * This strategy is tries to implement rfc4880 section-5.2.3.21.
+ * This implements the key selection strategy for BouncyGPG.
+ *  * This strategy is tries to implement rfc4880 section-5.2.3.21.
  * https://tools.ietf.org/html/rfc4880#section-5.2.3.21
  */
 public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
@@ -33,14 +33,16 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
   private final boolean matchPartial;
 
   // list of algorithms that can be used for encryption
-  private final List<Integer> encryptionAlgorithms = Arrays.asList(PublicKeyAlgorithmTags.RSA_GENERAL,
+  private final List<Integer> encryptionAlgorithms = Arrays.asList(
+          PublicKeyAlgorithmTags.RSA_GENERAL,
           PublicKeyAlgorithmTags.RSA_ENCRYPT,
           PublicKeyAlgorithmTags.ECDH,
           PublicKeyAlgorithmTags.ELGAMAL_ENCRYPT,
           PublicKeyAlgorithmTags.ELGAMAL_GENERAL);
 
   // list of algorithms that can be used for signing
-  private final List<Integer> signatureAlgorithms = Arrays.asList(PublicKeyAlgorithmTags.RSA_GENERAL,
+  private final List<Integer> signatureAlgorithms = Arrays.asList(
+          PublicKeyAlgorithmTags.RSA_GENERAL,
           PublicKeyAlgorithmTags.RSA_SIGN,
           PublicKeyAlgorithmTags.DSA,
           PublicKeyAlgorithmTags.ECDSA,

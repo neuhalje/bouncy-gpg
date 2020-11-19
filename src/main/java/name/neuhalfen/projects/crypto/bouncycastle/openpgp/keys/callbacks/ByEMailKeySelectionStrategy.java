@@ -10,11 +10,11 @@ import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 
 /**
- * This implements the key selection strategy for BouncyGPG and selects keys based on
- * email addresses.
- *
+ * <p>This implements the key selection strategy for BouncyGPG and selects keys based on
+ * email addresses.</p>
+ * <p>
  * For this it wraps the given addresses in &lt;/&gt;.
- *
+ * </p>
  * https://tools.ietf.org/html/rfc4880#section-5.2.3.21
  */
 public class ByEMailKeySelectionStrategy extends Rfc4880KeySelectionStrategy implements

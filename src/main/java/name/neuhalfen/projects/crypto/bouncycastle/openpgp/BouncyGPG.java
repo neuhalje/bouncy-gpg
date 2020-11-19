@@ -2,6 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp;
 
 
 import java.security.Security;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeyRingBuilder;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.KeyRingBuilderImpl;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.generation.SimpleKeyRingBuilder;
@@ -82,7 +83,7 @@ public final class BouncyGPG {
    * implementation.
    * </p>
    */
-  public synchronized static void registerProvider() {
+  public static synchronized void registerProvider() {
     Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
     Security.insertProviderAt(new BouncyCastleProvider(), 0);
   }
