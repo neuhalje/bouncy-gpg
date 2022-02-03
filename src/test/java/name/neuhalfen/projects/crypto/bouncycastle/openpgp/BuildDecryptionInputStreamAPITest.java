@@ -6,11 +6,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeNotNull;
 import static org.mockito.Mockito.mock;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.Configs;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages;
@@ -141,6 +142,32 @@ public class BuildDecryptionInputStreamAPITest {
 
       assertThat(plainText, equalTo(ExampleMessages.IMPORTANT_QUOTE_TEXT));
       plaintextStream.close();
+    }
+  }
+
+  @Test()
+  public void decryptNoSignatureValidation_withWrapperStream_works() throws Exception {
+
+    try (InputStream ciphertext = new ByteArrayInputStream(
+            ExampleMessages.IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED.getBytes(
+                    "US-ASCII"))) {
+      final InputStream plaintextStream = BouncyGPG.decryptAndVerifyStream()
+              .withConfig(Configs.keyringConfigFromResourceForRecipient())
+              .andIgnoreSignatures()
+              .fromEncryptedInputStream(ciphertext);
+
+      final InputStream wrapperStream = new InputStream() {
+        @Override
+        public int read() throws IOException {
+          return plaintextStream.read();
+        }
+      };
+
+      final String plainText = inputStreamToText(wrapperStream);
+
+      assertThat(plainText, equalTo(ExampleMessages.IMPORTANT_QUOTE_TEXT));
+      plaintextStream.close();
+      wrapperStream.close();
     }
   }
 
