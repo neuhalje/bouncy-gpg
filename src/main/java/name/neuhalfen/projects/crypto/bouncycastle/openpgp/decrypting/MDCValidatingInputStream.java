@@ -75,9 +75,29 @@ final class MDCValidatingInputStream extends FilterInputStream {
 
   }
 
+  // NOTE: We cannot simply delegate to super.skip, since we need to ensure our own read
+//       impl, which updates the one-pass signatures, is used to read the bytes being
+//       skipped.
   @Override
   public long skip(long n) throws IOException {
-    throw new UnsupportedOperationException("Skipping not supported");
+    if (n <= 0) {
+      return 0;
+    }
+
+    // buffer to be reused repeatedly
+    final byte[] buffer = new byte[(int) Math.min(4096, n)];
+
+    long remaining = n;
+    while (remaining > 0) {
+      final int read = read(buffer, 0, (int) Math.min(buffer.length, remaining));
+      final boolean endOfStream = read == -1;
+      if (endOfStream) {
+        break;
+      }
+      remaining -= read;
+    }
+
+    return n - remaining;
   }
 
   @SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")

@@ -2,8 +2,7 @@ package name.neuhalfen.projects.crypto.bouncycastle.openpgp.roundtrip;
 
 
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages.FULL_USER_ID_SENDER;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -127,7 +126,7 @@ public class EncryptionDecryptionRoundtripIntegrationTest {
 
     final byte[] decryptedPlaintext = Streams.readAll(decryptedPlaintextStream);
     // And expect the rest of the plaintext to be identical to the input with the first 5 chars (==bytes in this case) skipped
-    assertSame(new String(decryptedPlaintext, "US-ASCII"), ExampleMessages.IMPORTANT_QUOTE_TEXT.substring(5));
+    assertEquals(new String(decryptedPlaintext, "US-ASCII"), ExampleMessages.IMPORTANT_QUOTE_TEXT.substring(5));
   }
 
 
