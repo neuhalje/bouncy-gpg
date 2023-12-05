@@ -57,10 +57,12 @@ final class MDCValidatingInputStream extends FilterInputStream {
 
   /**
    * Checks MDC if present.
+   * If stream is not encrypted, returns directly
    *
    * @throws IOException Error while reading input stream or if MDC fails
    */
   private void validateMDC() throws IOException {
+    if (pbe == null) { return; }
     try {
       if (pbe.isIntegrityProtected()) {
         if (!pbe.verify()) {

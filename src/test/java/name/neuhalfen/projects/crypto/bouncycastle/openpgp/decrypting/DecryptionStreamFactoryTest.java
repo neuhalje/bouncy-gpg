@@ -1,5 +1,6 @@
 package name.neuhalfen.projects.crypto.bouncycastle.openpgp.decrypting;
 
+import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages.IMPORTANT_QUOTE_NOT_ENCRYPTED_BUT_SIGNED;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages.IMPORTANT_QUOTE_NOT_ENCRYPTED_TO_ME;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages.IMPORTANT_QUOTE_NOT_SIGNED_NOT_COMPRESSED;
 import static name.neuhalfen.projects.crypto.bouncycastle.openpgp.testtooling.ExampleMessages.IMPORTANT_QUOTE_SIGNED_BY_2_KNOWN_1_UNKNOWN_KEY;
@@ -296,7 +297,7 @@ public class DecryptionStreamFactoryTest {
   }
 
   @Test
-  public void decryptingSignedMessageWithSingleeSignatures_andAnySignatureIsRequired_succeeds()
+  public void decryptingSignedMessageWithSingleSignature_andAnySignatureIsRequired_succeeds()
       throws IOException, SignatureException {
     final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
 
@@ -327,6 +328,18 @@ public class DecryptionStreamFactoryTest {
     final String decryptedQuote = decrypt(
         IMPORTANT_QUOTE_SIGNED_MULTIPLE_V2_COMPRESSED.getBytes("US-ASCII"), config,
         SignatureValidationStrategies.requireAnySignature());
+
+    Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
+  }
+
+  @Test
+  public void verifyingSignedMessageWithSingleSignature_andNoSignatureIsRequired_succeeds()
+          throws IOException, SignatureException {
+    final KeyringConfig config = Configs.keyringConfigFromFilesForRecipient();
+
+    final String decryptedQuote = decrypt(
+            IMPORTANT_QUOTE_NOT_ENCRYPTED_BUT_SIGNED.getBytes("US-ASCII"), config,
+            SignatureValidationStrategies.ignoreSignatures());
 
     Assert.assertThat(decryptedQuote, equalTo(IMPORTANT_QUOTE_TEXT));
   }
