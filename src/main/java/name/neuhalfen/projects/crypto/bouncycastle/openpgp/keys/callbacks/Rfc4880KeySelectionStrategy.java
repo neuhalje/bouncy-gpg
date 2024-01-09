@@ -182,21 +182,14 @@ public class Rfc4880KeySelectionStrategy implements KeySelectionStrategy {
     return pubKey -> {
       requireNonNull(pubKey, "pubKey must not be null");
 
-      try {
-        final boolean hasPrivateKey = secretKeyRings.contains(pubKey.getKeyID());
+      final boolean hasPrivateKey = secretKeyRings.contains(pubKey.getKeyID());
 
-        if (!hasPrivateKey) {
-          LOGGER.trace("Skipping pubkey {} (no private key found)",
-              Long.toHexString(pubKey.getKeyID()));
-        }
-
-        return hasPrivateKey;
-      } catch (PGPException e) {
-        // ignore this for filtering
-        LOGGER.debug("Failed to test for private key for pubkey " + pubKey//NOPMD:GuardLogStatement
-            .getKeyID());
-        return false;
+      if (!hasPrivateKey) {
+        LOGGER.trace("Skipping pubkey {} (no private key found)",
+            Long.toHexString(pubKey.getKeyID()));
       }
+
+      return hasPrivateKey;
     };
   }
 

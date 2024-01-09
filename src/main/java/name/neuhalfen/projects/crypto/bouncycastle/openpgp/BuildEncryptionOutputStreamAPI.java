@@ -52,6 +52,9 @@ public final class BuildEncryptionOutputStreamAPI {
   private Set<PGPPublicKey> recipients;
   private boolean armorOutput;
 
+  private NameProvider nameProvider;
+  private ModificationDateProvider modificationDateProvider;
+
   // Signature
 
 
@@ -94,6 +97,21 @@ public final class BuildEncryptionOutputStreamAPI {
 
 
   public interface Build {
+
+    /**
+     * Set name a modification date providers which will be used to set name and modification date
+     * of literal data (literal packet in the output data).
+     * <p/>
+     * This allows acts like we are actually working with a file, not just unnamed, just-in-time stream of data.
+     * <p/>
+     * If not provided ({@code null}), default values will be used - empty string ({@code ""}) as a name
+     * anc current date ({@code new Date()}) as a modification date.
+     *
+     * @param nameProvider literal data name provider (nullable)
+     * @param modificationDateProvider literal data modification date provider (nullable)
+     * @return this
+     */
+    Build withProviders(NameProvider nameProvider, ModificationDateProvider modificationDateProvider);
 
     OutputStream andWriteTo(OutputStream sinkForEncryptedData)
         throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException;
@@ -503,6 +521,13 @@ public final class BuildEncryptionOutputStreamAPI {
           public final class Builder implements Build {
 
             @Override
+            public Build withProviders(NameProvider nameProvider, ModificationDateProvider modificationDateProvider) {
+              BuildEncryptionOutputStreamAPI.this.nameProvider = nameProvider;
+              BuildEncryptionOutputStreamAPI.this.modificationDateProvider = modificationDateProvider;
+              return this;
+            }
+
+            @Override
             public OutputStream andWriteTo(OutputStream sinkForEncryptedData)
                 throws PGPException, SignatureException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
               BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData = sinkForEncryptedData;
@@ -513,7 +538,9 @@ public final class BuildEncryptionOutputStreamAPI {
                   BuildEncryptionOutputStreamAPI.this.sinkForEncryptedData,
                   getKeySelectionStrategy(),
                   BuildEncryptionOutputStreamAPI.this.armorOutput,
-                  BuildEncryptionOutputStreamAPI.this.recipients);
+                  BuildEncryptionOutputStreamAPI.this.recipients,
+                  BuildEncryptionOutputStreamAPI.this.nameProvider,
+                  BuildEncryptionOutputStreamAPI.this.modificationDateProvider);
 
             }
           }

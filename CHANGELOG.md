@@ -1,5 +1,8 @@
 ## V 2.x.x (NEXT)
 
+* Enh: Bump Bouncy Castle to 1.77 and jdk18on for security fixes
+* New: Provide a way to change name and modification date in literal data packet
+
 ## V 2.3.0 Bugfix Release
 
 This releases fixes a security issue (#50) where encrypted, but not signed archives could be modified. 
