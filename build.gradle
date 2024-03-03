@@ -16,13 +16,14 @@ plugins {
     id 'pmd'
 
     // required for: website.gradle
-    id 'org.ajoberstar.git-publish' version '0.3.0'
+    id 'org.ajoberstar.git-publish'
 
     // deploy to maven central
     id 'maven-publish'
     id 'signing'
-    id "com.jfrog.bintray" version "1.8.4"
-    id "com.github.ben-manes.versions" version "0.27.0"
+    id "com.jfrog.bintray"
+    id "com.github.ben-manes.versions"
+    id "biz.aQute.bnd.builder"
 }
 
 javadoc {
@@ -165,6 +166,3 @@ apply from: 'website.gradle'
 wrapper {
     gradleVersion = '6.9.4'
 }
-
-// Generate OSGI bundle metadata
-apply plugin: 'biz.aQute.bnd.builder'
