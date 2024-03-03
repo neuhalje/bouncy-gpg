@@ -40,7 +40,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Run build with Gradle wrapper
-        run: ./gradlew build
+        run: ./gradlew build --stacktrace --warning-mode all
       - name: Upload build reports
         uses: actions/upload-artifact@v3
         if: always()
@@ -48,4 +48,4 @@ jobs:
           name: build-reports
           path: build/reports/
       - name: Run checks
-        run: ./gradlew check jacocoTestReport
+        run: ./gradlew check test integrationTest jacocoTestReport --stacktrace --warning-mode all
