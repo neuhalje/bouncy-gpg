@@ -15,6 +15,7 @@ permissions:
 
 jobs:
   build:
+    name: Build on ${{ matrix.os }} with Java ${{ matrix.java }}
     strategy:
       fail-fast: false
       matrix:
