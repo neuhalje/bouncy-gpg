@@ -3,9 +3,6 @@ buildscript {
         mavenCentral()
         jcenter()
     }
-    dependencies {
-        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.3.1'
-    }
 }
 
 plugins {
@@ -40,7 +37,7 @@ checkstyle {
 
 tasks.withType(Checkstyle).configureEach {
     reports {
-        xml.enabled true
+        xml.setRequired(true)
         // html.destination rootProject.file("build/reports/checkstyle.html")
         // html.stylesheet resources.text.fromFile('config/xsl/checkstyle-custom.xsl')
     }
@@ -53,9 +50,9 @@ jacoco {
 
 jacocoTestReport {
     reports {
-        xml.enabled true
-        csv.enabled false
-        html.enabled true
+        xml.setRequired(true)
+        csv.setRequired(true)
+        html.setRequired(true)
         html.destination file("${buildDir}/jacocoHtml")
     }
 }
@@ -164,5 +161,5 @@ if (hasProperty('bintray_Username')) {
 apply from: 'website.gradle'
 
 wrapper {
-    gradleVersion = '6.9.4'
+    gradleVersion = '7.6.2'
 }
