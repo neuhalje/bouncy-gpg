@@ -9,7 +9,7 @@ buildscript {
 }
 
 plugins {
-    id 'java'
+    id 'java-library'
     id 'jacoco'
 
     id 'checkstyle'
@@ -19,7 +19,6 @@ plugins {
     id 'org.ajoberstar.git-publish' version '0.3.0'
 
     // deploy to maven central
-    id 'maven'
     id 'maven-publish'
     id 'signing'
     id "com.jfrog.bintray" version "1.8.4"
@@ -98,8 +97,7 @@ repositories {
 sourceSets {
     integrationTest {
         compileClasspath += sourceSets.main.output \
-                      + sourceSets.test.output \
-                      + configurations.testRuntime
+                      + sourceSets.test.output
 
         runtimeClasspath += output + compileClasspath
 
