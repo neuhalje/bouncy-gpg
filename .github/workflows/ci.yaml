@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+  workflow_dispatch:
+concurrency:
+  group:
+    ${{ github.repository }}-${{ github.workflow }}-${{ github.event.number || github.head_ref || github.run_id || github.sha }}
+  cancel-in-progress: true
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ 8, 11, 17 ]
+        os: [ ubuntu-latest ]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          add-job-summary-as-pr-comment: on-failure
+          dependency-graph: generate-and-submit
+          build-scan-publish: true
+          build-scan-terms-of-service-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-service-agree: "yes"
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Run build with Gradle wrapper
+        run: ./gradlew build
+      - name: Upload build reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: build-reports
+          path: build/reports/
+      - name: Run checks
+        run: ./gradlew check jacocoTestReport
