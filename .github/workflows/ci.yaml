@@ -18,8 +18,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ 8, 11, 17 ]
-        os: [ ubuntu-latest ]
+        java: [ 8, 11 ]
+        os: [ ubuntu-22.04, macos-13, windows-2022 ]
 
     runs-on: ${{ matrix.os }}
     steps:
