@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.3.1'
@@ -37,7 +37,7 @@ checkstyle {
     // maxWarnings = 0
 }
 
-tasks.withType(Checkstyle) {
+tasks.withType(Checkstyle).configureEach {
     reports {
         xml.enabled true
         // html.destination rootProject.file("build/reports/checkstyle.html")
@@ -47,7 +47,7 @@ tasks.withType(Checkstyle) {
 
 jacoco {
     toolVersion = "0.8.5"
-    reportsDir = file("${buildDir}/jacocoHtml")
+    getReportsDirectory().set(file("${buildDir}/jacocoHtml"))
 }
 
 jacocoTestReport {
@@ -90,7 +90,7 @@ group = 'name.neuhalfen.projects.crypto.bouncycastle.openpgp'
 version = '2.3.0'
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 sourceSets {
@@ -111,7 +111,7 @@ configurations {
     integrationTestRuntime.extendsFrom testRuntime
 }
 
-task integrationTest(type: Test) {
+tasks.register('integrationTest', Test) {
     description = 'Runs the integration tests.'
     group = LifecycleBasePlugin.VERIFICATION_GROUP
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
@@ -123,20 +123,19 @@ check.dependsOn integrationTest
 
 
 dependencies {
-    compile 'org.bouncycastle:bcprov-jdk15on:1.67'
-    compile 'org.bouncycastle:bcpg-jdk15on:1.67'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.67'
+    implementation 'org.bouncycastle:bcpg-jdk15on:1.67'
 
-    compile 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
 
     // @Nullable and friends are not needed at runtime
-    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
-    testCompile 'junit:junit:4.13'
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
-    testCompile 'org.mockito:mockito-core:3.2.4'
-    testCompile 'org.concordion:concordion-api-documentation-extension:0.0.4'
-    testCompile 'ch.qos.logback:logback-classic:1.2.3'
-
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.hamcrest:hamcrest-all:1.3'
+    testImplementation 'org.mockito:mockito-core:3.2.4'
+    testImplementation 'org.concordion:concordion-api-documentation-extension:0.0.4'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.3'
 }
 
 
@@ -164,7 +163,7 @@ if (hasProperty('bintray_Username')) {
 apply from: 'website.gradle'
 
 wrapper {
-    gradleVersion = '6.5'
+    gradleVersion = '6.9.4'
 }
 
 // Generate OSGI bundle metadata
