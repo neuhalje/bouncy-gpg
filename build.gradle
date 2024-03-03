@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.3.1'
@@ -91,6 +92,7 @@ version = '2.3.0'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 sourceSets {
