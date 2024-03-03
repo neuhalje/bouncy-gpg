@@ -29,7 +29,7 @@ javadoc {
 }
 
 checkstyle {
-    toolVersion = "8.1"
+    toolVersion = "8.24"
     showViolations = false
     sourceSets = [project.sourceSets.main]
     // maxWarnings = 0
@@ -44,7 +44,7 @@ tasks.withType(Checkstyle).configureEach {
 }
 
 jacoco {
-    toolVersion = "0.8.5"
+    toolVersion = "0.8.11"
     getReportsDirectory().set(file("${buildDir}/jacocoHtml"))
 }
 
@@ -107,6 +107,12 @@ sourceSets {
 configurations {
     integrationTestImplementation.extendsFrom testImplementation
     integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+    checkstyle {
+        // See https://github.com/gradle/gradle/issues/27035
+        resolutionStrategy.capabilitiesResolution.withCapability("com.google.collections:google-collections") {
+            select("com.google.guava:guava:0")
+        }
+    }
 }
 
 tasks.register('integrationTest', Test) {
