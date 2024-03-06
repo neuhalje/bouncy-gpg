@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.Date;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.ModificationDateProvider;
+import name.neuhalfen.projects.crypto.bouncycastle.openpgp.NameProvider;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.PGPAlgorithmSuite;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.PGPUtilities;
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.callbacks.KeySelectionStrategy;
@@ -95,6 +97,40 @@ public final class PGPEncryptingStream extends OutputStream {
       final boolean armor,
       final Set<PGPPublicKey> encryptTo)
       throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException {
+    return create(config, algorithmSuite, signingUid, cipherTextSink, keySelectionStrategy, armor, encryptTo, null, null);
+  }
+
+  /**
+   * Return a stream that, when written plaintext into, writes the ciphertext into cipherTextSink.
+   *
+   * @param config key configuration
+   * @param algorithmSuite algorithm suite to use.
+   * @param signingUid sign with this uid (optionally)
+   * @param cipherTextSink write the ciphertext in here
+   * @param keySelectionStrategy selection strategy
+   * @param armor armor the file (true) or use binary.
+   * @param encryptTo encrypt to
+   * @param nameProvider a name provider for literal data packet (default to {@code ""})
+   * @param modificationDateProvider a modification date for literal data packet (default to current date)
+   *
+   * @return stream where plaintext gets written into
+   *
+   * @throws IOException streams, IO, ...
+   * @throws PGPException pgp error
+   * @throws NoSuchAlgorithmException algorithmSuite not supported
+   * @throws NoSuchProviderException bouncy castle not registered
+   * @see name.neuhalfen.projects.crypto.bouncycastle.openpgp.algorithms.DefaultPGPAlgorithmSuites
+   */
+  public static OutputStream create(final KeyringConfig config,
+      final PGPAlgorithmSuite algorithmSuite,
+      @Nullable final String signingUid,
+      final OutputStream cipherTextSink,
+      final KeySelectionStrategy keySelectionStrategy,
+      final boolean armor,
+      final Set<PGPPublicKey> encryptTo,
+      final NameProvider nameProvider,
+      final ModificationDateProvider modificationDateProvider)
+      throws IOException, PGPException, NoSuchAlgorithmException, NoSuchProviderException {
 
     requireNonNull(config, "callback must not be null");
     requireNonNull(cipherTextSink, "cipherTextSink must not be null");
@@ -109,7 +145,7 @@ public final class PGPEncryptingStream extends OutputStream {
     }
 
     final PGPEncryptingStream encryptingStream = new PGPEncryptingStream(config, algorithmSuite);
-    encryptingStream.setup(cipherTextSink, signingUid, encryptTo, keySelectionStrategy, armor);
+    encryptingStream.setup(cipherTextSink, signingUid, encryptTo, keySelectionStrategy, armor, nameProvider, modificationDateProvider);
     return encryptingStream;
   }
 
@@ -134,7 +170,9 @@ public final class PGPEncryptingStream extends OutputStream {
       @Nullable final String signingUid,
       final Set<PGPPublicKey> pubEncKeys,
       final KeySelectionStrategy keySelectionStrategy,
-      final boolean armor) throws
+      final boolean armor,
+      final NameProvider nameProvider,
+      final ModificationDateProvider modificationDateProvider) throws
       IOException, PGPException {
     isDoSign = signingUid != null;
 
@@ -192,13 +230,13 @@ public final class PGPEncryptingStream extends OutputStream {
       if (userIDs.hasNext()) {
         final PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
 
-        spGen.setSignerUserID(false, (String) userIDs.next());
+        spGen.addSignerUserID(false, (String) userIDs.next());
         signatureGenerator.setHashedSubpackets(spGen.generate());
       }
     }
 
     compressionStreamGenerator = new PGPCompressedDataGenerator(
-        algorithmSuite.getCompressionEncryptionAlgorithmCode().getAlgorithmId());
+        algorithmSuite.getCompressionAlgorithmCode().getAlgorithmId());
     compressionStream = new BCPGOutputStream(
         compressionStreamGenerator.open(outerEncryptionStream));
 
@@ -208,7 +246,11 @@ public final class PGPEncryptingStream extends OutputStream {
 
     encryptionDataStreamGenerator = new PGPLiteralDataGenerator();
     encryptionDataStream = encryptionDataStreamGenerator
-        .open(compressionStream, PGPLiteralData.BINARY, "", new Date(), new byte[1 << 16]);
+        .open(compressionStream,
+                PGPLiteralData.BINARY,
+                Optional.ofNullable(nameProvider).orElse(NameProvider.DEFAULT_INSTANCE).getName(),
+                Optional.ofNullable(modificationDateProvider).orElse(ModificationDateProvider.DEFAULT_INSTANCE).getModificationDate(),
+                new byte[1 << 16]);
   }
 
   @Override
