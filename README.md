@@ -1,6 +1,6 @@
 **Looking for contributors**: *_It's boring to work alone_ - If you are interested in contributing to an open source project please open an issue to discuss your ideas or create a PR*
 
-[![Build Status](https://travis-ci.org/neuhalje/bouncy-gpg.svg?branch=master)](https://travis-ci.org/neuhalje/bouncy-gpg)
+[![Build Status](https://github.com/neuhalje/bouncy-gpg/actions/workflows/ci.yaml/badge.svg)](https://github.com/neuhalje/bouncy-gpg/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/neuhalje/bouncy-gpg/branch/master/graph/badge.svg)](https://codecov.io/gh/neuhalje/bouncy-gpg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/86c099743f8b484c8da833495d7dc209)](https://www.codacy.com/app/neuhalje/bouncy-gpg?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=neuhalje/bouncy-gpg&amp;utm_campaign=Badge_Grade)
 [![license](https://img.shields.io/badge/license-APACHE%202.0-brightgreen.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)

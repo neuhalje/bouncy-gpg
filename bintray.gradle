@@ -22,13 +22,13 @@ def pomConfig = {
     }
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
+tasks.register('javadocJar', Jar) {
+    getArchiveClassifier().set("javadoc")
     from javadoc
 }
 
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
+tasks.register('sourcesJar', Jar) {
+    getArchiveClassifier().set("sources")
     from sourceSets.main.allSource
 }
 

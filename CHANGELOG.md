@@ -1,5 +1,7 @@
 ## V 2.x.x (NEXT)
 
+* Enh: Upgrade tooling and migrate to GitHub Actions.
+
 ## V 2.3.0 Bugfix Release
 
 This releases fixes a security issue (#50) where encrypted, but not signed archives could be modified. 
