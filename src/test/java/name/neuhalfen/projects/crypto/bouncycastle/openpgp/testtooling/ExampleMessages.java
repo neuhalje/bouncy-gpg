@@ -714,6 +714,27 @@ public class ExampleMessages {
           "znd5CR+Jye1UXfLusnylrlfgKZcCRA==\n" +
           "=q3RN\n" +
           "-----END PGP MESSAGE-----";
+
+  /**
+   * Encrypted-To:    recipient@example.com Signed-By:       not encrypted but signed Compressed:      no
+   */
+  public final static String IMPORTANT_QUOTE_NOT_ENCRYPTED_BUT_SIGNED =
+          "-----BEGIN PGP MESSAGE-----\n" +
+                  "Version: Keybase OpenPGP v2.0.76\n" +
+                  "Comment: https://keybase.io/crypto\n" +
+                  "\n" +
+                  "yMDRAnicO8LLzMDFGLL4trl/RdV2xtNRpQyp+TWTPRVy8stSFVJSE1NyMvNSi/UU\n" +
+                  "gCKZ2akKJRmpCuUZ+fnFGZl56QrF+aV5KSCxSoXcRKBsYjGEk5ZTqZBUqafgkl+a\n" +
+                  "ngMUdExJzC0+dCCGhYGRi4GNlQlkBQMXpwDM3ikLORjazieoXLSXYeKoN/rn9qKQ\n" +
+                  "3/58UNEr+9kXngh2W8knW9ke99/nIB5z4t4l23snT1r7ME2bbfJsbaWoL+fEh9Ws\n" +
+                  "BXWrH9Y/Px9f6Zv7ZWftgXk7TNdWJcm2OWSKMLr8Oz/rhRvn1y3zn5tVy6+RjWed\n" +
+                  "u74w7taaGyf8mHYpC7UzS6TVqiiIv72jv0bg/3/z6T8+/ty57eH26XtrJ8Zfld/w\n" +
+                  "dMYmFuY7k/eKb/JcNzPW7fLa3r4naXuDre/1mx4SmF++cmr3hUl6x9Q7PmzwP/75\n" +
+                  "hMysoIvfc/seZW9OZJsW2lB56/+ed5OKpqzb2/KVvbRa71LNLGWpIHXTlJrWp7qs\n" +
+                  "YU/nvsrk+xQWcdbD7qQdABDtsOc=\n" +
+                  "=5J9M\n" +
+                  "-----END PGP MESSAGE-----\n";
+
   /**
    * Encrypted-To:    sender@example.com Signed-By:       not signed Compressed:      no
    */
