@@ -13,6 +13,10 @@ final class MDCValidatingInputStream extends FilterInputStream {
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory
       .getLogger(MDCValidatingInputStream.class);
 
+  private final PGPPublicKeyEncryptedData pbe;
+
+  private boolean mdcChecked;
+
   /**
    * Creates a <code>MDCValidatingInputStream</code> by assigning the  argument
    * <code>inputStream</code> to the field <code>this.inputStream</code> and <code>pbe</code> to <code>this.pbe</code> so as to remember it for
@@ -21,9 +25,6 @@ final class MDCValidatingInputStream extends FilterInputStream {
    * @param inputStream the underlying input stream
    * @param pbe the pgp public key encrypted data to verify message integrity
    */
-
-  private final PGPPublicKeyEncryptedData pbe;
-
   MDCValidatingInputStream(InputStream inputStream, PGPPublicKeyEncryptedData pbe) {
     super(inputStream);
     this.pbe = pbe;
@@ -61,6 +62,11 @@ final class MDCValidatingInputStream extends FilterInputStream {
    * @throws IOException Error while reading input stream or if MDC fails
    */
   private void validateMDC() throws IOException {
+    if (mdcChecked) {
+      return;
+    }
+    mdcChecked = true;
+
     try {
       if (pbe.isIntegrityProtected()) {
         if (!pbe.verify()) {
