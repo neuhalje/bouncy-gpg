@@ -230,9 +230,9 @@ public final class PGPEncryptingStream extends OutputStream {
 
   @Override
   public void write(@Nonnull byte[] buffer, int off, int len) throws IOException {
-    encryptionDataStream.write(buffer, 0, len);
+    encryptionDataStream.write(buffer, off, len);
     if (isDoSign) {
-      signatureGenerator.update(buffer, 0, len);
+      signatureGenerator.update(buffer, off, len);
     }
   }
 
